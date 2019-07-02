@@ -1,5 +1,5 @@
 {
-  "name": "serious-game-library",
+  "name": "serious-game-backend",
   "version": "1.0.0",
   "description": "Express Backend for serious-game",
   "repository": {
@@ -37,6 +37,7 @@
     "express-validator": "^6.0.1",
     "lodash": "^4.17.11",
     "lusca": "^1.6.1",
+    "mysql": "^2.17.1",
     "nodemailer": "^6.2.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
