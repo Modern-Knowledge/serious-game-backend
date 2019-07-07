@@ -2,19 +2,43 @@ import express from "express";
 import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
 import lusca from "lusca";
-// import flash from "express-flash";
-import path from "path";
 import passport from "passport";
+import * as dotenv from "dotenv";
+import mysql from "mysql";
+
+
+dotenv.config({path: ".env"});
+
+
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
+
+/*
+const db = mysql.createConnection ({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_SCHEMA
+});
+
+// connect to database
+db.connect((err) => {
+  if (err) {
+    throw err;
+  }
+  console.log("Connected to database");
+});
+
+db.query("SELECT * FROM user", (err, result) => {
+  console.log(result[0].username);
+});
+*/
 
 // Create Express server
 const app = express();
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
-app.set("views", path.join(__dirname, "../views"));
-app.set("view engine", "pug");
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,9 +53,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
-);
 
 /**
  * Primary app routes.
