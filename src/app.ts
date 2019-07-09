@@ -4,35 +4,18 @@ import bodyParser from "body-parser";
 import lusca from "lusca";
 import passport from "passport";
 import * as dotenv from "dotenv";
-import mysql from "mysql";
+import { DatabaseConnection } from "./util/DatabaseConnection";
 
 
+// TODO: check if loaded
 dotenv.config({path: ".env"});
 
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
 
-/*
-const db = mysql.createConnection ({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_SCHEMA
-});
-
-// connect to database
-db.connect((err) => {
-  if (err) {
-    throw err;
-  }
-  console.log("Connected to database");
-});
-
-db.query("SELECT * FROM user", (err, result) => {
-  console.log(result[0].username);
-});
-*/
+const databaseConnection = DatabaseConnection.getInstance();
+// databaseConnection.query("SELECT * FROM USER");
 
 // Create Express server
 const app = express();
