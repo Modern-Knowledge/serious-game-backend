@@ -44,6 +44,16 @@ export class DatabaseConnection {
 
   /**
    *
+   */
+  // TODO:
+  private disconnect(): void {
+    this.connection.end((err: MysqlError) => {
+      console.log(err);
+    });
+  }
+
+  /**
+   *
    * @param sql
    */
   public query(sql: string) {

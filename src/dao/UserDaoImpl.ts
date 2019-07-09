@@ -1,24 +1,16 @@
-import { IUserDao } from "./IUserDao";
-import { DatabaseConnection } from "../util/DatabaseConnection";
 import User from "../lib/model/User";
+import { AbstractDao } from "./AbstractDao";
 
 /**
  *
  */
-export class UserDaoImpl implements IUserDao {
-  readonly tableName: string;
-  readonly tableAlias: string;
-  readonly databaseConnection: DatabaseConnection;
-
+export class UserDaoImpl extends AbstractDao<User> {
   /**
    * @param tableName
    * @param tableAlias
    */
   constructor(tableName: string, tableAlias: string) {
-    this.tableName = tableName;
-    this.tableAlias = tableAlias;
-
-    this.databaseConnection = DatabaseConnection.getInstance();
+    super(tableName, tableAlias);
   }
 
   create(user: User): boolean {
@@ -37,6 +29,8 @@ export class UserDaoImpl implements IUserDao {
     return false;
   }
 
-
+  all(): User[] {
+    return [];
+  }
 
 }
