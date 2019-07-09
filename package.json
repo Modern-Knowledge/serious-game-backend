@@ -73,6 +73,7 @@
     "@types/shelljs": "^0.8.5",
     "@types/supertest": "^2.0.7",
     "@types/winston": "^2.3.9",
+    "@types/mysql": "^2.15.6",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
     "jest": "^24.8.0",
