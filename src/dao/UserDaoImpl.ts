@@ -28,31 +28,14 @@ export class UserDaoImpl extends AbstractDao<User, UserFilter> {
   }
 
   public all(filter: UserFilter): User[] {
-    filter.id = "1";
-
     const user = new User();
     this.select(filter, (err: MysqlError, results: any, fields: FieldInfo[]) => {
-      console.log(err);
       console.log(results);
-      console.log(fields);
       user.fromMySQL(results[0]);
     });
 
     return [];
   }
-
-  protected applyFilter(filter: UserFilter): {filterStr: string, params: string[]} {
-    const params: string[] = [];
-    let filterStr: string = "";
-
-    if (filter.id != undefined) {
-      params.push(filter.id);
-      filterStr += this.tableAlias + ".id = ?";
-    }
-
-    return {filterStr: filterStr, params: params};
-  }
-
 
 
 }

@@ -2,6 +2,7 @@ import { DatabaseConnection } from "../util/DatabaseConnection";
 import { Model } from "../lib/model/Model";
 import { AbstractFilter } from "../filter/AbstractFilter";
 import { FieldInfo, MysqlError } from "mysql";
+import { AppliedFilter } from "../filter/AppliedFilter";
 
 
 /**
@@ -65,15 +66,8 @@ export abstract class AbstractDao<T extends Model<T>, F extends AbstractFilter> 
    * @param callback
    */
   protected query(sql: string, params: string[], callback: (err: MysqlError, results: any, fields: FieldInfo[]) => void): void {
-    // TODO: check questionmarks and params size
     this.connection.connection.query(sql, params, callback);
   }
-
-  /**
-   *
-   * @param filter
-   */
-  protected abstract applyFilter(filter: F): {filterStr: string, params: string[]};
 
   /**
    *
@@ -81,11 +75,9 @@ export abstract class AbstractDao<T extends Model<T>, F extends AbstractFilter> 
    * @param callback
    */
   protected select(filter: F, callback: (err: MysqlError, results: any, fields: FieldInfo[]) => void): void {
-    const queryStr = this.applyFilter(filter);
+    const appliedFilter: AppliedFilter = filter.applyFilter(this.tableAlias);
 
-    const where = (queryStr.filterStr.length > 0) ? "WHERE " + queryStr.filterStr : "";
-
-    this.query(`SELECT * FROM ${this.tableName} ${this.tableAlias} ${where}`, queryStr.params, callback);
+    this.query(`SELECT * FROM ${this.tableName} ${this.tableAlias} ${appliedFilter.getWhereString()}`, appliedFilter.params, callback);
   }
 
 }

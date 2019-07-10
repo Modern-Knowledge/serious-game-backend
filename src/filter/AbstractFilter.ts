@@ -1,3 +1,5 @@
+import { AppliedFilter } from "./AppliedFilter";
+
 export abstract class AbstractFilter {
   private _id: string;
 
@@ -11,7 +13,13 @@ export abstract class AbstractFilter {
     this._id = value;
   }
 
-  public getFilter(): any {
+  public applyFilter(tableAlias: string): AppliedFilter {
+    const appliedFilter: AppliedFilter = new AppliedFilter();
 
+   if (this.id !== undefined) {
+      appliedFilter.addParam(this.id, "id", tableAlias);
+   }
+
+   return appliedFilter;
   }
 }
