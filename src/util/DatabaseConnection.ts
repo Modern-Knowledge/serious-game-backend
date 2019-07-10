@@ -1,16 +1,16 @@
-import mysql, { Connection, ConnectionConfig, MysqlError } from "mysql";
+import mysql, { Connection, ConnectionConfig, FieldInfo, MysqlError } from "mysql";
 
 /**
  *
  */
 export class DatabaseConnection {
   private static _instance: DatabaseConnection;
-  private connection: Connection;
+  private _connection: Connection;
 
-  readonly host: string;
-  readonly user: string;
-  readonly password: string;
-  readonly database: string;
+  readonly _host: string;
+  readonly _user: string;
+  readonly _password: string;
+  readonly _database: string;
 
   /**
    * @param host
@@ -19,10 +19,10 @@ export class DatabaseConnection {
    * @param database
    */
   private constructor(host: string, user: string, password: string, database: string) {
-    this.host = host;
-    this.user = user;
-    this.password = password;
-    this.database = database;
+    this._host = host;
+    this._user = user;
+    this._password = password;
+    this._database = database;
 
     this.connect();
   }
@@ -32,9 +32,9 @@ export class DatabaseConnection {
    */
   // TODO: error handling
   private connect(): void {
-    this.connection = mysql.createConnection({host: this.host, user: this.user, password: this.password, database: this.password});
+    this._connection = mysql.createConnection({host: this._host, user: this._user, password: this._password, database: this._database});
 
-    this.connection.connect((err: MysqlError) => {
+    this._connection.connect((err: MysqlError) => {
       if (err) {
         throw err;
       }
@@ -47,18 +47,8 @@ export class DatabaseConnection {
    */
   // TODO:
   private disconnect(): void {
-    this.connection.end((err: MysqlError) => {
+    this._connection.end((err: MysqlError) => {
       console.log(err);
-    });
-  }
-
-  /**
-   *
-   * @param sql
-   */
-  public query(sql: string) {
-    this.connection.query(sql, (err, result) => {
-      console.log(result[0].username);
     });
   }
 
@@ -72,4 +62,9 @@ export class DatabaseConnection {
 
     return this._instance;
   }
+
+  get connection(): Connection {
+    return this._connection;
+  }
+
 }

@@ -4,7 +4,8 @@ import bodyParser from "body-parser";
 import lusca from "lusca";
 import passport from "passport";
 import * as dotenv from "dotenv";
-import { DatabaseConnection } from "./util/DatabaseConnection";
+import { UserDaoImpl } from "./dao/UserDaoImpl";
+import { UserFilter } from "./filter/UserFilter";
 
 
 // TODO: check if loaded
@@ -13,9 +14,13 @@ dotenv.config({path: ".env"});
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
+import User from "./lib/model/User";
 
-const databaseConnection = DatabaseConnection.getInstance();
-// databaseConnection.query("SELECT * FROM USER");
+const dao: UserDaoImpl = new UserDaoImpl();
+const filter: UserFilter = new UserFilter();
+
+const user: User[] = dao.all(filter);
+console.log(user);
 
 // Create Express server
 const app = express();

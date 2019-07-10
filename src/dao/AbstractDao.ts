@@ -1,11 +1,22 @@
 import { DatabaseConnection } from "../util/DatabaseConnection";
+import { Model } from "../lib/model/Model";
+import { AbstractFilter } from "../filter/AbstractFilter";
+import { FieldInfo, MysqlError } from "mysql";
 
-export abstract class AbstractDao<T> {
+
+/**
+ * AbstractDao
+ */
+export abstract class AbstractDao<T extends Model<T>, F extends AbstractFilter> {
   readonly tableName: string;
   readonly tableAlias: string;
 
   protected connection: DatabaseConnection;
 
+  /**
+   * @param tableName
+   * @param tableAlias
+   */
   protected constructor(tableName: string, tableAlias: string) {
     this.tableName = tableName;
     this.tableAlias = tableAlias;
@@ -13,13 +24,68 @@ export abstract class AbstractDao<T> {
     this.connection = DatabaseConnection.getInstance();
   }
 
-  abstract create(object: T): boolean;
+  /**
+   *
+   * @param object
+   */
+  public abstract create(object: T): number;
 
-  abstract delete(object: T): boolean;
+  /**
+   * @param filter
+   */
+  public abstract delete(filter: F): boolean;
 
-  abstract get(id: number): T;
+  /**
+   * @param filter
+   */
+  public get(filter: F): T {
+    const results: T[] = this.all(filter);
 
-  abstract update(object: T): boolean;
+    if (results.length > 0) {
+      return results[0];
+    } else {
+      return undefined;
+    }
+  }
 
-  abstract all(): T[];
+  /**
+   *
+   * @param object
+   */
+  public abstract update(object: T): boolean;
+
+  /**
+   * @param filter
+   */
+  public abstract all(filter: F): T[];
+
+  /**
+   * @param sql
+   * @param params
+   * @param callback
+   */
+  protected query(sql: string, params: string[], callback: (err: MysqlError, results: any, fields: FieldInfo[]) => void): void {
+    // TODO: check questionmarks and params size
+    this.connection.connection.query(sql, params, callback);
+  }
+
+  /**
+   *
+   * @param filter
+   */
+  protected abstract applyFilter(filter: F): {filterStr: string, params: string[]};
+
+  /**
+   *
+   * @param filter
+   * @param callback
+   */
+  protected select(filter: F, callback: (err: MysqlError, results: any, fields: FieldInfo[]) => void): void {
+    const queryStr = this.applyFilter(filter);
+
+    const where = (queryStr.filterStr.length > 0) ? "WHERE " + queryStr.filterStr : "";
+
+    this.query(`SELECT * FROM ${this.tableName} ${this.tableAlias} ${where}`, queryStr.params, callback);
+  }
+
 }
