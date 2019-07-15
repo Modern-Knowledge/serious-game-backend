@@ -4,23 +4,28 @@ import bodyParser from "body-parser";
 import lusca from "lusca";
 import passport from "passport";
 import * as dotenv from "dotenv";
+import { DotenvConfigOutput } from "dotenv";
 import { UserDaoImpl } from "./dao/UserDaoImpl";
 import { UserFilter } from "./filter/UserFilter";
+import { Therapist } from "./lib/models/Therapist";
+import { User } from "./lib/models/User";
+import logger from "./util/logger";
 
 
-// TODO: check if loaded
-dotenv.config({path: ".env"});
+const config: DotenvConfigOutput = dotenv.config({path: ".env"});
+if (config.error) { // .env not found
+  throw new Error("Config couldn't be loaded");
+}
 
+logger.info("hello");
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
-import User from "./lib/model/User";
 
 const dao: UserDaoImpl = new UserDaoImpl();
 const filter: UserFilter = new UserFilter();
 
-const user: User[] = dao.all(filter);
-console.log(user);
+// const user: User[] = dao.all(filter);
 
 // Create Express server
 const app = express();
@@ -45,6 +50,6 @@ app.use((req, res, next) => {
 /**
  * Primary app routes.
  */
-app.get("/", homeController.index);
+app.all("/", homeController.index);
 
 export default app;

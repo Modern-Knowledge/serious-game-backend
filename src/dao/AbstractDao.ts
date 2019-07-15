@@ -1,5 +1,5 @@
 import { DatabaseConnection } from "../util/DatabaseConnection";
-import { Model } from "../lib/model/Model";
+import { AbstractModel } from "../lib/models/AbstractModel";
 import { AbstractFilter } from "../filter/AbstractFilter";
 import { FieldInfo, MysqlError } from "mysql";
 import { AppliedFilter } from "../filter/AppliedFilter";
@@ -8,7 +8,7 @@ import { AppliedFilter } from "../filter/AppliedFilter";
 /**
  * AbstractDao
  */
-export abstract class AbstractDao<T extends Model<T>, F extends AbstractFilter> {
+export abstract class AbstractDao<T extends AbstractModel, F extends AbstractFilter> {
   readonly tableName: string;
   readonly tableAlias: string;
 

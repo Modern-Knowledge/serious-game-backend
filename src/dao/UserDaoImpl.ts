@@ -1,4 +1,4 @@
-import User from "../lib/model/User";
+import { User }  from "../lib/models/User";
 import { AbstractDao } from "./AbstractDao";
 import { UserFilter } from "../filter/UserFilter";
 import { FieldInfo, MysqlError } from "mysql";
