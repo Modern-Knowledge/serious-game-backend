@@ -11,17 +11,19 @@ import logger from "./util/logger";
 import { DatabaseConnection } from "./util/DatabaseConnection";
 import { Helper } from "./util/Helper";
 import moment from "moment";
+import morgan from "morgan";
+import { accessLogStream } from "./util/morgan";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
-  const message: string = `${Helper.loggerString(__dirname, "", "", __filename)} .env couldn't be loaded`;
+  const message: string = `${Helper.loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
   logger.error(message);
   throw new Error(message);
 }
-logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded`);
+logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
 DatabaseConnection.getInstance();
 
@@ -35,9 +37,12 @@ const filter: UserFilter = new UserFilter();
 
 // Create Express server
 const app = express();
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
+
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
