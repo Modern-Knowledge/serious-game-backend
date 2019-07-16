@@ -8,6 +8,7 @@ const options: LoggerOptions = {
 
   transports: [
     new transports.Console({
+      name: "console",
       level: process.env.NODE_ENV === "production" ? "error" : "debug",
       colorize: "all",
       prettyPrint: true,
@@ -16,6 +17,7 @@ const options: LoggerOptions = {
       handleExceptions: true
     }),
     new transports.DailyRotateFile({
+      name: "info logger",
       frequency: "24h",
       filename: "info-%DATE%.log",
       maxsize: "20m",
@@ -26,6 +28,7 @@ const options: LoggerOptions = {
       label: "Serious Game Backend"
     }),
     new transports.File({
+      name: "error logger",
       json: true,
       colorize: "all",
       prettyPrint: true,

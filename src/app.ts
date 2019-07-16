@@ -7,17 +7,12 @@ import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import { UserDaoImpl } from "./dao/UserDaoImpl";
 import { UserFilter } from "./filter/UserFilter";
-import { Therapist } from "./lib/models/Therapist";
-import { User } from "./lib/models/User";
 import logger from "./util/logger";
-
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
   throw new Error("Config couldn't be loaded");
 }
-
-logger.info("hello");
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
@@ -45,7 +40,6 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-
 
 /**
  * Primary app routes.
