@@ -1,4 +1,7 @@
 import mysql, { Connection, ConnectionConfig, FieldInfo, MysqlError } from "mysql";
+import logger from "./logger";
+import { Helper } from "./Helper";
+import moment from "moment";
 
 /**
  *
@@ -7,10 +10,10 @@ export class DatabaseConnection {
   private static _instance: DatabaseConnection;
   private _connection: Connection;
 
-  readonly _host: string;
-  readonly _user: string;
-  readonly _password: string;
-  readonly _database: string;
+  private readonly _host: string;
+  private readonly _user: string;
+  private readonly _password: string;
+  private readonly _database: string;
 
   /**
    * @param host
@@ -30,26 +33,46 @@ export class DatabaseConnection {
   /**
    * establish connection to database
    */
-  // TODO: error handling
   private connect(): void {
     this._connection = mysql.createConnection({host: this._host, user: this._user, password: this._password, database: this._database});
-
     this._connection.connect((err: MysqlError) => {
       if (err) {
+        logger.error(`${Helper.loggerString(__dirname, DatabaseConnection.name, "connect")} ${err} ${this}`);
         throw err;
+      } else {
+        logger.info(`${Helper.loggerString(__dirname, DatabaseConnection.name, "connect")} Connected to database! ${this}`);
       }
-      console.log("Connected to database");
     });
   }
 
   /**
-   *
+   * disconnects from database
    */
-  // TODO:
   private disconnect(): void {
     this._connection.end((err: MysqlError) => {
-      console.log(err);
+      if (err) {
+        logger.error(`${Helper.loggerString(__dirname, DatabaseConnection.name, "disconnect")} ${err} ${this}`);
+        throw err;
+      } else {
+        logger.info(`${Helper.loggerString(__dirname, DatabaseConnection.name, "disconnect")} Disconnected from database! ${this}`);
+      }
     });
+  }
+
+  /**
+   * pings server
+   */
+  public ping(): string {
+    this._connection.ping((err: MysqlError) => {
+      if (err) {
+        logger.error(`${Helper.loggerString(__dirname, DatabaseConnection.name, "ping")} ${err} ${this}`);
+        throw err;
+      } else {
+        logger.info(`${Helper.loggerString(__dirname, DatabaseConnection.name, "ping")} Ping to ${this} was successful!`);
+      }
+    });
+
+    return `Ping at ${moment().format("LLL")} to ${this} was successful!`;
   }
 
   /**
@@ -65,6 +88,10 @@ export class DatabaseConnection {
 
   get connection(): Connection {
     return this._connection;
+  }
+
+  public toString(): string {
+    return `{host: ${this._host}, database: ${this._database}, user: ${this._user}}`;
   }
 
 }

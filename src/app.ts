@@ -8,11 +8,22 @@ import { DotenvConfigOutput } from "dotenv";
 import { UserDaoImpl } from "./dao/UserDaoImpl";
 import { UserFilter } from "./filter/UserFilter";
 import logger from "./util/logger";
+import { DatabaseConnection } from "./util/DatabaseConnection";
+import { Helper } from "./util/Helper";
+import moment from "moment";
+
+process.env.TZ = "Europe/Vienna";
+moment.locale("de");
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
-  throw new Error("Config couldn't be loaded");
+  const message: string = `${Helper.loggerString(__dirname, "", "", __filename)} .env couldn't be loaded`;
+  logger.error(message);
+  throw new Error(message);
 }
+logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded`);
+
+DatabaseConnection.getInstance();
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";

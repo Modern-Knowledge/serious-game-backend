@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import logger from "../util/logger";
+import { DatabaseConnection } from "../util/DatabaseConnection";
 
 /**
  * GET /
  * Home page.
  */
 export const index = (req: Request, res: Response) => {
-  console.log(req.params);
-  res.send("hello");
-  logger.info("Sdasdasdasd");
+  res.send(DatabaseConnection.getInstance().ping());
 };

@@ -21,8 +21,6 @@ export abstract class AbstractDao<T extends AbstractModel, F extends AbstractFil
   protected constructor(tableName: string, tableAlias: string) {
     this.tableName = tableName;
     this.tableAlias = tableAlias;
-
-    this.connection = DatabaseConnection.getInstance();
   }
 
   /**
