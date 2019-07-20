@@ -1,5 +1,5 @@
-import { AbstractFilter } from "./AbstractFilter";
-import { AppliedFilter } from "./AppliedFilter";
+import { AbstractFilter } from "../../../../filter/AbstractFilter";
+import { AppliedFilter } from "../../../../filter/AppliedFilter";
 
 export class UserFilter extends AbstractFilter {
 

@@ -7,5 +7,5 @@ import { DatabaseConnection } from "../util/DatabaseConnection";
  * Home page.
  */
 export const index = (req: Request, res: Response) => {
-  res.send(DatabaseConnection.getInstance().ping());
+  // res.send(DatabaseConnection.getInstance().ping());
 };

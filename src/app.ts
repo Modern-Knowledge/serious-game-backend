@@ -5,14 +5,14 @@ import lusca from "lusca";
 import passport from "passport";
 import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
-import { UserDaoImpl } from "./dao/UserDaoImpl";
-import { UserFilter } from "./filter/UserFilter";
+import { UserFilter } from "./db/entity/user/filter/UserFilter";
 import logger from "./util/logger";
-import { DatabaseConnection } from "./util/DatabaseConnection";
 import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
+import { UserFacade } from "./db/entity/user/UserFacade";
+
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -25,13 +25,14 @@ if (config.error) { // .env not found
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
-DatabaseConnection.getInstance();
-
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
 
-const dao: UserDaoImpl = new UserDaoImpl();
-const filter: UserFilter = new UserFilter();
+// const dao: UserDaoImpl = new UserDaoImpl();
+// const filter: UserFilter = new UserFilter();
+
+// const facade: UserFacade = new UserFacade();
+// facade.getUsers(new UserFilter());
 
 // const user: User[] = dao.all(filter);
 
