@@ -24,23 +24,24 @@ export class BakedQuery {
 
    const regexp: RegExp = new RegExp("::(.*?)::");
    const array: RegExpExecArray = regexp.exec(this._sql);
-   console.log(this._sql);
 
-   for (const item of array) {
-     this._dictionary.set(count, item);
+   if (array !== null) {
+     for (const item of array) {
+       this._dictionary.set(count, item);
 
-     this._sql = this._sql.replace("::" + item + "::", "?");
+       this._sql = this._sql.replace("::" + item + "::", "?");
 
-     let value: SQLParam = undefined;
-     for (const currParam of params) {
-       if (currParam.name === item) {
-         value = currParam;
+       let value: SQLParam = undefined;
+       for (const currParam of params) {
+         if (currParam.name === item) {
+           value = currParam;
+         }
        }
+
+       this._values.set(count, value);
+
+       count++;
      }
-
-     this._values.set(count, value);
-
-     count++;
    }
   }
 

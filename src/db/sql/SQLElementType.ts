@@ -6,6 +6,6 @@ export enum SQLElementType {
   SQLWhere = 5,
   SQLSelect = 6,
   SQLFrom = 7,
-  SQLInser = 8,
+  SQLInsert = 8,
   SQLUpdate = 9
 }

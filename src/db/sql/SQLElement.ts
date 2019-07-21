@@ -1,7 +1,7 @@
 import { SQLParam } from "./SQLParam";
 
 export abstract class SQLElement {
-  protected _parameters: SQLParam[];
+  protected _parameters: SQLParam[] = [];
 
   public addParameter(param: SQLParam): void {
     this._parameters.push(param);

@@ -2,13 +2,11 @@ export class SQLParam {
   private _name: string = "";
   private _value: string;
   private _percQuotes: boolean = false;
-  private _valueType: string;
 
-  constructor(name: string, value: string, percQuotes: boolean, valueType: string) {
+  constructor(name: string, value: string, percQuotes: boolean) {
     this._name = name;
     this._value = value;
     this._percQuotes = percQuotes;
-    this._valueType = valueType;
   }
 
   get name(): string {

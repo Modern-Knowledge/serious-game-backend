@@ -18,6 +18,6 @@ export class SQLSelect extends SQLElement {
     if (this._attributes === undefined) {
       return "";
     }
-    return "SELECT " + this._attributes.getCommaSeperatedNames() + " ";
+    return "SELECT " + this._attributes.getCommaSeparatedNames() + " ";
   }
 }

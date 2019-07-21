@@ -2,7 +2,9 @@ import { EntityFacade } from "../EntityFacade";
 import { UserFilter } from "./filter/UserFilter";
 import { SQLWhere } from "../../sql/SQLWhere";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { User } from "../../../../../serious-game-library/src/models/User";
+import { User } from "../../../lib/models/User";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { SQLParam } from "../../sql/SQLParam";
 
 export class UserFacade extends EntityFacade<User, UserFilter> {
 
@@ -26,8 +28,19 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
     return this.select(attributes, undefined, filter);
   }
 
-  getFilter(filter: UserFilter): SQLWhere {
-    return undefined;
+  public getFilter(filter: UserFilter): SQLWhere {
+    const root: SQLBlock = new SQLBlock();
+
+    if (filter.id !== undefined) {
+      const inner: SQLBlock = new SQLBlock();
+      inner.addText(this.tableAlias + ".id = ::id::");
+      inner.addParameter(new SQLParam("id", filter.id, false));
+      root.addElement(inner);
+    }
+
+    root.addKeyword("AND");
+
+    return new SQLWhere(root);
   }
 
 

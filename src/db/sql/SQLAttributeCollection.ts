@@ -36,19 +36,7 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
     return undefined;
   }
 
-  public remove(tableAlias: string, name: string): void {
-    if (name === undefined || tableAlias === undefined) {
-      return;
-    }
-
-    this._attributes.forEach((item: AttributeType, index: number) => {
-      if (item.name == name && item.tableAlias === tableAlias) {
-          this._attributes.splice(index, 1);
-      }
-    });
-  }
-
-  public getCommaSeperatedNamesUnaliased(): string {
+  public getCommaSeparatedNamesUnaliased(): string {
     let returnSQL: string = "";
 
     for (const currAttribute of this._attributes) {
@@ -62,7 +50,7 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
     return returnSQL;
   }
 
-  public getCommaSeperatedNames() {
+  public getCommaSeparatedNames(): string {
     let returnSQL: string = "";
 
 

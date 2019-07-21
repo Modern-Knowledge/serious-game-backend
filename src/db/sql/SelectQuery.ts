@@ -31,7 +31,7 @@ export class SelectQuery extends NamedParameterizedQuery {
     }
 
     if (this._sqlWhere !== undefined) {
-      returnParams.concat(this.sqlWhere.getParameters());
+      returnParams.concat(this._sqlWhere.getParameters());
     }
 
     return returnParams;

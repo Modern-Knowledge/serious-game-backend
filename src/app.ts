@@ -31,8 +31,10 @@ import * as homeController from "./controllers/home";
 // const dao: UserDaoImpl = new UserDaoImpl();
 // const filter: UserFilter = new UserFilter();
 
-// const facade: UserFacade = new UserFacade();
-// facade.getUsers(new UserFilter());
+const facade: UserFacade = new UserFacade();
+const filter: UserFilter = new UserFilter();
+filter.id = "1";
+facade.getUsers(filter);
 
 // const user: User[] = dao.all(filter);
 

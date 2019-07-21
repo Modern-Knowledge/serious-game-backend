@@ -29,11 +29,11 @@ export class SQLAttribute {
   public getPrefixedName(withHighComas: boolean): string {
     let retStr: string = "";
 
-    if (this._tableAlias != undefined && (this._tableAlias.length > 0)) {
+    if (this._tableAlias !== undefined && (this._tableAlias.length > 0)) {
       retStr += this._tableAlias + ".";
     }
 
-    if (this._name != undefined && (this._name.length > 0)) {
+    if (this._name !== undefined && (this._name.length > 0)) {
       if (withHighComas) {
         retStr += "`" + this._name + "`";
       } else {

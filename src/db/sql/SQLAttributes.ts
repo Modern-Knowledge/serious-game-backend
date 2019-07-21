@@ -7,19 +7,13 @@ export class SQLAttributes extends SQLAttributeCollection<SQLAttribute> {
 
     if (attributes && tableAlias) {
       for (const currAttr of attributes) {
-        this._attributes.push(new SQLAttribute(tableAlias, currAttr));
+        this._attributes.push(new SQLAttribute(currAttr, tableAlias));
       }
     }
   }
 
-  public addAttribute1(tableAlias: string, attribute: string): void {
+  public addAnotherAttribute(tableAlias: string, attribute: string): void {
     this._attributes.push(new SQLAttribute(tableAlias, attribute));
-  }
-
-  public addAttributes2(tableAlias: string, attributes: string[]): void {
-    for (const currAttr of attributes) {
-      this._attributes.push(new SQLAttribute(tableAlias, currAttr));
-    }
   }
 
 

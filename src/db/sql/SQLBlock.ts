@@ -29,22 +29,8 @@ export class SQLBlock extends SQLElement {
     this._elements.push(newText);
   }
 
-  public addElement(block?: SQLBlock, element?: SQLElement, keyword?: SQLKeyword, text?: SQLText): void {
-    if (block) {
-      this._elements.push(block);
-    }
-
-    if (element) {
-      this._elements.push(element);
-    }
-
-    if (keyword) {
-      this._elements.push(keyword);
-    }
-
-    if (text) {
-      this._elements.push(text);
-    }
+  public addElement(element: SQLElement): void {
+    this._elements.push(element);
   }
 
   public invalidate(): void {
@@ -57,7 +43,7 @@ export class SQLBlock extends SQLElement {
 
       if (currElement.getElementType() === SQLElementType.SQLKeyword) {
         if (i == 0 || i >= this._elements.length - 1) {
-          delete this._elements[i];
+          this._elements.splice(i, 1);
           i -= 2;
           continue;
         }
@@ -66,7 +52,7 @@ export class SQLBlock extends SQLElement {
 
         if (!((prev.getElementType() == SQLElementType.SQLText && next.getElementType() == SQLElementType.SQLText)
           || (prev.getElementType() == SQLElementType.SQLBlock && next.getElementType() == SQLElementType.SQLBlock))) {
-          delete this._elements[i];
+          this._elements.splice(i, 1);
           i -= 2;
           continue;
         }
