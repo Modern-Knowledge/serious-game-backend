@@ -9,11 +9,12 @@ export class SQLBlock extends SQLElement {
   private _elements: SQLElement[] = [];
 
   public getParameters(): SQLParam[] {
-    const returnParams: SQLParam[] = [];
-    returnParams.concat(this._parameters);
+    let returnParams: SQLParam[] = [];
+
+    returnParams = returnParams.concat(this._parameters);
 
     for (const currElem of this._elements) {
-      returnParams.concat(currElem.getParameters());
+      returnParams = returnParams.concat(currElem.getParameters());
     }
 
     return returnParams;

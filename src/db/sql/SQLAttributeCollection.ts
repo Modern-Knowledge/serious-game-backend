@@ -19,7 +19,7 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
   }
 
   public addAttributes(attributes: AttributeType[]): void {
-    this._attributes.concat(attributes);
+    this._attributes = this._attributes.concat(attributes);
   }
 
   public setTableAlias(tableAlias: string): void {

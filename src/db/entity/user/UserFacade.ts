@@ -5,14 +5,16 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
 import { SQLBlock } from "../../sql/SQLBlock";
 import { SQLParam } from "../../sql/SQLParam";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 export class UserFacade extends EntityFacade<User, UserFilter> {
 
   public constructor(tableAlias?: string) {
     if (tableAlias) {
-      super("user", tableAlias);
+      super("users", tableAlias);
     } else {
-      super("user", "u");
+      super("users", "u");
     }
   }
 
@@ -27,6 +29,31 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
 
     return this.select(attributes, undefined, filter);
   }
+
+  public insertUser(user: User) {
+    const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+    const nameAttribute: SQLValueAttribute = new SQLValueAttribute("username", this.tableName, user.username);
+
+    attributes.addAttribute(nameAttribute);
+
+    this.insert(attributes);
+  }
+
+  public updateUser(user: User, filter: UserFilter): void {
+    const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+    const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
+
+    attributes.addAttribute(username);
+
+    this.update(attributes, this.getFilter(filter));
+  }
+
+  public deleteUser(filter: UserFilter): void {
+    this.delete(filter);
+  }
+
 
   public getFilter(filter: UserFilter): SQLWhere {
     const root: SQLBlock = new SQLBlock();

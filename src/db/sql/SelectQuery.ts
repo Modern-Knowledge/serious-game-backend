@@ -16,22 +16,22 @@ export class SelectQuery extends NamedParameterizedQuery {
   }
 
   public getParameters(): SQLParam[] {
-    const returnParams: SQLParam[] = [];
+    let returnParams: SQLParam[] = [];
 
     if (this._sqlSelect !== undefined) {
-      returnParams.concat(this._sqlSelect.getParameters());
+      returnParams = returnParams.concat(this._sqlSelect.getParameters());
     }
 
     if (this._sqlFrom !== undefined) {
-      returnParams.concat(this._sqlFrom.getParameters());
+      returnParams = returnParams.concat(this._sqlFrom.getParameters());
     }
 
     for (const item of this._sqlJoins) {
-      returnParams.concat(item.getParameters());
+      returnParams = returnParams.concat(item.getParameters());
     }
 
     if (this._sqlWhere !== undefined) {
-      returnParams.concat(this._sqlWhere.getParameters());
+      returnParams = returnParams.concat(this._sqlWhere.getParameters());
     }
 
     return returnParams;
@@ -45,7 +45,7 @@ export class SelectQuery extends NamedParameterizedQuery {
 
   public addJoins(joins: SQLJoin[]): void {
     if (joins !== undefined) {
-      this._sqlJoins.concat(joins);
+      this._sqlJoins = this._sqlJoins.concat(joins);
     }
   }
 

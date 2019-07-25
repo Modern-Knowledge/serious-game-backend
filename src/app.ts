@@ -27,14 +27,20 @@ logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successf
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
+import { User } from "./lib/models/User";
 
-// const dao: UserDaoImpl = new UserDaoImpl();
-// const filter: UserFilter = new UserFilter();
-
-const facade: UserFacade = new UserFacade();
+const facade: UserFacade = new UserFacade("u");
 const filter: UserFilter = new UserFilter();
-filter.id = "1";
-facade.getUsers(filter);
+filter.id = "2";
+// facade.getUsers(filter);
+
+const user: User = new User();
+user.username = "Sandra";
+// facade.insertUser(user);
+//
+ // facade.updateUser(user, filter);
+//
+  facade.deleteUser(filter);
 
 // const user: User[] = dao.all(filter);
 

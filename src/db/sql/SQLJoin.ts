@@ -20,10 +20,10 @@ export class SQLJoin extends SQLElement {
   }
 
   public getParameters(): SQLParam[] {
-    const returnParams: SQLParam[] = [];
+    let returnParams: SQLParam[] = [];
 
-    returnParams.concat(this._parameters);
-    returnParams.concat(this._condition.getParameters());
+    returnParams = returnParams.concat(this._parameters);
+    returnParams = returnParams.concat(this._condition.getParameters());
 
     return returnParams;
   }

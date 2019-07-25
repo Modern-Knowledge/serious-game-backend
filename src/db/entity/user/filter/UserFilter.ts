@@ -1,5 +1,4 @@
-import { AbstractFilter } from "../../../../filter/AbstractFilter";
-import { AppliedFilter } from "../../../../filter/AppliedFilter";
+import { AbstractFilter } from "../../../AbstractFilter";
 
 export class UserFilter extends AbstractFilter {
 
@@ -17,13 +16,4 @@ export class UserFilter extends AbstractFilter {
     this._username = value;
   }
 
-  public applyFilter(tableAlias: string): AppliedFilter {
-    const appliedFilter: AppliedFilter =  super.applyFilter(tableAlias);
-
-    if (this.username !== undefined) {
-      appliedFilter.addParam(this.username, "username", tableAlias);
-    }
-
-    return appliedFilter;
-  }
 }

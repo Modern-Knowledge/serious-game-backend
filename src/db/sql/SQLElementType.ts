@@ -7,5 +7,6 @@ export enum SQLElementType {
   SQLSelect = 6,
   SQLFrom = 7,
   SQLInsert = 8,
-  SQLUpdate = 9
+  SQLUpdate = 9,
+  SQLDelete = 10
 }

@@ -5,8 +5,19 @@ import { SelectQuery } from "./sql/SelectQuery";
 import { SQLSelect } from "./sql/SQLSelect";
 import { SQLFrom } from "./sql/SQLFrom";
 import { BakedQuery } from "./sql/BakedQuery";
+import { SQLValueAttributes } from "./sql/SQLValueAttributes";
+import { InsertQuery } from "./sql/InsertQuery";
+import { SQLInsert } from "./sql/SQLInsert";
+import { UpdateQuery } from "./sql/UpdateQuery";
+import { SQLUpdate } from "./sql/SQLUpdate";
+import { DeleteQuery } from "./sql/DeleteQuery";
+import { SQLDelete } from "./sql/SQLDelete";
+import { AbstractFilter } from "./AbstractFilter";
+import { AbstractModel } from "../lib/models/AbstractModel";
+import { DatabaseConnection } from "../util/DatabaseConnection";
+import { FieldInfo, MysqlError } from "mysql";
 
-export abstract class BaseFacade<EntityType, FilterType> {
+export abstract class BaseFacade<EntityType extends AbstractModel, FilterType extends AbstractFilter> {
 
   public getSQLAttributes(filter: FilterType): SQLAttributes {
     return new SQLAttributes();
@@ -16,9 +27,12 @@ export abstract class BaseFacade<EntityType, FilterType> {
   private _tableAlias: string;
   private _attributes: string[];
 
+  private readonly _dbInstance: DatabaseConnection;
+
   protected constructor(tableName: string, tableAlias: string) {
     this._tableName = tableName;
     this._tableAlias = tableAlias;
+    this._dbInstance = DatabaseConnection.getInstance();
   }
 
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: FilterType): EntityType[] {
@@ -28,16 +42,92 @@ export abstract class BaseFacade<EntityType, FilterType> {
 
     let returnEntities: EntityType[] = [];
 
-    // select statement
+    const params: string[] = selectQuery.fillParameters();
 
-    console.log(selectQuery.getBakedSQL());
+    this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(results);
+
+    });
 
     returnEntities = this.postProcessSelect(returnEntities);
 
     return returnEntities;
   }
 
-  public getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere): SelectQuery {
+  public insert(attributes: SQLValueAttributes): void {
+     const npq: InsertQuery = this.getInsertQuery(attributes);
+     const insertQuery: BakedQuery = npq.bake();
+     const params: string[] = insertQuery.fillParameters();
+
+     console.log(insertQuery.getBakedSQL());
+
+      this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+       if (error) {
+         throw error;
+       }
+
+       console.log(results);
+
+    });
+
+  }
+
+  public update(attributes: SQLValueAttributes, where: SQLWhere): void {
+    const npq: UpdateQuery = this.getUpdateQuery(attributes, where);
+    const updateQuery: BakedQuery = npq.bake();
+    const params: string[] = updateQuery.fillParameters();
+
+    console.log(updateQuery.getBakedSQL());
+
+    this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(results);
+
+    });
+  }
+
+  public delete(filter: FilterType): void {
+    // workaround because tableAlias is not allowed in delete statement
+    const alias: string = this._tableAlias;
+    this._tableAlias = this._tableName;
+    const where: SQLWhere = this.getFilter(filter);
+
+    const npq: DeleteQuery = this.getDeleteQuery(where);
+    const deleteQuery: BakedQuery = npq.bake();
+    const params: string[] = deleteQuery.fillParameters();
+
+
+    console.log(deleteQuery.getBakedSQL());
+    this._tableAlias = alias;
+    this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      if (error) {
+        throw error;
+      }
+
+      console.log(results);
+
+    });
+  }
+
+  private getInsertQuery(attributes: SQLValueAttributes): InsertQuery {
+    const insertQuery: InsertQuery = new InsertQuery();
+
+    const insert: SQLInsert = new SQLInsert(this._tableName);
+
+    insert.attributes = attributes;
+    insertQuery.insert = insert;
+
+    return insertQuery;
+  }
+
+  private getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere): SelectQuery {
     const npq: SelectQuery = new SelectQuery();
 
     const select: SQLSelect = new SQLSelect(attributes);
@@ -49,6 +139,26 @@ export abstract class BaseFacade<EntityType, FilterType> {
     npq.sqlWhere = where;
 
     return npq;
+  }
+
+  private getUpdateQuery(attributes: SQLValueAttributes, where: SQLWhere): UpdateQuery {
+    const updateQuery: UpdateQuery = new UpdateQuery();
+    const update: SQLUpdate = new SQLUpdate(this._tableName, this._tableAlias);
+
+    update.attributes = attributes;
+    updateQuery.update = update;
+    updateQuery.where = where;
+
+    return updateQuery;
+  }
+
+  private getDeleteQuery(where: SQLWhere): DeleteQuery {
+    const deleteQuery: DeleteQuery = new DeleteQuery();
+
+    deleteQuery.delete = new SQLDelete(this._tableName, this._tableAlias);
+    deleteQuery.where = where;
+
+    return deleteQuery;
   }
 
   public abstract getFilter(filter: FilterType): SQLWhere;

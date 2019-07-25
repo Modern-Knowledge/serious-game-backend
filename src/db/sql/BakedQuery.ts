@@ -11,8 +11,18 @@ export class BakedQuery {
    this.buildDictionary(npq.getParameters());
  }
 
- public fillParameters(stm: string): void {
+ public fillParameters(): string[] {
+   const returnArr: string[] = [];
 
+   this._values.forEach((value: SQLParam, key: number) => {
+      if (value === undefined) {
+        return;
+      }
+
+      returnArr.push(value.value);
+   });
+
+   return returnArr;
  }
 
   getBakedSQL(): string {
@@ -22,13 +32,13 @@ export class BakedQuery {
   private buildDictionary(params: SQLParam[]): void {
    let count: number = 1;
 
-   const regexp: RegExp = new RegExp("::(.*?)::");
-   const array: RegExpExecArray = regexp.exec(this._sql);
+   const regexp: RegExp = new RegExp("::(.*?)::", "g");
+   const array: RegExpMatchArray = this._sql.match(regexp);
 
-   if (array !== null) {
-     for (const item of array) {
+     for (let item of array) {
        this._dictionary.set(count, item);
 
+       item = item.replace(new RegExp("::", "g"), "");
        this._sql = this._sql.replace("::" + item + "::", "?");
 
        let value: SQLParam = undefined;
@@ -42,10 +52,6 @@ export class BakedQuery {
 
        count++;
      }
-   }
   }
 
-  private setNull(stm: string, index: number): void {
-
-  }
 }
