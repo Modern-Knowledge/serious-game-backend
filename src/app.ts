@@ -31,16 +31,16 @@ import { User } from "./lib/models/User";
 
 const facade: UserFacade = new UserFacade("u");
 const filter: UserFilter = new UserFilter();
-filter.id = "2";
-// facade.getUsers(filter);
+filter.id = "11";
+const users = facade.getUsers(filter);
 
 const user: User = new User();
 user.username = "Sandra";
 // facade.insertUser(user);
 //
- // facade.updateUser(user, filter);
+facade.updateUser(user, filter);
 //
-  facade.deleteUser(filter);
+ facade.deleteUser(filter);
 
 // const user: User[] = dao.all(filter);
 

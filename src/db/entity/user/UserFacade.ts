@@ -7,9 +7,16 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { SQLParam } from "../../sql/SQLParam";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLJoin } from "../../sql/SQLJoin";
 
+/**
+ * handles CRUD operations with the user-entity
+ */
 export class UserFacade extends EntityFacade<User, UserFilter> {
 
+  /**
+   * @param tableAlias
+   */
   public constructor(tableAlias?: string) {
     if (tableAlias) {
       super("users", tableAlias);
@@ -18,43 +25,72 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
     }
   }
 
-  getSQLAttributes(filter: UserFilter): SQLAttributes {
+  /**
+   * returns SQL-attributes for the user
+   * @param filter
+   */
+  public getSQLAttributes(filter: UserFilter): SQLAttributes {
     return new SQLAttributes(this.tableAlias,
       ["id",
                 "username"]);
   }
 
+  /**
+   * returns users that match the specified filter
+   * @param filter
+   */
   public getUsers(filter: UserFilter): User[] {
     const attributes: SQLAttributes = this.getSQLAttributes(filter);
 
-    return this.select(attributes, undefined, filter);
+    return this.select(attributes, this.getJoins(filter), filter);
   }
 
-  public insertUser(user: User) {
+  /**
+   * inserts a new user and returns the id of the created user
+   * @param user
+   */
+  public insertUser(user: User): User {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const nameAttribute: SQLValueAttribute = new SQLValueAttribute("username", this.tableName, user.username);
 
     attributes.addAttribute(nameAttribute);
 
-    this.insert(attributes);
+    const id: number = this.insert(attributes);
+    if (id > 0) {
+      user.id = id;
+    }
+
+    return user;
   }
 
-  public updateUser(user: User, filter: UserFilter): void {
+  /**
+   * updates the given user in the database and returns the number of affected rows
+   * @param user user that should be updated
+   * @param filter
+   */
+  public updateUser(user: User, filter: UserFilter): number {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
 
     attributes.addAttribute(username);
 
-    this.update(attributes, this.getFilter(filter));
+    return this.update(attributes, this.getFilter(filter));
   }
 
-  public deleteUser(filter: UserFilter): void {
-    this.delete(filter);
+  /**
+   * deletes the specified user in the database and returns the number of affected rows
+   * @param filter
+   */
+  public deleteUser(filter: UserFilter): number {
+    return this.delete(filter);
   }
 
-
+  /**
+   * creates the sql-filter (wherefor the user
+   * @param filter
+   */
   public getFilter(filter: UserFilter): SQLWhere {
     const root: SQLBlock = new SQLBlock();
 
@@ -64,11 +100,53 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
       inner.addParameter(new SQLParam("id", filter.id, false));
       root.addElement(inner);
     }
+    root.addKeyword("AND");
+
+    if (filter.username !== undefined) {
+      const inner: SQLBlock = new SQLBlock();
+      inner.addText(this.tableAlias + ".username = ::username::");
+      inner.addParameter(new SQLParam("username", filter.username, false));
+      root.addElement(inner);
+    }
 
     root.addKeyword("AND");
 
     return new SQLWhere(root);
   }
 
+  /**
+   * assigns the retrieved values to the newly created user and returns the user
+   * @param result retrieved result
+   * @param filter
+   */
+  public fillEntity(result: any, filter: UserFilter): User {
+    const u: User = new User();
 
+    const id: string = this.name("id");
+    if (result[id] !== undefined) {
+      u.id = result[id];
+    }
+
+    const username: string = this.name("username");
+    if (result[username] !== undefined) {
+      u.username = result[username];
+    }
+
+    return u;
+  }
+
+  /**
+   * creates the joins for the user-entity and returns them as a list
+   * @param filter
+   */
+  public getJoins(filter: UserFilter): SQLJoin[] {
+    const joins: SQLJoin[] = [];
+
+    // example join
+   /* const userJoin: SQLBlock = new SQLBlock();
+    userJoin.addText("u.id = u1.id");
+    joins.push(new SQLJoin("users", "u1", userJoin, JoinType.JOIN)); */
+
+    return joins;
+  }
 }

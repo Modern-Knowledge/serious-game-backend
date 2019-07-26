@@ -35,6 +35,7 @@ export class BakedQuery {
    const regexp: RegExp = new RegExp("::(.*?)::", "g");
    const array: RegExpMatchArray = this._sql.match(regexp);
 
+   if (array !== null) {
      for (let item of array) {
        this._dictionary.set(count, item);
 
@@ -52,6 +53,7 @@ export class BakedQuery {
 
        count++;
      }
+   }
   }
 
 }

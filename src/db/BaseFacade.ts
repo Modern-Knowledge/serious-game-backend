@@ -16,9 +16,18 @@ import { AbstractFilter } from "./AbstractFilter";
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { DatabaseConnection } from "../util/DatabaseConnection";
 import { FieldInfo, MysqlError } from "mysql";
+import logger from "../util/logger";
+import { Helper } from "../util/Helper";
 
+/**
+ *
+ */
 export abstract class BaseFacade<EntityType extends AbstractModel, FilterType extends AbstractFilter> {
 
+  /**
+   *
+   * @param filter
+   */
   public getSQLAttributes(filter: FilterType): SQLAttributes {
     return new SQLAttributes();
   }
@@ -29,71 +38,107 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
 
   private readonly _dbInstance: DatabaseConnection;
 
+  /**
+   *
+   * @param tableName
+   * @param tableAlias
+   */
   protected constructor(tableName: string, tableAlias: string) {
     this._tableName = tableName;
     this._tableAlias = tableAlias;
     this._dbInstance = DatabaseConnection.getInstance();
   }
 
+  /**
+   *
+   * @param attributes
+   * @param joins
+   * @param filter
+   */
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: FilterType): EntityType[] {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter));
-
     const selectQuery: BakedQuery = npq.bake();
-
     let returnEntities: EntityType[] = [];
-
     const params: string[] = selectQuery.fillParameters();
 
-    this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+    const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
       if (error) {
         throw error;
       }
 
-      console.log(results);
+      for (const item of results) {
+        const entity: EntityType = this.fillEntity(item, filter);
+        if (entity !== undefined) {
+          returnEntities.push(entity);
+        }
+      }
 
+      returnEntities = this.postProcessSelect(returnEntities);
+
+      console.log(returnEntities);
     });
 
-    returnEntities = this.postProcessSelect(returnEntities);
+    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
 
     return returnEntities;
   }
 
-  public insert(attributes: SQLValueAttributes): void {
-     const npq: InsertQuery = this.getInsertQuery(attributes);
-     const insertQuery: BakedQuery = npq.bake();
-     const params: string[] = insertQuery.fillParameters();
+  /**
+   *
+   * @param attributes
+   */
+  public insert(attributes: SQLValueAttributes): number {
+    const npq: InsertQuery = this.getInsertQuery(attributes);
+    const insertQuery: BakedQuery = npq.bake();
+    const params: string[] = insertQuery.fillParameters();
+    let id: number = 0;
 
-     console.log(insertQuery.getBakedSQL());
+    const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      if (error) {
+        throw error;
+      }
 
-      this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-       if (error) {
-         throw error;
-       }
+      id = results.insertId;
 
-       console.log(results);
-
+      console.log(results);
     });
 
+    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql} [${query.values}]`);
+
+    return id > 0 ? id : 0;
   }
 
-  public update(attributes: SQLValueAttributes, where: SQLWhere): void {
+  /**
+   *
+   * @param attributes
+   * @param where
+   */
+  public update(attributes: SQLValueAttributes, where: SQLWhere): number {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, where);
     const updateQuery: BakedQuery = npq.bake();
     const params: string[] = updateQuery.fillParameters();
+    let affectedRows: number = 0;
 
-    console.log(updateQuery.getBakedSQL());
-
-    this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+    const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
       if (error) {
         throw error;
       }
 
       console.log(results);
 
+      affectedRows = results.affectedRows;
     });
+
+    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql} [${query.values}]`);
+
+    return affectedRows > 0 ? affectedRows : 0;
   }
 
-  public delete(filter: FilterType): void {
+  /**
+   *
+   * @param filter
+   */
+  public delete(filter: FilterType): number {
     // workaround because tableAlias is not allowed in delete statement
     const alias: string = this._tableAlias;
     this._tableAlias = this._tableName;
@@ -102,20 +147,29 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     const npq: DeleteQuery = this.getDeleteQuery(where);
     const deleteQuery: BakedQuery = npq.bake();
     const params: string[] = deleteQuery.fillParameters();
+    let affectedRows: number = 0;
 
 
-    console.log(deleteQuery.getBakedSQL());
     this._tableAlias = alias;
-    this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+
+    const query = this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
       if (error) {
         throw error;
       }
 
       console.log(results);
-
+      affectedRows = results.affectedRows;
     });
+
+    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql} [${query.values}]`);
+
+    return affectedRows > 0 ? affectedRows : 0;
   }
 
+  /**
+   * creates and returns an insert-query
+   * @param attributes columns that should be inserted
+   */
   private getInsertQuery(attributes: SQLValueAttributes): InsertQuery {
     const insertQuery: InsertQuery = new InsertQuery();
 
@@ -127,6 +181,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     return insertQuery;
   }
 
+  /**
+   * creates and returns a select-query
+   * @param attributes columns that should be selected
+   * @param joins joins for the select query
+   * @param where where-conditions for the select-query
+   */
   private getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere): SelectQuery {
     const npq: SelectQuery = new SelectQuery();
 
@@ -141,6 +201,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     return npq;
   }
 
+  /**
+   * creates and returns an update-query
+   * @param attributes columns that should be set
+   * @param where where-conditions for the update-query
+   */
   private getUpdateQuery(attributes: SQLValueAttributes, where: SQLWhere): UpdateQuery {
     const updateQuery: UpdateQuery = new UpdateQuery();
     const update: SQLUpdate = new SQLUpdate(this._tableName, this._tableAlias);
@@ -152,6 +217,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     return updateQuery;
   }
 
+  /**
+   * creates and returns a delete-query
+   * @param where where-condition for the delete-query
+   */
   private getDeleteQuery(where: SQLWhere): DeleteQuery {
     const deleteQuery: DeleteQuery = new DeleteQuery();
 
@@ -161,12 +230,39 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     return deleteQuery;
   }
 
+  /**
+   * creates joins for the entity and returns them as a list
+   * @param filter
+   */
+  public getJoins(filter: FilterType): SQLJoin[] {
+    return [];
+  }
+
+  /**
+   * creates the sql-filter for the entity
+   * @param filter
+   */
   public abstract getFilter(filter: FilterType): SQLWhere;
 
+  /**
+   * assigns the retrieved values to the newly created entity and returns it
+   * @param results
+   * @param filter
+   */
+  public abstract fillEntity(results: any[], filter: FilterType): EntityType;
+
+  /**
+   *
+   * @param entities
+   */
   public postProcessSelect(entities: EntityType[]): EntityType[] {
     return entities;
   }
 
+  /**
+   *
+   * @param column
+   */
   public name(column: string): string {
     return column + this._tableAlias;
   }
