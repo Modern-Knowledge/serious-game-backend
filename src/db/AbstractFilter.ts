@@ -2,6 +2,7 @@
  * base filter for all filters
  * contains attributes that all filters have in common
  */
+
 export abstract class AbstractFilter {
   private _id: string;
   private _createdAt: string;

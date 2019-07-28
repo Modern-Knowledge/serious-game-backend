@@ -20,17 +20,9 @@ import logger from "../util/logger";
 import { Helper } from "../util/Helper";
 
 /**
- *
+ * base class for crud operations with the database
  */
 export abstract class BaseFacade<EntityType extends AbstractModel, FilterType extends AbstractFilter> {
-
-  /**
-   *
-   * @param filter
-   */
-  public getSQLAttributes(filter: FilterType): SQLAttributes {
-    return new SQLAttributes();
-  }
 
   private _tableName: string;
   private _tableAlias: string;
@@ -39,7 +31,14 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
   private readonly _dbInstance: DatabaseConnection;
 
   /**
-   *
+   * returns sql attributes that should be retrieved from the database
+   * @param filter
+   */
+  public getSQLAttributes(filter: FilterType): SQLAttributes {
+    return new SQLAttributes();
+  }
+
+  /**
    * @param tableName
    * @param tableAlias
    */
@@ -50,120 +49,111 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
   }
 
   /**
-   *
-   * @param attributes
-   * @param joins
+   * executes an select query and returns the results
+   * @param attributes attributes that should be retrieved
+   * @param joins joins to other tables
    * @param filter
    */
-  public select(attributes: SQLAttributes, joins: SQLJoin[], filter: FilterType): EntityType[] {
+  public select(attributes: SQLAttributes, joins: SQLJoin[], filter: FilterType): Promise<EntityType[]> {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter));
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: string[] = selectQuery.fillParameters();
 
-    const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-      if (error) {
-        throw error;
-      }
-
-      for (const item of results) {
-        const entity: EntityType = this.fillEntity(item, filter);
-        if (entity !== undefined) {
-          returnEntities.push(entity);
+    return new Promise<EntityType[]>((resolve, reject) => {
+      const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        if (error) {
+          return reject(error);
         }
-      }
 
-      returnEntities = this.postProcessSelect(returnEntities);
+        for (const item of results) {
+          const entity: EntityType = this.fillEntity(item, filter);
+          if (entity !== undefined) {
+            returnEntities.push(entity);
+          }
+        }
 
-      console.log(returnEntities);
+        returnEntities = this.postProcessSelect(returnEntities);
+
+        resolve(returnEntities);
+      });
+
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
     });
-
-    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
-
-    return returnEntities;
   }
 
   /**
-   *
-   * @param attributes
+   * executes an insert query and returns the id of the newly inserted row
+   * @param attributes name-value pairs of attributes that should be inserted
    */
-  public insert(attributes: SQLValueAttributes): number {
+  public insert(attributes: SQLValueAttributes): Promise<number> {
     const npq: InsertQuery = this.getInsertQuery(attributes);
     const insertQuery: BakedQuery = npq.bake();
     const params: string[] = insertQuery.fillParameters();
-    let id: number = 0;
 
-    const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-      if (error) {
-        throw error;
-      }
+    return new Promise<number>((resolve, reject) => {
+      const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        if (error) {
+          return reject(error);
+        }
 
-      id = results.insertId;
+        resolve(results.insertId);
+      });
 
-      console.log(results);
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql} [${query.values}]`);
     });
-
-    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql} [${query.values}]`);
-
-    return id > 0 ? id : 0;
   }
 
   /**
-   *
-   * @param attributes
-   * @param where
+   * executes an update query and returns the number of affected rows
+   * @param attributes name-value pairs of the entity that should be changed
+   * @param where where-condition
    */
-  public update(attributes: SQLValueAttributes, where: SQLWhere): number {
+  public update(attributes: SQLValueAttributes, where: SQLWhere): Promise<number> {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, where);
     const updateQuery: BakedQuery = npq.bake();
     const params: string[] = updateQuery.fillParameters();
-    let affectedRows: number = 0;
 
-    const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-      if (error) {
-        throw error;
-      }
+    return new Promise<number>((resolve, reject) => {
+      const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        if (error) {
+          return reject(error);
+        }
 
-      console.log(results);
+        resolve(results.affectedRows);
+      });
 
-      affectedRows = results.affectedRows;
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql} [${query.values}]`);
     });
-
-    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql} [${query.values}]`);
-
-    return affectedRows > 0 ? affectedRows : 0;
   }
 
   /**
-   *
-   * @param filter
+   * executes a delete query and returns the number of affected rows
+   * @param where where-condition
    */
-  public delete(filter: FilterType): number {
+  public delete(where: SQLWhere): Promise<number> {
     // workaround because tableAlias is not allowed in delete statement
     const alias: string = this._tableAlias;
     this._tableAlias = this._tableName;
-    const where: SQLWhere = this.getFilter(filter);
 
     const npq: DeleteQuery = this.getDeleteQuery(where);
     const deleteQuery: BakedQuery = npq.bake();
     const params: string[] = deleteQuery.fillParameters();
-    let affectedRows: number = 0;
-
 
     this._tableAlias = alias;
 
-    const query = this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-      if (error) {
-        throw error;
-      }
+    return new Promise<number>((resolve, reject) => {
+      const query = this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        if (error) {
+          return reject(error);
+        }
 
-      console.log(results);
-      affectedRows = results.affectedRows;
+        resolve(results.affectedRows);
+      });
+
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql} [${query.values}]`);
+
     });
-
-    logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql} [${query.values}]`);
-
-    return affectedRows > 0 ? affectedRows : 0;
   }
 
   /**
@@ -246,22 +236,23 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
 
   /**
    * assigns the retrieved values to the newly created entity and returns it
-   * @param results
+   * @param results results from the select query
    * @param filter
    */
   public abstract fillEntity(results: any[], filter: FilterType): EntityType;
 
   /**
-   *
-   * @param entities
+   * post process the results of a select query
+   * e.g.: handle joins
+   * @param entities entities that where returned from the database
    */
   public postProcessSelect(entities: EntityType[]): EntityType[] {
     return entities;
   }
 
   /**
-   *
-   * @param column
+   * returns the fully qualified name (columnName + tableAlias)
+   * @param column name of the column
    */
   public name(column: string): string {
     return column + this._tableAlias;

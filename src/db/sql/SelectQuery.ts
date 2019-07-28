@@ -5,16 +5,24 @@ import { SQLJoin } from "./SQLJoin";
 import { SQLWhere } from "./SQLWhere";
 import { SQLParam } from "./SQLParam";
 
+/**
+ * represents a sql select statement
+ *
+ * e.g.: select %attributes% FROM %tablename% %tablealias% (%join%)? (WHERE %condition)?
+ */
 export class SelectQuery extends NamedParameterizedQuery {
   private _sqlSelect: SQLSelect;
   private _sqlFrom: SQLFrom;
   private _sqlJoins: SQLJoin[] = [];
   private _sqlWhere: SQLWhere;
 
-  constructor() {
+  public constructor() {
     super();
   }
 
+  /**
+   * returns the parameters (name-value pairs) for the select query
+   */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
@@ -37,19 +45,29 @@ export class SelectQuery extends NamedParameterizedQuery {
     return returnParams;
   }
 
+  /**
+   * adds a new join to the list
+   * @param join
+   */
   public addJoin(join: SQLJoin): void {
     if (join !== undefined) {
       this._sqlJoins.push(join);
     }
   }
 
+  /**
+   * adds a list of new joins to the list
+   * @param joins
+   */
   public addJoins(joins: SQLJoin[]): void {
     if (joins !== undefined) {
       this._sqlJoins = this._sqlJoins.concat(joins);
     }
   }
 
-
+  /**
+   * returns the sql for the select query
+   */
   public getSql(): string {
     let returnSQL: string = "";
     if (this._sqlSelect !== undefined)

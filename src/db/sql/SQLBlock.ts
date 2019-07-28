@@ -4,10 +4,16 @@ import { SQLParam } from "./SQLParam";
 import { SQLKeyword } from "./SQLKeyword";
 import { SQLText } from "./SQLText";
 
+/**
+ *
+ */
 export class SQLBlock extends SQLElement {
 
   private _elements: SQLElement[] = [];
 
+  /**
+   *
+   */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
@@ -20,20 +26,35 @@ export class SQLBlock extends SQLElement {
     return returnParams;
   }
 
+  /**
+   *
+   * @param keyword
+   */
   public addKeyword(keyword: string): void {
     const newKeyword = new SQLKeyword(keyword);
     this._elements.push(newKeyword);
   }
 
+  /**
+   *
+   * @param text
+   */
   public addText(text: string): void {
     const newText = new SQLText(text);
     this._elements.push(newText);
   }
 
+  /**
+   *
+   * @param element
+   */
   public addElement(element: SQLElement): void {
     this._elements.push(element);
   }
 
+  /**
+   *
+   */
   public invalidate(): void {
     for (let i = 0; i < this._elements.length; i++) {
       if (i < 0) {
@@ -71,6 +92,9 @@ export class SQLBlock extends SQLElement {
     }
   }
 
+  /**
+   *
+   */
   public getSQL(): string {
     this.invalidate();
 

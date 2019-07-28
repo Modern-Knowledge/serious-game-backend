@@ -5,15 +5,24 @@ import { SQLElementType } from "./SQLElementType";
 import { SQLValueAttribute } from "./SQLValueAttribute";
 import { SQLBlock } from "./SQLBlock";
 
+/**
+ * represents the insert part of a sql query
+ */
 export class SQLInsert extends SQLElement {
   private _tableName: string;
   private _attributes: SQLValueAttributes;
 
-  constructor(tableName: string) {
+  /**
+   * @param tableName
+   */
+  public constructor(tableName: string) {
     super();
     this._tableName = tableName;
   }
 
+  /**
+   * returns the name-value parameters for the insert
+   */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
@@ -24,10 +33,16 @@ export class SQLInsert extends SQLElement {
     return returnParams;
   }
 
+  /**
+   * returns the element type for the insert
+   */
   public getElementType(): number {
     return SQLElementType.SQLInsert;
   }
 
+  /**
+   * returns the sql for the insert part of the query
+   */
   public getSQL(): string {
     if (this._attributes === undefined) {
       return undefined;

@@ -1,18 +1,30 @@
 import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./SQLElementType";
 
+/**
+ * represents a simple sql keyword like AND, OR
+ */
 export class SQLKeyword extends SQLElement {
   private readonly _keyword: string;
 
-  constructor(keyword: string) {
+  /**
+   * @param keyword
+   */
+  public constructor(keyword: string) {
     super();
     this._keyword = keyword;
   }
 
+  /**
+   * returns the element type for the sql keyword
+   */
   public getElementType(): number {
     return SQLElementType.SQLKeyword;
   }
 
+  /**
+   * returns the sql
+   */
   public getSQL(): string {
     return " " + this._keyword + " ";
   }

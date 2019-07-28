@@ -2,18 +2,19 @@ import { SQLAttributeCollection } from "./SQLAttributeCollection";
 import { SQLValueAttribute } from "./SQLValueAttribute";
 import { SQLParam } from "./SQLParam";
 
+/**
+ * handles interaction with the sql value attributes collection
+ */
 export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute> {
 
-  constructor() {
+  public constructor() {
     super();
   }
 
-  public setAllValuesUndefined(): void {
-    for (const currAttr of this._attributes) {
-      currAttr.value = undefined;
-    }
-  }
-
+  /**
+   * returns string of comma separated parameter names
+   * e.g.: ::id::, ::name::
+   */
   public getCommaSeparatedParameterName(): string {
     let returnSql: string = "";
 
@@ -28,6 +29,9 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
     return returnSql;
   }
 
+  /**
+   * returns every sql param in the collection
+   */
   public getSqlParams(): SQLParam[] {
     const returnParams: SQLParam[] = [];
 
@@ -38,7 +42,10 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
     return returnParams;
   }
 
-
+  /**
+   * returns a string with name = value pairs.
+   * e.g.: name = 'name', age = '12'
+   */
   public getNameParamNamePairs(): string {
     let returnSql: string = "";
 

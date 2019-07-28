@@ -1,10 +1,13 @@
 import { AbstractFilter } from "../../../AbstractFilter";
 
+/**
+ *
+ */
 export class UserFilter extends AbstractFilter {
 
   private _username: string;
 
-  constructor() {
+  public constructor() {
     super();
   }
 

@@ -4,6 +4,9 @@ import { SQLBlock } from "./SQLBlock";
 import { SQLParam } from "./SQLParam";
 import { SQLElementType } from "./SQLElementType";
 
+/**
+ * represents the join part of a sql query
+ */
 export class SQLJoin extends SQLElement {
   private readonly _joinTableName: string;
   private readonly _joinTableAlias: string;
@@ -11,7 +14,13 @@ export class SQLJoin extends SQLElement {
   private _condition: SQLBlock;
   private _joinType: JoinType = JoinType.JOIN;
 
-  constructor(joinTableName: string, joinTableAlias: string, condition: SQLBlock, joinType: JoinType) {
+  /**
+   * @param joinTableName
+   * @param joinTableAlias
+   * @param condition
+   * @param joinType
+   */
+  public constructor(joinTableName: string, joinTableAlias: string, condition: SQLBlock, joinType: JoinType) {
     super();
     this._joinTableName = joinTableName;
     this._joinTableAlias = joinTableAlias;
@@ -19,6 +28,9 @@ export class SQLJoin extends SQLElement {
     this._joinType = joinType;
   }
 
+  /**
+   * returns the parameters for the join
+   */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
@@ -28,33 +40,18 @@ export class SQLJoin extends SQLElement {
     return returnParams;
   }
 
-  get condition(): SQLBlock {
-    return this._condition;
-  }
-
-  set condition(value: SQLBlock) {
-    this._condition = value;
-  }
-
-  public setCondition(condition: string): void {
-    this._condition = new SQLBlock();
-    this._condition.addText(condition);
-  }
-
-  get joinType(): JoinType {
-    return this._joinType;
-  }
-
-  set joinType(value: JoinType) {
-    this._joinType = value;
-  }
-
+  /**
+   * returns the element type for the join
+   */
   public getElementType(): number {
     return SQLElementType.SQLJoin;
   }
 
- public getSQL(): string {
-    const keyword: string = this.joinType;
+  /**
+   * returns the sql for the join part of the sql
+   */
+  public getSQL(): string {
+    const keyword: string = this._joinType;
     let returnSQL: string = "";
 
    if (this._joinTableName !== undefined && (!(this._joinTableName.length === 0))) {
@@ -70,5 +67,30 @@ export class SQLJoin extends SQLElement {
    }
 
     return returnSQL;
+  }
+
+  get condition(): SQLBlock {
+    return this._condition;
+  }
+
+  set condition(value: SQLBlock) {
+    this._condition = value;
+  }
+
+  /**
+   * creates a new condition
+   * @param condition
+   */
+  public setCondition(condition: string): void {
+    this._condition = new SQLBlock();
+    this._condition.addText(condition);
+  }
+
+  get joinType(): JoinType {
+    return this._joinType;
+  }
+
+  set joinType(value: JoinType) {
+    this._joinType = value;
   }
 }

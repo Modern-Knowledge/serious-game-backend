@@ -3,6 +3,11 @@ import { SQLDelete } from "./SQLDelete";
 import { SQLWhere } from "./SQLWhere";
 import { SQLParam } from "./SQLParam";
 
+/**
+ * represents a sql delete statement
+ *
+ * e.g.: DELETE FROM %tablename% (WHERE condition)?
+ */
 export class DeleteQuery extends NamedParameterizedQuery {
   private _delete: SQLDelete;
   private _where: SQLWhere;
@@ -11,7 +16,9 @@ export class DeleteQuery extends NamedParameterizedQuery {
     super();
   }
 
-
+  /**
+   * returns the sql parameters (name-value pairs) for the delete query
+   */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
@@ -22,6 +29,9 @@ export class DeleteQuery extends NamedParameterizedQuery {
     return returnParams;
   }
 
+  /**
+   * returns the sql for delete query
+   */
   public getSql(): string {
     let returnStr: string = "";
 

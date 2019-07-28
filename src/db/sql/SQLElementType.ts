@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export enum SQLElementType {
   SQLBlock = 1,
   SQLKeyword = 2,

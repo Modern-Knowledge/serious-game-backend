@@ -2,9 +2,15 @@ import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 import { SQLElementType } from "./SQLElementType";
 
+/**
+ * represents the where part of a sql query
+ */
 export class SQLWhere extends SQLElement {
   private _condition: SQLElement;
 
+  /**
+   * @param condition
+   */
   public constructor(condition?: SQLElement) {
     super();
     if (condition) {
@@ -12,13 +18,34 @@ export class SQLWhere extends SQLElement {
     }
   }
 
-  getParameters(): SQLParam[] {
+  /**
+   * returns the sql params (name-value pairs) for the where part
+   */
+  public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
 
     returnParams = returnParams.concat(this._parameters);
     returnParams = returnParams.concat(this._condition.getParameters());
 
     return returnParams;
+  }
+
+  /**
+   * returns the element type for the where part of the query
+   */
+  public getElementType(): number {
+    return SQLElementType.SQLWhere;
+  }
+
+  /**
+   * returns the sql string for the where part
+   */
+  public getSQL(): string {
+    if (this._condition !== undefined) {
+      return "WHERE " + this._condition.getSQL();
+    }
+
+    return "";
   }
 
   get condition(): SQLElement {
@@ -28,18 +55,4 @@ export class SQLWhere extends SQLElement {
   set condition(value: SQLElement) {
     this._condition = value;
   }
-
-  getElementType(): number {
-    return SQLElementType.SQLWhere;
-  }
-
-  getSQL(): string {
-    if (this._condition !== undefined) {
-      return "WHERE " + this._condition.getSQL();
-    }
-
-    return "";
-  }
-
-
 }

@@ -1,21 +1,34 @@
 import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./SQLElementType";
 
+/**
+ * represents the from part of an sql query
+ */
 export class SQLFrom extends SQLElement {
 
   private readonly _tableName: string;
   private readonly _tableAlias: string;
 
-  constructor(tableName: string, tableAlias: string) {
+  /**
+   * @param tableName
+   * @param tableAlias
+   */
+  public constructor(tableName: string, tableAlias: string) {
     super();
     this._tableName = tableName;
     this._tableAlias = tableAlias;
   }
 
+  /**
+   * returns the element type of sql from
+   */
   public getElementType(): number {
     return SQLElementType.SQLFrom;
   }
 
+  /**
+   * returns the sql for the from element
+   */
   public getSQL(): string {
     let returnSQL: string = "";
 

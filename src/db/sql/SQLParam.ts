@@ -1,9 +1,18 @@
+/**
+ * represents a sql parameter with a name and a value
+ * e.g.: name = value
+ */
 export class SQLParam {
-  private _name: string = "";
+  private _name: string;
   private _value: string;
   private _percQuotes: boolean = false;
 
-  constructor(name: string, value: string, percQuotes: boolean) {
+  /**
+   * @param name
+   * @param value
+   * @param percQuotes
+   */
+  public constructor(name: string, value: string, percQuotes: boolean) {
     this._name = name;
     this._value = value;
     this._percQuotes = percQuotes;

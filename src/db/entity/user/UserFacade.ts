@@ -39,7 +39,7 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * returns users that match the specified filter
    * @param filter
    */
-  public getUsers(filter: UserFilter): User[] {
+  public getUsers(filter: UserFilter): Promise<User[]> {
     const attributes: SQLAttributes = this.getSQLAttributes(filter);
 
     return this.select(attributes, this.getJoins(filter), filter);
@@ -49,19 +49,20 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * inserts a new user and returns the id of the created user
    * @param user
    */
-  public insertUser(user: User): User {
+  public insertUser(user: User): Promise<User> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const nameAttribute: SQLValueAttribute = new SQLValueAttribute("username", this.tableName, user.username);
-
     attributes.addAttribute(nameAttribute);
 
-    const id: number = this.insert(attributes);
-    if (id > 0) {
-      user.id = id;
-    }
-
-    return user;
+    return new Promise<User>((resolve, reject) => {
+     this.insert(attributes).then(id => {
+        if (id > 0) {
+          user.id = id;
+          resolve(user);
+        }
+     });
+    });
   }
 
   /**
@@ -69,11 +70,10 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * @param user user that should be updated
    * @param filter
    */
-  public updateUser(user: User, filter: UserFilter): number {
+  public updateUser(user: User, filter: UserFilter): Promise<number> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
-
     attributes.addAttribute(username);
 
     return this.update(attributes, this.getFilter(filter));
@@ -83,8 +83,8 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * deletes the specified user in the database and returns the number of affected rows
    * @param filter
    */
-  public deleteUser(filter: UserFilter): number {
-    return this.delete(filter);
+  public deleteUser(filter: UserFilter): Promise<number> {
+    return this.delete(this.getFilter(filter));
   }
 
   /**
