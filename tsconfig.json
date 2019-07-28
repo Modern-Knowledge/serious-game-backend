@@ -4,17 +4,17 @@
         "module": "commonjs",
         "esModuleInterop": true,
         "lib": ["es2015", "es2016", "dom"],
-        "allowJs": false,
-        "checkJs": false,
         "declaration": true,
         "sourceMap": true,
         "outDir": "dist",
+        "removeComments": true,
+        "importHelpers": true,
+        "downlevelIteration": true,
+
 
         "strict": true,
-        "noImplicitAny": false,
         "strictNullChecks": false,
-        "noImplicitThis": false,
-        "alwaysStrict": false,
+        "strictPropertyInitialization": false,
 
         "noUnusedLocals": false,
         "noUnusedParameters": false,
@@ -27,15 +27,15 @@
 
         "declarationDir": "dist/types",
 
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-
         "paths": {
             "*": [
                 "node_modules/*",
                 "src/types/*"
             ]
-        }
+        },
+
+        "diagnostics": true,
+        "extendedDiagnostics": true
     },
     "include": [
         "src/**/*"

@@ -1,10 +1,10 @@
-import mysql, { Connection, ConnectionConfig, FieldInfo, MysqlError } from "mysql";
+import mysql, { Connection, MysqlError } from "mysql";
 import logger from "./logger";
 import { Helper } from "./Helper";
 import moment from "moment";
 
 /**
- *
+ * handles database connection and database interaction
  */
 export class DatabaseConnection {
   private static _instance: DatabaseConnection;
@@ -76,7 +76,7 @@ export class DatabaseConnection {
   }
 
   /**
-   * return instance
+   * returns instance
    */
   public static getInstance(): DatabaseConnection {
     if (DatabaseConnection._instance == undefined) {

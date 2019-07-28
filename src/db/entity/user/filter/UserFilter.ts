@@ -4,7 +4,6 @@ import { AbstractFilter } from "../../../AbstractFilter";
  *
  */
 export class UserFilter extends AbstractFilter {
-
   private _username: string;
 
   public constructor() {

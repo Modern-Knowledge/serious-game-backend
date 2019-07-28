@@ -63,7 +63,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
-          return reject(error);
+          reject(error);
         }
 
         for (const item of results) {

@@ -5,14 +5,11 @@ import lusca from "lusca";
 import passport from "passport";
 import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
-import { UserFilter } from "./db/entity/user/filter/UserFilter";
 import logger from "./util/logger";
 import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
-import { UserFacade } from "./db/entity/user/UserFacade";
-
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -27,15 +24,6 @@ logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successf
 
 // Controllers (route handlers)
 import * as homeController from "./controllers/home";
-import { User } from "./lib/models/User";
-
-const facade: UserFacade = new UserFacade("u");
-const filter: UserFilter = new UserFilter();
-const users = facade.getUsers(filter);
-
-users.then(rows => {
-  console.log(rows);
-});
 
 // const user: User = new User();
 // user.username = "Sandra";
@@ -45,7 +33,6 @@ users.then(rows => {
 //
 // facade.deleteUser(filter);
 
-// const user: User[] = dao.all(filter);
 
 // Create Express server
 const app = express();
