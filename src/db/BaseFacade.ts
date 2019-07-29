@@ -12,17 +12,17 @@ import { UpdateQuery } from "./sql/UpdateQuery";
 import { SQLUpdate } from "./sql/SQLUpdate";
 import { DeleteQuery } from "./sql/DeleteQuery";
 import { SQLDelete } from "./sql/SQLDelete";
-import { AbstractFilter } from "./AbstractFilter";
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { DatabaseConnection } from "../util/DatabaseConnection";
 import { FieldInfo, MysqlError } from "mysql";
 import logger from "../util/logger";
 import { Helper } from "../util/Helper";
+import { Filter } from "./filter/Filter";
 
 /**
  * base class for crud operations with the database
  */
-export abstract class BaseFacade<EntityType extends AbstractModel, FilterType extends AbstractFilter> {
+export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   private _tableName: string;
   private _tableAlias: string;
@@ -32,9 +32,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
 
   /**
    * returns sql attributes that should be retrieved from the database
-   * @param filter
    */
-  public getSQLAttributes(filter: FilterType): SQLAttributes {
+  public getSQLAttributes(excludedSQLAttributes: string[]): SQLAttributes {
     return new SQLAttributes();
   }
 
@@ -54,7 +53,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
    * @param joins joins to other tables
    * @param filter
    */
-  public select(attributes: SQLAttributes, joins: SQLJoin[], filter: FilterType): Promise<EntityType[]> {
+  public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter));
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
@@ -67,7 +66,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
         }
 
         for (const item of results) {
-          const entity: EntityType = this.fillEntity(item, filter);
+          const entity: EntityType = this.fillEntity(item);
           if (entity !== undefined) {
             returnEntities.push(entity);
           }
@@ -129,21 +128,19 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
 
   /**
    * executes a delete query and returns the number of affected rows
-   * @param where where-condition
+   * @param filter Filter
    */
-  public delete(where: SQLWhere): Promise<number> {
-    // workaround because tableAlias is not allowed in delete statement
-    const alias: string = this._tableAlias;
-    this._tableAlias = this._tableName;
-
-    const npq: DeleteQuery = this.getDeleteQuery(where);
+  public delete(filter: Filter): Promise<number> {
+    const npq: DeleteQuery = this.getDeleteQuery(this.getFilter(filter));
     const deleteQuery: BakedQuery = npq.bake();
     const params: string[] = deleteQuery.fillParameters();
 
-    this._tableAlias = alias;
+    let queryStr: string = deleteQuery.getBakedSQL();
+    const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
+    queryStr = queryStr.replace(regex, ""); // workaround for delete
 
     return new Promise<number>((resolve, reject) => {
-      const query = this._dbInstance.connection.query(deleteQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = this._dbInstance.connection.query(queryStr, params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
         }
@@ -222,9 +219,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
 
   /**
    * creates joins for the entity and returns them as a list
-   * @param filter
    */
-  public getJoins(filter: FilterType): SQLJoin[] {
+  public getJoins(): SQLJoin[] {
     return [];
   }
 
@@ -232,14 +228,16 @@ export abstract class BaseFacade<EntityType extends AbstractModel, FilterType ex
    * creates the sql-filter for the entity
    * @param filter
    */
-  public abstract getFilter(filter: FilterType): SQLWhere;
+  public getFilter(filter: Filter): SQLWhere {
+    return new SQLWhere(filter.getBlock());
+  }
 
   /**
    * assigns the retrieved values to the newly created entity and returns it
    * @param results results from the select query
    * @param filter
    */
-  public abstract fillEntity(results: any[], filter: FilterType): EntityType;
+  public abstract fillEntity(results: any[]): EntityType;
 
   /**
    * post process the results of a select query

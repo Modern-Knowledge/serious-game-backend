@@ -1,18 +1,15 @@
 import { EntityFacade } from "../EntityFacade";
-import { UserFilter } from "./filter/UserFilter";
-import { SQLWhere } from "../../sql/SQLWhere";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { SQLParam } from "../../sql/SQLParam";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLJoin } from "../../sql/SQLJoin";
+import { Filter } from "../../filter/Filter";
 
 /**
  * handles CRUD operations with the user-entity
  */
-export class UserFacade extends EntityFacade<User, UserFilter> {
+export class UserFacade extends EntityFacade<User> {
 
   /**
    * @param tableAlias
@@ -27,22 +24,27 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
 
   /**
    * returns SQL-attributes for the user
-   * @param filter
+   * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
-  public getSQLAttributes(filter: UserFilter): SQLAttributes {
-    return new SQLAttributes(this.tableAlias,
-      ["id",
-                "username"]);
+  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+    let sqlAttributes: string[] = ["id", "username"];
+    if (excludedSQLAttributes) {
+      sqlAttributes = sqlAttributes.filter(function(x) {
+        return excludedSQLAttributes.indexOf(x) < 0;
+      });
+    }
+
+    return new SQLAttributes(this.tableAlias, sqlAttributes);
   }
 
   /**
    * returns users that match the specified filter
    * @param filter
+   * @param excludedSQLAttributes
    */
-  public getUsers(filter: UserFilter): Promise<User[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(filter);
-
-    return this.select(attributes, this.getJoins(filter), filter);
+  public getUsers(filter: Filter, excludedSQLAttributes?: string[]): Promise<User[]> {
+    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
+    return this.select(attributes, this.getJoins(), filter);
   }
 
   /**
@@ -70,7 +72,7 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * @param user user that should be updated
    * @param filter
    */
-  public updateUser(user: User, filter: UserFilter): Promise<number> {
+  public updateUser(user: User, filter: Filter): Promise<number> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
@@ -83,53 +85,23 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * deletes the specified user in the database and returns the number of affected rows
    * @param filter
    */
-  public deleteUser(filter: UserFilter): Promise<number> {
-    return this.delete(this.getFilter(filter));
-  }
-
-  /**
-   * creates the sql-filter (wherefor the user
-   * @param filter
-   */
-  public getFilter(filter: UserFilter): SQLWhere {
-    const root: SQLBlock = new SQLBlock();
-
-    if (filter.id !== undefined) {
-      const inner: SQLBlock = new SQLBlock();
-      inner.addText(this.tableAlias + ".id = ::id::");
-      inner.addParameter(new SQLParam("id", filter.id, false));
-      root.addElement(inner);
-    }
-    root.addKeyword("AND");
-
-    if (filter.username !== undefined) {
-      const inner: SQLBlock = new SQLBlock();
-      inner.addText(this.tableAlias + ".username = ::username::");
-      inner.addParameter(new SQLParam("username", filter.username, false));
-      root.addElement(inner);
-    }
-
-    root.addKeyword("AND");
-
-    return new SQLWhere(root);
+  public deleteUser(filter: Filter): Promise<number> {
+    return this.delete(filter);
   }
 
   /**
    * assigns the retrieved values to the newly created user and returns the user
    * @param result retrieved result
-   * @param filter
    */
-  public fillEntity(result: any, filter: UserFilter): User {
+  public fillEntity(result: any): User {
     const u: User = new User();
 
-    const id: string = this.name("id");
-    if (result[id] !== undefined) {
-      u.id = result[id];
+    if (result[this.name("id")] !== undefined) {
+      u.id = result[this.name("id")];
     }
 
-    const username: string = this.name("username");
-    if (result[username] !== undefined) {
-      u.username = result[username];
+    if (result[this.name("username")] !== undefined) {
+      u.username = result[this.name("username")];
     }
 
     return u;
@@ -139,7 +111,7 @@ export class UserFacade extends EntityFacade<User, UserFilter> {
    * creates the joins for the user-entity and returns them as a list
    * @param filter
    */
-  public getJoins(filter: UserFilter): SQLJoin[] {
+  public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
     // example join

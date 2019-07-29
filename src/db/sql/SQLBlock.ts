@@ -5,14 +5,14 @@ import { SQLKeyword } from "./SQLKeyword";
 import { SQLText } from "./SQLText";
 
 /**
- *
+ * sql block that can hold from, select, ... parts of a query
  */
 export class SQLBlock extends SQLElement {
 
   private _elements: SQLElement[] = [];
 
   /**
-   *
+   *  returns the parameters of the sql block
    */
   public getParameters(): SQLParam[] {
     let returnParams: SQLParam[] = [];
@@ -27,7 +27,7 @@ export class SQLBlock extends SQLElement {
   }
 
   /**
-   *
+   * adds a keyword to the sql block
    * @param keyword
    */
   public addKeyword(keyword: string): void {
@@ -36,7 +36,7 @@ export class SQLBlock extends SQLElement {
   }
 
   /**
-   *
+   * adds text to the sql block
    * @param text
    */
   public addText(text: string): void {
@@ -45,7 +45,7 @@ export class SQLBlock extends SQLElement {
   }
 
   /**
-   *
+   * adds an element to the sql block
    * @param element
    */
   public addElement(element: SQLElement): void {
@@ -93,7 +93,7 @@ export class SQLBlock extends SQLElement {
   }
 
   /**
-   *
+   * returns the sql for the sql block
    */
   public getSQL(): string {
     this.invalidate();
@@ -113,6 +113,9 @@ export class SQLBlock extends SQLElement {
     return sql;
   }
 
+  /**
+   * returns the element type of a sql block
+   */
   public getElementType(): number {
     return SQLElementType.SQLBlock;
   }

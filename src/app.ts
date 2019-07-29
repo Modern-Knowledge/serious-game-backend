@@ -10,6 +10,12 @@ import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
+// Controllers (route handlers)
+import * as homeController from "./controllers/home";
+import { Filter } from "./db/filter/Filter";
+import { FilterAttribute } from "./db/filter/FilterAttribute";
+import { SQLComparisonOperator } from "./db/sql/SQLComparisonOperator";
+import { SQLOperator } from "./db/sql/SQLOperator";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -22,9 +28,6 @@ if (config.error) { // .env not found
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
-// Controllers (route handlers)
-import * as homeController from "./controllers/home";
-
 // const user: User = new User();
 // user.username = "Sandra";
 // facade.insertUser(user);
@@ -32,7 +35,6 @@ import * as homeController from "./controllers/home";
 // facade.updateUser(user, filter);
 //
 // facade.deleteUser(filter);
-
 
 // Create Express server
 const app = express();

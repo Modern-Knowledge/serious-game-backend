@@ -1,14 +1,12 @@
 import { BaseFacade } from "../BaseFacade";
 import { AbstractModel } from "../../lib/models/AbstractModel";
-import { AbstractFilter } from "../AbstractFilter";
 
 /**
- *
+ * base facade for entities
  */
-export abstract class EntityFacade<EntityType extends AbstractModel, FilterType extends AbstractFilter> extends BaseFacade<EntityType, FilterType> {
+export abstract class EntityFacade<EntityType extends AbstractModel> extends BaseFacade<EntityType> {
 
   /**
-   *
    * @param tableName
    * @param tableAlias
    */
