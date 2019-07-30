@@ -4,17 +4,19 @@ import { SQLFrom } from "./SQLFrom";
 import { SQLJoin } from "./SQLJoin";
 import { SQLWhere } from "./SQLWhere";
 import { SQLParam } from "./SQLParam";
+import { SQLOrderBy } from "./SQLOrderBy";
 
 /**
  * represents a sql select statement
  *
- * e.g.: select %attributes% FROM %tablename% %tablealias% (%join%)? (WHERE %condition)?
+ * e.g.: select %attributes% FROM %tablename% %tablealias% (%join%)? (WHERE %condition)? (ORDER BY %name% ASC|DESC)
  */
 export class SelectQuery extends NamedParameterizedQuery {
   private _sqlSelect: SQLSelect;
   private _sqlFrom: SQLFrom;
   private _sqlJoins: SQLJoin[] = [];
   private _sqlWhere: SQLWhere;
+  private _sqlOrderBy: SQLOrderBy[] = [];
 
   public constructor() {
     super();
@@ -88,6 +90,14 @@ export class SelectQuery extends NamedParameterizedQuery {
       returnSQL += where;
     }
 
+    if (this._sqlOrderBy.length > 0) {
+      returnSQL += " ORDER BY ";
+      for (let i = 0; i < this._sqlOrderBy.length; i++) {
+        returnSQL += this._sqlOrderBy[i].getSQL();
+        returnSQL += (i === this._sqlOrderBy.length - 1) ? "" : ", ";
+      }
+    }
+
     return returnSQL;
   }
 
@@ -121,5 +131,13 @@ export class SelectQuery extends NamedParameterizedQuery {
 
   set sqlWhere(value: SQLWhere) {
     this._sqlWhere = value;
+  }
+
+  get sqlOrderBy(): SQLOrderBy[] {
+    return this._sqlOrderBy;
+  }
+
+  set sqlOrderBy(value: SQLOrderBy[]) {
+    this._sqlOrderBy = value;
   }
 }

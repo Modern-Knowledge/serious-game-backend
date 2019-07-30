@@ -5,6 +5,8 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { Filter } from "../../filter/Filter";
+import { SQLOrderBy } from "../../sql/SQLOrderBy";
+import { SQLOrder } from "../../sql/SQLOrder";
 
 /**
  * handles CRUD operations with the user-entity
@@ -109,7 +111,6 @@ export class UserFacade extends EntityFacade<User> {
 
   /**
    * creates the joins for the user-entity and returns them as a list
-   * @param filter
    */
   public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
@@ -120,5 +121,10 @@ export class UserFacade extends EntityFacade<User> {
     joins.push(new SQLJoin("users", "u1", userJoin, JoinType.JOIN)); */
 
     return joins;
+  }
+
+
+  public addOrderBy(attribute: string, order: SQLOrder): void {
+    this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }
 }

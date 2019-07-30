@@ -3,6 +3,7 @@ import { UserFacade } from "../db/entity/user/UserFacade";
 import { Filter } from "../db/filter/Filter";
 import { FilterAttribute } from "../db/filter/FilterAttribute";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
+import { SQLOrder } from "../db/sql/SQLOrder";
 
 /**
  * GET /
@@ -12,9 +13,13 @@ export const index = async (req: Request, res: Response) => {
 
   const f: Filter = new Filter("u");
   f.addFilterAttribute(new FilterAttribute("username", "%a%", SQLComparisonOperator.LIKE));
+
   const facade: UserFacade = new UserFacade("u");
-  const attr: string[] = ["username"];
-  const users = await facade.getUsers(f, attr);
+  facade.addOrderBy("id", SQLOrder.DESC);
+  facade.addOrderBy("username", SQLOrder.DESC);
+
+  const exclAttr: string[] = ["username"];
+  const users = await facade.getUsers(f, exclAttr);
 
   res.send(users);
 };

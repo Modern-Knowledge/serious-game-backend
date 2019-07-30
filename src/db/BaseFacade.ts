@@ -18,6 +18,8 @@ import { FieldInfo, MysqlError } from "mysql";
 import logger from "../util/logger";
 import { Helper } from "../util/Helper";
 import { Filter } from "./filter/Filter";
+import { SQLOrderBy } from "./sql/SQLOrderBy";
+import { SQLOrder } from "./sql/SQLOrder";
 
 /**
  * base class for crud operations with the database
@@ -27,6 +29,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _tableName: string;
   private _tableAlias: string;
   private _attributes: string[];
+
+  protected _orderBys: SQLOrderBy[] = [];
 
   private readonly _dbInstance: DatabaseConnection;
 
@@ -52,9 +56,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param attributes attributes that should be retrieved
    * @param joins joins to other tables
    * @param filter
+   * @param orderBy order by of the query
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
-    const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter));
+    const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: string[] = selectQuery.fillParameters();
@@ -173,8 +178,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param attributes columns that should be selected
    * @param joins joins for the select query
    * @param where where-conditions for the select-query
+   * @param orderBy order by attributes
    */
-  private getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere): SelectQuery {
+  private getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere, orderBy: SQLOrderBy[]): SelectQuery {
     const npq: SelectQuery = new SelectQuery();
 
     const select: SQLSelect = new SQLSelect(attributes);
@@ -184,6 +190,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     npq.sqlFrom = from;
     npq.addJoins(joins);
     npq.sqlWhere = where;
+    npq.sqlOrderBy = orderBy;
 
     return npq;
   }
@@ -235,9 +242,15 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * assigns the retrieved values to the newly created entity and returns it
    * @param results results from the select query
-   * @param filter
    */
   public abstract fillEntity(results: any[]): EntityType;
+
+  /**
+   *
+   * @param attribute
+   * @param order
+   */
+  public abstract addOrderBy(attribute: string, order: SQLOrder): void;
 
   /**
    * post process the results of a select query
