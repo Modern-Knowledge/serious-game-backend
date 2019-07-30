@@ -123,7 +123,11 @@ export class UserFacade extends EntityFacade<User> {
     return joins;
   }
 
-
+  /**
+   * add an order by clause to the query
+   * @param attribute attribute for ordering
+   * @param order attribute sort order (ASC|DESC)
+   */
   public addOrderBy(attribute: string, order: SQLOrder): void {
     this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }

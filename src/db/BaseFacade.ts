@@ -56,7 +56,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param attributes attributes that should be retrieved
    * @param joins joins to other tables
    * @param filter
-   * @param orderBy order by of the query
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter), this._orderBys);
@@ -246,11 +245,18 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public abstract fillEntity(results: any[]): EntityType;
 
   /**
-   *
+   * add an order by to the select query
    * @param attribute
    * @param order
    */
   public abstract addOrderBy(attribute: string, order: SQLOrder): void;
+
+  /**
+   * clear the order bys
+   */
+  public clearOrderBy(): void {
+    this._orderBys = [];
+  }
 
   /**
    * post process the results of a select query
