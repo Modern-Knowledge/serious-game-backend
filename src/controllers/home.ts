@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { UserFacade } from "../db/entity/user/UserFacade";
-import { Filter } from "../db/filter/Filter";
-import { FilterAttribute } from "../db/filter/FilterAttribute";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { SQLOrder } from "../db/sql/SQLOrder";
 
@@ -11,15 +9,15 @@ import { SQLOrder } from "../db/sql/SQLOrder";
  */
 export const index = async (req: Request, res: Response) => {
 
-  const f: Filter = new Filter("u");
-  f.addFilterAttribute(new FilterAttribute("username", "%a%", SQLComparisonOperator.LIKE));
 
   const facade: UserFacade = new UserFacade("u");
   facade.addOrderBy("id", SQLOrder.DESC);
   facade.addOrderBy("username", SQLOrder.DESC);
 
+  facade.addFilter("username", "%a%", SQLComparisonOperator.LIKE);
+
   const exclAttr: string[] = ["username"];
-  const users = await facade.getUsers(f, exclAttr);
+  const users = await facade.getUsers(exclAttr);
 
   res.send(users);
 };

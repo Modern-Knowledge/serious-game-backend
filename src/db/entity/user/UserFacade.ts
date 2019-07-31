@@ -44,9 +44,9 @@ export class UserFacade extends EntityFacade<User> {
    * @param filter
    * @param excludedSQLAttributes
    */
-  public getUsers(filter: Filter, excludedSQLAttributes?: string[]): Promise<User[]> {
+  public getUsers(excludedSQLAttributes?: string[], filter?: Filter): Promise<User[]> {
     const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins(), filter);
+    return this.select(attributes, this.getJoins(), this._filter ? this._filter : filter);
   }
 
   /**
@@ -74,21 +74,21 @@ export class UserFacade extends EntityFacade<User> {
    * @param user user that should be updated
    * @param filter
    */
-  public updateUser(user: User, filter: Filter): Promise<number> {
+  public updateUser(user: User, filter?: Filter): Promise<number> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
     attributes.addAttribute(username);
 
-    return this.update(attributes, this.getFilter(filter));
+    return this.update(attributes, this._filter ? this._filter : filter);
   }
 
   /**
    * deletes the specified user in the database and returns the number of affected rows
    * @param filter
    */
-  public deleteUser(filter: Filter): Promise<number> {
-    return this.delete(filter);
+  public deleteUser(filter?: Filter): Promise<number> {
+    return this.delete(this._filter ? this._filter : filter);
   }
 
   /**

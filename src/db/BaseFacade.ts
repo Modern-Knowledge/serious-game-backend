@@ -20,6 +20,8 @@ import { Helper } from "../util/Helper";
 import { Filter } from "./filter/Filter";
 import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
+import { FilterAttribute } from "./filter/FilterAttribute";
+import { SQLComparisonOperator } from "./sql/SQLComparisonOperator";
 
 /**
  * base class for crud operations with the database
@@ -31,6 +33,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _attributes: string[];
 
   protected _orderBys: SQLOrderBy[] = [];
+  protected _filter: Filter;
 
   private readonly _dbInstance: DatabaseConnection;
 
@@ -49,6 +52,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._tableName = tableName;
     this._tableAlias = tableAlias;
     this._dbInstance = DatabaseConnection.getInstance();
+
+    this._filter = new Filter(tableAlias);
   }
 
   /**
@@ -58,7 +63,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
-    const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(filter), this._orderBys);
+    const npq: SelectQuery = this.getSelectQuery(attributes, joins, new SQLWhere(filter.getBlock()), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: string[] = selectQuery.fillParameters();
@@ -110,10 +115,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * executes an update query and returns the number of affected rows
    * @param attributes name-value pairs of the entity that should be changed
-   * @param where where-condition
+   * @param filter
    */
-  public update(attributes: SQLValueAttributes, where: SQLWhere): Promise<number> {
-    const npq: UpdateQuery = this.getUpdateQuery(attributes, where);
+  public update(attributes: SQLValueAttributes, filter: Filter): Promise<number> {
+    const npq: UpdateQuery = this.getUpdateQuery(attributes, new SQLWhere(filter.getBlock()));
     const updateQuery: BakedQuery = npq.bake();
     const params: string[] = updateQuery.fillParameters();
 
@@ -135,7 +140,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter Filter
    */
   public delete(filter: Filter): Promise<number> {
-    const npq: DeleteQuery = this.getDeleteQuery(this.getFilter(filter));
+    const npq: DeleteQuery = this.getDeleteQuery(new SQLWhere(filter.getBlock()));
     const deleteQuery: BakedQuery = npq.bake();
     const params: string[] = deleteQuery.fillParameters();
 
@@ -223,19 +228,36 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return deleteQuery;
   }
 
+
+  /**
+   * execute a sql query
+   * @param sql sql query to be executed
+   * @param params parameters for prepared query that are later replaced
+   */
+  public query(sql: string, params: string[] = []): Promise<any[]> {
+    const returnArr: any[] = [];
+    return new Promise<EntityType[]>((resolve, reject) => {
+      const query = this._dbInstance.connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        if (error) {
+          reject(error);
+        }
+
+        for (const item of results) {
+          returnArr.push(item);
+        }
+
+        resolve(returnArr);
+      });
+
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "query")} ${query.sql} [${query.values}]`);
+    });
+  }
+
   /**
    * creates joins for the entity and returns them as a list
    */
   public getJoins(): SQLJoin[] {
     return [];
-  }
-
-  /**
-   * creates the sql-filter for the entity
-   * @param filter
-   */
-  public getFilter(filter: Filter): SQLWhere {
-    return new SQLWhere(filter.getBlock());
   }
 
   /**
@@ -252,10 +274,24 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public abstract addOrderBy(attribute: string, order: SQLOrder): void;
 
   /**
-   * clear the order bys
+   * adds a filter attribute to the facade
+   * @param name name of the attribute e.g.: id
+   * @param value value of the attribute
+   * @param operator comparison attribute
    */
-  public clearOrderBy(): void {
+  public addFilter(name: string, value: string, operator: SQLComparisonOperator): void {
+    this._filter.addFilterAttribute(new FilterAttribute(name, value, operator));
+  }
+
+  /**
+   * clear order bys
+   */
+  public clearOrderBys(): void {
     this._orderBys = [];
+  }
+
+  public clearFilter(): void {
+    this._filter = new Filter(this._tableAlias);
   }
 
   /**

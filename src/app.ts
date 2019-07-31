@@ -28,14 +28,6 @@ if (config.error) { // .env not found
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
-// const user: User = new User();
-// user.username = "Sandra";
-// facade.insertUser(user);
-//
-// facade.updateUser(user, filter);
-//
-// facade.deleteUser(filter);
-
 // Create Express server
 const app = express();
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
