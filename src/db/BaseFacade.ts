@@ -63,7 +63,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
-    const npq: SelectQuery = this.getSelectQuery(attributes, joins, new SQLWhere(filter.getBlock()), this._orderBys);
+    const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: string[] = selectQuery.fillParameters();
@@ -118,7 +118,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter
    */
   public update(attributes: SQLValueAttributes, filter: Filter): Promise<number> {
-    const npq: UpdateQuery = this.getUpdateQuery(attributes, new SQLWhere(filter.getBlock()));
+    const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
     const updateQuery: BakedQuery = npq.bake();
     const params: string[] = updateQuery.fillParameters();
 
@@ -140,7 +140,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter Filter
    */
   public delete(filter: Filter): Promise<number> {
-    const npq: DeleteQuery = this.getDeleteQuery(new SQLWhere(filter.getBlock()));
+    const npq: DeleteQuery = this.getDeleteQuery(this.getFilter());
     const deleteQuery: BakedQuery = npq.bake();
     const params: string[] = deleteQuery.fillParameters();
 
@@ -281,6 +281,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    */
   public addFilter(name: string, value: string, operator: SQLComparisonOperator): void {
     this._filter.addFilterAttribute(new FilterAttribute(name, value, operator));
+  }
+
+  protected getFilter(): SQLWhere {
+    return new SQLWhere(this._filter.getBlock());
   }
 
   /**
