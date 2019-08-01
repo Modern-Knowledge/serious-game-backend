@@ -9,7 +9,7 @@ import { SQLParam } from "../sql/SQLParam";
  */
 export class FilterAttribute implements Filterable {
   private readonly _name: string;
-  private readonly _value: string;
+  private readonly _value: string | number;
   private readonly _comparisonOperator: SQLComparisonOperator;
   private _tableAlias: string;
 
@@ -18,7 +18,7 @@ export class FilterAttribute implements Filterable {
    * @param value value of the attribute
    * @param comparisonOperator comparison operator e.g.: =, <
    */
-  public constructor(name: string, value: string, comparisonOperator: SQLComparisonOperator) {
+  public constructor(name: string, value: string | number, comparisonOperator: SQLComparisonOperator) {
     this._name = name;
     this._value = value;
     this._comparisonOperator = comparisonOperator;

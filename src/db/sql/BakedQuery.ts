@@ -21,8 +21,8 @@ export class BakedQuery {
   /**
    * returns the parameters of a prepared statement as a list
    */
-  public fillParameters(): string[] {
-   const returnArr: string[] = [];
+  public fillParameters(): (string | number)[] {
+   const returnArr: (string | number)[] = [];
 
    this._values.forEach((value: SQLParam) => {
       if (value === undefined) {

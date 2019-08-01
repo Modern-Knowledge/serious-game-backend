@@ -4,7 +4,7 @@
  */
 export class SQLParam {
   private _name: string;
-  private _value: string;
+  private _value: string | number;
   private _percQuotes: boolean = false;
 
   /**
@@ -12,7 +12,7 @@ export class SQLParam {
    * @param value
    * @param percQuotes
    */
-  public constructor(name: string, value: string, percQuotes: boolean) {
+  public constructor(name: string, value: string | number, percQuotes: boolean) {
     this._name = name;
     this._value = value;
     this._percQuotes = percQuotes;
@@ -26,11 +26,11 @@ export class SQLParam {
     this._name = value;
   }
 
-  get value(): string {
+  get value(): string | number {
     return this._value;
   }
 
-  set value(value: string) {
+  set value(value: string | number) {
     this._value = value;
   }
 

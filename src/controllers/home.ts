@@ -14,7 +14,7 @@ export const index = async (req: Request, res: Response) => {
   facade.addOrderBy("id", SQLOrder.DESC);
   facade.addOrderBy("username", SQLOrder.DESC);
 
-  facade.addFilter("username", "%a%", SQLComparisonOperator.LIKE);
+  facade.addFilter("username", undefined, SQLComparisonOperator.IS);
 
   const exclAttr: string[] = ["username"];
   const users = await facade.getUsers(exclAttr);

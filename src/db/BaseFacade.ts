@@ -66,7 +66,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
-    const params: string[] = selectQuery.fillParameters();
+    const params: (string | number)[] = selectQuery.fillParameters();
 
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -97,7 +97,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public insert(attributes: SQLValueAttributes): Promise<number> {
     const npq: InsertQuery = this.getInsertQuery(attributes);
     const insertQuery: BakedQuery = npq.bake();
-    const params: string[] = insertQuery.fillParameters();
+    const params: (number | string)[] = insertQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
       const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -120,7 +120,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public update(attributes: SQLValueAttributes, filter: Filter): Promise<number> {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
     const updateQuery: BakedQuery = npq.bake();
-    const params: string[] = updateQuery.fillParameters();
+    const params: (number | string)[] = updateQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
       const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -142,7 +142,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public delete(filter: Filter): Promise<number> {
     const npq: DeleteQuery = this.getDeleteQuery(this.getFilter());
     const deleteQuery: BakedQuery = npq.bake();
-    const params: string[] = deleteQuery.fillParameters();
+    const params: (number | string)[] = deleteQuery.fillParameters();
 
     let queryStr: string = deleteQuery.getBakedSQL();
     const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
@@ -279,7 +279,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param value value of the attribute
    * @param operator comparison attribute
    */
-  public addFilter(name: string, value: string, operator: SQLComparisonOperator): void {
+  public addFilter(name: string, value: string|number, operator: SQLComparisonOperator): void {
     this._filter.addFilterAttribute(new FilterAttribute(name, value, operator));
   }
 
