@@ -294,6 +294,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._orderBys = [];
   }
 
+  /**
+   * clear filter
+   */
   public clearFilter(): void {
     this._filter = new Filter(this._tableAlias);
   }
