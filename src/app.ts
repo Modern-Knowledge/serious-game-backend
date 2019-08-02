@@ -10,12 +10,14 @@ import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
+
 // Controllers (route handlers)
-import * as homeController from "./controllers/home";
-import { Filter } from "./db/filter/Filter";
-import { FilterAttribute } from "./db/filter/FilterAttribute";
-import { SQLComparisonOperator } from "./db/sql/SQLComparisonOperator";
-import { SQLOperator } from "./db/sql/SQLOperator";
+import HomeController from "./controllers/HomeController";
+import LoginController from "./controllers/LoginController";
+import GameController from "./controllers/GameController";
+import VersionController from "./controllers/VersionController";
+import RegisterController from "./controllers/RegisterController";
+import UserController from "./controllers/UserController";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -53,6 +55,13 @@ app.use((req, res, next) => {
 /**
  * Primary app routes.
  */
-app.all("/", homeController.index);
+app.use("/home", HomeController);
+app.use("/", LoginController);
+app.use("/game", GameController);
+app.use("/version", VersionController);
+app.use("/register", RegisterController);
+app.use("/user", UserController);
+
+
 
 export default app;
