@@ -10,6 +10,7 @@ import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
+import cors from "cors";
 
 // Controllers (route handlers)
 import HomeController from "./controllers/HomeController";
@@ -38,6 +39,10 @@ app.use(morgan("combined", { stream: accessLogStream }));
 // Express configuration
 app.set("port", process.env.PORT || 3000);
 
+// options for cors middleware
+const options: cors.CorsOptions = {}; // TODO: set cors options correct
+
+app.use(cors(options));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

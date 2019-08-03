@@ -82,7 +82,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         }
 
         returnEntities = this.postProcessSelect(returnEntities);
-        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} [${returnEntities}]`);
+        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} [${JSON.stringify(returnEntities)}]`);
 
         resolve(returnEntities);
       });
