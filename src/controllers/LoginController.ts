@@ -3,12 +3,7 @@ import { Request, Response } from "express";
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  console.log("before login");
-  next();
-});
-
-router.get("/login", (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
   res.send("LoginController");
 });
 

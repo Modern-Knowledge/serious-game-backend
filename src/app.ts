@@ -19,6 +19,7 @@ import GameController from "./controllers/GameController";
 import VersionController from "./controllers/VersionController";
 import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
+import LoggingController from "./controllers/LoggingController";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -66,7 +67,7 @@ app.use("/game", GameController);
 app.use("/version", VersionController);
 app.use("/register", RegisterController);
 app.use("/user", UserController);
-
+app.use("/logging", LoggingController);
 
 
 export default app;
