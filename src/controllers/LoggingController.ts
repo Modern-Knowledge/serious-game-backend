@@ -11,7 +11,7 @@ router.get("/", async (req: Request, res: Response) => {
   facade.addOrderBy("id", SQLOrder.ASC);
 
   const logs = await facade.getLogs();
-  
+
   res.type("json");
   res.json(logs);
   res.end();
