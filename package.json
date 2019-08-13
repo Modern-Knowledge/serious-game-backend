@@ -23,7 +23,7 @@
     "serve-debug": "nodemon --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "build-docs": "npm run delete-docs && typedoc",
-    "pre-build": "rm -rf dist/",
+    "pre-build": "rm -rf dist/ && rm -rf src/lib && cp -r ../serious-game-library/src/. ./src/lib",
     "delete-docs": "rm -rf docs/"
   },
   "dependencies": {

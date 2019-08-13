@@ -24,7 +24,7 @@ import LoggingController from "./controllers/LoggingController";
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
 
-const config: DotenvConfigOutput = dotenv.config({path: ".env"});
+const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
 if (config.error) { // .env not found
   const message: string = `${Helper.loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
   logger.error(message);
@@ -50,9 +50,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(flash());
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
+
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
@@ -68,6 +68,5 @@ app.use("/version", VersionController);
 app.use("/register", RegisterController);
 app.use("/user", UserController);
 app.use("/logging", LoggingController);
-
 
 export default app;
