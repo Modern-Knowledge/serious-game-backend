@@ -1,6 +1,5 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { Filter } from "../../filter/Filter";
 import { SQLOrderBy } from "../../sql/SQLOrderBy";
 import { SQLOrder } from "../../sql/SQLOrder";
 import { Log } from "../../../lib/models/Log";
@@ -28,24 +27,27 @@ export class LogFacade extends EntityFacade<Log> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    let sqlAttributes: string[] = ["id", "logger", "level", "method", "message", "params", "created_at", "modified_at"];
+    let sqlAttributes: string[] = ["logger", "level", "method", "message", "params"];
     if (excludedSQLAttributes) {
       sqlAttributes = sqlAttributes.filter(function(x) {
         return excludedSQLAttributes.indexOf(x) < 0;
       });
     }
 
-    return new SQLAttributes(this.tableAlias, sqlAttributes);
+    const superSqlAttributes: SQLAttributes = super.getSQLAttributes();
+    const thisSqlAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
+    thisSqlAttributes.addSqlAttributes(superSqlAttributes);
+
+    return thisSqlAttributes;
   }
 
   /**
    * returns logs that match the specified filter
-   * @param filter
    * @param excludedSQLAttributes
    */
-  public getLogs(excludedSQLAttributes?: string[], filter?: Filter): Promise<Log[]> {
+  public getLogs(excludedSQLAttributes?: string[]): Promise<Log[]> {
     const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins(), this._filter ? this._filter : filter);
+    return this.select(attributes, this.getJoins());
   }
 
   /**
@@ -70,10 +72,15 @@ export class LogFacade extends EntityFacade<Log> {
     const loggerParams: SQLValueAttribute = new SQLValueAttribute("params", this.tableName, log.params.join(" "));
     attributes.addAttribute(loggerParams);
 
+    const createdAtDate: Date = new Date();
+    const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
+    attributes.addAttribute(createdAtAttribute);
+
     return new Promise<Log>((resolve, reject) => {
       this.insert(attributes).then(id => {
         if (id > 0) {
           log.id = id;
+          log.createdAt = createdAtDate;
           resolve(log);
         }
       });
@@ -87,9 +94,7 @@ export class LogFacade extends EntityFacade<Log> {
   public fillEntity(result: any): Log {
     const l: Log = new Log();
 
-    if (result[this.name("id")] !== undefined) {
-      l.id = result[this.name("id")];
-    }
+    this.fillDefaultAttributes(l, result);
 
     if (result[this.name("logger")] !== undefined) {
       l.logger = result[this.name("logger")];
@@ -111,23 +116,7 @@ export class LogFacade extends EntityFacade<Log> {
       l.params = result[this.name("params")].split(" ");
     }
 
-    if (result[this.name("created_at")] !== undefined) {
-      l.createdAt = result[this.name("created_at")];
-    }
-
-    if (result[this.name("modified_at")] !== undefined) {
-      l.modifiedAt = result[this.name("modified_at")];
-    }
-
     return l;
   }
 
-  /**
-   * add an order by clause to the query
-   * @param attribute attribute for ordering
-   * @param order attribute sort order (ASC|DESC)
-   */
-  public addOrderBy(attribute: string, order: SQLOrder): void {
-    this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
-  }
 }

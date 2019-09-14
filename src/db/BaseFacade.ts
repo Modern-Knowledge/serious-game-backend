@@ -40,8 +40,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * returns sql attributes that should be retrieved from the database
    */
-  public getSQLAttributes(excludedSQLAttributes: string[]): SQLAttributes {
-    return new SQLAttributes();
+  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+    let sqlAttributes: string[] = ["id", "created_at", "modified_at"];
+    return new SQLAttributes(this.tableAlias, sqlAttributes);
   }
 
   /**
@@ -60,13 +61,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * executes an select query and returns the results
    * @param attributes attributes that should be retrieved
    * @param joins joins to other tables
-   * @param filter
    */
-  public select(attributes: SQLAttributes, joins: SQLJoin[], filter: Filter): Promise<EntityType[]> {
+  public select(attributes: SQLAttributes, joins: SQLJoin[]): Promise<EntityType[]> {
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
-    const params: (string | number)[] = selectQuery.fillParameters();
+    const params: (string | number | Date)[] = selectQuery.fillParameters();
 
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -98,7 +98,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public insert(attributes: SQLValueAttributes): Promise<number> {
     const npq: InsertQuery = this.getInsertQuery(attributes);
     const insertQuery: BakedQuery = npq.bake();
-    const params: (number | string)[] = insertQuery.fillParameters();
+    const params: (string | number | Date)[] = insertQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
       const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -116,12 +116,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * executes an update query and returns the number of affected rows
    * @param attributes name-value pairs of the entity that should be changed
-   * @param filter
    */
-  public update(attributes: SQLValueAttributes, filter: Filter): Promise<number> {
+  public update(attributes: SQLValueAttributes): Promise<number> {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
     const updateQuery: BakedQuery = npq.bake();
-    const params: (number | string)[] = updateQuery.fillParameters();
+    const params: (string | number | Date)[] = updateQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
       const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
@@ -138,12 +137,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   /**
    * executes a delete query and returns the number of affected rows
-   * @param filter Filter
    */
-  public delete(filter: Filter): Promise<number> {
+  public delete(): Promise<number> {
     const npq: DeleteQuery = this.getDeleteQuery(this.getFilter());
     const deleteQuery: BakedQuery = npq.bake();
-    const params: (number | string)[] = deleteQuery.fillParameters();
+    const params: (string | number | Date)[] = deleteQuery.fillParameters();
 
     let queryStr: string = deleteQuery.getBakedSQL();
     const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
@@ -268,20 +266,40 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public abstract fillEntity(results: any[]): EntityType;
 
   /**
-   * add an order by to the select query
-   * @param attribute
-   * @param order
+   * fills the default attributes for every model (id, created_at, modified_at)
+   * @param model
+   * @param result
    */
-  public abstract addOrderBy(attribute: string, order: SQLOrder): void;
+  public fillDefaultAttributes(model: EntityType, result: any): EntityType {
+    if (result["id"] !== undefined) {
+      model.id = result[this.name("id")];
+    }
+
+    if (result["created_at"] !== undefined) {
+      model.createdAt = result[this.name("created_at")];
+    }
+
+    if (result["modified_at"] !== undefined) {
+      model.modifiedAt = result[this.name("modified_at")];
+    }
+
+    return model;
+  }
 
   /**
-   * adds a filter attribute to the facade
-   * @param name name of the attribute e.g.: id
-   * @param value value of the attribute
-   * @param operator comparison attribute
+   * add an order by clause to the query
+   * @param attribute attribute for ordering
+   * @param order attribute sort order (ASC|DESC)
    */
-  public addFilter(name: string, value: string|number, operator: SQLComparisonOperator): void {
-    this._filter.addFilterAttribute(new FilterAttribute(name, value, operator));
+  public addOrderBy(attribute: string, order: SQLOrder): void {
+    this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
+  }
+
+  /**
+   * retrieves the filter
+   */
+  public getFacadeFilter(): Filter {
+    return this._filter;
   }
 
   protected getFilter(): SQLWhere {
