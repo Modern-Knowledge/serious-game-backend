@@ -56,7 +56,7 @@ export class UserFacade extends EntityFacade<User> {
   public insertUser(user: User): Promise<User> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    const nameAttribute: SQLValueAttribute = new SQLValueAttribute("username", this.tableName, user.username);
+    const nameAttribute: SQLValueAttribute = new SQLValueAttribute("username", this.tableName, user.email);
     attributes.addAttribute(nameAttribute);
 
     return new Promise<User>((resolve, reject) => {
@@ -77,7 +77,7 @@ export class UserFacade extends EntityFacade<User> {
   public updateUser(user: User, filter?: Filter): Promise<number> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.username);
+    const username: SQLValueAttribute = new SQLValueAttribute("username", this.tableAlias, user.email);
     attributes.addAttribute(username);
 
     return this.update(attributes, this._filter ? this._filter : filter);
@@ -103,7 +103,7 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     if (result[this.name("username")] !== undefined) {
-      u.username = result[this.name("username")];
+      u.email = result[this.name("username")];
     }
 
     return u;
