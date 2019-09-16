@@ -44,7 +44,7 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
 
   /**
    * returns a string with name = value pairs.
-   * e.g.: name = 'name', age = '12'
+   * e.g.: name = "name", age = "12"
    */
   public getNameParamNamePairs(): string {
     let returnSql: string = "";

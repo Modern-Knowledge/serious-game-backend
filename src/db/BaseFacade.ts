@@ -22,6 +22,7 @@ import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
 import { FilterAttribute } from "./filter/FilterAttribute";
 import { SQLComparisonOperator } from "./sql/SQLComparisonOperator";
+import { Error } from "tslint/lib/error";
 
 /**
  * base class for crud operations with the database
@@ -39,9 +40,22 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   /**
    * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes
+   * @param allowedSqlAttributes
    */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+  protected getSQLAttributes(excludedSQLAttributes?: string[], allowedSqlAttributes?: string[]): SQLAttributes {
     let sqlAttributes: string[] = ["id", "created_at", "modified_at"];
+
+    // combine sql attributes
+    sqlAttributes = sqlAttributes.concat(allowedSqlAttributes);
+
+    // filter excluded sql attributes
+    if (excludedSQLAttributes) {
+      sqlAttributes = sqlAttributes.filter(function(x) {
+        return excludedSQLAttributes.indexOf(x) < 0;
+      });
+    }
+
     return new SQLAttributes(this.tableAlias, sqlAttributes);
   }
 
@@ -117,12 +131,18 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * executes an update query and returns the number of affected rows
    * @param attributes name-value pairs of the entity that should be changed
    */
-  public update(attributes: SQLValueAttributes): Promise<number> {
+  public async update(attributes: SQLValueAttributes): Promise<number> {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
     const updateQuery: BakedQuery = npq.bake();
     const params: (string | number | Date)[] = updateQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
+      if (this._filter.isEmpty) {
+        const error: string = `${Helper.loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
+        logger.error(error);
+        return reject(new Error(error));
+      }
+
       const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
@@ -148,6 +168,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     queryStr = queryStr.replace(regex, ""); // workaround for delete
 
     return new Promise<number>((resolve, reject) => {
+      if (this._filter.isEmpty) {
+        const error: string = `${Helper.loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
+        logger.error(error);
+        return reject(new Error(error));
+      }
+
       const query = this._dbInstance.connection.query(queryStr, params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
@@ -261,30 +287,25 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   /**
    * assigns the retrieved values to the newly created entity and returns it
-   * @param results results from the select query
+   * @param result results from the select query
    */
-  public abstract fillEntity(results: any[]): EntityType;
+  protected abstract fillEntity(result: any): EntityType;
 
-  /**
-   * fills the default attributes for every model (id, created_at, modified_at)
-   * @param model
-   * @param result
-   */
-  public fillDefaultAttributes(model: EntityType, result: any): EntityType {
-    if (result["id"] !== undefined) {
-      model.id = result[this.name("id")];
+  protected fillDefaultAttributes(result: any, entity: EntityType): EntityType {
+    if (result[this.name("id")] !== undefined) {
+      entity.id = result[this.name("id")];
     }
 
-    if (result["created_at"] !== undefined) {
-      model.createdAt = result[this.name("created_at")];
+    if (result[this.name("created_at")] !== undefined) {
+      entity.createdAt = result[this.name("created_at")];
     }
 
-    if (result["modified_at"] !== undefined) {
-      model.modifiedAt = result[this.name("modified_at")];
+    if (result[this.name("modified_at")] !== undefined) {
+      entity.modifiedAt = result[this.name("modified_at")];
     }
 
-    return model;
-  }
+    return entity;
+}
 
   /**
    * add an order by clause to the query
@@ -296,14 +317,22 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   }
 
   /**
-   * retrieves the filter
+   * retrieves the filter for the facade
    */
   public getFacadeFilter(): Filter {
     return this._filter;
   }
 
   protected getFilter(): SQLWhere {
-    return new SQLWhere(this._filter.getBlock());
+    return this._filter.isEmpty ? undefined : new SQLWhere(this._filter.getBlock());
+  }
+
+  /**
+   * sets the filter
+   * @param filter
+   */
+  public setFilter(filter: Filter): void {
+    this._filter = filter;
   }
 
   /**

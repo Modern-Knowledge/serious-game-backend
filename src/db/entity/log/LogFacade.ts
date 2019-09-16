@@ -1,7 +1,5 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLOrderBy } from "../../sql/SQLOrderBy";
-import { SQLOrder } from "../../sql/SQLOrder";
 import { Log } from "../../../lib/models/Log";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
@@ -27,18 +25,9 @@ export class LogFacade extends EntityFacade<Log> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    let sqlAttributes: string[] = ["logger", "level", "method", "message", "params"];
-    if (excludedSQLAttributes) {
-      sqlAttributes = sqlAttributes.filter(function(x) {
-        return excludedSQLAttributes.indexOf(x) < 0;
-      });
-    }
+    const sqlAttributes: string[] = ["logger", "level", "method", "message", "params"];
 
-    const superSqlAttributes: SQLAttributes = super.getSQLAttributes();
-    const thisSqlAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
-    thisSqlAttributes.addSqlAttributes(superSqlAttributes);
-
-    return thisSqlAttributes;
+    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
 
   /**
@@ -94,7 +83,8 @@ export class LogFacade extends EntityFacade<Log> {
   public fillEntity(result: any): Log {
     const l: Log = new Log();
 
-    this.fillDefaultAttributes(l, result);
+    this.fillDefaultAttributes(result, l);
+
 
     if (result[this.name("logger")] !== undefined) {
       l.logger = result[this.name("logger")];

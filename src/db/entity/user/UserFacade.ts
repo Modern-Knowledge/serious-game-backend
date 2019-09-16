@@ -3,7 +3,8 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLJoin } from "../../sql/SQLJoin";
+import { FilterAttribute } from "../../filter/FilterAttribute";
+import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 
 /**
  * handles CRUD operations with the user-entity
@@ -14,6 +15,7 @@ export class UserFacade extends EntityFacade<User> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
+
     if (tableAlias) {
       super("users", tableAlias);
     } else {
@@ -26,18 +28,9 @@ export class UserFacade extends EntityFacade<User> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    let sqlAttributes: string[] = ["email", "password", "forename", "lastname", "last_login", "failed_login_attempts", "status"];
-    if (excludedSQLAttributes) {
-      sqlAttributes = sqlAttributes.filter(function(x) {
-        return excludedSQLAttributes.indexOf(x) < 0;
-      });
-    }
+    const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "last_login", "failed_login_attempts", "status"];
 
-    const superSqlAttributes: SQLAttributes = super.getSQLAttributes();
-    const thisSqlAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
-    thisSqlAttributes.addSqlAttributes(superSqlAttributes);
-
-    return thisSqlAttributes;
+    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
 
   /**
@@ -50,7 +43,7 @@ export class UserFacade extends EntityFacade<User> {
   }
 
   /**
-   * inserts a new user and returns the id of the created user
+   * inserts a new user and returns the created user
    * @param user
    */
   public insertUser(user: User): Promise<User> {
@@ -102,32 +95,32 @@ export class UserFacade extends EntityFacade<User> {
   public updateUser(user: User): Promise<number> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    const emailAttribute: SQLValueAttribute = new SQLValueAttribute("email", this.tableName, user.email);
+    const emailAttribute: SQLValueAttribute = new SQLValueAttribute("email", this.tableAlias, user.email);
     attributes.addAttribute(emailAttribute);
 
-    const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", this.tableName, user.password);
+    const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", this.tableAlias, user.password);
     attributes.addAttribute(passwordAttribute);
 
-    const forenameAttribute: SQLValueAttribute = new SQLValueAttribute("forename", this.tableName, user.forename);
+    const forenameAttribute: SQLValueAttribute = new SQLValueAttribute("forename", this.tableAlias, user.forename);
     attributes.addAttribute(forenameAttribute);
 
-    const lastnameAttribute: SQLValueAttribute = new SQLValueAttribute("lastname", this.tableName, user.lastname);
+    const lastnameAttribute: SQLValueAttribute = new SQLValueAttribute("lastname", this.tableAlias, user.lastname);
     attributes.addAttribute(lastnameAttribute);
 
-    const lastLoginAttribute: SQLValueAttribute = new SQLValueAttribute("last_login", this.tableName, user.lastLogin);
+    const lastLoginAttribute: SQLValueAttribute = new SQLValueAttribute("last_login", this.tableAlias, user.lastLogin);
     attributes.addAttribute(lastLoginAttribute);
 
-    const failedLoginAttemptsAttribute: SQLValueAttribute = new SQLValueAttribute("failed_login_attempts", this.tableName, user.failedLoginAttempts);
+    const failedLoginAttemptsAttribute: SQLValueAttribute = new SQLValueAttribute("failed_login_attempts", this.tableAlias, user.failedLoginAttempts);
     attributes.addAttribute(failedLoginAttemptsAttribute);
 
-    const loginCooldownAttribute: SQLValueAttribute = new SQLValueAttribute("login_cooldown", this.tableName, user.loginCoolDown);
+    const loginCooldownAttribute: SQLValueAttribute = new SQLValueAttribute("login_cooldown", this.tableAlias, user.loginCoolDown);
     attributes.addAttribute(loginCooldownAttribute);
 
-    const statusAttribute: SQLValueAttribute = new SQLValueAttribute("status", this.tableName, user.status);
+    const statusAttribute: SQLValueAttribute = new SQLValueAttribute("status", this.tableAlias, user.status);
     attributes.addAttribute(statusAttribute);
 
     const modifiedAtDate = new Date();
-    const modifiedAtAttribute: SQLValueAttribute = new SQLValueAttribute("modified_at", this.tableName, modifiedAtDate);
+    const modifiedAtAttribute: SQLValueAttribute = new SQLValueAttribute("modified_at", this.tableAlias, modifiedAtDate);
     attributes.addAttribute(modifiedAtAttribute);
 
     user.modifiedAt = modifiedAtDate;
@@ -138,18 +131,30 @@ export class UserFacade extends EntityFacade<User> {
   /**
    * deletes the specified user in the database and returns the number of affected rows
    */
-  public deleteUser(): Promise<number> {
+  public deleteUser(user: User): Promise<number> {
+    this._filter.addFilterAttribute(new FilterAttribute("id", user.id, SQLComparisonOperator.EQUAL));
     return this.delete();
   }
 
   /**
+   * fills the entity
+   * @param result result for filling
+   */
+  protected fillEntity(result: any): User {
+    const u: User = new User();
+    this.fillUserEntity(result, u);
+
+    return u;
+  }
+
+
+  /**
    * assigns the retrieved values to the newly created user and returns the user
    * @param result retrieved result
+   * @param u entity to fill
    */
-  public fillEntity(result: any): User {
-    const u: User = new User();
-
-    this.fillDefaultAttributes(u, result);
+  public fillUserEntity(result: any, u: User): User {
+    this.fillDefaultAttributes(result, u);
 
     if (result[this.name("email")] !== undefined) {
       u.email = result[this.name("email")];
@@ -184,20 +189,6 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     return u;
-  }
-
-  /**
-   * creates the joins for the user-entity and returns them as a list
-   */
-  public getJoins(): SQLJoin[] {
-    const joins: SQLJoin[] = [];
-
-    // example join
-   /* const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText("u.id = u1.id");
-    joins.push(new SQLJoin("users", "u1", userJoin, JoinType.JOIN)); */
-
-    return joins;
   }
 
 }

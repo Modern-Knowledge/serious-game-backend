@@ -9,6 +9,7 @@ import { SQLOperator } from "../sql/SQLOperator";
 export class Filter implements Filterable {
   private _root: SQLBlock = new SQLBlock();
   private _tableAlias: string;
+  private _empty: boolean = true;
 
   public constructor(tableAlias?: string) {
     this._tableAlias = tableAlias;
@@ -19,6 +20,7 @@ export class Filter implements Filterable {
    * @param filterAttribute filterAttribute that contains name, value, comparison operator
    */
   public addFilterAttribute(filterAttribute: FilterAttribute): Filter {
+    this._empty = false;
     filterAttribute.tableAlias = this._tableAlias;
     this._root.addElement(filterAttribute.getBlock());
     return this;
@@ -30,6 +32,7 @@ export class Filter implements Filterable {
    * @param filter
    */
   public addSubFilter(filter: Filter): Filter {
+    this._empty = false;
     this._root.addElement(filter.getBlock());
     return this;
   }
@@ -39,6 +42,7 @@ export class Filter implements Filterable {
    * @param operator SQLOperator like AND, OR
    */
   public addOperator(operator: SQLOperator): Filter {
+    this._empty = false;
     this._root.addKeyword(operator);
     return this;
   }
@@ -52,5 +56,9 @@ export class Filter implements Filterable {
 
   set tableAlias(value: string) {
     this._tableAlias = value;
+  }
+
+  get isEmpty() {
+    return this._empty;
   }
 }
