@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ImageFacade } from "../db/entity/user/ImageFacade";
+import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { Filter } from "../db/filter/Filter";
 import { FilterAttribute } from "../db/filter/FilterAttribute";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
