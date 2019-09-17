@@ -12,6 +12,10 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { Patient } from "../../../lib/models/Patient";
 import { Filter } from "../../filter/Filter";
 
+
+/**
+ * handles crud operations with patients
+ */
 export class PatientFacade extends EntityFacade<Patient> {
 
   private userFacade: UserFacade = new UserFacade();
@@ -118,10 +122,6 @@ export class PatientFacade extends EntityFacade<Patient> {
 
     if (result[this.name("info")] !== undefined) {
       p.info = result[this.name("info")];
-    }
-
-    if (result[this.name("patient_settings_id")] !== undefined) {
-      p.patientSettingsId = result[this.name("patient_settings_id")];
     }
 
     return p;

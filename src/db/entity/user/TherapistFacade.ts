@@ -12,6 +12,10 @@ import { JoinType } from "../../sql/JoinType";
 import { SQLBlock } from "../../sql/SQLBlock";
 import { Filter } from "../../filter/Filter";
 
+/**
+ *
+ * handles CRUD operations with therapists
+ */
 export class TherapistFacade extends EntityFacade<Therapist> {
 
   private userFacade: UserFacade = new UserFacade();

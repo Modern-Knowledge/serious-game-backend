@@ -20,6 +20,8 @@ import VersionController from "./controllers/VersionController";
 import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
+import ImageController from "./controllers/ImageController";
+
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -68,5 +70,7 @@ app.use("/version", VersionController);
 app.use("/register", RegisterController);
 app.use("/user", UserController);
 app.use("/logging", LoggingController);
+app.use("/images", ImageController);
+
 
 export default app;

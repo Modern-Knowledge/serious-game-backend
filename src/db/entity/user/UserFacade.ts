@@ -7,7 +7,7 @@ import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 
 /**
- * handles CRUD operations with the user-entity
+ * handles CRUD operations with users
  */
 export class UserFacade extends EntityFacade<User> {
 
