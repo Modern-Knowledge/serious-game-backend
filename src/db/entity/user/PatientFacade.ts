@@ -12,16 +12,21 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { Patient } from "../../../lib/models/Patient";
 import { Filter } from "../../filter/Filter";
 
-
 /**
- * handles crud operations with patients
+ * handles crud operations with the patient-entity
  */
 export class PatientFacade extends EntityFacade<Patient> {
 
-  private userFacade: UserFacade = new UserFacade();
+  private _userFacade: UserFacade;
 
-  public constructor() {
-    super("patients", "p");
+  public constructor(tableAlias?: string) {
+    if (tableAlias) {
+      super("patients", tableAlias);
+    } else {
+      super("patients", "p");
+    }
+
+    this._userFacade = new UserFacade("up");
   }
 
   /**
@@ -29,9 +34,9 @@ export class PatientFacade extends EntityFacade<Patient> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["users_id"];
+    const sqlAttributes: string[] = ["patient_id", "birthday", "info"];
 
-    const userAttributes: SQLAttributes = this.userFacade.getSQLAttributes(excludedSQLAttributes);
+    const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
     const patientsAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
     patientsAttributes.addSqlAttributes(userAttributes);
 
@@ -52,12 +57,12 @@ export class PatientFacade extends EntityFacade<Patient> {
    * @param patient patient to insert
    */
   public async insertPatient(patient: Patient): Promise<Patient> {
-    const t: User = await this.userFacade.insertUser(patient);
+    const t: User = await this._userFacade.insertUser(patient);
 
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    const usersIdAttribute: SQLValueAttribute = new SQLValueAttribute("users_id", this.tableName, t.id);
-    attributes.addAttribute(usersIdAttribute);
+    const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", this.tableName, t.id);
+    attributes.addAttribute(patientIdAttribute);
 
     const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", this.tableName, patient.birthday);
     attributes.addAttribute(birthdayAttribute);
@@ -89,7 +94,7 @@ export class PatientFacade extends EntityFacade<Patient> {
     const infoAttribute: SQLValueAttribute = new SQLValueAttribute("info", this.tableAlias, patient.info);
     attributes.addAttribute(infoAttribute);
 
-    const userRows: number = await this.userFacade.updateUser(patient);
+    const userRows: number = await this._userFacade.updateUser(patient);
     const patientRows: number = await this.update(attributes);
 
     return userRows + patientRows;
@@ -100,10 +105,10 @@ export class PatientFacade extends EntityFacade<Patient> {
    * @param patient patient to delete
    */
   public async deletePatient(patient: Patient): Promise<number> {
-    this._filter.addFilterAttribute(new FilterAttribute("users_id", patient.id, SQLComparisonOperator.EQUAL));
+    this._filter.addFilterAttribute(new FilterAttribute("patient_id", patient.id, SQLComparisonOperator.EQUAL));
     const rows: number = await this.delete();
 
-    const userRows: number = await this.userFacade.deleteUser(patient);
+    const userRows: number = await this._userFacade.deleteUser(patient);
 
     return rows + userRows;
   }
@@ -114,7 +119,7 @@ export class PatientFacade extends EntityFacade<Patient> {
    */
   public fillEntity(result: any): Patient {
     const p: Patient = new Patient();
-    this.userFacade.fillUserEntity(result, p);
+    this._userFacade.fillUserEntity(result, p);
 
     if (result[this.name("birthday")] !== undefined) {
       p.birthday = result[this.name("birthday")];
@@ -134,8 +139,8 @@ export class PatientFacade extends EntityFacade<Patient> {
     const joins: SQLJoin[] = [];
 
     const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.users_id = ${this.userFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this.userFacade.tableName, this.userFacade.tableAlias, userJoin, JoinType.JOIN));
+    userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
+    joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
 
     return joins;
   }
@@ -144,7 +149,7 @@ export class PatientFacade extends EntityFacade<Patient> {
    * returns the userFacadeFilter
    */
   public getUserFacadeFilter(): Filter {
-    return this.userFacade.getFacadeFilter();
+    return this._userFacade.getFacadeFilter();
   }
 
 }

@@ -9,6 +9,7 @@ import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { Status } from "../lib/enums/Status";
 import { Therapist } from "../lib/models/Therapist";
 import { Patient } from "../lib/models/Patient";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 
 const router = express.Router();
 
@@ -23,12 +24,12 @@ router.get("/", async (req: Request, res: Response) => {
    const filter: Filter = facade.getFacadeFilter();
    // filter.addFilterAttribute(new FilterAttribute("der", "asdasd", SQLComparisonOperator.EQUAL));
   //
-  const users = await facade.getUsers();
+  //const users = await facade.getUsers();
   //
   // const u: User = new User();
   // await facade.insertUser(u);
 
-  const therapistFacade: TherapistFacade = new TherapistFacade();
+/* const therapistFacade: TherapistFacade = new TherapistFacade();
   const therapists = await therapistFacade.getTherapists();
 
   const patientFacade: PatientFacade = new PatientFacade();
@@ -48,10 +49,13 @@ router.get("/", async (req: Request, res: Response) => {
 
 
   const newpatient = await patientFacade.deletePatient(patient1);
-  console.log(newpatient);
+  console.log(newpatient);*/
 
+  const therapistCompFacade = new TherapistCompositeFacade();
+  const lol = await therapistCompFacade.getTherapists();
+  console.log(lol[0].patients);
 
-  res.jsonp(therapists);
+  res.jsonp("therapists");
 });
 
 export default router;

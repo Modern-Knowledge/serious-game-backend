@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Game } from "../../../lib/models/Game";
 
 /**
- * handles CRUD operations with games
+ * handles CRUD operations with the game-entity
  */
 export class GameFacade extends EntityFacade<Game> {
 
@@ -11,7 +11,6 @@ export class GameFacade extends EntityFacade<Game> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("games", tableAlias);
     } else {
@@ -53,7 +52,6 @@ export class GameFacade extends EntityFacade<Game> {
     if (result[this.name("description")] !== undefined) {
       game.description = result[this.name("description")];
     }
-
 
     return game;
   }

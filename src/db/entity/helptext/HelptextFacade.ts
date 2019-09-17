@@ -1,22 +1,30 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { Helptext } from "../../../lib/models/Helptext";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { JoinType } from "../../sql/JoinType";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { Filter } from "../../filter/Filter";
+import {TextFacade} from "./TextFacade";
+import {Helptext} from "../../../lib/models/Helptext";
 
 /**
- * handles CRUD operations with helptexts
+ * handles CRUD operations with the helptext-entity
  */
 export class HelptextFacade extends EntityFacade<Helptext> {
+
+  private _textFacade: TextFacade;
 
   /**
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("helptexts", tableAlias);
     } else {
-      super("helptexts", "hp");
+      super("helptexts", "helpt");
     }
+
+    this._textFacade = new TextFacade("texthelp");
   }
 
   /**
@@ -24,9 +32,13 @@ export class HelptextFacade extends EntityFacade<Helptext> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["name", "text"];
+    const sqlAttributes: string[] = ["helptext_id"];
 
-    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
+    const helptextAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
+    helptextAttributes.addSqlAttributes(textAttributes);
+
+    return helptextAttributes;
   }
 
   /**
@@ -42,22 +54,31 @@ export class HelptextFacade extends EntityFacade<Helptext> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Helptext {
+  public fillEntity(result: any): Helptext {
     const helptext: Helptext = new Helptext();
-
-    this.fillDefaultAttributes(result, helptext);
-
-    if (result[this.name("name")] !== undefined) {
-      helptext.name = result[this.name("name")];
-    }
-
-
-    if (result[this.name("text")] !== undefined) {
-      helptext.text = result[this.name("text")];
-    }
-
+    this._textFacade.fillTextEntity(result, helptext);
 
     return helptext;
+  }
+
+  /**
+   * creates the joins for the therapist-entity and returns them as a list
+   */
+  public getJoins(): SQLJoin[] {
+    const joins: SQLJoin[] = [];
+
+    const userJoin: SQLBlock = new SQLBlock();
+    userJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
+    joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, userJoin, JoinType.JOIN));
+
+    return joins;
+  }
+
+  /**
+   * returns the userFacadeFilter
+   */
+  public getTextFacadeFilter(): Filter {
+    return this._textFacade.getFacadeFilter();
   }
 
 }

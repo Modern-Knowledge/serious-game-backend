@@ -14,14 +14,20 @@ import { Filter } from "../../filter/Filter";
 
 /**
  *
- * handles CRUD operations with therapists
+ * handles CRUD operations with the therapist-entity
  */
 export class TherapistFacade extends EntityFacade<Therapist> {
 
-  private _userFacade: UserFacade = new UserFacade();
+  private _userFacade: UserFacade;
 
-  public constructor() {
-    super("therapists", "t");
+  public constructor(tableAlias?: string) {
+    if (tableAlias) {
+      super("therapists", tableAlias);
+    } else {
+      super("therapists", "t");
+    }
+
+    this._userFacade = new UserFacade("ut");
   }
 
   /**
@@ -29,7 +35,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["users_id"];
+    const sqlAttributes: string[] = ["therapist_id"];
 
     const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
     const therapistAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
@@ -56,8 +62,8 @@ export class TherapistFacade extends EntityFacade<Therapist> {
 
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    const emailAttribute: SQLValueAttribute = new SQLValueAttribute("users_id", this.tableName, t.id);
-    attributes.addAttribute(emailAttribute);
+    const therapistIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", this.tableName, t.id);
+    attributes.addAttribute(therapistIdAttribute);
 
     return new Promise<Therapist>((resolve, reject) => {
       this.insert(attributes).then(id => {
@@ -83,7 +89,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param therapist
    */
   public async deleteTherapist(therapist: Therapist): Promise<number> {
-    this._filter.addFilterAttribute(new FilterAttribute("users_id", therapist.id, SQLComparisonOperator.EQUAL));
+    this._filter.addFilterAttribute(new FilterAttribute("therapist_id", therapist.id, SQLComparisonOperator.EQUAL));
     const rows: number = await this.delete();
 
     const userRows: number = await this._userFacade.deleteUser(therapist);
@@ -109,7 +115,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
     const joins: SQLJoin[] = [];
 
     const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.users_id = ${this._userFacade.tableAlias}.id`);
+    userJoin.addText(`${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`);
     joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
 
     return joins;

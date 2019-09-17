@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { AppSetting } from "../../../lib/models/AppSetting";
 
 /**
- * handles CRUD operations with app-settings
+ * handles CRUD operations with app-setting-entity
  */
 export class AppSettingFacade extends EntityFacade<AppSetting> {
 
@@ -11,7 +11,6 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("app_settings", tableAlias);
     } else {
@@ -24,7 +23,7 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = [];
+    const sqlAttributes: string[] = ["id"];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }

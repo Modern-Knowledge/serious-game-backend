@@ -11,7 +11,6 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("therapists_patients", tableAlias);
     } else {
@@ -24,7 +23,7 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] =  ["therapists_id", "patients_id"];
+    const sqlAttributes: string[] =  ["therapist_id", "patient_id"];
     let exclDefaultAttr: string[] = ["id", "created_at", "modified_at"];
 
     if (excludedSQLAttributes) {
@@ -50,12 +49,12 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
   protected fillEntity(result: any): TherapistPatient {
     const therapistPatient: TherapistPatient = new TherapistPatient();
 
-    if (result[this.name("therapists_id")] !== undefined) {
-      therapistPatient.therapists_id = result[this.name("therapists_id")];
+    if (result[this.name("therapist_id")] !== undefined) {
+      therapistPatient.therapistId = result[this.name("therapist_id")];
     }
 
-    if (result[this.name("patients_id")] !== undefined) {
-      therapistPatient.patients_id = result[this.name("patients_id")];
+    if (result[this.name("patient_id")] !== undefined) {
+      therapistPatient.patientId = result[this.name("patient_id")];
     }
 
     return therapistPatient;

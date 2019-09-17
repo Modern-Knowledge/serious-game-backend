@@ -14,12 +14,20 @@ import { Patient } from "../../lib/models/Patient";
  */
 export class TherapistCompositeFacade extends EntityFacade<Therapist> {
 
-  private _therapistFacade: TherapistFacade = new TherapistFacade();
-  private _patientFacade: PatientFacade = new PatientFacade();
-  private _therapistPatientFacade: TherapistsPatientsFacade = new TherapistsPatientsFacade();
+  private _therapistFacade: TherapistFacade;
+  private _patientFacade: PatientFacade;
+  private _therapistPatientFacade: TherapistsPatientsFacade;
 
-  public constructor() {
-    super("therapists", "thera");
+  public constructor(tableAlias?: string) {
+    if (tableAlias) {
+      super("therapists", tableAlias);
+    } else {
+      super("therapists", "t");
+    }
+
+    this._therapistFacade = new TherapistFacade();
+    this._patientFacade = new PatientFacade();
+    this._therapistPatientFacade = new TherapistsPatientsFacade();
   }
 
   /**
@@ -32,7 +40,6 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
     returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
     returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
-
 
     return returnAttributes;
   }
@@ -66,23 +73,32 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     let joins: SQLJoin[] = [];
 
     joins = joins.concat(this._therapistFacade.getJoins()); // add therapist joins (user)
-    joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
 
     const therapistPatientJoin: SQLBlock = new SQLBlock();
-    therapistPatientJoin.addText(`${this._therapistFacade.tableAlias}.users_id = ${this._therapistPatientFacade.tableAlias}.therapists_id`);
+    therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
     joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN));
 
     const patientTherapistJoin: SQLBlock = new SQLBlock();
-    patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patients_id = ${this._patientFacade.tableAlias}.users_id`);
+    patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
     joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN));
 
+    joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
 
     return joins;
   }
 
-
   postProcessSelect(entities: Therapist[]): Therapist[] {
-    return super.postProcessSelect(entities);
-    // %todo
+    const therapistMap = new Map<number, Therapist>();
+
+    for (const therapist of entities) {
+      if (!therapistMap.has(therapist.id)) {
+        therapistMap.set(therapist.id, therapist)
+      } else {
+        const existingTherapist: Therapist = therapistMap.get(therapist.id);
+        existingTherapist.addPatients(therapist.patients);
+      }
+    }
+
+    return Array.from(therapistMap.values());
   }
 }

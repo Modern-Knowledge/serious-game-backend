@@ -25,7 +25,7 @@ export class LogFacade extends EntityFacade<Log> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["logger", "level", "method", "message", "params"];
+    const sqlAttributes: string[] = ["logger", "level", "method", "message", "params", "user_id"];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
@@ -65,6 +65,9 @@ export class LogFacade extends EntityFacade<Log> {
     const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
     attributes.addAttribute(createdAtAttribute);
 
+    const userIdParams: SQLValueAttribute = new SQLValueAttribute("user_id", this.tableName, log.userId);
+    attributes.addAttribute(userIdParams);
+
     return new Promise<Log>((resolve, reject) => {
       this.insert(attributes).then(id => {
         if (id > 0) {
@@ -103,6 +106,10 @@ export class LogFacade extends EntityFacade<Log> {
 
     if (result[this.name("params")] !== undefined) {
       l.params = result[this.name("params")].split(" ");
+    }
+
+    if (result[this.name("user_id")] !== undefined) {
+      l.userId = result[this.name("user_id")];
     }
 
     return l;

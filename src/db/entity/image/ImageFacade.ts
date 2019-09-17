@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import Image from "../../../lib/models/Image";
 
 /**
- * handles CRUD operations with images
+ * handles CRUD operations with the image-entity
  */
 export class ImageFacade extends EntityFacade<Image> {
 
@@ -11,7 +11,6 @@ export class ImageFacade extends EntityFacade<Image> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("images", tableAlias);
     } else {

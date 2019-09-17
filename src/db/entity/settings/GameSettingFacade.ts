@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { GameSetting } from "../../../lib/models/GameSetting";
 
 /**
- * handles CRUD operations with game-settings
+ * handles CRUD operations with game-settings-entity
  */
 export class GameSettingFacade extends EntityFacade<GameSetting> {
 
@@ -11,7 +11,6 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("game_settings", tableAlias);
     } else {
@@ -24,7 +23,7 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["games_id", "difficulties_id"];
+    const sqlAttributes: string[] = ["game_id", "difficulty_id"];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
@@ -47,14 +46,13 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
 
     this.fillDefaultAttributes(result, gameSetting);
 
-    if (result[this.name("games_id")] !== undefined) {
-      gameSetting.gamesId = result[this.name("games_id")];
+    if (result[this.name("game_id")] !== undefined) {
+      gameSetting.gameId = result[this.name("game_id")];
     }
 
-    if (result[this.name("difficulties_id")] !== undefined) {
-      gameSetting.difficultyId = result[this.name("difficulties_id")];
+    if (result[this.name("difficulty_id")] !== undefined) {
+      gameSetting.difficultyId = result[this.name("difficulty_id")];
     }
-
 
     return gameSetting;
   }

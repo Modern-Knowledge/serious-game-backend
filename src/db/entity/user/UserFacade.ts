@@ -7,7 +7,7 @@ import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 
 /**
- * handles CRUD operations with users
+ * handles CRUD operations with the user-entity
  */
 export class UserFacade extends EntityFacade<User> {
 
@@ -15,7 +15,6 @@ export class UserFacade extends EntityFacade<User> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("users", tableAlias);
     } else {
@@ -146,7 +145,6 @@ export class UserFacade extends EntityFacade<User> {
 
     return u;
   }
-
 
   /**
    * assigns the retrieved values to the newly created user and returns the user

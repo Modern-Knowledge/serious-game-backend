@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Word } from "../../../lib/models/Word";
 
 /**
- * handles CRUD operations with words
+ * handles CRUD operations with the word-entity
  */
 export class WordFacade extends EntityFacade<Word> {
 
@@ -11,7 +11,6 @@ export class WordFacade extends EntityFacade<Word> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("words", tableAlias);
     } else {

@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Statistic } from "../../../lib/models/Statistic";
 
 /**
- * handles CRUD operations with statistics
+ * handles CRUD operations with the statistic-entity
  */
 export class StatisticFacade extends EntityFacade<Statistic> {
 
@@ -11,7 +11,6 @@ export class StatisticFacade extends EntityFacade<Statistic> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("statistics", tableAlias);
     } else {
@@ -24,7 +23,7 @@ export class StatisticFacade extends EntityFacade<Statistic> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["starttime", "endtime", "errors"];
+    const sqlAttributes: string[] = ["starttime", "endtime"];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
@@ -53,10 +52,6 @@ export class StatisticFacade extends EntityFacade<Statistic> {
 
     if (result[this.name("endtime")] !== undefined) {
       statistic.endTime = result[this.name("endtime")];
-    }
-
-    if (result[this.name("errors")] !== undefined) {
-      statistic.errors = result[this.name("errors")];
     }
 
     return statistic;

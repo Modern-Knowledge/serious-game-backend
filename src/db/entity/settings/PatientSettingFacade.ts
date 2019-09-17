@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { PatientSetting } from "../../../lib/models/PatientSetting";
 
 /**
- * handles CRUD operations with patient-settings
+ * handles CRUD operations with patient-settings-entity
  */
 export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
@@ -11,7 +11,6 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
    * @param tableAlias
    */
   public constructor(tableAlias?: string) {
-
     if (tableAlias) {
       super("patient_settings", tableAlias);
     } else {
@@ -49,6 +48,10 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
     if (result[this.name("neglect")] !== undefined) {
       patientSetting.neglect = result[this.name("neglect")];
+    }
+
+    if (result[this.name("patient_id")] !== undefined) {
+      patientSetting.patientId = result[this.name("patient_id")];
     }
 
     return patientSetting;
