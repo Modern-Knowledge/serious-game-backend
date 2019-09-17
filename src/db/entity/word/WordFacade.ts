@@ -1,11 +1,11 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { AppSetting } from "../../../lib/models/AppSetting";
+import { Word } from "../../../lib/models/Word";
 
 /**
- * handles CRUD operations with app-settings
+ * handles CRUD operations with words
  */
-export class AppSettingFacade extends EntityFacade<AppSetting> {
+export class WordFacade extends EntityFacade<Word> {
 
   /**
    * @param tableAlias
@@ -13,27 +13,27 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
   public constructor(tableAlias?: string) {
 
     if (tableAlias) {
-      super("app_settings", tableAlias);
+      super("words", tableAlias);
     } else {
-      super("app_settings", "ap");
+      super("words", "w");
     }
   }
 
   /**
-   * returns SQL-attributes for the app-settings
+   * returns SQL-attributes for the words
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = [];
+    const sqlAttributes: string[] =  ["name"];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
 
   /**
-   * returns app-settings that match the specified filter
+   * returns words that match the specified filter
    * @param excludedSQLAttributes
    */
-  public getAppSettings(excludedSQLAttributes?: string[]): Promise<AppSetting[]> {
+  public getWords(excludedSQLAttributes?: string[]): Promise<Word[]> {
     const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
     return this.select(attributes, this.getJoins());
   }
@@ -42,12 +42,16 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): AppSetting {
-    const appSetting: AppSetting = new AppSetting();
+  protected fillEntity(result: any): Word {
+    const word: Word = new Word();
 
-    this.fillDefaultAttributes(result, appSetting);
+    this.fillDefaultAttributes(result, word);
 
-    return appSetting;
+    if (result[this.name("name")] !== undefined) {
+      word.name = result[this.name("name")];
+    }
+
+    return word;
   }
 
 }

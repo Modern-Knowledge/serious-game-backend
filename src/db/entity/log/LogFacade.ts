@@ -85,7 +85,6 @@ export class LogFacade extends EntityFacade<Log> {
 
     this.fillDefaultAttributes(result, l);
 
-
     if (result[this.name("logger")] !== undefined) {
       l.logger = result[this.name("logger")];
     }

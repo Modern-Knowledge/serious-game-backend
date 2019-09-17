@@ -28,7 +28,7 @@ export class PatientFacade extends EntityFacade<Patient> {
    * returns SQL-attributes for the patient
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
-  protected getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["users_id"];
 
     const userAttributes: SQLAttributes = this.userFacade.getSQLAttributes(excludedSQLAttributes);
@@ -112,7 +112,7 @@ export class PatientFacade extends EntityFacade<Patient> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Patient {
+  public fillEntity(result: any): Patient {
     const p: Patient = new Patient();
     this.userFacade.fillUserEntity(result, p);
 

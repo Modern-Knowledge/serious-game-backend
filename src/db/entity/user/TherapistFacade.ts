@@ -18,7 +18,7 @@ import { Filter } from "../../filter/Filter";
  */
 export class TherapistFacade extends EntityFacade<Therapist> {
 
-  private userFacade: UserFacade = new UserFacade();
+  private _userFacade: UserFacade = new UserFacade();
 
   public constructor() {
     super("therapists", "t");
@@ -28,10 +28,10 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * returns SQL-attributes for the therapist
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
-  protected getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["users_id"];
 
-    const userAttributes: SQLAttributes = this.userFacade.getSQLAttributes(excludedSQLAttributes);
+    const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
     const therapistAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
     therapistAttributes.addSqlAttributes(userAttributes);
 
@@ -52,7 +52,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param therapist
    */
   public async insertTherapist(therapist: Therapist): Promise<Therapist> {
-    const t: User = await this.userFacade.insertUser(therapist);
+    const t: User = await this._userFacade.insertUser(therapist);
 
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
@@ -75,7 +75,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param therapist
    */
   public async updateTherapist(therapist: Therapist): Promise<number> {
-    return await this.userFacade.updateUser(therapist);
+    return await this._userFacade.updateUser(therapist);
   }
 
   /**
@@ -86,7 +86,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
     this._filter.addFilterAttribute(new FilterAttribute("users_id", therapist.id, SQLComparisonOperator.EQUAL));
     const rows: number = await this.delete();
 
-    const userRows: number = await this.userFacade.deleteUser(therapist);
+    const userRows: number = await this._userFacade.deleteUser(therapist);
 
     return rows + userRows;
   }
@@ -95,9 +95,9 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Therapist {
+  public fillEntity(result: any): Therapist {
     const t: Therapist = new Therapist();
-    this.userFacade.fillUserEntity(result, t);
+    this._userFacade.fillUserEntity(result, t);
 
     return t;
   }
@@ -109,8 +109,8 @@ export class TherapistFacade extends EntityFacade<Therapist> {
     const joins: SQLJoin[] = [];
 
     const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.users_id = ${this.userFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this.userFacade.tableName, this.userFacade.tableAlias, userJoin, JoinType.JOIN));
+    userJoin.addText(`${this.tableAlias}.users_id = ${this._userFacade.tableAlias}.id`);
+    joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
 
     return joins;
   }
@@ -119,7 +119,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * returns the userFacadeFilter
    */
   public getUserFacadeFilter(): Filter {
-    return this.userFacade.getFacadeFilter();
+    return this._userFacade.getFacadeFilter();
   }
 
 }
