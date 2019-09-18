@@ -68,7 +68,7 @@ app.use("/", LoginController);
 app.use("/game", GameController);
 app.use("/version", VersionController);
 app.use("/register", RegisterController);
-app.use("/user", UserController);
+app.use("/users", UserController);
 app.use("/logging", LoggingController);
 app.use("/images", ImageController);
 
