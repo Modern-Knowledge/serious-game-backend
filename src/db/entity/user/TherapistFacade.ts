@@ -58,7 +58,6 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param therapist
    */
   public async insertTherapist(therapist: Therapist): Promise<Therapist> {
-    logger.debug(therapist.email);
     const t: User = await this._userFacade.insertUser(therapist);
 
     const attributes: SQLValueAttributes = new SQLValueAttributes();
