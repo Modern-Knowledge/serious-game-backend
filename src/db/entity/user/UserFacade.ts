@@ -5,6 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
+import logger from '../../../util/logger';
 
 /**
  * handles CRUD operations with the user-entity
@@ -63,7 +64,7 @@ export class UserFacade extends EntityFacade<User> {
     const lastLoginAttribute: SQLValueAttribute = new SQLValueAttribute("last_login", this.tableName, user.lastLogin);
     attributes.addAttribute(lastLoginAttribute);
 
-    const failedLoginAttemptsAttribute: SQLValueAttribute = new SQLValueAttribute("failed_login_attempts", this.tableName, user.failedLoginAttempts);
+    const failedLoginAttemptsAttribute: SQLValueAttribute = new SQLValueAttribute("failed_login_attempts", this.tableName, 0);
     attributes.addAttribute(failedLoginAttemptsAttribute);
 
     const loginCooldownAttribute: SQLValueAttribute = new SQLValueAttribute("login_cooldown", this.tableName, user.loginCoolDown);
