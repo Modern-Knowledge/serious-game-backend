@@ -41,7 +41,7 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): PatientSetting {
+  public fillEntity(result: any): PatientSetting {
     const patientSetting: PatientSetting = new PatientSetting();
 
     this.fillDefaultAttributes(result, patientSetting);

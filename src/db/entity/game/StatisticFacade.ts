@@ -41,7 +41,7 @@ export class StatisticFacade extends EntityFacade<Statistic> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Statistic {
+  public fillEntity(result: any): Statistic {
     const statistic: Statistic = new Statistic();
 
     this.fillDefaultAttributes(result, statistic);

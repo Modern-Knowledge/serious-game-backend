@@ -3,7 +3,7 @@ import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { Filter } from "../db/filter/Filter";
 import { FilterAttribute } from "../db/filter/FilterAttribute";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
-import Image from "../lib/models/Image";
+import { Image } from "../lib/models/Image";
 
 const router = express.Router();
 

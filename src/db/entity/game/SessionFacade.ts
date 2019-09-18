@@ -1,6 +1,6 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import Session from "../../../lib/models/Session";
+import { Session } from "../../../lib/models/Session";
 
 /**
  * handles CRUD operations with the session-entity
@@ -23,7 +23,7 @@ export class SessionFacade extends EntityFacade<Session> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    let excludedAttrDefault: string[] = ["id"]; // no id in session table
+    let excludedAttrDefault: string[] = [];
 
     if (excludedSQLAttributes) {
       excludedAttrDefault = excludedAttrDefault.concat(excludedSQLAttributes);
@@ -47,10 +47,14 @@ export class SessionFacade extends EntityFacade<Session> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Session {
+  public fillEntity(result: any): Session {
     const session: Session = new Session();
 
     this.fillDefaultAttributes(result, session);
+
+    if (result[this.name("id")] !== undefined) {
+      session.id = result[this.name("id")];
+    }
 
     if (result[this.name("game_id")] !== undefined) {
       session.gameId = result[this.name("game_id")];

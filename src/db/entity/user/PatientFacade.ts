@@ -14,6 +14,8 @@ import { Filter } from "../../filter/Filter";
 
 /**
  * handles crud operations with the patient-entity
+ * Joins:
+ * - users (1:1)
  */
 export class PatientFacade extends EntityFacade<Patient> {
 

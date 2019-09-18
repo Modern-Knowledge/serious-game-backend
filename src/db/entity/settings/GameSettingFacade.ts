@@ -1,11 +1,19 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { GameSetting } from "../../../lib/models/GameSetting";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { JoinType } from "../../sql/JoinType";
+import { DifficultyFacade } from "../enum/DifficultyFacade";
 
 /**
  * handles CRUD operations with game-settings-entity
+ * Joins:
+ *  - difficulties (1:1)
  */
 export class GameSettingFacade extends EntityFacade<GameSetting> {
+
+  private _difficultyFacade: DifficultyFacade;
 
   /**
    * @param tableAlias
@@ -16,6 +24,8 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
     } else {
       super("game_settings", "gs");
     }
+
+    this._difficultyFacade = new DifficultyFacade();
   }
 
   /**
@@ -25,7 +35,11 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["game_id", "difficulty_id"];
 
-    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    const returnAttributes: SQLAttributes = new SQLAttributes();
+    returnAttributes.addSqlAttributes(super.getSQLAttributes(excludedSQLAttributes, sqlAttributes));
+    returnAttributes.addSqlAttributes(this._difficultyFacade.getSQLAttributes(excludedSQLAttributes));
+
+    return returnAttributes
   }
 
   /**
@@ -41,7 +55,7 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): GameSetting {
+  public fillEntity(result: any): GameSetting {
     const gameSetting: GameSetting = new GameSetting();
 
     this.fillDefaultAttributes(result, gameSetting);
@@ -54,7 +68,22 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
       gameSetting.difficultyId = result[this.name("difficulty_id")];
     }
 
+    gameSetting.difficulty = this._difficultyFacade.fillEntity(result);
+
     return gameSetting;
+  }
+
+  /**
+   * creates the joins for the game-settings-entity and returns them as a list
+   */
+  public getJoins(): SQLJoin[] {
+    const joins: SQLJoin[] = [];
+
+    const difficultyJoin: SQLBlock = new SQLBlock();
+    difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
+    joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN));
+
+    return joins;
   }
 
 }

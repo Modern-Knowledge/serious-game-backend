@@ -9,6 +9,8 @@ import {Helptext} from "../../../lib/models/Helptext";
 
 /**
  * handles CRUD operations with the helptext-entity
+ * Joins:
+ * - texts (1:1)
  */
 export class HelptextFacade extends EntityFacade<Helptext> {
 
@@ -75,7 +77,7 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   }
 
   /**
-   * returns the userFacadeFilter
+   * returns the textFacadeFilter
    */
   public getTextFacadeFilter(): Filter {
     return this._textFacade.getFacadeFilter();

@@ -1,3 +1,5 @@
+import { AbstractModel } from "../lib/models/AbstractModel";
+
 export abstract class Helper {
   private constructor() {}
 
@@ -17,5 +19,20 @@ export abstract class Helper {
     }
 
     return `${((dir[1] !== undefined) ? dir[1] : "") + "/" + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
+  }
+
+  /**
+   * searches for model in values-array
+   * @param search model to search for
+   * @param values array to search in
+   */
+  public static arrayContainsModel(search: AbstractModel, values: AbstractModel[]): boolean {
+    for (const item of values) {
+      if(search.equals(item)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

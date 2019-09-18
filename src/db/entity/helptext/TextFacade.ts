@@ -67,5 +67,4 @@ export class TextFacade extends EntityFacade<Text> {
         return text;
     }
 
-
 }

@@ -1,6 +1,6 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import Image from "../../../lib/models/Image";
+import { Image } from "../../../lib/models/Image";
 
 /**
  * handles CRUD operations with the image-entity

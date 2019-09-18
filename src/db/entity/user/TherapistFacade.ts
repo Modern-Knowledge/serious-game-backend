@@ -13,13 +13,17 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { Filter } from "../../filter/Filter";
 
 /**
- *
  * handles CRUD operations with the therapist-entity
+ * Joins:
+ * - users (1:1)
  */
 export class TherapistFacade extends EntityFacade<Therapist> {
 
   private _userFacade: UserFacade;
 
+  /**
+   * @param tableAlias
+   */
   public constructor(tableAlias?: string) {
     if (tableAlias) {
       super("therapists", tableAlias);

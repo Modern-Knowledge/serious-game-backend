@@ -40,7 +40,7 @@ export class GameFacade extends EntityFacade<Game> {
    * fills the entity
    * @param result result for filling
    */
-  protected fillEntity(result: any): Game {
+  public fillEntity(result: any): Game {
     const game: Game = new Game();
 
     this.fillDefaultAttributes(result, game);

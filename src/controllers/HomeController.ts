@@ -10,6 +10,14 @@ import { Status } from "../lib/enums/Status";
 import { Therapist } from "../lib/models/Therapist";
 import { Patient } from "../lib/models/Patient";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import {HelptextFacade} from "../db/entity/helptext/HelptextFacade";
+import {ErrortextFacade} from "../db/entity/helptext/ErrortextFacade";
+import {StatisticFacade} from "../db/entity/game/StatisticFacade";
+import {StatisticCompositeFacade} from "../db/composite/StatisticCompositeFacade";
+import {PatientCompositeFacade} from "../db/composite/PatientCompositeFacade";
+import {GameCompositeFacade} from "../db/composite/GameCompositeFacade";
+import {SessionCompositeFacade} from "../db/composite/SessionCompositeFacade";
+import {SessionFacade} from "../db/entity/game/SessionFacade";
 
 const router = express.Router();
 
@@ -29,13 +37,13 @@ router.get("/", async (req: Request, res: Response) => {
   // const u: User = new User();
   // await facade.insertUser(u);
 
-/* const therapistFacade: TherapistFacade = new TherapistFacade();
+ const therapistFacade: TherapistFacade = new TherapistFacade();
   const therapists = await therapistFacade.getTherapists();
 
   const patientFacade: PatientFacade = new PatientFacade();
   const patients = await patientFacade.getPatients();
 
-  const patient1 = new Patient();
+ /* const patient1 = new Patient();
   patient1.id = 1;
   patient1.email = "florian1";
   patient1.password = "dere";
@@ -49,13 +57,43 @@ router.get("/", async (req: Request, res: Response) => {
 
 
   const newpatient = await patientFacade.deletePatient(patient1);
-  console.log(newpatient);*/
+  console.log(newpatient); */
 
-  const therapistCompFacade = new TherapistCompositeFacade();
-  const lol = await therapistCompFacade.getTherapists();
-  console.log(lol[0].patients);
+   const therapistCompFacade = new TherapistCompositeFacade();
+   const thera = await therapistCompFacade.getTherapists();
+   console.log(thera[0]);
+ //
+ //  const helptextFacade = new HelptextFacade();
+ //  console.log(await helptextFacade.getHelptexts());
+ //
+ //  const errortextFacade = new ErrortextFacade();
+ //  console.log(await errortextFacade.getErrorTexts());
+ //
+ //  const statisticFacade = new StatisticFacade();
+ //  console.log(await statisticFacade.getStatistics());
+ //
+ // const statisticCompFacade = new StatisticCompositeFacade();
+ // const statisticComp = await statisticCompFacade.getStatistics();
+ // console.log(statisticComp);
+ //
+  const patientCompositeFacade = new PatientCompositeFacade();
+  const patientComp = await patientCompositeFacade.getPatients();
+  console.log(patientComp[0].sessions);
+ //
+ // const gameCompositeFacade = new GameCompositeFacade();
+ // const gamesComp = await gameCompositeFacade.getGames();
+ // console.log(gamesComp[0].helptexts);
+ // console.log(gamesComp[0].gameSettings);
+ //
+ // const sessionFacade = new SessionFacade();
+ // const sess = await sessionFacade.getSessions();
+ // console.log(sess);
 
-  res.jsonp("therapists");
+ const sessionCompositeFacade = new SessionCompositeFacade();
+ const sessions = await sessionCompositeFacade.getSessions();
+ console.log(sessions);
+
+ res.jsonp("therapists");
 });
 
 export default router;

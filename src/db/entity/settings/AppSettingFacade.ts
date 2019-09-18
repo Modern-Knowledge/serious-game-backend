@@ -23,7 +23,7 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
    * @param excludedSQLAttributes sql attributes that are excluded from the query
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["id"];
+    const sqlAttributes: string[] = [];
 
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }

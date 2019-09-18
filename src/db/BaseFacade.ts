@@ -354,7 +354,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * e.g.: handle joins
    * @param entities entities that where returned from the database
    */
-  public postProcessSelect(entities: EntityType[]): EntityType[] {
+  protected postProcessSelect(entities: EntityType[]): EntityType[] {
     return entities;
   }
 
