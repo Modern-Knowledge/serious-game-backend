@@ -29,7 +29,7 @@ router.post("/login", async (req: Request, res: Response) => {
     expiresIn: 3600 // expires in 1 hour
   });
 
-  res.status(200).send({ auth: true, token: token });
+  return res.status(200).send({ auth: true, token: token });
 });
 
 export default router;
