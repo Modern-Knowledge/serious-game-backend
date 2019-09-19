@@ -29,7 +29,7 @@ router.get("/", async (req: Request, res: Response) => {
    const facade: UserFacade = new UserFacade("u");
    facade.addOrderBy("id", SQLOrder.DESC);
   //
-   const filter: Filter = facade.getFacadeFilter();
+   const filter: Filter = facade.filter;
    // filter.addFilterAttribute(new FilterAttribute("der", "asdasd", SQLComparisonOperator.EQUAL));
   //
   //const users = await facade.getUsers();
@@ -79,10 +79,10 @@ router.get("/", async (req: Request, res: Response) => {
   const patientCompositeFacade = new PatientCompositeFacade();
   const patientComp = await patientCompositeFacade.get();
  //
- // const gameCompositeFacade = new GameCompositeFacade();
- // const gamesComp = await gameCompositeFacade.getGames();
- // console.log(gamesComp[0].helptexts);
- // console.log(gamesComp[0].gameSettings);
+  const gameCompositeFacade = new GameCompositeFacade();
+  const gamesComp = await gameCompositeFacade.get();
+  console.log(gamesComp[0].gameSettings[0]);
+  console.log(gamesComp[0].gameSettings);
  //
  // const sessionFacade = new SessionFacade();
  // const sess = await sessionFacade.getSessions();
