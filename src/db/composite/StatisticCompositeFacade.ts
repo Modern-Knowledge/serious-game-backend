@@ -53,15 +53,6 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * returns composite statistics that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getStatistics(excludedSQLAttributes?: string[]): Promise<Statistic[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */
