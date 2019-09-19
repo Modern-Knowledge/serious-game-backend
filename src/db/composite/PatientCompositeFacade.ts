@@ -24,6 +24,10 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
     private _patientSettingsFacade: PatientSettingFacade;
     private _sessionFacade: SessionFacade;
 
+    private _withUserJoin: boolean;
+    private _withPatientSettingJoin: boolean;
+    private _withSessionJoin: boolean;
+
     /**
      * @param tableAlias
      */
@@ -37,6 +41,10 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         this._patientFacade = new PatientFacade();
         this._patientSettingsFacade = new PatientSettingFacade();
         this._sessionFacade = new SessionFacade();
+
+        this._withUserJoin = true;
+        this._withPatientSettingJoin = true;
+        this._withSessionJoin = true;
     }
 
     /**
@@ -46,8 +54,12 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         const returnAttributes: SQLAttributes = new SQLAttributes();
 
         returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._patientSettingsFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+        if(this._withPatientSettingJoin) {
+            returnAttributes.addSqlAttributes(this._patientSettingsFacade.getSQLAttributes(excludedSQLAttributes));
+        }
+        if(this._withSessionJoin) {
+            returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+        }
 
         return returnAttributes;
     }
@@ -58,11 +70,15 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
      */
     protected fillEntity(result: any): Patient {
         const p: Patient = this._patientFacade.fillEntity(result);
-        const ps: PatientSetting = this._patientSettingsFacade.fillEntity(result);
-        const s: Session = this._sessionFacade.fillEntity(result);
+        if(this._withPatientSettingJoin) {
+            const ps: PatientSetting = this._patientSettingsFacade.fillEntity(result);
+            p.patientSetting = ps;
+        }
 
-        p.patientSetting = ps;
-        p.addSession(s);
+        if(this._withSessionJoin) {
+            const s: Session = this._sessionFacade.fillEntity(result);
+            p.addSession(s);
+        }
 
         return p;
     }
@@ -75,13 +91,17 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
 
         joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
 
-        const patientSettingJoin: SQLBlock = new SQLBlock();
-        patientSettingJoin.addText(`${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-        joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.JOIN));
+        if(this._withPatientSettingJoin) {
+            const patientSettingJoin: SQLBlock = new SQLBlock();
+            patientSettingJoin.addText(`${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
+            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.JOIN));
+        }
 
-        const sessionJoin: SQLBlock = new SQLBlock();
-        sessionJoin.addText(`${this._sessionFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-        joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+        if(this._withSessionJoin) {
+            const sessionJoin: SQLBlock = new SQLBlock();
+            sessionJoin.addText(`${this._sessionFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
+            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+        }
 
         return joins;
     }
@@ -106,5 +126,29 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         }
 
         return Array.from(patientMap.values());
+    }
+
+    get withUserJoin(): boolean {
+        return this._withUserJoin;
+    }
+
+    set withUserJoin(value: boolean) {
+        this._withUserJoin = value;
+    }
+
+    get withPatientSettingJoin(): boolean {
+        return this._withPatientSettingJoin;
+    }
+
+    set withPatientSettingJoin(value: boolean) {
+        this._withPatientSettingJoin = value;
+    }
+
+    get withSessionJoin(): boolean {
+        return this._withSessionJoin;
+    }
+
+    set withSessionJoin(value: boolean) {
+        this._withSessionJoin = value;
     }
 }

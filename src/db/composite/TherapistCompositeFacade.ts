@@ -15,10 +15,11 @@ import { Helper } from "../../util/Helper";
 /**
  * retrieves composites therapists
  * Joins:
- * - users (1:1)
  * - therapists_patients (1:n)
  * - patients (1:n)
+ *   - users (1:1)
  * - sessions (1:n)
+ *   - users (1:1)
  */
 export class TherapistCompositeFacade extends EntityFacade<Therapist> {
 
@@ -26,6 +27,10 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
   private _patientFacade: PatientFacade;
   private _therapistPatientFacade: TherapistsPatientsFacade;
   private _sessionFacade: SessionFacade;
+
+  private _withUserJoin: boolean;
+  private _withPatientJoin: boolean;
+  private _withSessionJoin: boolean;
 
   /**
    * @param tableAlias
@@ -41,6 +46,10 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     this._patientFacade = new PatientFacade();
     this._therapistPatientFacade = new TherapistsPatientsFacade();
     this._sessionFacade = new SessionFacade();
+
+    this._withUserJoin = true;
+    this._withPatientJoin = true;
+    this._withSessionJoin = true;
   }
 
   /**
@@ -50,9 +59,15 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     const returnAttributes: SQLAttributes = new SQLAttributes();
 
     returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
-    returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
-    returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
-    returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+
+    if(this._withPatientJoin) {
+      returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
+      returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
+    }
+
+    if(this._withSessionJoin) {
+      returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+    }
 
     return returnAttributes;
   }
@@ -63,11 +78,15 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
    */
   protected fillEntity(result: any): Therapist {
     const t: Therapist = this._therapistFacade.fillEntity(result);
-    const p: Patient = this._patientFacade.fillEntity(result);
-    const s: Session = this._sessionFacade.fillEntity(result);
+    if(this._withPatientJoin) {
+      const p: Patient = this._patientFacade.fillEntity(result);
+      t.addPatient(p);
+    }
 
-    t.addPatient(p);
-    t.addSession(s);
+    if(this._withSessionJoin) {
+      const s: Session = this._sessionFacade.fillEntity(result);
+      t.addSession(s);
+    }
 
     return t;
   }
@@ -80,19 +99,23 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
 
     joins = joins.concat(this._therapistFacade.getJoins()); // add therapist joins (user)
 
-    const therapistPatientJoin: SQLBlock = new SQLBlock();
-    therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-    joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN));
+    if (this._withPatientJoin) {
+      const therapistPatientJoin: SQLBlock = new SQLBlock();
+      therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
+      joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN));
 
-    const patientTherapistJoin: SQLBlock = new SQLBlock();
-    patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
-    joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN));
+      const patientTherapistJoin: SQLBlock = new SQLBlock();
+      patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
+      joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN));
 
-    joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
+      joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
+    }
 
-    const sessionJoin: SQLBlock = new SQLBlock();
-    sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-    joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+    if (this._withSessionJoin) {
+      const sessionJoin: SQLBlock = new SQLBlock();
+      sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
+      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+    }
 
     return joins;
   }
@@ -120,5 +143,31 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     }
 
     return Array.from(therapistMap.values());
+  }
+
+  get withUserJoin(): boolean {
+    return this._withUserJoin;
+  }
+
+  set withUserJoin(value: boolean) {
+    this._patientFacade.withUserJoin = value;
+    this._therapistFacade.withUserJoin = value;
+    this._withUserJoin = value;
+  }
+
+  get withPatientJoin(): boolean {
+    return this._withPatientJoin;
+  }
+
+  set withPatientJoin(value: boolean) {
+    this._withPatientJoin = value;
+  }
+
+  get withSessionJoin(): boolean {
+    return this._withSessionJoin;
+  }
+
+  set withSessionJoin(value: boolean) {
+    this._withSessionJoin = value;
   }
 }

@@ -21,6 +21,8 @@ export class PatientFacade extends EntityFacade<Patient> {
 
   private _userFacade: UserFacade;
 
+  private _withUserJoin: boolean;
+
   public constructor(tableAlias?: string) {
     if (tableAlias) {
       super("patients", tableAlias);
@@ -29,6 +31,7 @@ export class PatientFacade extends EntityFacade<Patient> {
     }
 
     this._userFacade = new UserFacade("up");
+    this._withUserJoin = true;
   }
 
   /**
@@ -38,9 +41,12 @@ export class PatientFacade extends EntityFacade<Patient> {
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["patient_id", "birthday", "info"];
 
-    const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
     const patientsAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
-    patientsAttributes.addSqlAttributes(userAttributes);
+
+    if(this._withUserJoin) {
+      const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
+      patientsAttributes.addSqlAttributes(userAttributes);
+    }
 
     return patientsAttributes;
   }
@@ -112,7 +118,10 @@ export class PatientFacade extends EntityFacade<Patient> {
    */
   public fillEntity(result: any): Patient {
     const p: Patient = new Patient();
-    this._userFacade.fillUserEntity(result, p);
+
+    if(this._withUserJoin) {
+      this._userFacade.fillUserEntity(result, p);
+    }
 
     if (result[this.name("birthday")] !== undefined) {
       p.birthday = result[this.name("birthday")];
@@ -131,9 +140,11 @@ export class PatientFacade extends EntityFacade<Patient> {
   public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
+    if(this._withUserJoin) {
+      const userJoin: SQLBlock = new SQLBlock();
+      userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
+      joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
+    }
 
     return joins;
   }
@@ -141,8 +152,15 @@ export class PatientFacade extends EntityFacade<Patient> {
   /**
    * returns the userFacadeFilter
    */
-  public getUserFacadeFilter(): Filter {
-    return this._userFacade.getFacadeFilter();
+  get userFacadeFilter(): Filter {
+    return this._userFacade.filter;
   }
 
+  get withUserJoin(): boolean {
+    return this._withUserJoin;
+  }
+
+  set withUserJoin(value: boolean) {
+    this._withUserJoin = value;
+  }
 }

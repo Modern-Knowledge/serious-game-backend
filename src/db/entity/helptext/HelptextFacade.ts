@@ -16,6 +16,8 @@ export class HelptextFacade extends EntityFacade<Helptext> {
 
   private _textFacade: TextFacade;
 
+  private _withTextJoin: boolean;
+
   /**
    * @param tableAlias
    */
@@ -27,6 +29,8 @@ export class HelptextFacade extends EntityFacade<Helptext> {
     }
 
     this._textFacade = new TextFacade("texthelp");
+
+    this._withTextJoin = true;
   }
 
   /**
@@ -36,9 +40,12 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["helptext_id"];
 
-    const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
     const helptextAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
-    helptextAttributes.addSqlAttributes(textAttributes);
+
+    if(this._withTextJoin) {
+      const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
+      helptextAttributes.addSqlAttributes(textAttributes);
+    }
 
     return helptextAttributes;
   }
@@ -49,7 +56,10 @@ export class HelptextFacade extends EntityFacade<Helptext> {
    */
   public fillEntity(result: any): Helptext {
     const helptext: Helptext = new Helptext();
-    this._textFacade.fillTextEntity(result, helptext);
+
+    if(this._withTextJoin) {
+      this._textFacade.fillTextEntity(result, helptext);
+    }
 
     return helptext;
   }
@@ -60,9 +70,11 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, userJoin, JoinType.JOIN));
+    if(this._withTextJoin) {
+      const textJoin: SQLBlock = new SQLBlock();
+      textJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
+      joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN));
+    }
 
     return joins;
   }
@@ -70,8 +82,15 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   /**
    * returns the textFacadeFilter
    */
-  public getTextFacadeFilter(): Filter {
-    return this._textFacade.getFacadeFilter();
+  get textFacadeFilter(): Filter {
+    return this._textFacade.filter;
   }
 
+  get withTextJoin(): boolean {
+    return this._withTextJoin;
+  }
+
+  set withTextJoin(value: boolean) {
+    this._withTextJoin = value;
+  }
 }

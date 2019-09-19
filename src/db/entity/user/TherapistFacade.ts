@@ -21,6 +21,8 @@ export class TherapistFacade extends EntityFacade<Therapist> {
 
   private _userFacade: UserFacade;
 
+  private _withUserJoin: boolean;
+
   /**
    * @param tableAlias
    */
@@ -32,6 +34,8 @@ export class TherapistFacade extends EntityFacade<Therapist> {
     }
 
     this._userFacade = new UserFacade("ut");
+
+    this._withUserJoin = true;
   }
 
   /**
@@ -41,9 +45,12 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["therapist_id"];
 
-    const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
     const therapistAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
-    therapistAttributes.addSqlAttributes(userAttributes);
+
+    if(this._withUserJoin) {
+      const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
+      therapistAttributes.addSqlAttributes(userAttributes);
+    }
 
     return therapistAttributes;
   }
@@ -98,7 +105,10 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    */
   public fillEntity(result: any): Therapist {
     const t: Therapist = new Therapist();
-    this._userFacade.fillUserEntity(result, t);
+
+    if(this._withUserJoin) {
+      this._userFacade.fillUserEntity(result, t);
+    }
 
     return t;
   }
@@ -109,9 +119,11 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    const userJoin: SQLBlock = new SQLBlock();
-    userJoin.addText(`${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
+    if(this._withUserJoin) {
+      const userJoin: SQLBlock = new SQLBlock();
+      userJoin.addText(`${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`);
+      joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
+    }
 
     return joins;
   }
@@ -119,8 +131,15 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   /**
    * returns the userFacadeFilter
    */
-  public getUserFacadeFilter(): Filter {
-    return this._userFacade.getFacadeFilter();
+  get userFacadeFilter(): Filter {
+    return this._userFacade.filter;
   }
 
+  get withUserJoin(): boolean {
+    return this._withUserJoin;
+  }
+
+  set withUserJoin(value: boolean) {
+    this._withUserJoin = value;
+  }
 }

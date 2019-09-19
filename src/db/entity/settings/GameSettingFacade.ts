@@ -15,6 +15,8 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
 
   private _difficultyFacade: DifficultyFacade;
 
+  private _withDifficultyJoin: boolean;
+
   /**
    * @param tableAlias
    */
@@ -26,6 +28,7 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
     }
 
     this._difficultyFacade = new DifficultyFacade();
+    this._withDifficultyJoin = true;
   }
 
   /**
@@ -37,7 +40,10 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
 
     const returnAttributes: SQLAttributes = new SQLAttributes();
     returnAttributes.addSqlAttributes(super.getSQLAttributes(excludedSQLAttributes, sqlAttributes));
-    returnAttributes.addSqlAttributes(this._difficultyFacade.getSQLAttributes(excludedSQLAttributes));
+
+    if(this._withDifficultyJoin) {
+      returnAttributes.addSqlAttributes(this._difficultyFacade.getSQLAttributes(excludedSQLAttributes));
+    }
 
     return returnAttributes
   }
@@ -59,7 +65,9 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
       gameSetting.difficultyId = result[this.name("difficulty_id")];
     }
 
-    gameSetting.difficulty = this._difficultyFacade.fillEntity(result);
+    if(this._withDifficultyJoin) {
+      gameSetting.difficulty = this._difficultyFacade.fillEntity(result);
+    }
 
     return gameSetting;
   }
@@ -70,11 +78,20 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
   public getJoins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    const difficultyJoin: SQLBlock = new SQLBlock();
-    difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
-    joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN));
+    if(this._withDifficultyJoin) {
+      const difficultyJoin: SQLBlock = new SQLBlock();
+      difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
+      joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN));
+    }
 
     return joins;
   }
 
+  get withDifficultyJoin(): boolean {
+    return this._withDifficultyJoin;
+  }
+
+  set withDifficultyJoin(value: boolean) {
+    this._withDifficultyJoin = value;
+  }
 }

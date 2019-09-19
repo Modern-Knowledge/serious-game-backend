@@ -24,6 +24,10 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
     private _errortextFacade: ErrortextFacade;
     private _errortextStatisticFacade: ErrortextStatisticFacade;
 
+    private _withErrortextJoin: boolean;
+    private _withTextJoin: boolean;
+    private _withSeverityJoin: boolean;
+
     /**
      * @param tableAlias
      */
@@ -37,6 +41,10 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         this._statisticFacade = new StatisticFacade();
         this._errortextFacade = new ErrortextFacade();
         this._errortextStatisticFacade = new ErrortextStatisticFacade();
+
+        this._withErrortextJoin = true;
+        this._withTextJoin = true;
+        this._withSeverityJoin = true;
     }
 
     /**
@@ -46,8 +54,11 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         const returnAttributes: SQLAttributes = new SQLAttributes();
 
         returnAttributes.addSqlAttributes(this._statisticFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._errortextFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._errortextStatisticFacade.getSQLAttributes(excludedSQLAttributes));
+
+        if(this._withErrortextJoin) {
+            returnAttributes.addSqlAttributes(this._errortextFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._errortextStatisticFacade.getSQLAttributes(excludedSQLAttributes));
+        }
 
         return returnAttributes;
     }
@@ -58,9 +69,11 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
      */
     public fillEntity(result: any): Statistic {
         const t: Statistic = this._statisticFacade.fillEntity(result);
-        const et: Errortext = this._errortextFacade.fillEntity(result);
 
-        t.addErrortext(et);
+        if(this._withErrortextJoin) {
+            const et: Errortext = this._errortextFacade.fillEntity(result);
+            t.addErrortext(et);
+        }
 
         return t;
     }
@@ -71,15 +84,17 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
     public getJoins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
-        const statisticErrortextJoin: SQLBlock = new SQLBlock();
-        statisticErrortextJoin.addText(`${this._errortextStatisticFacade.tableAlias}.statistic_id = ${this.tableAlias}.id`);
-        joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN));
+        if(this._withErrortextJoin) {
+            const statisticErrortextJoin: SQLBlock = new SQLBlock();
+            statisticErrortextJoin.addText(`${this._errortextStatisticFacade.tableAlias}.statistic_id = ${this.tableAlias}.id`);
+            joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN));
 
-        const errortextStatisticJoin: SQLBlock = new SQLBlock();
-        errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
-        joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN));
+            const errortextStatisticJoin: SQLBlock = new SQLBlock();
+            errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
+            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN));
+        }
 
-        joins = joins.concat(this._errortextFacade.getJoins()); // add patient joins (user)
+        joins = joins.concat(this._errortextFacade.getJoins()); // add errortext joins (text, severity)
 
         return joins;
     }
@@ -103,5 +118,32 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         }
 
         return Array.from(statisticMap.values());
+    }
+
+
+    get withErrortextJoin(): boolean {
+        return this._withErrortextJoin;
+    }
+
+    set withErrortextJoin(value: boolean) {
+        this._withErrortextJoin = value;
+    }
+
+    get withTextJoin(): boolean {
+        return this._withTextJoin;
+    }
+
+    set withTextJoin(value: boolean) {
+        this._errortextFacade.withTextJoin = value;
+        this._withTextJoin = value;
+    }
+
+    get withSeverityJoin(): boolean {
+        return this._withSeverityJoin;
+    }
+
+    set withSeverityJoin(value: boolean) {
+        this._errortextFacade.withSeverityJoin = value;
+        this._withSeverityJoin = value;
     }
 }

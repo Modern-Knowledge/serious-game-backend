@@ -11,15 +11,16 @@ import { HelptextsGamesFacade } from "../entity/helptext/HelptextsGamesFacade";
 import { GameSetting } from "../../lib/models/GameSetting";
 import { Helptext } from "../../lib/models/Helptext";
 import { Helper } from "../../util/Helper";
+import {Filter} from "../filter/Filter";
 
 /**
  * retrieves composite games
  * Joins:
  * - game_settings (1:n)
- * - difficulty (1:1)
+ *  - difficulty (1:1)
  * - helptexts_games (1:n)
  * - helptexts (1:n)
- * - texts (1:1)
+ *  - texts (1:1)
  */
 export class GameCompositeFacade extends EntityFacade<Game> {
 
@@ -27,6 +28,10 @@ export class GameCompositeFacade extends EntityFacade<Game> {
     private _gameSettingsFacade: GameSettingFacade;
     private _helptextsGamesFacade: HelptextsGamesFacade;
     private _helptextFacade: HelptextFacade;
+
+    private _withGameSettingsJoin: boolean;
+    private _withDifficultyJoin: boolean;
+    private _withHelptextJoin: boolean;
 
     /**
      * @param tableAlias
@@ -42,6 +47,10 @@ export class GameCompositeFacade extends EntityFacade<Game> {
         this._gameSettingsFacade = new GameSettingFacade();
         this._helptextsGamesFacade = new HelptextsGamesFacade();
         this._helptextFacade = new HelptextFacade();
+
+        this._withGameSettingsJoin = true;
+        this._withDifficultyJoin = true;
+        this._withHelptextJoin = true;
     }
 
     /**
@@ -51,9 +60,14 @@ export class GameCompositeFacade extends EntityFacade<Game> {
         const returnAttributes: SQLAttributes = new SQLAttributes();
 
         returnAttributes.addSqlAttributes(this._gameFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._gameSettingsFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._helptextsGamesFacade.getSQLAttributes(excludedSQLAttributes));
-        returnAttributes.addSqlAttributes(this._helptextFacade.getSQLAttributes(excludedSQLAttributes));
+
+        if(this._withGameSettingsJoin) {
+            returnAttributes.addSqlAttributes(this._gameSettingsFacade.getSQLAttributes(excludedSQLAttributes));
+        }
+        if(this._withHelptextJoin) {
+            returnAttributes.addSqlAttributes(this._helptextsGamesFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._helptextFacade.getSQLAttributes(excludedSQLAttributes));
+        }
 
         return returnAttributes;
     }
@@ -64,11 +78,17 @@ export class GameCompositeFacade extends EntityFacade<Game> {
      */
     protected fillEntity(result: any): Game {
         const g: Game = this._gameFacade.fillEntity(result);
-        const gs: GameSetting = this._gameSettingsFacade.fillEntity(result);
-        const ht: Helptext = this._helptextFacade.fillEntity(result);
 
-        g.addHelptext(ht);
-        g.addGameSetting(gs);
+        if(this._withGameSettingsJoin) {
+            const gs: GameSetting = this._gameSettingsFacade.fillEntity(result);
+            g.addGameSetting(gs);
+        }
+
+        if(this._withHelptextJoin) {
+            const ht: Helptext = this._helptextFacade.fillEntity(result);
+            g.addHelptext(ht);
+        }
+
 
         return g;
     }
@@ -79,21 +99,25 @@ export class GameCompositeFacade extends EntityFacade<Game> {
     public getJoins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
-        const gameSettingJoin: SQLBlock = new SQLBlock();
-        gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-        joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN));
+        if(this._withGameSettingsJoin) {
+            const gameSettingJoin: SQLBlock = new SQLBlock();
+            gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
+            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN));
+        }
 
         joins = joins.concat(this._gameSettingsFacade.getJoins()); // add game-settings joins (difficulty)
 
-        const helptextGamesJoin: SQLBlock = new SQLBlock();
-        helptextGamesJoin.addText(`${this._helptextsGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-        joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.JOIN));
+        if(this._withHelptextJoin) {
+            const helptextGamesJoin: SQLBlock = new SQLBlock();
+            helptextGamesJoin.addText(`${this._helptextsGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
+            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.JOIN));
 
-        const helptextsJoin: SQLBlock = new SQLBlock();
-        helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
-        joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN));
+            const helptextsJoin: SQLBlock = new SQLBlock();
+            helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
+            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN));
 
-        joins = joins.concat(this._helptextFacade.getJoins()); // add helptext joins (text)
+            joins = joins.concat(this._helptextFacade.getJoins()); // add helptext joins (text)
+        }
 
         return joins;
     }
@@ -122,4 +146,39 @@ export class GameCompositeFacade extends EntityFacade<Game> {
 
         return Array.from(gameMap.values());
     }
+
+    get gameFacadeFilter(): Filter {
+        return this._gameSettingsFacade.filter;
+    }
+    
+    get helptextFacadeFilter(): Filter {
+        return this._helptextFacade.filter;
+    }
+
+    get withGameSettingsJoin(): boolean {
+        return this._withGameSettingsJoin;
+    }
+
+    set withGameSettingsJoin(value: boolean) {
+        this._withGameSettingsJoin = value;
+    }
+
+    get withDifficultyJoin(): boolean {
+        return this._withDifficultyJoin;
+    }
+
+    set withDifficultyJoin(value: boolean) {
+        this._gameSettingsFacade.withDifficultyJoin = value;
+        this._withDifficultyJoin = value;
+    }
+
+    get withHelptextJoin(): boolean {
+        return this._withHelptextJoin;
+    }
+
+    set withHelptextJoin(value: boolean) {
+        this._withHelptextJoin = value;
+    }
+
+
 }

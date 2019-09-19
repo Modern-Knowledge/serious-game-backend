@@ -253,7 +253,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return deleteQuery;
   }
 
-
   /**
    * execute a sql query
    * @param sql sql query to be executed
@@ -316,13 +315,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }
 
-  /**
-   * retrieves the filter for the facade
-   */
-  public getFacadeFilter(): Filter {
-    return this._filter;
-  }
-
   protected getFilter(): SQLWhere {
     return this._filter.isEmpty ? undefined : new SQLWhere(this._filter.getBlock());
   }
@@ -331,8 +323,15 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * sets the filter
    * @param filter
    */
-  public setFilter(filter: Filter): void {
+  set filter(filter: Filter) {
     this._filter = filter;
+  }
+
+  /**
+   * retrieves the filter for the facade
+   */
+  get filter(): Filter {
+    return this._filter;
   }
 
   /**
