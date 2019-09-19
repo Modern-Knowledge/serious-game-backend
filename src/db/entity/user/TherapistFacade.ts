@@ -49,15 +49,6 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   }
 
   /**
-   * returns therapists that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getTherapists(excludedSQLAttributes?: string[]): Promise<Therapist[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * inserts a new therapist and returns the created therapist
    * @param therapist
    */
