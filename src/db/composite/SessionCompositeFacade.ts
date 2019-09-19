@@ -147,24 +147,23 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
      * todo
      */
     protected postProcessSelect(entities: Session[]): Session[] {
-       /* const sessionMap = new Map<number, Session>();
+        const sessionMap = new Map<number, Session>();
 
         for (const session of entities) {
             if (!sessionMap.has(session.id)) {
                 sessionMap.set(session.id, session)
             } else {
                 const existingSession: Session = sessionMap.get(session.id);
+                const existingStatistic: Statistic = existingSession.statistic;
 
-                if(!Helper.arrayContainsModel(game.helptexts[0], existingGame.helptexts)) {
-                    existingGame.addHelptexts(game.helptexts);
+                const statistic: Statistic = session.statistic;
+
+                if(!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                    existingStatistic.addErrortexts(statistic.errortexts);
                 }
-
-                existingSession.addPatients(session.patients);
             }
         }
 
-        return Array.from(therapistMap.values()); */
-
-       return super.postProcessSelect(entities);
+        return Array.from(sessionMap.values());
     }
 }

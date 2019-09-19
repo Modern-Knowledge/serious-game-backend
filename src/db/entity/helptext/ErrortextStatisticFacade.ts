@@ -34,15 +34,6 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * returns errortext-statistic that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getErrortextStatistics(excludedSQLAttributes?: string[]): Promise<ErrortextStatistic[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

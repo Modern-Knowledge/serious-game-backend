@@ -29,15 +29,6 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * returns texts that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getTexts(excludedSQLAttributes?: string[]): Promise<Text[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

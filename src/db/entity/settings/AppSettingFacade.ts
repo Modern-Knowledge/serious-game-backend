@@ -29,15 +29,6 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
   }
 
   /**
-   * returns app-settings that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getAppSettings(excludedSQLAttributes?: string[]): Promise<AppSetting[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */

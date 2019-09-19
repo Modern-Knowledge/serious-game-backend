@@ -60,7 +60,7 @@ router.get("/", async (req: Request, res: Response) => {
   console.log(newpatient); */
 
    const therapistCompFacade = new TherapistCompositeFacade();
-   const thera = await therapistCompFacade.getTherapists();
+   const thera = await therapistCompFacade.get();
    console.log(thera[0]);
  //
  //  const helptextFacade = new HelptextFacade();
@@ -77,8 +77,7 @@ router.get("/", async (req: Request, res: Response) => {
  // console.log(statisticComp);
  //
   const patientCompositeFacade = new PatientCompositeFacade();
-  const patientComp = await patientCompositeFacade.getPatients();
-  console.log(patientComp[0].sessions);
+  const patientComp = await patientCompositeFacade.get();
  //
  // const gameCompositeFacade = new GameCompositeFacade();
  // const gamesComp = await gameCompositeFacade.getGames();
@@ -90,8 +89,9 @@ router.get("/", async (req: Request, res: Response) => {
  // console.log(sess);
 
  const sessionCompositeFacade = new SessionCompositeFacade();
- const sessions = await sessionCompositeFacade.getSessions();
+ const sessions = await sessionCompositeFacade.get();
  console.log(sessions);
+
 
  res.jsonp("therapists");
 });

@@ -29,15 +29,6 @@ export class WordFacade extends EntityFacade<Word> {
   }
 
   /**
-   * returns words that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getWords(excludedSQLAttributes?: string[]): Promise<Word[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */

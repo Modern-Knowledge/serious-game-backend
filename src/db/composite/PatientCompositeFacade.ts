@@ -53,15 +53,6 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
     }
 
     /**
-     * returns composite patients that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getPatients(excludedSQLAttributes?: string[]): Promise<Patient[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

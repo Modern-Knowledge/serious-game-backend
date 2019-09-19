@@ -67,7 +67,6 @@ export class TherapistFacade extends EntityFacade<Therapist> {
     const attributes: SQLValueAttributes = new SQLValueAttributes();
 
     const therapistIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", this.tableName, t.id);
-    
     attributes.addAttribute(therapistIdAttribute);
 
     return new Promise<Therapist>((resolve, reject) => {

@@ -52,15 +52,6 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
     }
 
     /**
-     * returns errortexts that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getErrorTexts(excludedSQLAttributes?: string[]): Promise<Errortext[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

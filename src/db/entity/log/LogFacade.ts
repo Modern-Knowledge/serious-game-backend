@@ -31,15 +31,6 @@ export class LogFacade extends EntityFacade<Log> {
   }
 
   /**
-   * returns logs that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getLogs(excludedSQLAttributes?: string[]): Promise<Log[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * inserts a new log and returns the id of the created log
    * @param log
    */

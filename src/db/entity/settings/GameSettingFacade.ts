@@ -43,15 +43,6 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
   }
 
   /**
-   * returns the game-settings that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getGameSettings(excludedSQLAttributes?: string[]): Promise<GameSetting[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */

@@ -8,6 +8,7 @@ import { StatisticFacade } from "../entity/game/StatisticFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
 import { ErrortextStatisticFacade } from "../entity/helptext/ErrortextStatisticFacade";
 import { Errortext } from "../../lib/models/Errortext";
+import {Helper} from "../../util/Helper";
 
 /**
  * retrieves composite statistics
@@ -103,7 +104,10 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
                 statisticMap.set(statistic.id, statistic)
             } else {
                 const existingStatistic: Statistic = statisticMap.get(statistic.id);
-                existingStatistic.addErrortexts(statistic.errortexts);
+
+                if(!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                    existingStatistic.addErrortexts(statistic.errortexts);
+                }
             }
         }
 

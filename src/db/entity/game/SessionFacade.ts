@@ -35,15 +35,6 @@ export class SessionFacade extends EntityFacade<Session> {
   }
 
   /**
-   * returns sessions that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getSessions(excludedSQLAttributes?: string[]): Promise<Session[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */

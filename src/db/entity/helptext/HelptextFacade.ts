@@ -44,15 +44,6 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   }
 
   /**
-   * returns helptexts that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getHelptexts(excludedSQLAttributes?: string[]): Promise<Helptext[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */

@@ -28,14 +28,6 @@ export class ImageFacade extends EntityFacade<Image> {
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
 
-  /**
-   * returns images that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getImages(excludedSQLAttributes?: string[]): Promise<Image[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
 
   /**
    * fills the entity

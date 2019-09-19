@@ -26,6 +26,7 @@ export abstract class Helper {
    * @param search model to search for
    * @param values array to search in
    */
+  // todo refactor to generic method
   public static arrayContainsModel(search: AbstractModel, values: AbstractModel[]): boolean {
     for (const item of values) {
       if(search.equals(item)) {

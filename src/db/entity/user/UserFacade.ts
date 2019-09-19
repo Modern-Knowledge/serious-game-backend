@@ -34,15 +34,6 @@ export class UserFacade extends EntityFacade<User> {
   }
 
   /**
-   * returns users that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getUsers(excludedSQLAttributes?: string[]): Promise<User[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * inserts a new user and returns the created user
    * @param user
    */

@@ -29,15 +29,6 @@ export class SeverityFacade extends EntityFacade<Severity> {
     }
 
     /**
-     * returns difficulties that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getSeverities(excludedSQLAttributes?: string[]): Promise<Severity[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

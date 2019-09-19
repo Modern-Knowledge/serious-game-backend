@@ -34,15 +34,6 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
     }
 
     /**
-     * returns helptexts-games that match the specified filter
-     * @param excludedSQLAttributes
-     */
-    public getHelptextsGames(excludedSQLAttributes?: string[]): Promise<HelptextGame[]> {
-        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-        return this.select(attributes, this.getJoins());
-    }
-
-    /**
      * fills the entity
      * @param result result for filling
      */

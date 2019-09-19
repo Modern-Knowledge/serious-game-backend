@@ -29,15 +29,6 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
   }
 
   /**
-   * returns the patient-settings that match the specified filter
-   * @param excludedSQLAttributes
-   */
-  public getPatientSettings(excludedSQLAttributes?: string[]): Promise<PatientSetting[]> {
-    const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-    return this.select(attributes, this.getJoins());
-  }
-
-  /**
    * fills the entity
    * @param result result for filling
    */
