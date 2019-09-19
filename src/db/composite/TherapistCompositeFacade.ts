@@ -11,6 +11,7 @@ import { Patient } from "../../lib/models/Patient";
 import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
 import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
 
 /**
  * retrieves composites therapists
@@ -19,7 +20,6 @@ import { Helper } from "../../util/Helper";
  * - patients (1:n)
  *   - users (1:1)
  * - sessions (1:n)
- *   - users (1:1)
  */
 export class TherapistCompositeFacade extends EntityFacade<Therapist> {
 
@@ -143,6 +143,18 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     }
 
     return Array.from(therapistMap.values());
+  }
+
+  get therapistUserFacadeFilter(): Filter {
+    return this._therapistFacade.userFacadeFilter;
+  }
+
+  get patientUserFacadeFilter(): Filter {
+    return this._patientFacade.userFacadeFilter;
+  }
+
+  get sessionFacadeFilter(): Filter {
+    return this._sessionFacade.filter;
   }
 
   get withUserJoin(): boolean {

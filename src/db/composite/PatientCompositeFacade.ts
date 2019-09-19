@@ -10,6 +10,7 @@ import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
 import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
 import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
 
 /**
  * retrieves composite patients
@@ -107,7 +108,6 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
     }
 
     /**
-     *
      * @param entities
      */
     protected postProcessSelect(entities: Patient[]): Patient[] {
@@ -126,6 +126,18 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         }
 
         return Array.from(patientMap.values());
+    }
+
+    get patientUserFacadeFilter(): Filter {
+        return this._patientFacade.userFacadeFilter;
+    }
+
+    get patientSettingFacadeFilter(): Filter {
+        return this._patientSettingsFacade.filter;
+    }
+
+    get sessionFacadeFilter(): Filter {
+        return this._sessionFacade.filter;
     }
 
     get withUserJoin(): boolean {

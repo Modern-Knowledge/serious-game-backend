@@ -8,7 +8,8 @@ import { StatisticFacade } from "../entity/game/StatisticFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
 import { ErrortextStatisticFacade } from "../entity/helptext/ErrortextStatisticFacade";
 import { Errortext } from "../../lib/models/Errortext";
-import {Helper} from "../../util/Helper";
+import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
 
 /**
  * retrieves composite statistics
@@ -120,6 +121,13 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         return Array.from(statisticMap.values());
     }
 
+    get statisticFacadeFilter(): Filter {
+        return this._statisticFacade.filter;
+    }
+
+    get errortextFacadeFilter(): Filter {
+        return this._errortextFacade.filter;
+    }
 
     get withErrortextJoin(): boolean {
         return this._withErrortextJoin;
