@@ -38,10 +38,10 @@ router.get("/", async (req: Request, res: Response) => {
   // await facade.insertUser(u);
 
  const therapistFacade: TherapistFacade = new TherapistFacade();
-  const therapists = await therapistFacade.getTherapists();
+  const therapists = await therapistFacade.get();
 
   const patientFacade: PatientFacade = new PatientFacade();
-  const patients = await patientFacade.getPatients();
+  const patients = await patientFacade.get();
 
  /* const patient1 = new Patient();
   patient1.id = 1;

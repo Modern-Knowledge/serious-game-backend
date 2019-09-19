@@ -12,7 +12,7 @@ router.get("/related", async (req: Request, res: Response) => {
 
   return jwt.verify(token, process.env.SECRET_KEY, async function(err, decoded) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-    const users = await userFacade.getUsers();
+    const users = await userFacade.get();
     const data: any = decoded;
     const user = users.find(user => user.email === data.email);
     if (!user) return res.status(404).send('User not found.');

@@ -19,7 +19,7 @@ router.post("/login", async (req: Request, res: Response) => {
   const {
     body: { email, password }
   } = req;
-  const users = await userFacade.getUsers();
+  const users = await userFacade.get();
 
   const user = users.find(user => user.email === email);
   if (!user) return res.status(401).send("Invalid credentials.");
