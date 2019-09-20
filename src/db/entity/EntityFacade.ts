@@ -6,6 +6,7 @@ import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
 import logger from "../../util/logger";
 import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
+import {SQLValueAttributes} from "../sql/SQLValueAttributes";
 
 /**
  * base facade for entities
@@ -50,9 +51,19 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
     }
 
     /**
-     * returns facade filter that be used for filtering id
+     * returns facade filter that can be used for filtering id
      */
     get idFilter(): Filter {
         return this.filter;
     }
+
+    /**
+     * returns sql value attributes for insert-statement and update-statement
+     * @param prefix prefix before the sql attribute
+     * @param entity entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, entity: EntityType): SQLValueAttributes {
+        return new SQLValueAttributes();
+    }
+
 }
