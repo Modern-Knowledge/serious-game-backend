@@ -82,7 +82,7 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
     /**
      * creates the joins for the composite statistics and returns them as a list
      */
-    public getJoins(): SQLJoin[] {
+    get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
         if(this._withErrortextJoin) {
@@ -93,9 +93,10 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
             const errortextStatisticJoin: SQLBlock = new SQLBlock();
             errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
             joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN));
+
+            joins = joins.concat(this._errortextFacade.joins); // add errortext joins (text, severity)
         }
 
-        joins = joins.concat(this._errortextFacade.getJoins()); // add errortext joins (text, severity)
 
         return joins;
     }

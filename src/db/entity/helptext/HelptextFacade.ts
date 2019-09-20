@@ -67,7 +67,7 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   /**
    * creates the joins for the therapist-entity and returns them as a list
    */
-  public getJoins(): SQLJoin[] {
+  get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
     if(this._withTextJoin) {

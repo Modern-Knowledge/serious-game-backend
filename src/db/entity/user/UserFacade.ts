@@ -5,7 +5,6 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
-import logger from '../../../util/logger';
 
 /**
  * handles CRUD operations with the user-entity

@@ -75,7 +75,7 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
   /**
    * creates the joins for the game-settings-entity and returns them as a list
    */
-  public getJoins(): SQLJoin[] {
+  get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
     if(this._withDifficultyJoin) {

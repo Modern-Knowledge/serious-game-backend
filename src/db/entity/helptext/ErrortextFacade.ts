@@ -86,7 +86,7 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
     /**
      * creates the joins for the errortext and returns them as a list
      */
-    public getJoins(): SQLJoin[] {
+    get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
 
         if(this._withTextJoin) {

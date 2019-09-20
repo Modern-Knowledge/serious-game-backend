@@ -283,7 +283,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * creates joins for the entity and returns them as a list
    */
-  public getJoins(): SQLJoin[] {
+  get joins(): SQLJoin[] {
     return [];
   }
 

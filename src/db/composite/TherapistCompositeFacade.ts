@@ -94,10 +94,10 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
   /**
    * creates the joins for the composite therapists and returns them as a list
    */
-  public getJoins(): SQLJoin[] {
+  get joins(): SQLJoin[] {
     let joins: SQLJoin[] = [];
 
-    joins = joins.concat(this._therapistFacade.getJoins()); // add therapist joins (user)
+    joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
 
     if (this._withPatientJoin) {
       const therapistPatientJoin: SQLBlock = new SQLBlock();
@@ -108,7 +108,7 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
       patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
       joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN));
 
-      joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
+      joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
     }
 
     if (this._withSessionJoin) {

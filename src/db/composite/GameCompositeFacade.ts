@@ -96,16 +96,16 @@ export class GameCompositeFacade extends EntityFacade<Game> {
     /**
      * creates the joins for the composite games and returns them as a list
      */
-    public getJoins(): SQLJoin[] {
+    get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
         if(this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
             joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN));
-        }
 
-        joins = joins.concat(this._gameSettingsFacade.getJoins()); // add game-settings joins (difficulty)
+            joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
+        }
 
         if(this._withHelptextJoin) {
             const helptextGamesJoin: SQLBlock = new SQLBlock();
@@ -116,7 +116,7 @@ export class GameCompositeFacade extends EntityFacade<Game> {
             helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
             joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN));
 
-            joins = joins.concat(this._helptextFacade.getJoins()); // add helptext joins (text)
+            joins = joins.concat(this._helptextFacade.joins); // add helptext joins (text)
         }
 
         return joins;

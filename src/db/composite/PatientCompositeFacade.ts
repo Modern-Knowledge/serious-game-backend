@@ -87,10 +87,10 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
     /**
      * creates the joins for the composite patients and returns them as a list
      */
-    public getJoins(): SQLJoin[] {
+    get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
-        joins = joins.concat(this._patientFacade.getJoins()); // add patient joins (user)
+        joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
 
         if(this._withPatientSettingJoin) {
             const patientSettingJoin: SQLBlock = new SQLBlock();

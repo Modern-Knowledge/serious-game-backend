@@ -1,8 +1,8 @@
-import {BaseFacade} from "../BaseFacade";
-import {AbstractModel} from "../../lib/models/AbstractModel";
-import {SQLAttributes} from "../sql/SQLAttributes";
-import {FilterAttribute} from "../filter/FilterAttribute";
-import {SQLComparisonOperator} from "../sql/SQLComparisonOperator";
+import { BaseFacade } from "../BaseFacade";
+import { AbstractModel } from "../../lib/models/AbstractModel";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { FilterAttribute } from "../filter/FilterAttribute";
+import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
 
 /**
  * base facade for entities
@@ -27,7 +27,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
         const filter = this._filter;
         filter.addFilterAttribute(new FilterAttribute("id", id, SQLComparisonOperator.EQUAL));
 
-        const result: EntityType[] = await this.select(attributes, this.getJoins());
+        const result: EntityType[] = await this.select(attributes, this.joins);
 
         if(result.length > 0) {
           return result[0];
@@ -42,6 +42,6 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
      */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
       const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
-      return this.select(attributes, this.getJoins());
+      return this.select(attributes, this.joins);
     }
 }
