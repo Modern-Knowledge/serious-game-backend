@@ -96,6 +96,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         }
 
         returnEntities = this.postProcessSelect(returnEntities);
+        returnEntities = this.postProcessFilter(returnEntities);
+
         logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned`);
 
         const elapsedTime = s.timeElapsed;
@@ -358,6 +360,15 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    */
   protected postProcessSelect(entities: EntityType[]): EntityType[] {
     return entities;
+  }
+
+    /**
+     * filter an array of entities
+     * do filtering that is not possible in mysql
+     * @param entities
+     */
+  protected postProcessFilter(entities: EntityType[]): EntityType[] {
+      return entities;
   }
 
   /**

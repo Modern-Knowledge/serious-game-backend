@@ -1,11 +1,12 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Filter } from "../../filter/Filter";
+import {EntityFacade} from "../EntityFacade";
+import {SQLAttributes} from "../../sql/SQLAttributes";
+import {SQLJoin} from "../../sql/SQLJoin";
+import {JoinType} from "../../sql/enums/JoinType";
+import {SQLBlock} from "../../sql/SQLBlock";
+import {Filter} from "../../filter/Filter";
 import {TextFacade} from "./TextFacade";
 import {Helptext} from "../../../lib/models/Helptext";
+import {JoinCardinality} from "../../sql/enums/JoinCardinality";
 
 /**
  * handles CRUD operations with the helptext-entity
@@ -73,7 +74,7 @@ export class HelptextFacade extends EntityFacade<Helptext> {
     if(this._withTextJoin) {
       const textJoin: SQLBlock = new SQLBlock();
       textJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
-      joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
     }
 
     return joins;

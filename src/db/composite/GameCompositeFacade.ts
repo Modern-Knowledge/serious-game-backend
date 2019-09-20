@@ -1,17 +1,18 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/JoinType";
-import { Game } from "../../lib/models/Game";
-import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
-import { GameFacade } from "../entity/game/GameFacade";
-import { HelptextFacade } from "../entity/helptext/HelptextFacade";
-import { HelptextsGamesFacade } from "../entity/helptext/HelptextsGamesFacade";
-import { GameSetting } from "../../lib/models/GameSetting";
-import { Helptext } from "../../lib/models/Helptext";
-import { Helper } from "../../util/Helper";
+import {EntityFacade} from "../entity/EntityFacade";
+import {SQLAttributes} from "../sql/SQLAttributes";
+import {SQLJoin} from "../sql/SQLJoin";
+import {SQLBlock} from "../sql/SQLBlock";
+import {JoinType} from "../sql/enums/JoinType";
+import {Game} from "../../lib/models/Game";
+import {GameSettingFacade} from "../entity/settings/GameSettingFacade";
+import {GameFacade} from "../entity/game/GameFacade";
+import {HelptextFacade} from "../entity/helptext/HelptextFacade";
+import {HelptextsGamesFacade} from "../entity/helptext/HelptextsGamesFacade";
+import {GameSetting} from "../../lib/models/GameSetting";
+import {Helptext} from "../../lib/models/Helptext";
+import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
+import {JoinCardinality} from "../sql/enums/JoinCardinality";
 
 /**
  * retrieves composite games
@@ -102,7 +103,7 @@ export class GameCompositeFacade extends EntityFacade<Game> {
         if(this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }
@@ -110,11 +111,11 @@ export class GameCompositeFacade extends EntityFacade<Game> {
         if(this._withHelptextJoin) {
             const helptextGamesJoin: SQLBlock = new SQLBlock();
             helptextGamesJoin.addText(`${this._helptextsGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
 
             const helptextsJoin: SQLBlock = new SQLBlock();
             helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
-            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._helptextFacade.joins); // add helptext joins (text)
         }

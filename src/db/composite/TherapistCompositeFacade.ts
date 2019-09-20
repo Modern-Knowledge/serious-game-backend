@@ -1,17 +1,18 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { Therapist } from "../../lib/models/Therapist";
-import { TherapistFacade } from "../entity/user/TherapistFacade";
-import { PatientFacade } from "../entity/user/PatientFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/JoinType";
-import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacade";
-import { Patient } from "../../lib/models/Patient";
-import { SessionFacade } from "../entity/game/SessionFacade";
-import { Session } from "../../lib/models/Session";
-import { Helper } from "../../util/Helper";
-import { Filter } from "../filter/Filter";
+import {EntityFacade} from "../entity/EntityFacade";
+import {Therapist} from "../../lib/models/Therapist";
+import {TherapistFacade} from "../entity/user/TherapistFacade";
+import {PatientFacade} from "../entity/user/PatientFacade";
+import {SQLAttributes} from "../sql/SQLAttributes";
+import {SQLJoin} from "../sql/SQLJoin";
+import {SQLBlock} from "../sql/SQLBlock";
+import {JoinType} from "../sql/enums/JoinType";
+import {TherapistsPatientsFacade} from "../entity/user/TherapistsPatientsFacade";
+import {Patient} from "../../lib/models/Patient";
+import {SessionFacade} from "../entity/game/SessionFacade";
+import {Session} from "../../lib/models/Session";
+import {Helper} from "../../util/Helper";
+import {Filter} from "../filter/Filter";
+import {JoinCardinality} from "../sql/enums/JoinCardinality";
 
 /**
  * retrieves composites therapists
@@ -102,11 +103,11 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     if (this._withPatientJoin) {
       const therapistPatientJoin: SQLBlock = new SQLBlock();
       therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-      joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
 
       const patientTherapistJoin: SQLBlock = new SQLBlock();
       patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
-      joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
       joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
     }
@@ -114,7 +115,7 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     if (this._withSessionJoin) {
       const sessionJoin: SQLBlock = new SQLBlock();
       sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
     }
 
     return joins;

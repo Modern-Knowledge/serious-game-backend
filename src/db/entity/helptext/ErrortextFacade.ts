@@ -1,13 +1,14 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Filter } from "../../filter/Filter";
-import { Errortext } from "../../../lib/models/Errortext";
-import { TextFacade } from "./TextFacade";
-import { SeverityFacade } from "../enum/SeverityFacade";
-import { Severity } from "../../../lib/models/Severity";
+import {EntityFacade} from "../EntityFacade";
+import {SQLAttributes} from "../../sql/SQLAttributes";
+import {SQLJoin} from "../../sql/SQLJoin";
+import {JoinType} from "../../sql/enums/JoinType";
+import {SQLBlock} from "../../sql/SQLBlock";
+import {Filter} from "../../filter/Filter";
+import {Errortext} from "../../../lib/models/Errortext";
+import {TextFacade} from "./TextFacade";
+import {SeverityFacade} from "../enum/SeverityFacade";
+import {Severity} from "../../../lib/models/Severity";
+import {JoinCardinality} from "../../sql/enums/JoinCardinality";
 
 /**
  * handles CRUD operations with the errortext-entity
@@ -92,13 +93,13 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
         if(this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.error_id = ${this._textFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         if(this._withSeverityJoin) {
             const severityJoin: SQLBlock = new SQLBlock();
             severityJoin.addText(`${this.tableAlias}.severity_id = ${this._severityFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;

@@ -1,8 +1,9 @@
 import { SQLElement } from "./SQLElement";
-import { JoinType } from "./JoinType";
+import { JoinType } from "./enums/JoinType";
 import { SQLBlock } from "./SQLBlock";
 import { SQLParam } from "./SQLParam";
 import { SQLElementType } from "./SQLElementType";
+import { JoinCardinality } from "./enums/JoinCardinality";
 
 /**
  * represents the join part of a sql query
@@ -12,20 +13,23 @@ export class SQLJoin extends SQLElement {
   private readonly _joinTableAlias: string;
 
   private _condition: SQLBlock;
-  private _joinType: JoinType = JoinType.JOIN;
+  private readonly _joinType: JoinType = JoinType.JOIN;
+  private readonly _joinCardinality: JoinCardinality = JoinCardinality.ONE_TO_ONE;
 
   /**
    * @param joinTableName
    * @param joinTableAlias
    * @param condition
    * @param joinType
+   * @param joinCardinality
    */
-  public constructor(joinTableName: string, joinTableAlias: string, condition: SQLBlock, joinType: JoinType) {
+  public constructor(joinTableName: string, joinTableAlias: string, condition: SQLBlock, joinType: JoinType, joinCardinality?: JoinCardinality) {
     super();
     this._joinTableName = joinTableName;
     this._joinTableAlias = joinTableAlias;
     this._condition = condition;
     this._joinType = joinType;
+    this._joinCardinality = joinCardinality;
   }
 
   /**
@@ -90,7 +94,8 @@ export class SQLJoin extends SQLElement {
     return this._joinType;
   }
 
-  set joinType(value: JoinType) {
-    this._joinType = value;
+  get joinCardinality(): JoinCardinality {
+    return this._joinCardinality;
   }
+
 }

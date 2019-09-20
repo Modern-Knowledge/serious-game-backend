@@ -18,7 +18,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
     }
 
   /**
-   * returns entity by id
+   * returns the entity by id
    * @param id
    * @param excludedSQLAttributes
    */
@@ -33,11 +33,11 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
           return result[0];
         }
 
-        throw new Error("More than 1 row returned");
+        throw new Error("More than 1 row returned!"); // %todo logger str
     }
 
     /**
-     * returns all entities with specified filter
+     * returns all entities that match the specified filter
      * @param excludedSQLAttributes
      */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {

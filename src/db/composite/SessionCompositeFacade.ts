@@ -1,18 +1,19 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { TherapistFacade } from "../entity/user/TherapistFacade";
-import { PatientFacade } from "../entity/user/PatientFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/JoinType";
-import { Session } from "../../lib/models/Session";
-import { StatisticCompositeFacade } from "./StatisticCompositeFacade";
-import { GameFacade } from "../entity/game/GameFacade";
-import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
-import { Statistic } from "../../lib/models/Statistic";
-import { SessionFacade } from "../entity/game/SessionFacade";
-import { Helper } from "../../util/Helper";
-import { Filter } from "../filter/Filter";
+import {EntityFacade} from "../entity/EntityFacade";
+import {TherapistFacade} from "../entity/user/TherapistFacade";
+import {PatientFacade} from "../entity/user/PatientFacade";
+import {SQLAttributes} from "../sql/SQLAttributes";
+import {SQLJoin} from "../sql/SQLJoin";
+import {SQLBlock} from "../sql/SQLBlock";
+import {JoinType} from "../sql/enums/JoinType";
+import {Session} from "../../lib/models/Session";
+import {StatisticCompositeFacade} from "./StatisticCompositeFacade";
+import {GameFacade} from "../entity/game/GameFacade";
+import {GameSettingFacade} from "../entity/settings/GameSettingFacade";
+import {Statistic} from "../../lib/models/Statistic";
+import {SessionFacade} from "../entity/game/SessionFacade";
+import {Helper} from "../../util/Helper";
+import {Filter} from "../filter/Filter";
+import {JoinCardinality} from "../sql/enums/JoinCardinality";
 
 /**
  * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
@@ -148,13 +149,13 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         if (this._withGameJoin) {
             const gameJoin: SQLBlock = new SQLBlock();
             gameJoin.addText(`${this._gameFacade.tableAlias}.id = ${this.tableAlias}.game_id`);
-            joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         if(this._withPatientJoin) {
             const patientJoin: SQLBlock = new SQLBlock();
             patientJoin.addText(`${this._patientFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
         }
@@ -162,7 +163,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         if(this._withTherapistJoin) {
             const therapistJoin: SQLBlock = new SQLBlock();
             therapistJoin.addText(`${this._therapistFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-            joins.push(new SQLJoin(this._therapistFacade.tableName, this._therapistFacade.tableAlias, therapistJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._therapistFacade.tableName, this._therapistFacade.tableAlias, therapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
         }
@@ -170,7 +171,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         if(this._withStatisticCompositeJoin) {
             const statisticJoin: SQLBlock = new SQLBlock();
             statisticJoin.addText(`${this._statisticCompositeFacade.tableAlias}.id = ${this.tableAlias}.statistic_id`);
-            joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._statisticCompositeFacade.joins); // add statistic joins (errortext)
         }
@@ -178,7 +179,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         if(this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_settings_id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }

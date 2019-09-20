@@ -1,16 +1,17 @@
-import { UserFacade } from "./UserFacade";
-import { User } from "../../../lib/models/User";
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
-import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { FilterAttribute } from "../../filter/FilterAttribute";
-import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Patient } from "../../../lib/models/Patient";
-import { Filter } from "../../filter/Filter";
+import {UserFacade} from "./UserFacade";
+import {User} from "../../../lib/models/User";
+import {EntityFacade} from "../EntityFacade";
+import {SQLAttributes} from "../../sql/SQLAttributes";
+import {SQLValueAttributes} from "../../sql/SQLValueAttributes";
+import {SQLValueAttribute} from "../../sql/SQLValueAttribute";
+import {FilterAttribute} from "../../filter/FilterAttribute";
+import {SQLComparisonOperator} from "../../sql/SQLComparisonOperator";
+import {SQLJoin} from "../../sql/SQLJoin";
+import {JoinType} from "../../sql/enums/JoinType";
+import {SQLBlock} from "../../sql/SQLBlock";
+import {Patient} from "../../../lib/models/Patient";
+import {Filter} from "../../filter/Filter";
+import {JoinCardinality} from "../../sql/enums/JoinCardinality";
 
 /**
  * handles crud operations with the patient-entity
@@ -143,7 +144,7 @@ export class PatientFacade extends EntityFacade<Patient> {
     if(this._withUserJoin) {
       const userJoin: SQLBlock = new SQLBlock();
       userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
-      joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
     }
 
     return joins;

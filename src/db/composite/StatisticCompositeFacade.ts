@@ -1,15 +1,16 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/JoinType";
-import { Statistic } from "../../lib/models/Statistic";
-import { StatisticFacade } from "../entity/game/StatisticFacade";
-import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
-import { ErrortextStatisticFacade } from "../entity/helptext/ErrortextStatisticFacade";
-import { Errortext } from "../../lib/models/Errortext";
-import { Helper } from "../../util/Helper";
-import { Filter } from "../filter/Filter";
+import {EntityFacade} from "../entity/EntityFacade";
+import {SQLAttributes} from "../sql/SQLAttributes";
+import {SQLJoin} from "../sql/SQLJoin";
+import {SQLBlock} from "../sql/SQLBlock";
+import {JoinType} from "../sql/enums/JoinType";
+import {Statistic} from "../../lib/models/Statistic";
+import {StatisticFacade} from "../entity/game/StatisticFacade";
+import {ErrortextFacade} from "../entity/helptext/ErrortextFacade";
+import {ErrortextStatisticFacade} from "../entity/helptext/ErrortextStatisticFacade";
+import {Errortext} from "../../lib/models/Errortext";
+import {Helper} from "../../util/Helper";
+import {Filter} from "../filter/Filter";
+import {JoinCardinality} from "../sql/enums/JoinCardinality";
 
 /**
  * retrieves composite statistics
@@ -88,11 +89,11 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         if(this._withErrortextJoin) {
             const statisticErrortextJoin: SQLBlock = new SQLBlock();
             statisticErrortextJoin.addText(`${this._errortextStatisticFacade.tableAlias}.statistic_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
 
             const errortextStatisticJoin: SQLBlock = new SQLBlock();
             errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
-            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._errortextFacade.joins); // add errortext joins (text, severity)
         }

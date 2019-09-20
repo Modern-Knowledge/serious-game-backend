@@ -1,16 +1,17 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/JoinType";
-import { Patient } from "../../lib/models/Patient";
-import { PatientFacade } from "../entity/user/PatientFacade";
-import { PatientSetting } from "../../lib/models/PatientSetting";
-import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
-import { SessionFacade } from "../entity/game/SessionFacade";
-import { Session } from "../../lib/models/Session";
-import { Helper } from "../../util/Helper";
-import { Filter } from "../filter/Filter";
+import {EntityFacade} from "../entity/EntityFacade";
+import {SQLAttributes} from "../sql/SQLAttributes";
+import {SQLJoin} from "../sql/SQLJoin";
+import {SQLBlock} from "../sql/SQLBlock";
+import {JoinType} from "../sql/enums/JoinType";
+import {Patient} from "../../lib/models/Patient";
+import {PatientFacade} from "../entity/user/PatientFacade";
+import {PatientSetting} from "../../lib/models/PatientSetting";
+import {PatientSettingFacade} from "../entity/settings/PatientSettingFacade";
+import {SessionFacade} from "../entity/game/SessionFacade";
+import {Session} from "../../lib/models/Session";
+import {Helper} from "../../util/Helper";
+import {Filter} from "../filter/Filter";
+import {JoinCardinality} from "../sql/enums/JoinCardinality";
 
 /**
  * retrieves composite patients
@@ -95,13 +96,13 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         if(this._withPatientSettingJoin) {
             const patientSettingJoin: SQLBlock = new SQLBlock();
             patientSettingJoin.addText(`${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         if(this._withSessionJoin) {
             const sessionJoin: SQLBlock = new SQLBlock();
             sessionJoin.addText(`${this._sessionFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN));
+            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
         }
 
         return joins;

@@ -1,10 +1,11 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { GameSetting } from "../../../lib/models/GameSetting";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { JoinType } from "../../sql/JoinType";
-import { DifficultyFacade } from "../enum/DifficultyFacade";
+import {EntityFacade} from "../EntityFacade";
+import {SQLAttributes} from "../../sql/SQLAttributes";
+import {GameSetting} from "../../../lib/models/GameSetting";
+import {SQLJoin} from "../../sql/SQLJoin";
+import {SQLBlock} from "../../sql/SQLBlock";
+import {JoinType} from "../../sql/enums/JoinType";
+import {DifficultyFacade} from "../enum/DifficultyFacade";
+import {JoinCardinality} from "../../sql/enums/JoinCardinality";
 
 /**
  * handles CRUD operations with game-settings-entity
@@ -81,7 +82,7 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
     if(this._withDifficultyJoin) {
       const difficultyJoin: SQLBlock = new SQLBlock();
       difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
-      joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN));
+      joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
     }
 
     return joins;
