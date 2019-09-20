@@ -20,9 +20,8 @@ import { Helper } from "../util/Helper";
 import { Filter } from "./filter/Filter";
 import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
-import { FilterAttribute } from "./filter/FilterAttribute";
-import { SQLComparisonOperator } from "./sql/SQLComparisonOperator";
 import { Error } from "tslint/lib/error";
+import { Stopwatch } from "../util/Stopwatch";
 
 /**
  * base class for crud operations with the database
@@ -82,6 +81,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     let returnEntities: EntityType[] = [];
     const params: (string | number | Date)[] = selectQuery.fillParameters();
 
+    const s: Stopwatch = new Stopwatch();
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
@@ -96,7 +96,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         }
 
         returnEntities = this.postProcessSelect(returnEntities);
-        // logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} [${JSON.stringify(returnEntities)}]`);
+        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned`);
+
+        const elapsedTime = s.timeElapsed;
+        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}`);
 
         resolve(returnEntities);
       });
@@ -131,7 +134,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * executes an update query and returns the number of affected rows
    * @param attributes name-value pairs of the entity that should be changed
    */
-  public async update(attributes: SQLValueAttributes): Promise<number> {
+  public update(attributes: SQLValueAttributes): Promise<number> {
     const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
     const updateQuery: BakedQuery = npq.bake();
     const params: (string | number | Date)[] = updateQuery.fillParameters();

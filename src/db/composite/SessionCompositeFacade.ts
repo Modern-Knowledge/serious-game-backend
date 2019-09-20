@@ -15,8 +15,8 @@ import { Statistic } from "../../lib/models/Statistic";
 import { Game } from "../../lib/models/Game";
 import { GameSetting } from "../../lib/models/GameSetting";
 import { SessionFacade } from "../entity/game/SessionFacade";
-import {Helper} from "../../util/Helper";
-import {Filter} from "../filter/Filter";
+import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
 
 /**
  * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
@@ -29,7 +29,7 @@ import {Filter} from "../filter/Filter";
  *  - errortexts_statistics (1:n)
  *  - errortexts (1:n)
  *  - texts (1:1)
- * - severities (1:1)
+ *  - severities (1:1)
  * - games (1:1)
  * - games_settings (1:1)
  *  - difficulty (1:1)
@@ -251,6 +251,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         return this._gameSettingsFacade.filter;
     }
 
+
     get withTherapistJoin(): boolean {
         return this._withTherapistJoin;
     }
@@ -292,6 +293,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
     }
 
     set withErrortextJoin(value: boolean) {
+        this._statisticCompositeFacade.withErrortextJoin = value;
         this._withErrortextJoin = value;
     }
 
@@ -300,6 +302,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
     }
 
     set withTextJoin(value: boolean) {
+        this._statisticCompositeFacade.withTextJoin = value;
         this._withTextJoin = value;
     }
 
@@ -308,6 +311,7 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
     }
 
     set withSeverityJoin(value: boolean) {
+        this._statisticCompositeFacade.withSeverityJoin = value;
         this._withSeverityJoin = value;
     }
 
@@ -324,8 +328,15 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
     }
 
     set withGameSettingsJoin(value: boolean) {
-        this._gameSettingsFacade.withDifficultyJoin = value;
         this._withGameSettingsJoin = value;
     }
 
+    get withDifficultyJoin(): boolean {
+        return this._withDifficultyJoin;
+    }
+
+    set withDifficultyJoin(value: boolean) {
+        this._gameSettingsFacade.withDifficultyJoin = value;
+        this._withDifficultyJoin = value;
+    }
 }
