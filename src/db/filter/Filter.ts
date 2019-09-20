@@ -1,8 +1,8 @@
-import { Filterable } from "./Filterable";
-import { FilterAttribute } from "./FilterAttribute";
-import { SQLBlock } from "../sql/SQLBlock";
-import { SQLOperator } from "../sql/enums/SQLOperator";
-import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
+import {Filterable} from "./Filterable";
+import {FilterAttribute} from "./FilterAttribute";
+import {SQLBlock} from "../sql/SQLBlock";
+import {SQLOperator} from "../sql/enums/SQLOperator";
+import {SQLComparisonOperator} from "../sql/SQLComparisonOperator";
 
 /**
  * filter for sql statements
@@ -23,7 +23,7 @@ export class Filter implements Filterable {
    * @param sqlOperator sql-operator (equals, greater than, ...) between the filter-conditions
    * @param operator optional sql-operator that is appended behind the condition
    */
-  public addFilterCondition(name: string, value: string | number, sqlOperator: SQLComparisonOperator, operator?: SQLOperator): Filter {
+  public addFilterCondition(name: string, value: string | number, sqlOperator: SQLComparisonOperator = SQLComparisonOperator.EQUAL, operator?: SQLOperator): Filter {
     this._empty = false;
     const filterAttribute: FilterAttribute = new FilterAttribute(name, value, sqlOperator);
     filterAttribute.tableAlias = this._tableAlias;
