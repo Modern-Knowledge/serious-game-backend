@@ -135,4 +135,8 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         this._withSeverityJoin = value;
     }
 
+    get idFilter(): Filter {
+        return this.textFacadeFilter;
+    }
+
 }

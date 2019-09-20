@@ -62,7 +62,6 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
      * combines the composite facade filters with the specified sql-operator
      */
     private combineFilters(): void {
-        this.clearFilter()
         const compositeFacadeFilters: Filter[] = this.filters;
         const newFilter: Filter = new Filter(this.tableAlias);
         const facadeFilter: Filter = this.filter;
@@ -79,10 +78,18 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
         this.filter = newFilter;
     }
 
+    /**
+     * sql-operator to combine sql-operators with
+     * @param value
+     */
     set sqlOperator(value: SQLOperator) {
         this._sqlOperator = value;
     }
 
+    /**
+     * auto combine composite filters
+     * @param value
+     */
     set autoCombineFilter(value: boolean) {
         this._autoCombineFilter = value;
     }

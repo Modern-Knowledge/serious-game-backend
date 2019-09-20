@@ -174,4 +174,8 @@ export class PatientFacade extends CompositeFacade<Patient> {
   set withUserJoin(value: boolean) {
     this._withUserJoin = value;
   }
+
+  get idFilter(): Filter {
+    return this.userFacadeFilter;
+  }
 }

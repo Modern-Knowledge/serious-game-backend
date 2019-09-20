@@ -6,9 +6,7 @@ import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
-import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
-import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
-import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
+import {SessionCompositeFacade} from "../db/composite/SessionCompositeFacade";
 
 const router = express.Router();
 
@@ -55,12 +53,11 @@ router.get("/", async (req: Request, res: Response) => {
  const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
  const sessionFilter = therapistCompFacade.sessionFacadeFilter;
 
- // theraUserFilter.addFilterCondition("id", 1, SQLComparisonOperator.EQUAL, SQLOperator.AND);
+therapistCompFacade.filter.addFilterCondition("therapist_id", 1);
+ patientUserFilter.addFilterCondition("id", 1);
+ sessionFilter.addFilterCondition("id", "ddsfsdf");
 
- patientUserFilter.addFilterCondition("id", 1, SQLComparisonOperator.EQUAL);
- sessionFilter.addFilterCondition("id", 1, SQLComparisonOperator.EQUAL);
-
- const thera = await therapistCompFacade.get();
+ const thera = await therapistCompFacade.getById(6);
 
  // console.log(thera);
  //
@@ -77,11 +74,11 @@ router.get("/", async (req: Request, res: Response) => {
  // const statisticComp = await statisticCompFacade.getStatistics();
  // console.log(statisticComp);
  //
- const patientCompositeFacade = new PatientCompositeFacade();
- const patientComp = await patientCompositeFacade.get();
+ // const patientCompositeFacade = new PatientCompositeFacade();
+ // const patientComp = await patientCompositeFacade.get();
  //
- const gameCompositeFacade = new GameCompositeFacade();
- const gamesComp = await gameCompositeFacade.get();
+ // const gameCompositeFacade = new GameCompositeFacade();
+ // const gamesComp = await gameCompositeFacade.get();
  // console.log(gamesComp[0].gameSettings[0]);
  // console.log(gamesComp[0].gameSettings);
  //
@@ -89,11 +86,11 @@ router.get("/", async (req: Request, res: Response) => {
  // const sess = await sessionFacade.getSessions();
  // console.log(sess);
 
- const sessionCompositeFacade = new SessionCompositeFacade();
- const sessions = await sessionCompositeFacade.get();
+  const sessionCompositeFacade = new SessionCompositeFacade();
+  const sessions = await sessionCompositeFacade.getById(1);
  // console.log(sessions);
 
- sessionCompositeFacade.postProcessFilter;
+ // sessionCompositeFacade.postProcessFilter;
 
 
  res.jsonp("therapists");

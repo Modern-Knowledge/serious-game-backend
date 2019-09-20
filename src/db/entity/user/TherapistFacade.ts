@@ -139,6 +139,10 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     ];
   }
 
+  get idFilter(): Filter {
+    return this.userFacadeFilter;
+  }
+
   /**
    * returns the userFacadeFilter
    */

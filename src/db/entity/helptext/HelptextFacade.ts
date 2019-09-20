@@ -104,4 +104,8 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
   set withTextJoin(value: boolean) {
     this._withTextJoin = value;
   }
+
+  get idFilter(): Filter {
+    return this.textFacadeFilter;
+  }
 }

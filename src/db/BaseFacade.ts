@@ -23,7 +23,7 @@ import { SQLOrder } from "./sql/SQLOrder";
 import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
-import {ExecutionTimeAnalyser} from "../util/ExecutionTimeAnalyser";
+import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
 
 /**
  * base class for crud operations with the database
@@ -39,7 +39,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   private readonly _dbInstance: DatabaseConnection;
 
-  private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {return entities};
+  private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {return entities; };
 
   /**
    * returns sql attributes that should be retrieved from the database
@@ -77,12 +77,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * executes an select query and returns the results
    * @param attributes attributes that should be retrieved
-   * @param joins joins to other tables
+   * @param filter filter for selected (can be different from facade filter
    */
-  public select(attributes: SQLAttributes, joins: SQLJoin[]): Promise<EntityType[]> {
+  public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
     logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} called`);
-    BaseFacade.joinAnalyzer(joins);
-    const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
+    BaseFacade.joinAnalyzer(this.joins);
+    const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: (string | number | Date)[] = selectQuery.fillParameters();
@@ -144,7 +144,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param attributes name-value pairs of the entity that should be changed
    */
   public update(attributes: SQLValueAttributes): Promise<number> {
-    const npq: UpdateQuery = this.getUpdateQuery(attributes, this.getFilter());
+    const npq: UpdateQuery = this.getUpdateQuery(attributes, BaseFacade.getSQLFilter(this._filter));
     const updateQuery: BakedQuery = npq.bake();
     const params: (string | number | Date)[] = updateQuery.fillParameters();
 
@@ -171,7 +171,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * executes a delete query and returns the number of affected rows
    */
   public delete(): Promise<number> {
-    const npq: DeleteQuery = this.getDeleteQuery(this.getFilter());
+    const npq: DeleteQuery = this.getDeleteQuery(BaseFacade.getSQLFilter(this._filter));
     const deleteQuery: BakedQuery = npq.bake();
     const params: (string | number | Date)[] = deleteQuery.fillParameters();
 
@@ -327,8 +327,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }
 
-  protected getFilter(): SQLWhere {
-    return this._filter.isEmpty ? undefined : new SQLWhere(this._filter.getBlock());
+  private static getSQLFilter(filter: Filter): SQLWhere {
+    return filter.isEmpty ? undefined : new SQLWhere(filter.getBlock());
   }
 
   /**
@@ -386,11 +386,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     let oneToOneJoinAmount = 0;
 
     for (const join of joins) {
-      if(join.joinCardinality === JoinCardinality.ONE_TO_MANY) {
+      if (join.joinCardinality === JoinCardinality.ONE_TO_MANY) {
         oneToManyJoinAmount++;
       }
 
-      if(join.joinCardinality === JoinCardinality.ONE_TO_ONE) {
+      if (join.joinCardinality === JoinCardinality.ONE_TO_ONE) {
         oneToOneJoinAmount++;
       }
     }
@@ -398,7 +398,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
 
     const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
-    if(oneToManyJoinAmount >= warnToManyJoins) {
+    if (oneToManyJoinAmount >= warnToManyJoins) {
       logger.warn(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
     }
 

@@ -194,4 +194,8 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
   set withSessionJoin(value: boolean) {
     this._withSessionJoin = value;
   }
+
+  get idFilter(): Filter {
+    return this.therapistUserFacadeFilter;
+  }
 }

@@ -43,7 +43,6 @@ export class Filter implements Filterable {
    */
   public addSubFilter(filter: Filter): Filter {
     this._empty = false;
-    console.log(JSON.stringify(filter.getBlock()));
     this._root.addElement(filter.getBlock());
     return this;
   }
