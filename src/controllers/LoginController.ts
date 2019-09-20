@@ -19,7 +19,7 @@ router.post("/login", async (req: Request, res: Response) => {
   const userFacade = new UserFacade();
   const {body: { email, password }} = req;
   const filter = userFacade.filter;
-  filter.addFilterAttribute(new FilterAttribute("email", email, SQLComparisonOperator.EQUAL));
+  filter.addFilterCondition("email", email, SQLComparisonOperator.EQUAL);
 
   const users = await userFacade.get();
 

@@ -16,7 +16,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
   const facade: ImageFacade = new ImageFacade();
   const filter: Filter = facade.filter;
-  filter.addFilterAttribute(new FilterAttribute("id", id, SQLComparisonOperator.EQUAL));
+  filter.addFilterCondition("id", id, SQLComparisonOperator.EQUAL);
 
   const images = await facade.get();
   let image: Image;

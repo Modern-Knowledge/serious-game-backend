@@ -1,4 +1,3 @@
-import {EntityFacade} from "../entity/EntityFacade";
 import {Therapist} from "../../lib/models/Therapist";
 import {TherapistFacade} from "../entity/user/TherapistFacade";
 import {PatientFacade} from "../entity/user/PatientFacade";
@@ -13,6 +12,7 @@ import {Session} from "../../lib/models/Session";
 import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
 import {JoinCardinality} from "../sql/enums/JoinCardinality";
+import {CompositeFacade} from "./CompositeFacade";
 
 /**
  * retrieves composites therapists
@@ -22,7 +22,7 @@ import {JoinCardinality} from "../sql/enums/JoinCardinality";
  *   - users (1:1)
  * - sessions (1:n)
  */
-export class TherapistCompositeFacade extends EntityFacade<Therapist> {
+export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
   private _therapistFacade: TherapistFacade;
   private _patientFacade: PatientFacade;
@@ -144,6 +144,17 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     }
 
     return Array.from(therapistMap.values());
+  }
+
+  /**
+   * returns the therapist composite filters as an array
+   */
+  protected get filters(): Filter[] {
+    return [
+        this.therapistUserFacadeFilter,
+        this.patientUserFacadeFilter,
+        this.sessionFacadeFilter
+    ];
   }
 
   get therapistUserFacadeFilter(): Filter {

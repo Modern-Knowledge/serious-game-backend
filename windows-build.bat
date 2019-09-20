@@ -14,4 +14,4 @@ echo delete docs folder
 if exist docs rmdir /s /q docs
 
 echo build docs
-typedoc & npm install && npm run watch
+npm install && npm run watch

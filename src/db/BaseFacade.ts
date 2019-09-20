@@ -290,7 +290,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   }
 
   /**
-   * creates joins for the entity and returns them as a list
+   * combine joins for the entity and returns them as a list
    */
   get joins(): SQLJoin[] {
     return [];
@@ -369,7 +369,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return entities;
   }
 
-
   /**
    * returns the fully qualified name (columnName + tableAlias)
    * @param column name of the column
@@ -429,6 +428,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._attributes = value;
   }
 
+  /**
+   * sets the function that is applied to the result set
+   * @param value function that takes an array of entity types
+   */
   set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
     this._postProcessFilter = value;
   }

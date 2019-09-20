@@ -92,7 +92,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
    * @param therapist
    */
   public async deleteTherapist(therapist: Therapist): Promise<number> {
-    this._filter.addFilterAttribute(new FilterAttribute("therapist_id", therapist.id, SQLComparisonOperator.EQUAL));
+    this._filter.addFilterCondition("therapist_id", therapist.id, SQLComparisonOperator.EQUAL);
     const rows: number = await this.delete();
 
     const userRows: number = await this._userFacade.deleteUser(therapist);
