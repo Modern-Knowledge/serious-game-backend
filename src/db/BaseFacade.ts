@@ -357,7 +357,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * clear filter
    */
   public clearFilter(): void {
-    this._filter = new Filter(this._tableAlias);
+    this._filter.clear();
   }
 
   /**

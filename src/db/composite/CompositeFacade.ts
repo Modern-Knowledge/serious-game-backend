@@ -19,6 +19,11 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
         super(tableName, tableAlias);
     }
 
+    /**
+     * returns the composite entity by id
+     * @param id
+     * @param excludedSQLAttributes
+     */
     public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
         if (this._autoCombineFilter) {
             this.combineFilters();
@@ -26,6 +31,10 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
         return super.getById(id, excludedSQLAttributes);
     }
 
+    /**
+     * returns all entities that match the specified filter
+     * @param excludedSQLAttributes
+     */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
         if (this._autoCombineFilter) {
             this.combineFilters();
@@ -41,20 +50,33 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
+     * clears every filter in the composite facade
+     */
+    public clearFilters(): void {
+        for (const filter of this.filters) {
+            filter.clear();
+        }
+    }
+
+    /**
      * combines the composite facade filters with the specified sql-operator
      */
     private combineFilters(): void {
+        this.clearFilter()
         const compositeFacadeFilters: Filter[] = this.filters;
-        const facadeFilter = this.filter;
+        const newFilter: Filter = new Filter(this.tableAlias);
+        const facadeFilter: Filter = this.filter;
+
+        compositeFacadeFilters.push(facadeFilter);
 
         for (const filter of compositeFacadeFilters) {
             if (!filter.isEmpty) {
-                facadeFilter.addSubFilter(filter);
-                facadeFilter.addOperator(this._sqlOperator);
+                newFilter.addSubFilter(filter);
+                newFilter.addOperator(this._sqlOperator);
             }
         }
 
-        this.filter = facadeFilter;
+        this.filter = newFilter;
     }
 
     set sqlOperator(value: SQLOperator) {

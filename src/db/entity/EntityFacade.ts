@@ -3,6 +3,8 @@ import { AbstractModel } from "../../lib/models/AbstractModel";
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { FilterAttribute } from "../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
+import logger from "../../util/logger";
+import { Helper } from "../../util/Helper";
 
 /**
  * base facade for entities
@@ -29,11 +31,13 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
 
         const result: EntityType[] = await this.select(attributes, this.joins);
 
-        if(result.length > 0) {
+        if (result.length > 0) {
           return result[0];
         }
 
-        throw new Error("More than 1 row returned!"); // %todo logger str
+        const errorMsg: string = `${Helper.loggerString(__dirname, BaseFacade.name, "select")} More than one result returned!`;
+        logger.error(errorMsg);
+        throw new Error(errorMsg);
     }
 
     /**

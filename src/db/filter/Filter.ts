@@ -29,9 +29,10 @@ export class Filter implements Filterable {
     filterAttribute.tableAlias = this._tableAlias;
     this._root.addElement(filterAttribute.getBlock());
 
-    if(operator) {
+    if (operator) {
       this.addOperator(operator);
     }
+
     return this;
   }
 
@@ -42,6 +43,7 @@ export class Filter implements Filterable {
    */
   public addSubFilter(filter: Filter): Filter {
     this._empty = false;
+    console.log(JSON.stringify(filter.getBlock()));
     this._root.addElement(filter.getBlock());
     return this;
   }
@@ -69,5 +71,10 @@ export class Filter implements Filterable {
 
   get isEmpty() {
     return this._empty;
+  }
+
+  public clear() {
+    this._root = new SQLBlock();
+    this._empty = true;
   }
 }

@@ -36,13 +36,6 @@ export class BakedQuery {
  }
 
   /**
-   * returns the sql, where parameters are replaced with questionmarks
-   */
-  getBakedSQL(): string {
-    return this._sql;
-  }
-
-  /**
    * adds the names of the parameters and the values of the parameters to the map
    * adds the values of the parameters to the _values map
    * @param params
@@ -72,4 +65,12 @@ export class BakedQuery {
      }
     }
   }
+
+
+    /**
+     * returns the sql, where parameters are replaced with questionmarks
+     */
+    getBakedSQL(): string {
+        return this._sql;
+    }
 }
