@@ -23,6 +23,7 @@ import { SQLOrder } from "./sql/SQLOrder";
 import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
+import {ExecutionTimeAnalyser} from "../util/ExecutionTimeAnalyser";
 
 /**
  * base class for crud operations with the database
@@ -37,6 +38,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   protected _filter: Filter;
 
   private readonly _dbInstance: DatabaseConnection;
+
+  private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {return entities};
 
   /**
    * returns sql attributes that should be retrieved from the database
@@ -77,6 +80,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param joins joins to other tables
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[]): Promise<EntityType[]> {
+    logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} called`);
     BaseFacade.joinAnalyzer(joins);
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
@@ -86,6 +90,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     const s: Stopwatch = new Stopwatch();
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
         if (error) {
           reject(error);
         }
@@ -98,17 +103,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         }
 
         returnEntities = this.postProcessSelect(returnEntities);
-        returnEntities = this.postProcessFilter(returnEntities);
+        returnEntities = this._postProcessFilter(returnEntities);
 
-        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned`);
+        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned!`);
 
         const elapsedTime = s.timeElapsed;
-        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}`);
+        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
+        const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
+        eta.analyse(s.measuredTime);
 
         resolve(returnEntities);
       });
-
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
     });
   }
 
@@ -364,14 +369,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return entities;
   }
 
-    /**
-     * filter an array of entities
-     * do filtering that is not possible in mysql
-     * @param entities
-     */
-  protected postProcessFilter(entities: EntityType[]): EntityType[] {
-      return entities;
-  }
 
   /**
    * returns the fully qualified name (columnName + tableAlias)
@@ -381,6 +378,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return column + this._tableAlias;
   }
 
+  /**
+   * returns performance infos (amount, cardinality) about the sql joins
+   * @param joins
+   */
   private static joinAnalyzer(joins: SQLJoin[]): void {
     let oneToManyJoinAmount = 0;
     let oneToOneJoinAmount = 0;
@@ -426,5 +427,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
   set attributes(value: string[]) {
     this._attributes = value;
+  }
+
+  set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
+    this._postProcessFilter = value;
   }
 }

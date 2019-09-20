@@ -115,7 +115,7 @@ export class TherapistCompositeFacade extends EntityFacade<Therapist> {
     if (this._withSessionJoin) {
       const sessionJoin: SQLBlock = new SQLBlock();
       sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
     }
 
     return joins;

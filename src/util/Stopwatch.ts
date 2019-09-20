@@ -15,15 +15,16 @@ export class Stopwatch {
     }
   }
 
-  get measuredTime(): [number, number] {
-    return process.hrtime(this._start);
+  get measuredTime(): number {
+    const end = process.hrtime(this._start);
+    return Math.round(end[1]/1000000);
   }
 
   /**
    * returns the elapsed time since the start in ms
    */
   get timeElapsed(): string {
-    const end = this.measuredTime;
-    return `${this._name ? this._name + ": " : ""}${Math.round(end[1]/1000000)}ms`;
+    const time: number = this.measuredTime;
+    return `${this._name ? this._name + ": " : ""}${time}ms`;
   }
 }
