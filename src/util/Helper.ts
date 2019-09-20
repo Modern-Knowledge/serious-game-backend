@@ -22,14 +22,13 @@ export abstract class Helper {
   }
 
   /**
-   * searches for model in values-array
+   * searches for key in values-array
    * @param search model to search for
    * @param values array to search in
    */
-  // todo refactor to generic method
-  public static arrayContainsModel(search: AbstractModel, values: AbstractModel[]): boolean {
+  public static arrayContainsModel<T extends AbstractModel>(search: T, values: T[]): boolean {
     for (const item of values) {
-      if(search.equals(item)) {
+      if(search.id === item.id) {
         return true;
       }
     }
