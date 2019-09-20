@@ -1,20 +1,20 @@
-import {EntityFacade} from "../entity/EntityFacade";
-import {TherapistFacade} from "../entity/user/TherapistFacade";
-import {PatientFacade} from "../entity/user/PatientFacade";
-import {SQLAttributes} from "../sql/SQLAttributes";
-import {SQLJoin} from "../sql/SQLJoin";
-import {SQLBlock} from "../sql/SQLBlock";
-import {JoinType} from "../sql/enums/JoinType";
-import {Session} from "../../lib/models/Session";
-import {StatisticCompositeFacade} from "./StatisticCompositeFacade";
-import {GameFacade} from "../entity/game/GameFacade";
-import {GameSettingFacade} from "../entity/settings/GameSettingFacade";
-import {Statistic} from "../../lib/models/Statistic";
-import {SessionFacade} from "../entity/game/SessionFacade";
-import {Helper} from "../../util/Helper";
-import {Filter} from "../filter/Filter";
-import {JoinCardinality} from "../sql/enums/JoinCardinality";
-import {CompositeFacade} from "./CompositeFacade";
+import { EntityFacade } from "../entity/EntityFacade";
+import { TherapistFacade } from "../entity/user/TherapistFacade";
+import { PatientFacade } from "../entity/user/PatientFacade";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLJoin } from "../sql/SQLJoin";
+import { SQLBlock } from "../sql/SQLBlock";
+import { JoinType } from "../sql/enums/JoinType";
+import { Session } from "../../lib/models/Session";
+import { StatisticCompositeFacade } from "./StatisticCompositeFacade";
+import { GameFacade } from "../entity/game/GameFacade";
+import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
+import { Statistic } from "../../lib/models/Statistic";
+import { SessionFacade } from "../entity/game/SessionFacade";
+import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
@@ -105,7 +105,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             returnAttributes.addSqlAttributes(this._gameFacade.getSQLAttributes(excludedSQLAttributes));
         }
 
-        if(this._gameSettingsFacade) {
+        if (this._gameSettingsFacade) {
             returnAttributes.addSqlAttributes(this._gameSettingsFacade.getSQLAttributes(excludedSQLAttributes));
         }
 
@@ -134,7 +134,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             s.game = this._gameFacade.fillEntity(result);
         }
 
-        if(this._withGameSettingsJoin) {
+        if (this._withGameSettingsJoin) {
             s.gameSetting = this._gameSettingsFacade.fillEntity(result);
         }
 
@@ -153,7 +153,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
-        if(this._withPatientJoin) {
+        if (this._withPatientJoin) {
             const patientJoin: SQLBlock = new SQLBlock();
             patientJoin.addText(`${this._patientFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
             joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
@@ -161,7 +161,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
         }
 
-        if(this._withTherapistJoin) {
+        if (this._withTherapistJoin) {
             const therapistJoin: SQLBlock = new SQLBlock();
             therapistJoin.addText(`${this._therapistFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
             joins.push(new SQLJoin(this._therapistFacade.tableName, this._therapistFacade.tableAlias, therapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
@@ -169,7 +169,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
         }
 
-        if(this._withStatisticCompositeJoin) {
+        if (this._withStatisticCompositeJoin) {
             const statisticJoin: SQLBlock = new SQLBlock();
             statisticJoin.addText(`${this._statisticCompositeFacade.tableAlias}.id = ${this.tableAlias}.statistic_id`);
             joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
@@ -177,7 +177,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             joins = joins.concat(this._statisticCompositeFacade.joins); // add statistic joins (errortext)
         }
 
-        if(this._withGameSettingsJoin) {
+        if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_settings_id`);
             joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
@@ -196,14 +196,14 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
         for (const session of entities) {
             if (!sessionMap.has(session.id)) {
-                sessionMap.set(session.id, session)
+                sessionMap.set(session.id, session);
             } else {
                 const existingSession: Session = sessionMap.get(session.id);
                 const existingStatistic: Statistic = existingSession.statistic;
 
                 const statistic: Statistic = session.statistic;
 
-                if(!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
                     existingStatistic.addErrortexts(statistic.errortexts);
                 }
             }

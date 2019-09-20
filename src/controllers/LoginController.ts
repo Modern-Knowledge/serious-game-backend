@@ -1,9 +1,9 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import {FilterAttribute} from "../db/filter/FilterAttribute";
-import {SQLComparisonOperator} from "../db/sql/SQLComparisonOperator";
+import { UserFacade } from "../db/entity/user/UserFacade";
+import { FilterAttribute } from "../db/filter/FilterAttribute";
+import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.post("/login", async (req: Request, res: Response) => {
   const users = await userFacade.get();
 
   let user;
-  if(users.length == 0) {
+  if (users.length == 0) {
     return res.status(401).send("Invalid credentials.");
   }
   user = users[0];

@@ -50,9 +50,10 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * clears every filter in the composite facade
+     * clears filters from the facades in the composite facade
+     * but not the facade filter itself
      */
-    public clearFilters(): void {
+    public clearFacadeFilters(): void {
         for (const filter of this.filters) {
             filter.clear();
         }

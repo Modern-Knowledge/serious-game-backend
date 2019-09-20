@@ -1,16 +1,16 @@
-import {SQLAttributes} from "../sql/SQLAttributes";
-import {SQLJoin} from "../sql/SQLJoin";
-import {SQLBlock} from "../sql/SQLBlock";
-import {JoinType} from "../sql/enums/JoinType";
-import {Statistic} from "../../lib/models/Statistic";
-import {StatisticFacade} from "../entity/game/StatisticFacade";
-import {ErrortextFacade} from "../entity/helptext/ErrortextFacade";
-import {ErrortextStatisticFacade} from "../entity/helptext/ErrortextStatisticFacade";
-import {Errortext} from "../../lib/models/Errortext";
-import {Helper} from "../../util/Helper";
-import {Filter} from "../filter/Filter";
-import {JoinCardinality} from "../sql/enums/JoinCardinality";
-import {CompositeFacade} from "./CompositeFacade";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLJoin } from "../sql/SQLJoin";
+import { SQLBlock } from "../sql/SQLBlock";
+import { JoinType } from "../sql/enums/JoinType";
+import { Statistic } from "../../lib/models/Statistic";
+import { StatisticFacade } from "../entity/game/StatisticFacade";
+import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
+import { ErrortextStatisticFacade } from "../entity/helptext/ErrortextStatisticFacade";
+import { Errortext } from "../../lib/models/Errortext";
+import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite statistics
@@ -57,7 +57,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
         returnAttributes.addSqlAttributes(this._statisticFacade.getSQLAttributes(excludedSQLAttributes));
 
-        if(this._withErrortextJoin) {
+        if (this._withErrortextJoin) {
             returnAttributes.addSqlAttributes(this._errortextFacade.getSQLAttributes(excludedSQLAttributes));
             returnAttributes.addSqlAttributes(this._errortextStatisticFacade.getSQLAttributes(excludedSQLAttributes));
         }
@@ -72,7 +72,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     public fillEntity(result: any): Statistic {
         const t: Statistic = this._statisticFacade.fillEntity(result);
 
-        if(this._withErrortextJoin) {
+        if (this._withErrortextJoin) {
             const et: Errortext = this._errortextFacade.fillEntity(result);
             t.addErrortext(et);
         }
@@ -86,7 +86,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
 
-        if(this._withErrortextJoin) {
+        if (this._withErrortextJoin) {
             const statisticErrortextJoin: SQLBlock = new SQLBlock();
             statisticErrortextJoin.addText(`${this._errortextStatisticFacade.tableAlias}.statistic_id = ${this.tableAlias}.id`);
             joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
@@ -110,11 +110,11 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
         for (const statistic of entities) {
             if (!statisticMap.has(statistic.id)) {
-                statisticMap.set(statistic.id, statistic)
+                statisticMap.set(statistic.id, statistic);
             } else {
                 const existingStatistic: Statistic = statisticMap.get(statistic.id);
 
-                if(!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
                     existingStatistic.addErrortexts(statistic.errortexts);
                 }
             }

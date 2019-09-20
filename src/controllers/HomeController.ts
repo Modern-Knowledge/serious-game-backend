@@ -6,7 +6,7 @@ import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
-import {SessionCompositeFacade} from "../db/composite/SessionCompositeFacade";
+import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 
 const router = express.Router();
 
@@ -57,7 +57,9 @@ therapistCompFacade.filter.addFilterCondition("therapist_id", 1);
  patientUserFilter.addFilterCondition("id", 1);
  sessionFilter.addFilterCondition("id", "ddsfsdf");
 
- const thera = await therapistCompFacade.getById(6);
+ therapistCompFacade.clearFacadeFilters();
+
+ const thera = await therapistCompFacade.get();
 
  // console.log(thera);
  //

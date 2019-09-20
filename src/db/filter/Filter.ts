@@ -1,8 +1,8 @@
-import {Filterable} from "./Filterable";
-import {FilterAttribute} from "./FilterAttribute";
-import {SQLBlock} from "../sql/SQLBlock";
-import {SQLOperator} from "../sql/enums/SQLOperator";
-import {SQLComparisonOperator} from "../sql/SQLComparisonOperator";
+import { Filterable } from "./Filterable";
+import { FilterAttribute } from "./FilterAttribute";
+import { SQLBlock } from "../sql/SQLBlock";
+import { SQLOperator } from "../sql/enums/SQLOperator";
+import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
 
 /**
  * filter for sql statements

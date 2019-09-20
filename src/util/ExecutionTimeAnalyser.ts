@@ -20,9 +20,9 @@ export class ExecutionTimeAnalyser {
      * @param executionTime
      */
     public analyse(executionTime: number): void {
-        if(executionTime >= this._maxExecutionTime) {
+        if (executionTime >= this._maxExecutionTime) {
             logger.error(`${Helper.loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation is non performant (${executionTime}ms)! Refactor this method!`);
-        } else if(executionTime >= this._warnExecutionTime) {
+        } else if (executionTime >= this._warnExecutionTime) {
             logger.warn(`${Helper.loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation takes very long (${executionTime}ms)! Consider refactoring this method!`);
         }
     }

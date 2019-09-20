@@ -28,7 +28,7 @@ export abstract class Helper {
    */
   public static arrayContainsModel<T extends AbstractModel>(search: T, values: T[]): boolean {
     for (const item of values) {
-      if(search.id === item.id) {
+      if (search.id === item.id) {
         return true;
       }
     }

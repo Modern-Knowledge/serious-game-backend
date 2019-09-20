@@ -10,14 +10,14 @@ export class Stopwatch {
    * @param name
    */
   public constructor(name?: string) {
-    if(name) {
+    if (name) {
       this._name = name;
     }
   }
 
   get measuredTime(): number {
     const end = process.hrtime(this._start);
-    return Math.round(end[1]/1000000);
+    return Math.round(end[1] / 1000000);
   }
 
   /**
