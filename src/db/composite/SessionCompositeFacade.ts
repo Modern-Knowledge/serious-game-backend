@@ -14,6 +14,7 @@ import {SessionFacade} from "../entity/game/SessionFacade";
 import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
 import {JoinCardinality} from "../sql/enums/JoinCardinality";
+import {CompositeFacade} from "./CompositeFacade";
 
 /**
  * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
@@ -31,7 +32,7 @@ import {JoinCardinality} from "../sql/enums/JoinCardinality";
  * - games_settings (1:1)
  *  - difficulty (1:1)
  */
-export class SessionCompositeFacade extends EntityFacade<Session> {
+export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     private _sessionFacade: SessionFacade;
     private _therapistFacade: TherapistFacade;
@@ -211,6 +212,22 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
         return Array.from(sessionMap.values());
     }
 
+    /**
+     * returns the statistic composite filters as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.therapistFacadeFilter,
+            this.therapistUserFacadeFilter,
+            this.patientFacadeFilter,
+            this.statisticFacadeFilter,
+            this.errortextFacadeFilter,
+            this.patientUserFacadeFilter,
+            this.gameFacadeFilter,
+            this.gameSettingFacadeFilter
+        ];
+    }
+
     get therapistFacadeFilter(): Filter {
         return this._therapistFacade.filter;
     }
@@ -242,7 +259,6 @@ export class SessionCompositeFacade extends EntityFacade<Session> {
     get gameSettingFacadeFilter(): Filter {
         return this._gameSettingsFacade.filter;
     }
-
 
     get withTherapistJoin(): boolean {
         return this._withTherapistJoin;

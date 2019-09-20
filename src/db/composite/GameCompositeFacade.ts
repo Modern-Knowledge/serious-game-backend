@@ -1,4 +1,3 @@
-import {EntityFacade} from "../entity/EntityFacade";
 import {SQLAttributes} from "../sql/SQLAttributes";
 import {SQLJoin} from "../sql/SQLJoin";
 import {SQLBlock} from "../sql/SQLBlock";
@@ -13,6 +12,7 @@ import {Helptext} from "../../lib/models/Helptext";
 import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
 import {JoinCardinality} from "../sql/enums/JoinCardinality";
+import {CompositeFacade} from "./CompositeFacade";
 
 /**
  * retrieves composite games
@@ -23,7 +23,7 @@ import {JoinCardinality} from "../sql/enums/JoinCardinality";
  * - helptexts (1:n)
  *  - texts (1:1)
  */
-export class GameCompositeFacade extends EntityFacade<Game> {
+export class GameCompositeFacade extends CompositeFacade<Game> {
 
     private _gameFacade: GameFacade;
     private _gameSettingsFacade: GameSettingFacade;
@@ -146,6 +146,16 @@ export class GameCompositeFacade extends EntityFacade<Game> {
         }
 
         return Array.from(gameMap.values());
+    }
+
+    /**
+     * returns the game composite filters as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.gameFacadeFilter,
+            this.helptextFacadeFilter,
+        ];
     }
 
     get gameFacadeFilter(): Filter {

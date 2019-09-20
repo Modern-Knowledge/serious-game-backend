@@ -1,19 +1,20 @@
-import {EntityFacade} from "../EntityFacade";
-import {SQLAttributes} from "../../sql/SQLAttributes";
-import {SQLJoin} from "../../sql/SQLJoin";
-import {JoinType} from "../../sql/enums/JoinType";
-import {SQLBlock} from "../../sql/SQLBlock";
-import {Filter} from "../../filter/Filter";
-import {TextFacade} from "./TextFacade";
-import {Helptext} from "../../../lib/models/Helptext";
-import {JoinCardinality} from "../../sql/enums/JoinCardinality";
+import { EntityFacade } from "../EntityFacade";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { Filter } from "../../filter/Filter";
+import { TextFacade } from "./TextFacade";
+import { Helptext } from "../../../lib/models/Helptext";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles CRUD operations with the helptext-entity
  * Joins:
  * - texts (1:1)
  */
-export class HelptextFacade extends EntityFacade<Helptext> {
+export class HelptextFacade extends CompositeFacade<Helptext> {
 
   private _textFacade: TextFacade;
 
@@ -43,7 +44,7 @@ export class HelptextFacade extends EntityFacade<Helptext> {
 
     const helptextAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
 
-    if(this._withTextJoin) {
+    if (this._withTextJoin) {
       const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
       helptextAttributes.addSqlAttributes(textAttributes);
     }
@@ -58,7 +59,7 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   public fillEntity(result: any): Helptext {
     const helptext: Helptext = new Helptext();
 
-    if(this._withTextJoin) {
+    if (this._withTextJoin) {
       this._textFacade.fillTextEntity(result, helptext);
     }
 
@@ -71,13 +72,22 @@ export class HelptextFacade extends EntityFacade<Helptext> {
   get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    if(this._withTextJoin) {
+    if (this._withTextJoin) {
       const textJoin: SQLBlock = new SQLBlock();
       textJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
       joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
     }
 
     return joins;
+  }
+
+  /**
+   * returns the helptext composite filters as an array
+   */
+  protected get filters(): Filter[] {
+    return [
+      this.textFacadeFilter
+    ];
   }
 
   /**

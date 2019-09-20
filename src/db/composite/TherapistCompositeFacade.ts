@@ -1,18 +1,18 @@
-import {Therapist} from "../../lib/models/Therapist";
-import {TherapistFacade} from "../entity/user/TherapistFacade";
-import {PatientFacade} from "../entity/user/PatientFacade";
-import {SQLAttributes} from "../sql/SQLAttributes";
-import {SQLJoin} from "../sql/SQLJoin";
-import {SQLBlock} from "../sql/SQLBlock";
-import {JoinType} from "../sql/enums/JoinType";
-import {TherapistsPatientsFacade} from "../entity/user/TherapistsPatientsFacade";
-import {Patient} from "../../lib/models/Patient";
-import {SessionFacade} from "../entity/game/SessionFacade";
-import {Session} from "../../lib/models/Session";
-import {Helper} from "../../util/Helper";
-import {Filter} from "../filter/Filter";
-import {JoinCardinality} from "../sql/enums/JoinCardinality";
-import {CompositeFacade} from "./CompositeFacade";
+import { Therapist } from "../../lib/models/Therapist";
+import { TherapistFacade } from "../entity/user/TherapistFacade";
+import { PatientFacade } from "../entity/user/PatientFacade";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLJoin } from "../sql/SQLJoin";
+import { SQLBlock } from "../sql/SQLBlock";
+import { JoinType } from "../sql/enums/JoinType";
+import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacade";
+import { Patient } from "../../lib/models/Patient";
+import { SessionFacade } from "../entity/game/SessionFacade";
+import { Session } from "../../lib/models/Session";
+import { Helper } from "../../util/Helper";
+import { Filter } from "../filter/Filter";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composites therapists
@@ -61,12 +61,12 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
     returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
 
-    if(this._withPatientJoin) {
+    if (this._withPatientJoin) {
       returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
       returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
     }
 
-    if(this._withSessionJoin) {
+    if (this._withSessionJoin) {
       returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
     }
 
@@ -79,12 +79,12 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
    */
   protected fillEntity(result: any): Therapist {
     const t: Therapist = this._therapistFacade.fillEntity(result);
-    if(this._withPatientJoin) {
+    if (this._withPatientJoin) {
       const p: Patient = this._patientFacade.fillEntity(result);
       t.addPatient(p);
     }
 
-    if(this._withSessionJoin) {
+    if (this._withSessionJoin) {
       const s: Session = this._sessionFacade.fillEntity(result);
       t.addSession(s);
     }
@@ -129,15 +129,15 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
     for (const therapist of entities) {
       if (!therapistMap.has(therapist.id)) {
-        therapistMap.set(therapist.id, therapist)
+        therapistMap.set(therapist.id, therapist);
       } else {
         const existingTherapist: Therapist = therapistMap.get(therapist.id);
 
-        if(!Helper.arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
+        if (!Helper.arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
           existingTherapist.addPatients(therapist.patients);
         }
 
-        if(!Helper.arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
+        if (!Helper.arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
           existingTherapist.addSessions(therapist.sessions);
         }
       }

@@ -1,4 +1,3 @@
-import {EntityFacade} from "../entity/EntityFacade";
 import {SQLAttributes} from "../sql/SQLAttributes";
 import {SQLJoin} from "../sql/SQLJoin";
 import {SQLBlock} from "../sql/SQLBlock";
@@ -12,6 +11,7 @@ import {Session} from "../../lib/models/Session";
 import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
 import {JoinCardinality} from "../sql/enums/JoinCardinality";
+import {CompositeFacade} from "./CompositeFacade";
 
 /**
  * retrieves composite patients
@@ -20,7 +20,7 @@ import {JoinCardinality} from "../sql/enums/JoinCardinality";
  * - patient_setting (1:1)
  * - sessions (1:n)
  */
-export class PatientCompositeFacade extends EntityFacade<Patient> {
+export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     private _patientFacade: PatientFacade;
     private _patientSettingsFacade: PatientSettingFacade;
@@ -73,8 +73,7 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
     protected fillEntity(result: any): Patient {
         const p: Patient = this._patientFacade.fillEntity(result);
         if(this._withPatientSettingJoin) {
-            const ps: PatientSetting = this._patientSettingsFacade.fillEntity(result);
-            p.patientSetting = ps;
+            p.patientSetting = this._patientSettingsFacade.fillEntity(result);
         }
 
         if(this._withSessionJoin) {
@@ -102,7 +101,7 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         if(this._withSessionJoin) {
             const sessionJoin: SQLBlock = new SQLBlock();
             sessionJoin.addText(`${this._sessionFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
         }
 
         return joins;
@@ -127,6 +126,17 @@ export class PatientCompositeFacade extends EntityFacade<Patient> {
         }
 
         return Array.from(patientMap.values());
+    }
+
+    /**
+     * returns the patient composite filters as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.patientUserFacadeFilter,
+            this.patientSettingFacadeFilter,
+            this.sessionFacadeFilter
+        ];
     }
 
     get patientUserFacadeFilter(): Filter {

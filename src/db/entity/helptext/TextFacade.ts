@@ -1,6 +1,6 @@
-import {EntityFacade} from "../EntityFacade";
-import {Text} from "../../../lib/models/Text";
-import {SQLAttributes} from "../../sql/SQLAttributes";
+import { EntityFacade } from "../EntityFacade";
+import { Text } from "../../../lib/models/Text";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 
 /**
  * handles CRUD operations with the text-entity

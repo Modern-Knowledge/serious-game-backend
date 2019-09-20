@@ -1,14 +1,13 @@
-import {EntityFacade} from "../EntityFacade";
-import {SQLAttributes} from "../../sql/SQLAttributes";
-import {SQLJoin} from "../../sql/SQLJoin";
-import {JoinType} from "../../sql/enums/JoinType";
-import {SQLBlock} from "../../sql/SQLBlock";
-import {Filter} from "../../filter/Filter";
-import {Errortext} from "../../../lib/models/Errortext";
-import {TextFacade} from "./TextFacade";
-import {SeverityFacade} from "../enum/SeverityFacade";
-import {Severity} from "../../../lib/models/Severity";
-import {JoinCardinality} from "../../sql/enums/JoinCardinality";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { Filter } from "../../filter/Filter";
+import { Errortext } from "../../../lib/models/Errortext";
+import { TextFacade } from "./TextFacade";
+import { SeverityFacade } from "../enum/SeverityFacade";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles CRUD operations with the errortext-entity
@@ -16,7 +15,7 @@ import {JoinCardinality} from "../../sql/enums/JoinCardinality";
  * - texts (1:1)
  * - severities (1:1)
  */
-export class ErrortextFacade extends EntityFacade<Errortext> {
+export class ErrortextFacade extends CompositeFacade<Errortext> {
 
     private _textFacade: TextFacade;
     private _severityFacade: SeverityFacade;
@@ -50,11 +49,11 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
 
         const errortextAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
 
-        if(this._withTextJoin) {
+        if (this._withTextJoin) {
             const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
             errortextAttributes.addSqlAttributes(textAttributes);
         }
-        if(this._withSeverityJoin) {
+        if (this._withSeverityJoin) {
             const severityAttributes: SQLAttributes = this._severityFacade.getSQLAttributes(excludedSQLAttributes);
             errortextAttributes.addSqlAttributes(severityAttributes);
         }
@@ -68,7 +67,7 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
      */
     public fillEntity(result: any): Errortext {
         const errortext: Errortext = new Errortext();
-        if(this._withTextJoin) {
+        if (this._withTextJoin) {
             this._textFacade.fillTextEntity(result, errortext);
         }
 
@@ -76,9 +75,8 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
             errortext.severityId = result[this.name("severity_id")];
         }
 
-        if(this._withSeverityJoin) {
-            const s: Severity = this._severityFacade.fillEntity(result);
-            errortext.severity = s;
+        if (this._withSeverityJoin) {
+            errortext.severity = this._severityFacade.fillEntity(result);
         }
 
         return errortext;
@@ -90,19 +88,28 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
 
-        if(this._withTextJoin) {
+        if (this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.error_id = ${this._textFacade.tableAlias}.id`);
             joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
-        if(this._withSeverityJoin) {
+        if (this._withSeverityJoin) {
             const severityJoin: SQLBlock = new SQLBlock();
             severityJoin.addText(`${this.tableAlias}.severity_id = ${this._severityFacade.tableAlias}.id`);
             joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;
+    }
+
+    /**
+     * returns the errortext filters as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.textFacadeFilter,
+        ];
     }
 
     /**
@@ -127,4 +134,5 @@ export class ErrortextFacade extends EntityFacade<Errortext> {
     set withSeverityJoin(value: boolean) {
         this._withSeverityJoin = value;
     }
+
 }

@@ -86,7 +86,7 @@ export class SQLBlock extends SQLElement {
         if (currBlock._elements.length === 0) {
           delete this._elements[i];
           i -= 2;
-          continue;
+
         }
       }
     }

@@ -97,7 +97,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
         for (const item of results) {
           const entity: EntityType = this.fillEntity(item);
-          if (entity !== undefined) {
+          if (entity) {
             returnEntities.push(entity);
           }
         }

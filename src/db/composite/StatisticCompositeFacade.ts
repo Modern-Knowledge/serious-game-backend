@@ -1,4 +1,3 @@
-import {EntityFacade} from "../entity/EntityFacade";
 import {SQLAttributes} from "../sql/SQLAttributes";
 import {SQLJoin} from "../sql/SQLJoin";
 import {SQLBlock} from "../sql/SQLBlock";
@@ -11,6 +10,7 @@ import {Errortext} from "../../lib/models/Errortext";
 import {Helper} from "../../util/Helper";
 import {Filter} from "../filter/Filter";
 import {JoinCardinality} from "../sql/enums/JoinCardinality";
+import {CompositeFacade} from "./CompositeFacade";
 
 /**
  * retrieves composite statistics
@@ -20,7 +20,7 @@ import {JoinCardinality} from "../sql/enums/JoinCardinality";
  * - texts (1:1)
  * - severities (1:1)
  */
-export class StatisticCompositeFacade extends EntityFacade<Statistic> {
+export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
     private _statisticFacade: StatisticFacade;
     private _errortextFacade: ErrortextFacade;
@@ -121,6 +121,16 @@ export class StatisticCompositeFacade extends EntityFacade<Statistic> {
         }
 
         return Array.from(statisticMap.values());
+    }
+
+    /**
+     * returns the statistic composite filters as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.statisticFacadeFilter,
+            this.errortextFacadeFilter,
+        ];
     }
 
     get statisticFacadeFilter(): Filter {

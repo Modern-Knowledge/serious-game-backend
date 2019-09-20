@@ -1,24 +1,25 @@
-import {UserFacade} from "./UserFacade";
-import {Therapist} from "../../../lib/models/Therapist";
-import {User} from "../../../lib/models/User";
-import {EntityFacade} from "../EntityFacade";
-import {SQLAttributes} from "../../sql/SQLAttributes";
-import {SQLValueAttributes} from "../../sql/SQLValueAttributes";
-import {SQLValueAttribute} from "../../sql/SQLValueAttribute";
-import {FilterAttribute} from "../../filter/FilterAttribute";
-import {SQLComparisonOperator} from "../../sql/SQLComparisonOperator";
-import {SQLJoin} from "../../sql/SQLJoin";
-import {JoinType} from "../../sql/enums/JoinType";
-import {SQLBlock} from "../../sql/SQLBlock";
-import {Filter} from "../../filter/Filter";
-import {JoinCardinality} from "../../sql/enums/JoinCardinality";
+import { UserFacade } from "./UserFacade";
+import { Therapist } from "../../../lib/models/Therapist";
+import { User } from "../../../lib/models/User";
+import { EntityFacade } from "../EntityFacade";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { FilterAttribute } from "../../filter/FilterAttribute";
+import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { Filter } from "../../filter/Filter";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles CRUD operations with the therapist-entity
  * Joins:
  * - users (1:1)
  */
-export class TherapistFacade extends EntityFacade<Therapist> {
+export class TherapistFacade extends CompositeFacade<Therapist> {
 
   private _userFacade: UserFacade;
 
@@ -48,7 +49,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
 
     const therapistAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
 
-    if(this._withUserJoin) {
+    if (this._withUserJoin) {
       const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
       therapistAttributes.addSqlAttributes(userAttributes);
     }
@@ -107,7 +108,7 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   public fillEntity(result: any): Therapist {
     const t: Therapist = new Therapist();
 
-    if(this._withUserJoin) {
+    if (this._withUserJoin) {
       this._userFacade.fillUserEntity(result, t);
     }
 
@@ -120,13 +121,22 @@ export class TherapistFacade extends EntityFacade<Therapist> {
   get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
 
-    if(this._withUserJoin) {
+    if (this._withUserJoin) {
       const userJoin: SQLBlock = new SQLBlock();
       userJoin.addText(`${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`);
       joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
     }
 
     return joins;
+  }
+
+  /**
+   * returns the therapist composite filters as an array
+   */
+  protected get filters(): Filter[] {
+    return [
+      this.userFacadeFilter
+    ];
   }
 
   /**
