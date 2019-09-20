@@ -22,6 +22,7 @@ import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
 import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/Stopwatch";
+import { JoinCardinality } from "./sql/enums/JoinCardinality";
 
 /**
  * base class for crud operations with the database
@@ -76,6 +77,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param joins joins to other tables
    */
   public select(attributes: SQLAttributes, joins: SQLJoin[]): Promise<EntityType[]> {
+    BaseFacade.joinAnalyzer(joins);
     const npq: SelectQuery = this.getSelectQuery(attributes, joins, this.getFilter(), this._orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
@@ -98,7 +100,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         returnEntities = this.postProcessSelect(returnEntities);
         returnEntities = this.postProcessFilter(returnEntities);
 
-        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned`);
+        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned`);
 
         const elapsedTime = s.timeElapsed;
         logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}`);
@@ -377,6 +379,29 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    */
   public name(column: string): string {
     return column + this._tableAlias;
+  }
+
+  private static joinAnalyzer(joins: SQLJoin[]): void {
+    let oneToManyJoinAmount = 0;
+    let oneToOneJoinAmount = 0;
+
+    for (const join of joins) {
+      if(join.joinCardinality === JoinCardinality.ONE_TO_MANY) {
+        oneToManyJoinAmount++;
+      }
+
+      if(join.joinCardinality === JoinCardinality.ONE_TO_ONE) {
+        oneToOneJoinAmount++;
+      }
+    }
+
+    logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+
+    const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
+    if(oneToManyJoinAmount >= warnToManyJoins) {
+      logger.warn(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+    }
+
   }
 
   get tableName(): string {
