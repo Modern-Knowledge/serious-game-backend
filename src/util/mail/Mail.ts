@@ -43,6 +43,10 @@ export class Mail {
         this.html = html;
     }
 
+    /**
+     * validate mail
+     * check that required attributes are set
+     */
     public validate(): boolean {
         if (this.to.length === 0) {
             return false;

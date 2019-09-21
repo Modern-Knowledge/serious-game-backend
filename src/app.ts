@@ -29,6 +29,7 @@ import ImageController from "./controllers/ImageController";
 import {Mail} from "./util/mail/Mail";
 import {Recipient} from "./util/mail/Recipient";
 import {MailTransport} from "./util/mail/MailTransport";
+import {User} from "./lib/models/User";
 
 
 process.env.TZ = "Europe/Vienna";
@@ -41,7 +42,6 @@ if (config.error) { // .env not found
   throw new Error(message);
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
-
 
 // check env variables
 (() => {
@@ -78,10 +78,6 @@ logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successf
     logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
   }
 })();
-
-const m = new Mail([new Recipient("Sandra Albrecht", "sandra.albrecht@aon.at")], "test", "test", "<h1>test</h1>");
-MailTransport.getInstance().sendMail(m);
-
 
 // Create Express server
 const app = express();
