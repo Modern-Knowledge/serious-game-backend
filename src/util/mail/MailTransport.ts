@@ -6,7 +6,6 @@
 import { Mail } from "./Mail";
 import logger from "../logger";
 import { Helper } from "../Helper";
-import { Recipient } from "./Recipient";
 import { SmtpLog } from "../../lib/models/SmtpLog";
 
 import * as nodemailer from "nodemailer";
@@ -20,7 +19,6 @@ export class MailTransport {
 
     private _sendMails: boolean;
     private _transporter: any;
-    private _connected: boolean = false;
 
     private _configVariables = {
         pool: true,
@@ -35,11 +33,10 @@ export class MailTransport {
     };
 
     /**
-     * @param sendMails
+     * @param sendMails determines if mail is sent or simulated
      */
     private constructor(sendMails: boolean) {
         this._sendMails = sendMails;
-        this._transporter = nodemailer.createTransport(this._configVariables);
 
         if (!this._sendMails) {
             logger.warn(`${Helper.loggerString(__dirname, MailTransport.name, "constructor")} Mail sending is simulated!`);
@@ -49,21 +46,9 @@ export class MailTransport {
     /**
      * creates the connection to the mail host
      */
-    private async createNodeMailer(): Promise<void> {
+    private createNodeMailer(): void {
         if (this._sendMails) {
-            if (!this._connected) { // reconnect to host
-                this._transporter = nodemailer.createTransport(this._configVariables);
-            }
-
-            const ptr = this;
-            try {
-                await this._transporter.verify();
-                logger.info(`${Helper.loggerString(__dirname, MailTransport.name, "createNodeMailer")} Connection to mail transport was successfully established!`);
-                ptr._connected = true;
-            } catch (e) {
-                logger.error(`${Helper.loggerString(__dirname, MailTransport.name, "createNodeMailer")} Connection to mail host is not possible! \n ${e}`);
-                ptr._connected = false;
-            }
+            this._transporter = nodemailer.createTransport(this._configVariables);
         }
     }
 
@@ -78,7 +63,7 @@ export class MailTransport {
             throw new Error(errStr);
         }
 
-        await this.createNodeMailer();
+        this.createNodeMailer();
 
         const smtpLogs: SmtpLog[] = [];
 
@@ -96,7 +81,7 @@ export class MailTransport {
 
         const smtpLogFacade: SmtpLogFacade = new SmtpLogFacade();
 
-        if (this._sendMails && this._connected) {
+        if (this._sendMails) {
             this._transporter.sendMail(mail).then((value: any) => {
                 logger.info(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail sent: ${value.messageId}!`);
 
@@ -113,7 +98,7 @@ export class MailTransport {
                 }
 
             });
-        } else { // mail is simulated or connection can't be established
+        } else { // mail is simulated
             logger.info(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Simulated mail was successfully sent!`);
 
             // todo maybe refactor to batch insert
