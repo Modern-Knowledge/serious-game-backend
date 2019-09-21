@@ -17,9 +17,9 @@ export class SmtpMessageFacade extends EntityFacade<SmtpMessage> {
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
-            super("smtp_categories", tableAlias);
+            super("smtp_messages", tableAlias);
         } else {
-            super("smtp_categories", "smtpc");
+            super("smtp_messages", "smtpm");
         }
     }
 
@@ -28,7 +28,7 @@ export class SmtpMessageFacade extends EntityFacade<SmtpMessage> {
      * @param excludedSQLAttributes sql attributes that are excluded from the query
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["name"];
+        const sqlAttributes: string[] = ["name", "subject", "html", "text"];
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 

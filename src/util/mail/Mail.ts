@@ -7,6 +7,8 @@
 import { Attachment } from "./Attachment";
 import { Recipient } from "./Recipient";
 import { MailPriority } from "./MailPriority";
+import { SmtpMessage } from "../../lib/models/SmtpMessage";
+import { MailTemplateParser } from "./MailTemplateParser";
 
 /**
  * represents a Mail for nodemailer
@@ -32,15 +34,16 @@ export class Mail {
     /**
      * Common parameters that every Mail needs
      * @param to
-     * @param subject
-     * @param text
-     * @param html
+     * @param messageTemplate messageTemplate for the mail
+     * @param replacementParams params to replace placeholder variables with
      */
-    public constructor(to: Recipient[], subject: string, text: string, html: string) {
+    public constructor(to: Recipient[], messageTemplate: SmtpMessage, replacementParams: string[]) {
+        const parser = new MailTemplateParser(replacementParams);
+
         this.to = to;
-        this.subject = subject;
-        this.text = text;
-        this.html = html;
+        this.subject = messageTemplate.subject;
+        this.text = parser.parse(messageTemplate.text);
+        this.html = parser.parse(messageTemplate.html);
     }
 
     /**

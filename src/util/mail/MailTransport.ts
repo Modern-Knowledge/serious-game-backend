@@ -72,8 +72,10 @@ export class MailTransport {
      * @param mail
      */
     public async sendMail(mail: Mail): Promise<void> {
-        if (mail.validate()) {
-            logger.warn(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`);
+        if (!mail.validate()) {
+            const errStr: string = `${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
+            logger.error(errStr);
+            throw new Error(errStr);
         }
 
         await this.createNodeMailer();
