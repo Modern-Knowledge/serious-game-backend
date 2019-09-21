@@ -54,7 +54,7 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
         const loggerMessage: SQLValueAttribute = new SQLValueAttribute("simulated", this.tableName, smtpLog.simulated);
         attributes.addAttribute(loggerMessage);
 
-        const loggerParams: SQLValueAttribute = new SQLValueAttribute("smtp_category_id", this.tableName, smtpLog.smtpCategoryId);
+        const loggerParams: SQLValueAttribute = new SQLValueAttribute("sent", this.tableName, smtpLog.sent);
         attributes.addAttribute(loggerParams);
 
         const createdAtDate: Date = new Date();

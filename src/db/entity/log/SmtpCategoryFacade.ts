@@ -4,13 +4,13 @@
  */
 
 import { EntityFacade } from "../EntityFacade";
-import { SmtpCategory } from "../../../lib/models/SmtpCategory";
 import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SmtpMessage } from "../../../lib/models/SmtpMessage";
 
 /**
  * handles CRUD operations with the smtp-category facade
  */
-export class SmtpCategoryFacade extends EntityFacade<SmtpCategory> {
+export class SmtpMessageFacade extends EntityFacade<SmtpMessage> {
 
     /**
      * @param tableAlias
@@ -37,13 +37,25 @@ export class SmtpCategoryFacade extends EntityFacade<SmtpCategory> {
      * assigns the retrieved values to the newly created smtp_category and returns the log
      * @param result retrieved result
      */
-    public fillEntity(result: any): SmtpCategory {
-        const sc: SmtpCategory = new SmtpCategory();
+    public fillEntity(result: any): SmtpMessage {
+        const sc: SmtpMessage = new SmtpMessage();
 
         this.fillDefaultAttributes(result, sc);
 
-        if (result[this.name("category")] !== undefined) {
-            sc.category = result[this.name("category")];
+        if (result[this.name("name")] !== undefined) {
+            sc.name = result[this.name("name")];
+        }
+
+        if (result[this.name("subject")] !== undefined) {
+            sc.subject = result[this.name("subject")];
+        }
+
+        if (result[this.name("html")] !== undefined) {
+            sc.html = result[this.name("html")];
+        }
+
+        if (result[this.name("text")] !== undefined) {
+            sc.text = result[this.name("text")];
         }
 
         return sc;

@@ -13,7 +13,7 @@ import { MailPriority } from "./MailPriority";
  */
 export class Mail {
     public from: string = process.env.MAIL_USER;
-    public to: any[] = [];
+    public to: Recipient[] = [];
     public cc: Recipient[] = [];
     public bcc: Recipient[] = [];
     public subject: string;
@@ -41,6 +41,22 @@ export class Mail {
         this.subject = subject;
         this.text = text;
         this.html = html;
+    }
+
+    public validate(): boolean {
+        if (this.to.length === 0) {
+            return false;
+        }
+
+        if (this.subject.length === 0) {
+            return false;
+        }
+
+        if (this.text.length === 0) {
+            return false;
+        }
+
+        return this.html.length !== 0;
     }
 }
 
