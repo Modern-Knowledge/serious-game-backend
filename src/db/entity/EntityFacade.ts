@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { BaseFacade } from "../BaseFacade";
 import { AbstractModel } from "../../lib/models/AbstractModel";
 import { SQLAttributes } from "../sql/SQLAttributes";
@@ -6,7 +11,7 @@ import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
 import logger from "../../util/logger";
 import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
-import {SQLValueAttributes} from "../sql/SQLValueAttributes";
+import { SQLValueAttributes } from "../sql/SQLValueAttributes";
 
 /**
  * base facade for entities
