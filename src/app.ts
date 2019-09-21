@@ -26,6 +26,9 @@ import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
+import {Mail} from "./util/mail/Mail";
+import {Recipient} from "./util/mail/Recipient";
+import {MailTransport} from "./util/mail/MailTransport";
 
 
 process.env.TZ = "Europe/Vienna";
@@ -39,38 +42,46 @@ if (config.error) { // .env not found
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
-const checkEnvVarFn = (value: string) => {
-  return !(process.env[value]);
-};
 
-/**
- * throw an error if these env variables are not present
- */
-const requiredEnvVariables: string[] = [
+// check env variables
+(() => {
+  /**
+   * throw an error if these env variables are not present
+   */
+  const unsetRequiredVars: string[] = Helper.checkEnvVariables([
     "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE"
-];
+  ]);
 
-const unsetRequiredVars: string[] = requiredEnvVariables.filter(checkEnvVarFn);
+  if (unsetRequiredVars.length > 0) {
+    const errorStr = `${Helper.loggerString(__dirname, "", "", __filename)} Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
+    logger.error(errorStr);
+    throw new Error(errorStr);
+  }
 
-if (unsetRequiredVars.length > 0) {
-  const errorStr = `Some Required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
-  logger.error(errorStr);
-  throw new Error(errorStr);
-}
+  /**
+   * print an warning, if these env variables are not present
+   */
+  const unsetOptionalVars: string[] = Helper.checkEnvVariables([
+    "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "SEND_MAILS"
+  ]);
 
-/**
- * print an warning, if these env variables are not present
- */
-const optionalEnvVariables = [
-  "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "MAIL_HOST",
-  "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS", "SEND_MAILS"
-];
+  if (unsetOptionalVars.length > 0) {
+    logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
+  }
 
-const unsetOptionalVars: string[] = optionalEnvVariables.filter(checkEnvVarFn);
+  const unsetMailVariables: string[] = Helper.checkEnvVariables(
+      ["MAIL_HOST", "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS"]
+  );
 
-if (unsetOptionalVars.length > 0) {
-  logger.warn(`Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
-}
+  if (unsetMailVariables.length > 0) {
+    process.env.SEND_MAILS = "0";
+    logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
+  }
+})();
+
+const m = new Mail([new Recipient("Sandra Albrecht", "sandra.albrecht@aon.at")], "test", "test", "<h1>test</h1>");
+MailTransport.getInstance().sendMail(m);
+
 
 // Create Express server
 const app = express();

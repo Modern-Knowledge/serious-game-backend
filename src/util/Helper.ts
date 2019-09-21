@@ -35,4 +35,21 @@ export abstract class Helper {
 
     return false;
   }
+
+  /**
+   * check if environment does not exist
+   * @param variable variable to check
+   */
+  public static checkEnvVariable(variable: string): boolean {
+    return !process.env[variable];
+  }
+
+  /**
+   * check an array of environment variables
+   * returns the variables that do not exist in process.env
+   * @param variables variables to check
+   */
+  public static checkEnvVariables(variables: string[]): string[] {
+    return variables.filter(Helper.checkEnvVariable);
+  }
 }
