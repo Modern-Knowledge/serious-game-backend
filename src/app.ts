@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
@@ -33,6 +38,39 @@ if (config.error) { // .env not found
   throw new Error(message);
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
+
+const checkEnvVarFn = (value: string) => {
+  return !(process.env[value]);
+};
+
+/**
+ * throw an error if these env variables are not present
+ */
+const requiredEnvVariables: string[] = [
+    "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE"
+];
+
+const unsetRequiredVars: string[] = requiredEnvVariables.filter(checkEnvVarFn);
+
+if (unsetRequiredVars.length > 0) {
+  const errorStr = `Some Required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
+  logger.error(errorStr);
+  throw new Error(errorStr);
+}
+
+/**
+ * print an warning, if these env variables are not present
+ */
+const optionalEnvVariables = [
+  "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "MAIL_HOST",
+  "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS", "SEND_MAILS"
+];
+
+const unsetOptionalVars: string[] = optionalEnvVariables.filter(checkEnvVarFn);
+
+if (unsetOptionalVars.length > 0) {
+  logger.warn(`Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
+}
 
 // Create Express server
 const app = express();
