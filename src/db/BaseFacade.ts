@@ -135,7 +135,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.insertId);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql} [${query.values}]`);
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
     });
   }
 
@@ -163,7 +163,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.affectedRows);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql} [${query.values}]`);
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
     });
   }
 
@@ -194,7 +194,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.affectedRows);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql} [${query.values}]`);
+      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
 
     });
   }
