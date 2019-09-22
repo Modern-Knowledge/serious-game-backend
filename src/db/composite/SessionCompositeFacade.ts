@@ -18,7 +18,15 @@ import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
- * Joins:
+ * contained Facades:
+ * - SessionFacade
+ * - TherapistFacade
+ * - PatientFacade
+ * - StatisticCompositeFacade
+ * - GameFacade
+ * - GameSettingFacade
+ *
+ * contained Joins:
  * - therapists (1:1)
  *  - users (1:1)
  * - patients (1:1)
@@ -82,7 +90,8 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * @param excludedSQLAttributes
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const returnAttributes: SQLAttributes = new SQLAttributes();
@@ -142,7 +151,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * creates the joins for the composite sessions and returns them as a list
+     * creates the joins for the composite sessions facade and returns them as a list
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -189,7 +198,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * @param entities
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Session[]): Session[] {
         const sessionMap = new Map<number, Session>();
@@ -213,7 +224,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * returns the statistic composite filters as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [

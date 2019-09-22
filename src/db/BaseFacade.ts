@@ -42,6 +42,18 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {return entities; };
 
   /**
+   * @param tableName
+   * @param tableAlias
+   */
+  protected constructor(tableName: string, tableAlias: string) {
+    this._tableName = tableName;
+    this._tableAlias = tableAlias;
+    this._dbInstance = DatabaseConnection.getInstance();
+
+    this._filter = new Filter(tableAlias);
+  }
+
+  /**
    * returns sql attributes that should be retrieved from the database
    * @param excludedSQLAttributes
    * @param allowedSqlAttributes
@@ -63,19 +75,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   }
 
   /**
-   * @param tableName
-   * @param tableAlias
-   */
-  protected constructor(tableName: string, tableAlias: string) {
-    this._tableName = tableName;
-    this._tableAlias = tableAlias;
-    this._dbInstance = DatabaseConnection.getInstance();
-
-    this._filter = new Filter(tableAlias);
-  }
-
-  /**
    * executes an select query and returns the results
+   * execution time of the query is analysed
    * @param attributes attributes that should be retrieved
    * @param filter filter for selected (can be different from facade filter
    */
@@ -302,6 +303,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    */
   protected abstract fillEntity(result: any): EntityType;
 
+  /**
+   * fill default attributes that every model has (id, created_at, modified_at)
+   * @param result
+   * @param entity
+   */
   protected fillDefaultAttributes(result: any, entity: EntityType): EntityType {
     if (result[this.name("id")] !== undefined) {
       entity.id = result[this.name("id")];
@@ -327,6 +333,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }
 
+  /**
+   * returns the sql-where clause
+   * @param filter
+   */
   private static getSQLFilter(filter: Filter): SQLWhere {
     return filter.isEmpty ? undefined : new SQLWhere(filter.getBlock());
   }
@@ -429,7 +439,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   }
 
   /**
-   * sets the function that is applied to the result set
+   * sets the function that is applied to the result set of a select query
    * @param value function that takes an array of entity types
    */
   set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {

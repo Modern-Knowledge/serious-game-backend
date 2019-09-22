@@ -11,7 +11,11 @@ import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles CRUD operations with the errortext-entity
- * Joins:
+ * contained Facades:
+ * - TextFacade
+ * - SeverityFacade
+ *
+ * contained Joins:
  * - texts (1:1)
  * - severities (1:1)
  */
@@ -41,8 +45,8 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * returns SQL-attributes for the errortexts
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["error_id", "severity_id"];
@@ -83,7 +87,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * creates the joins for the errortext and returns them as a list
+     * creates the joins for the errortext facade and returns them as a list
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -104,7 +108,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * returns the errortext filters as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [
@@ -135,8 +139,11 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         this._withSeverityJoin = value;
     }
 
+    /**
+     * returns the facade filter that can be used for filtering model with id
+     */
     get idFilter(): Filter {
-        return this.textFacadeFilter;
+        return new Filter(this._textFacade.tableAlias);
     }
 
 }

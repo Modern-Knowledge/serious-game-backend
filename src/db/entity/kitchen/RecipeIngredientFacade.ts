@@ -24,8 +24,8 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     }
 
     /**
-     * returns SQL-attributes for the recipes-ingredients
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] =  ["name", "description", "difficulty_id"];

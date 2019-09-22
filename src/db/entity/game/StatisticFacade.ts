@@ -19,8 +19,8 @@ export class StatisticFacade extends EntityFacade<Statistic> {
   }
 
   /**
-   * returns SQL-attributes for the statistics
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["starttime", "endtime"];

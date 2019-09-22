@@ -11,7 +11,10 @@ import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles CRUD operations with the helptext-entity
- * Joins:
+ * contained Facades:
+ * - TextFacade
+ *
+ * contained Joins:
  * - texts (1:1)
  */
 export class HelptextFacade extends CompositeFacade<Helptext> {
@@ -36,8 +39,8 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
   }
 
   /**
-   * returns SQL-attributes for the helptexts
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["helptext_id"];
@@ -67,7 +70,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
   }
 
   /**
-   * creates the joins for the therapist-entity and returns them as a list
+   * creates the joins for the helptext facade and returns them as a list
    */
   get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
@@ -82,7 +85,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
   }
 
   /**
-   * returns the helptext composite filters as an array
+   * returns all sub facade filters of the facade as an array
    */
   protected get filters(): Filter[] {
     return [
@@ -106,6 +109,6 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
   }
 
   get idFilter(): Filter {
-    return this.textFacadeFilter;
+    return new Filter(this._textFacade.tableAlias);
   }
 }

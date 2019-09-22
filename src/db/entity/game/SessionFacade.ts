@@ -19,8 +19,8 @@ export class SessionFacade extends EntityFacade<Session> {
   }
 
   /**
-   * returns SQL-attributes for the sessions
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     let excludedAttrDefault: string[] = [];

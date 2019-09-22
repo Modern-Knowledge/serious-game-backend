@@ -4,7 +4,8 @@ import { Filter } from "../filter/Filter";
 import { SQLOperator } from "../sql/enums/SQLOperator";
 
 /**
- * base facade for composite facades
+ * base class for composite facades
+ * contains methods for filtering composite facades
  */
 export abstract class CompositeFacade<EntityType extends AbstractModel> extends EntityFacade<EntityType> {
 
@@ -20,18 +21,6 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * returns the composite entity by id
-     * @param id
-     * @param excludedSQLAttributes
-     */
-    public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
-        if (this._autoCombineFilter) {
-            this.combineFilters();
-        }
-        return super.getById(id, excludedSQLAttributes);
-    }
-
-    /**
      * returns all entities that match the specified filter
      * @param excludedSQLAttributes
      */
@@ -43,7 +32,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * returns the composite filters of the array as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [];
@@ -60,7 +49,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * combines the composite facade filters with the specified sql-operator
+     * combines the composite facade filters to one filter with the specified sql-operator
      */
     private combineFilters(): void {
         const compositeFacadeFilters: Filter[] = this.filters;
@@ -80,7 +69,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * sql-operator to combine sql-operators with
+     * sql-operator to combine composite filters with
      * @param value
      */
     set sqlOperator(value: SQLOperator) {
@@ -88,7 +77,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
-     * auto combine composite filters
+     * enable auto combine composite filters with specified sqlOperator
      * @param value
      */
     set autoCombineFilter(value: boolean) {

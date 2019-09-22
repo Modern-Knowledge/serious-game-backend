@@ -72,6 +72,9 @@ export class Filter implements Filterable {
     return this._empty;
   }
 
+  /**
+   * clear the filter
+   */
   public clear() {
     this._root = new SQLBlock();
     this._empty = true;

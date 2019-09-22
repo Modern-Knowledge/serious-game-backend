@@ -24,8 +24,8 @@ export class SmtpMessageFacade extends EntityFacade<SmtpMessage> {
     }
 
     /**
-     * returns SQL-attributes for the smtp_categories
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["name", "subject", "html", "text"];
@@ -34,7 +34,7 @@ export class SmtpMessageFacade extends EntityFacade<SmtpMessage> {
 
 
     /**
-     * assigns the retrieved values to the newly created smtp_category and returns the log
+     * fills the entity
      * @param result retrieved result
      */
     public fillEntity(result: any): SmtpMessage {

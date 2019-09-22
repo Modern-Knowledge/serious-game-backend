@@ -19,8 +19,8 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
     }
 
     /**
-     * returns SQL-attributes for helptexts-games
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] =  ["game_id", "helptext_id"];

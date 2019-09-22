@@ -16,7 +16,13 @@ import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite games
- * Joins:
+ * contained Facades:
+ * - GameFacade
+ * - GameSettingFacade
+ * - HelptextGamesFacade
+ * - HelptextFacade
+ *
+ * contained Joins:
  * - game_settings (1:n)
  *  - difficulty (1:1)
  * - helptexts_games (1:n)
@@ -55,7 +61,8 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * @param excludedSQLAttributes
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const returnAttributes: SQLAttributes = new SQLAttributes();
@@ -95,7 +102,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * creates the joins for the composite games and returns them as a list
+     * creates the joins for the composite games facade and returns them as a list
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -124,7 +131,9 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * @param entities
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Game[]): Game[] {
         const gameMap = new Map<number, Game>();
@@ -149,7 +158,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * returns the game composite filters as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [

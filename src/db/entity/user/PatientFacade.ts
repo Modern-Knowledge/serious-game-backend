@@ -16,7 +16,10 @@ import { CompositeFacade } from "../../composite/CompositeFacade";
 
 /**
  * handles crud operations with the patient-entity
- * Joins:
+ * contained Facade:
+ * - UserFacade
+ *
+ * contained Joins:
  * - users (1:1)
  */
 export class PatientFacade extends CompositeFacade<Patient> {
@@ -25,6 +28,9 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
   private _withUserJoin: boolean;
 
+  /**
+   * @param tableAlias
+   */
   public constructor(tableAlias?: string) {
     if (tableAlias) {
       super("patients", tableAlias);
@@ -37,8 +43,8 @@ export class PatientFacade extends CompositeFacade<Patient> {
   }
 
   /**
-   * returns SQL-attributes for the patient
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["patient_id", "birthday", "info"];
@@ -137,7 +143,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
   }
 
   /**
-   * creates the joins for the therapist-entity and returns them as a list
+   * creates the joins for the patient facade and returns them as a list
    */
   get joins(): SQLJoin[] {
     const joins: SQLJoin[] = [];
@@ -152,7 +158,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
   }
 
   /**
-   * returns the therapist composite filters as an array
+   * returns all sub facade filters of the facade as an array
    */
   protected get filters(): Filter[] {
     return [
@@ -176,6 +182,6 @@ export class PatientFacade extends CompositeFacade<Patient> {
   }
 
   get idFilter(): Filter {
-    return this.userFacadeFilter;
+    return new Filter(this._userFacade.tableAlias);
   }
 }

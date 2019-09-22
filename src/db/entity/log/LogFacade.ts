@@ -21,8 +21,8 @@ export class LogFacade extends EntityFacade<Log> {
   }
 
   /**
-   * returns SQL-attributes for the log
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const sqlAttributes: string[] = ["logger", "level", "method", "message", "params", "user_id"];
@@ -71,7 +71,7 @@ export class LogFacade extends EntityFacade<Log> {
   }
 
   /**
-   * assigns the retrieved values to the newly created log and returns the log
+   * fills the entity
    * @param result retrieved result
    */
   public fillEntity(result: any): Log {

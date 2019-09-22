@@ -16,7 +16,13 @@ import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composites therapists
- * Joins:
+ * contained Facades:
+ * - TherapistFacade
+ * - PatientFacade
+ * - TherapistPatientFacade
+ * - SessionFacade
+ *
+ * contained Joins:
  * - therapists_patients (1:n)
  * - patients (1:n)
  *   - users (1:1)
@@ -54,7 +60,8 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
   }
 
   /**
-   * @param excludedSQLAttributes
+   * returns sql attributes that should be retrieved from the database
+   * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
     const returnAttributes: SQLAttributes = new SQLAttributes();
@@ -93,7 +100,7 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
   }
 
   /**
-   * creates the joins for the composite therapists and returns them as a list
+   * creates the joins for the composite therapists facade and returns them as a list
    */
   get joins(): SQLJoin[] {
     let joins: SQLJoin[] = [];
@@ -122,7 +129,9 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
   }
 
   /**
-   * @param entities
+   * post process the results of the select query
+   * e.g.: handle joins
+   * @param entities entities that where returned from the database
    */
   protected postProcessSelect(entities: Therapist[]): Therapist[] {
     const therapistMap = new Map<number, Therapist>();
@@ -147,7 +156,7 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
   }
 
   /**
-   * returns the therapist composite filters as an array
+   * returns all sub facade filters of the facade as an array
    */
   protected get filters(): Filter[] {
     return [

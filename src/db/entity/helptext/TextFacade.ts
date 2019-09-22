@@ -19,8 +19,8 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * returns SQL-attributes for the user
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["name", "text"];
@@ -40,7 +40,7 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * assigns the retrieved values to the newly created user and returns the user
+     * assigns the retrieved common values to the newly created text and returns the text
      * @param result retrieved result
      * @param text entity to fill
      */

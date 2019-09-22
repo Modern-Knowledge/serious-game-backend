@@ -4,7 +4,6 @@ import { SQLBlock } from "../sql/SQLBlock";
 import { JoinType } from "../sql/enums/JoinType";
 import { Patient } from "../../lib/models/Patient";
 import { PatientFacade } from "../entity/user/PatientFacade";
-import { PatientSetting } from "../../lib/models/PatientSetting";
 import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
 import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
@@ -15,7 +14,12 @@ import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite patients
- * Joins:
+ * contained Facades:
+ * - PatientFacade
+ * - PatientSettingFacade
+ * - SessionFacade
+ *
+ * contained Joins:
  * - users (1:1)
  * - patient_setting (1:1)
  * - sessions (1:n)
@@ -50,7 +54,8 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * @param excludedSQLAttributes
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const returnAttributes: SQLAttributes = new SQLAttributes();
@@ -85,7 +90,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * creates the joins for the composite patients and returns them as a list
+     * creates the joins for the composite patients facade and returns them as a list
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -108,7 +113,9 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * @param entities
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Patient[]): Patient[] {
         const patientMap = new Map<number, Patient>();
@@ -129,7 +136,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * returns the patient composite filters as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [

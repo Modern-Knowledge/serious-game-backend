@@ -56,7 +56,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
     }
 
     /**
-     * returns facade filter that can be used for filtering id
+     * returns the facade filter that can be used for filtering model with id
      */
     get idFilter(): Filter {
         return this.filter;

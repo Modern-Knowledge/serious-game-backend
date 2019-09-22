@@ -14,7 +14,11 @@ import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite statistics
- * Joins:
+ * contained Facades:
+ * - StatisticFacade
+ * - ErrortextFacade
+ * - ErrortextStatisticFacade
+ * contained Joins:
  * - errortexts_statistics (1:n)
  * - errortexts (1:n)
  * - texts (1:1)
@@ -50,7 +54,8 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * @param excludedSQLAttributes
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const returnAttributes: SQLAttributes = new SQLAttributes();
@@ -81,7 +86,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * creates the joins for the composite statistics and returns them as a list
+     * creates the joins for the composite statistics facade and returns them as a list
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -103,7 +108,9 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * @param entities
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Statistic[]): Statistic[] {
         const statisticMap = new Map<number, Statistic>();
@@ -124,7 +131,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * returns the statistic composite filters as an array
+     * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [

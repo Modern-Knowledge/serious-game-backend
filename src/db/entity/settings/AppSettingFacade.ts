@@ -7,37 +7,37 @@ import { AppSetting } from "../../../lib/models/AppSetting";
  */
 export class AppSettingFacade extends EntityFacade<AppSetting> {
 
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("app_settings", tableAlias);
-    } else {
-      super("app_settings", "ap");
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("app_settings", tableAlias);
+        } else {
+            super("app_settings", "ap");
+        }
     }
-  }
 
-  /**
-   * returns SQL-attributes for the app-settings
-   * @param excludedSQLAttributes sql attributes that are excluded from the query
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = [];
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const sqlAttributes: string[] = [];
 
-    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
-  }
+        return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    }
 
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  protected fillEntity(result: any): AppSetting {
-    const appSetting: AppSetting = new AppSetting();
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): AppSetting {
+        const appSetting: AppSetting = new AppSetting();
 
-    this.fillDefaultAttributes(result, appSetting);
+        this.fillDefaultAttributes(result, appSetting);
 
-    return appSetting;
-  }
+        return appSetting;
+    }
 
 }

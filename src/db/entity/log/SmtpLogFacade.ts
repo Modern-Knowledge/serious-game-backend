@@ -27,8 +27,8 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * returns SQL-attributes for the smtp-logs
-     * @param excludedSQLAttributes sql attributes that are excluded from the query
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["subject", "body", "rcpt_email", "simulated", "smtp_category_id"];
@@ -73,7 +73,7 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * assigns the retrieved values to the newly created smtp-log and returns the smtp-log
+     * fills the entity
      * @param result retrieved result
      */
     public fillEntity(result: any): SmtpLog {
@@ -97,8 +97,8 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
             smtpLog.simulated = result[this.name("simulated")];
         }
 
-        if (result[this.name("smtp_category_id")] !== undefined) {
-            smtpLog.smtpCategoryId = result[this.name("smtp_category_id")];
+        if (result[this.name("sent")] !== undefined) {
+            smtpLog.sent = result[this.name("sent")];
         }
 
         return smtpLog;
