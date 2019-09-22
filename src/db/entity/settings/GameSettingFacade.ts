@@ -7,6 +7,7 @@ import { DifficultyFacade } from "../enum/DifficultyFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
+import {Ordering} from "../../order/Ordering";
 
 /**
  * handles CRUD operations with game-settings-entity
@@ -106,6 +107,19 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
      */
     get difficultyFacadeFilter(): Filter {
         return this._difficultyFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): Ordering[] {
+        return [
+            this.difficultyFacadeOrderBy
+        ];
+    }
+
+    get difficultyFacadeOrderBy(): Ordering {
+        return this._difficultyFacade.ordering;
     }
 
     get withDifficultyJoin(): boolean {

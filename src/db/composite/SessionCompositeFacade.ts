@@ -15,7 +15,7 @@ import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
-import { SQLOrderBy } from "../sql/SQLOrderBy";
+import { Ordering } from "../order/Ordering";
 
 /**
  * retrieves composite sessions
@@ -255,7 +255,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     get patientFacadeFilter(): Filter {
-        return this._therapistFacade.filter;
+        return this._patientFacade.filter;
     }
 
     get patientUserFacadeFilter(): Filter {
@@ -293,7 +293,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.therapistFacadeOrderBy,
             this.therapistUserFacadeOrderBy,
@@ -309,48 +309,48 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         ];
     }
 
-    get therapistFacadeOrderBy(): SQLOrderBy[] {
-        return this._therapistFacade.orderBy;
+    get therapistFacadeOrderBy(): Ordering {
+        return this._therapistFacade.ordering;
     }
 
-    get therapistUserFacadeOrderBy(): SQLOrderBy[] {
-        return this._therapistFacade.orderBy;
+    get therapistUserFacadeOrderBy(): Ordering {
+        return this._therapistFacade.userFacadeOrderBy;
     }
 
-    get patientFacadeOrderBy(): SQLOrderBy[] {
-        return this._therapistFacade.orderBy;
+    get patientFacadeOrderBy(): Ordering {
+        return this._patientFacade.ordering;
     }
 
-    get patientUserFacadeOrderBy(): SQLOrderBy[] {
-        return this._patientFacade.orderBy;
+    get patientUserFacadeOrderBy(): Ordering {
+        return this._patientFacade.userFacadeOrderBy;
     }
 
-    get statisticFacadeOrderBy(): SQLOrderBy[] {
-        return this._statisticCompositeFacade.orderBy;
+    get statisticFacadeOrderBy(): Ordering {
+        return this._statisticCompositeFacade.ordering;
     }
 
-    get errortextFacadeOrderBy(): SQLOrderBy[] {
-        return this._statisticCompositeFacade.orderBy;
+    get errortextFacadeOrderBy(): Ordering {
+        return this._statisticCompositeFacade.errortextFacadeOrderBy;
     }
 
-    get textFacadeOrderBy(): SQLOrderBy[] {
-        return this._statisticCompositeFacade.orderBy;
+    get textFacadeOrderBy(): Ordering {
+        return this._statisticCompositeFacade.textFacadeOrderBy;
     }
 
-    get severityFacadeOrderBy(): SQLOrderBy[] {
-        return this._statisticCompositeFacade.orderBy;
+    get severityFacadeOrderBy(): Ordering {
+        return this._statisticCompositeFacade.severityFacadeOrderBy;
     }
 
-    get gameFacadeOrderBy(): SQLOrderBy[] {
-        return this._gameFacade.orderBy;
+    get gameFacadeOrderBy(): Ordering {
+        return this._gameFacade.ordering;
     }
 
-    get gameSettingFacadeOrderBy(): SQLOrderBy[] {
-        return this._gameSettingsFacade.orderBy;
+    get gameSettingFacadeOrderBy(): Ordering {
+        return this._gameSettingsFacade.ordering;
     }
 
-    get difficultyFacadeOrderBy(): SQLOrderBy[] {
-        return this._gameSettingsFacade.orderBy;
+    get difficultyFacadeOrderBy(): Ordering {
+        return this._gameSettingsFacade.difficultyFacadeOrderBy;
     }
 
     get withTherapistJoin(): boolean {

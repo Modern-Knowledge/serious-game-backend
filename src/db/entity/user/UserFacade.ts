@@ -3,7 +3,6 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 
 /**
@@ -74,7 +73,7 @@ export class UserFacade extends EntityFacade<User> {
      * deletes the specified user in the database and returns the number of affected rows
      */
     public deleteUser(user: User): Promise<number> {
-        this._filter.addFilterCondition("id", user.id, SQLComparisonOperator.EQUAL);
+        this.filter.addFilterCondition("id", user.id, SQLComparisonOperator.EQUAL);
         return this.delete();
     }
 

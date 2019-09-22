@@ -11,7 +11,7 @@ import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
-import { SQLOrderBy } from "../sql/SQLOrderBy";
+import { Ordering } from "../order/Ordering";
 
 /**
  * retrieves composite statistics
@@ -163,7 +163,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.severityFacadeOrderBy,
             this.statisticFacadeOrderBy,
@@ -172,20 +172,20 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
         ];
     }
 
-    get severityFacadeOrderBy(): SQLOrderBy[] {
-        return this._errortextFacade.orderBy;
+    get severityFacadeOrderBy(): Ordering {
+        return this._errortextFacade.severityFacadeOrderBy;
     }
 
-    get statisticFacadeOrderBy(): SQLOrderBy[] {
-        return this._statisticFacade.orderBy;
+    get statisticFacadeOrderBy(): Ordering {
+        return this._statisticFacade.ordering;
     }
 
-    get errortextFacadeOrderBy(): SQLOrderBy[] {
-        return this._errortextFacade.orderBy;
+    get errortextFacadeOrderBy(): Ordering {
+        return this._errortextFacade.ordering;
     }
 
-    get textFacadeOrderBy(): SQLOrderBy[] {
-        return this._errortextFacade.orderBy;
+    get textFacadeOrderBy(): Ordering {
+        return this._errortextFacade.textFacadeOrderBy;
     }
 
     get withErrortextJoin(): boolean {

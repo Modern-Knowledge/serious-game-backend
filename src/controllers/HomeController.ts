@@ -2,11 +2,13 @@ import express, { Request, Response } from "express";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { SQLOrder } from "../db/sql/SQLOrder";
 import { Filter } from "../db/filter/Filter";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
+import { User } from "../lib/models/User";
+import { SmtpMessageFacade } from "../db/entity/log/SmtpMessageFacade";
+import { SQLOrderBy } from "../db/sql/SQLOrderBy";
 
 const router = express.Router();
 
@@ -53,13 +55,14 @@ router.get("/", async (req: Request, res: Response) => {
  const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
  const sessionFilter = therapistCompFacade.sessionFacadeFilter;
 
-therapistCompFacade.filter.addFilterCondition("therapist_id", 1);
- patientUserFilter.addFilterCondition("id", 1);
- sessionFilter.addFilterCondition("id", "ddsfsdf");
+ const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
+ theraOrderBy.addOrderBy("id");
 
- therapistCompFacade.clearFacadeFilters();
 
- const thera = await therapistCompFacade.get();
+ // const patientOrderBy = therapistCompFacade.patientUserFacadeOrderBy;
+ // patientOrderBy.push(new SQLOrderBy("id", SQLOrder.ASC, "up"));
+
+ const thera = await therapistCompFacade.getById(1);
 
  // console.log(thera);
  //
@@ -93,6 +96,19 @@ therapistCompFacade.filter.addFilterCondition("therapist_id", 1);
  // console.log(sessions);
 
  // sessionCompositeFacade.postProcessFilter;
+
+ const u = new User();
+ u.forename = "Florian";
+ u.lastname = "Mold";
+ u.email = "sandra.albrecht@aon.at";
+
+
+ const facade1 = new SmtpMessageFacade();
+ const message = await facade1.getById(1);
+
+
+ // const m = new Mail([u.recipient], message, ["Sandra Albrecht", "1234456", "dslkfjskdf"]);
+ // mailTransport.sendMail(m);
 
 
  res.jsonp("therapists");

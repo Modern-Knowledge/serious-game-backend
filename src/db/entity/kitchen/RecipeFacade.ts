@@ -12,7 +12,7 @@ import { JoinType } from "../../sql/enums/JoinType";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { Filter } from "../../filter/Filter";
 import { CompositeFacade } from "../../composite/CompositeFacade";
-import { SQLOrderBy } from "../../sql/SQLOrderBy";
+import { Ordering } from "../../order/Ordering";
 
 /**
  * handles CRUD operations with the recipe-entity
@@ -119,14 +119,14 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.difficultyFacadeOrderBy
         ];
     }
 
-    get difficultyFacadeOrderBy(): SQLOrderBy[] {
-        return this._difficultyFacade.orderBy;
+    get difficultyFacadeOrderBy(): Ordering {
+        return this._difficultyFacade.ordering;
     }
 
     get withDifficultyJoin(): boolean {

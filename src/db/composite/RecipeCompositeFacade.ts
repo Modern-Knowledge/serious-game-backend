@@ -16,7 +16,7 @@ import { JoinType } from "../sql/enums/JoinType";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
-import { SQLOrderBy } from "../sql/SQLOrderBy";
+import { Ordering } from "../order/Ordering";
 
 /**
  * retrieves composite recipes
@@ -164,7 +164,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.difficultyOrderBy,
             this.ingredientOrderBy,
@@ -172,16 +172,16 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
         ];
     }
 
-    get difficultyOrderBy(): SQLOrderBy[] {
-        return this._recipeFacade.orderBy;
+    get difficultyOrderBy(): Ordering {
+        return this._recipeFacade.difficultyFacadeOrderBy;
     }
 
-    get ingredientOrderBy(): SQLOrderBy[] {
-        return this._ingredientFacade.orderBy;
+    get ingredientOrderBy(): Ordering {
+        return this._ingredientFacade.ordering;
     }
 
-    get foodCategoryOrderBy(): SQLOrderBy[] {
-        return this._ingredientFacade.orderBy;
+    get foodCategoryOrderBy(): Ordering {
+        return this._ingredientFacade.foodCategoryFacadeOrderBy;
     }
 
     get withIngredientsJoin(): boolean {

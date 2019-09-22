@@ -3,6 +3,7 @@ import { EntityFacade } from "../entity/EntityFacade";
 import { Filter } from "../filter/Filter";
 import { SQLOperator } from "../sql/enums/SQLOperator";
 import { SQLOrderBy } from "../sql/SQLOrderBy";
+import { Ordering } from "../order/Ordering";
 
 /**
  * base class for composite facades
@@ -100,18 +101,33 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): (SQLOrderBy[])[] {
+    protected get orderBys(): Ordering[] {
         return [];
+    }
+
+    /**
+     * clears order-bys from the facades in the composite facade
+     */
+    public clearOrderBys(): void {
+        for (const orderBy of this.orderBys) {
+            orderBy.clear();
+        }
     }
 
     /**
      * combines the composite facade order-bys to one order-by
      */
     private combineOrderBys(): void {
-        const compositeFacadeOrderBys: (SQLOrderBy[])[] = this.orderBys;
+        const compositeFacadeOrdering: Ordering[] = this.orderBys;
+        const newOrdering = new Ordering(this.tableAlias);
+        const facadeOrdering = this.ordering;
 
-        for (const orderBy of compositeFacadeOrderBys) {
-            this.orderBy = this.orderBy.concat(orderBy);
+        newOrdering.addOrdering(facadeOrdering);
+
+        for (const ordering of compositeFacadeOrdering) {
+            newOrdering.addOrdering(ordering);
         }
+
+        this.ordering = newOrdering;
     }
 }

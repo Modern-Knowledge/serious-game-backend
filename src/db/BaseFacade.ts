@@ -24,6 +24,7 @@ import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
 import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
+import { Ordering } from "./order/Ordering";
 
 /**
  * base class for crud operations with the database
@@ -34,8 +35,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _tableAlias: string;
   private _attributes: string[];
 
-  private _orderBy: SQLOrderBy[] = [];
-  protected _filter: Filter;
+  private _ordering: Ordering;
+  private _filter: Filter;
 
   private readonly _dbInstance: DatabaseConnection;
 
@@ -51,6 +52,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     this._dbInstance = DatabaseConnection.getInstance();
 
     this._filter = new Filter(tableAlias);
+    this._ordering = new Ordering(tableAlias);
   }
 
   /**
@@ -83,7 +85,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
     logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} called`);
     BaseFacade.joinAnalyzer(this.joins);
-    const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._orderBy);
+    const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._ordering.orderBys);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: (string | number | Date)[] = selectQuery.fillParameters();
@@ -325,15 +327,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 }
 
   /**
-   * add an order by clause to the query
-   * @param attribute attribute for ordering
-   * @param order attribute sort order (ASC|DESC)
-   */
-  public addOrderBy(attribute: string, order: SQLOrder): void {
-    this._orderBy.push(new SQLOrderBy(attribute, order, this.tableAlias));
-  }
-
-  /**
    * returns the sql-where clause
    * @param filter
    */
@@ -356,22 +349,29 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     return this._filter;
   }
 
+
   /**
-   * clear order bys
+   * returns the ordering of the facade (order-by)
    */
-  public clearOrderBy(): void {
-    this._orderBy = [];
+  get ordering(): Ordering {
+    return this._ordering;
   }
 
   /**
-   * retrieve array of order by values
+   * sets the ordering of the facade (order-by)
+   * @param value
    */
-  get orderBy(): SQLOrderBy[] {
-    return this._orderBy;
+  set ordering(value: Ordering) {
+    this._ordering = value;
   }
 
-  set orderBy(value: SQLOrderBy[]) {
-    this._orderBy = value;
+  /**
+   * add an order by clause
+   * @param attribute attribute for ordering
+   * @param order attribute sort order (ASC|DESC)
+   */
+  public addOrderBy(attribute: string, order: SQLOrder = SQLOrder.DESC): void {
+    this.ordering.addOrderBy(attribute, order);
   }
 
   /**

@@ -11,7 +11,7 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
-import {SQLOrderBy} from "../../sql/SQLOrderBy";
+import { Ordering } from "../../order/Ordering";
 
 /**
  * handles CRUD operations with the therapist-entity
@@ -95,7 +95,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * @param therapist
      */
     public async deleteTherapist(therapist: Therapist): Promise<number> {
-        this._filter.addFilterCondition("therapist_id", therapist.id, SQLComparisonOperator.EQUAL);
+        this.filter.addFilterCondition("therapist_id", therapist.id, SQLComparisonOperator.EQUAL);
         const rows: number = await this.delete();
 
         const userRows: number = await this._userFacade.deleteUser(therapist);
@@ -158,17 +158,14 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.userFacadeOrderBy
         ];
     }
 
-    /**
-     * returns the userFacadeFilter
-     */
-    get userFacadeOrderBy(): SQLOrderBy[] {
-        return this._userFacade.orderBy;
+    get userFacadeOrderBy(): Ordering {
+        return this._userFacade.ordering;
     }
 
     get withUserJoin(): boolean {

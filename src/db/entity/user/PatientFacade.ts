@@ -1,10 +1,8 @@
 import { UserFacade } from "./UserFacade";
 import { User } from "../../../lib/models/User";
-import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { FilterAttribute } from "../../filter/FilterAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { JoinType } from "../../sql/enums/JoinType";
@@ -13,7 +11,7 @@ import { Patient } from "../../../lib/models/Patient";
 import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
-import {SQLOrderBy} from "../../sql/SQLOrderBy";
+import { Ordering } from "../../order/Ordering";
 
 /**
  * handles crud operations with the patient-entity
@@ -113,7 +111,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * @param patient patient to delete
      */
     public async deletePatient(patient: Patient): Promise<number> {
-        this._filter.addFilterCondition("patient_id", patient.id, SQLComparisonOperator.EQUAL);
+        this.filter.addFilterCondition("patient_id", patient.id, SQLComparisonOperator.EQUAL);
         const rows: number = await this.delete();
 
         const userRows: number = await this._userFacade.deleteUser(patient);
@@ -177,17 +175,14 @@ export class PatientFacade extends CompositeFacade<Patient> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.userFacadeOrderBy
         ];
     }
 
-    /**
-     * returns the userFacadeFilter
-     */
-    get userFacadeOrderBy(): SQLOrderBy[] {
-        return this._userFacade.orderBy;
+    get userFacadeOrderBy(): Ordering {
+        return this._userFacade.ordering;
     }
 
     get withUserJoin(): boolean {

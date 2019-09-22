@@ -12,7 +12,7 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { JoinType } from "../../sql/enums/JoinType";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { Filter } from "../../filter/Filter";
-import { SQLOrderBy } from "../../sql/SQLOrderBy";
+import { Ordering } from "../../order/Ordering";
 
 /**
  * handles CRUD operations with the ingredient-entity
@@ -119,14 +119,14 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     /**
      * returns all sub facade order-bys of the facade as an array
      */
-    protected get orderBys(): SQLOrderBy[][] {
+    protected get orderBys(): Ordering[] {
         return [
             this.foodCategoryFacadeOrderBy
         ];
     }
 
-    get foodCategoryFacadeOrderBy(): SQLOrderBy[] {
-        return this._foodCategoryFacade.orderBy;
+    get foodCategoryFacadeOrderBy(): Ordering {
+        return this._foodCategoryFacade.ordering;
     }
 
     get withFoodCategoryJoin(): boolean {
