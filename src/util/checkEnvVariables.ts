@@ -3,8 +3,8 @@
  * All rights reserved.
  */
 
-import { Helper } from "./Helper";
 import logger from "./logger";
+import { loggerString } from "./Helper";
 
 /**
  * check if environment does not exist
@@ -32,7 +32,7 @@ export function checkEnvFunction(): void {
     ]);
 
     if (unsetRequiredVars.length > 0) {
-        const errorStr = `${Helper.loggerString(__dirname, "", "", __filename)} Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
+        const errorStr = `${loggerString(__dirname, "", "", __filename)} Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
         logger.error(errorStr);
         throw new Error(errorStr);
     }
@@ -45,7 +45,7 @@ export function checkEnvFunction(): void {
     ]);
 
     if (unsetOptionalVars.length > 0) {
-        logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
     }
 
     const unsetMailVariables: string[] = checkEnvVariables(
@@ -54,6 +54,6 @@ export function checkEnvFunction(): void {
 
     if (unsetMailVariables.length > 0) {
         process.env.SEND_MAILS = "0";
-        logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
     }
 }

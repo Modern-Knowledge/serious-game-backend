@@ -3,7 +3,7 @@
  * prints warnings and errors if execution time is to high
  */
 import logger from "./logger";
-import { Helper } from "./Helper";
+import { loggerString } from "./Helper";
 
 export class ExecutionTimeAnalyser {
 
@@ -21,9 +21,9 @@ export class ExecutionTimeAnalyser {
      */
     public analyse(executionTime: number): void {
         if (executionTime >= this._maxExecutionTime) {
-            logger.error(`${Helper.loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation is non performant (${executionTime}ms)! Refactor this method!`);
+            logger.error(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation is non performant (${executionTime}ms)! Refactor this method!`);
         } else if (executionTime >= this._warnExecutionTime) {
-            logger.warn(`${Helper.loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation takes very long (${executionTime}ms)! Consider refactoring this method!`);
+            logger.warn(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation takes very long (${executionTime}ms)! Consider refactoring this method!`);
         }
     }
 }

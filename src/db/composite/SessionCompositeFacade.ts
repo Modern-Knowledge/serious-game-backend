@@ -11,11 +11,11 @@ import { GameFacade } from "../entity/game/GameFacade";
 import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
 import { Statistic } from "../../lib/models/Statistic";
 import { SessionFacade } from "../entity/game/SessionFacade";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composite sessions
@@ -218,7 +218,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
                 const statistic: Statistic = session.statistic;
 
-                if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                if (!arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
                     existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
                 }
             }

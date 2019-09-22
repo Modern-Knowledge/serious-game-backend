@@ -9,11 +9,11 @@ import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacad
 import { Patient } from "../../lib/models/Patient";
 import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composites therapists
@@ -145,11 +145,11 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
             } else {
                 const existingTherapist: Therapist = therapistMap.get(therapist.id);
 
-                if (!Helper.arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
+                if (!arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
                     existingTherapist.patients = existingTherapist.patients.concat(therapist.patients);
                 }
 
-                if (!Helper.arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
+                if (!arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
                     existingTherapist.sessions = existingTherapist.sessions.concat(therapist.sessions);
                 }
             }

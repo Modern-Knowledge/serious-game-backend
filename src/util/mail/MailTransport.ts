@@ -5,11 +5,11 @@
 
 import { Mail } from "./Mail";
 import logger from "../logger";
-import { Helper } from "../Helper";
 import { SmtpLog } from "../../lib/models/SmtpLog";
 
 import * as nodemailer from "nodemailer";
 import { SmtpLogFacade } from "../../db/entity/log/SmtpLogFacade";
+import { loggerString } from "../Helper";
 
 /**
  * class used to handle mail sending with nodemailer
@@ -39,7 +39,7 @@ export class MailTransport {
         this._sendMails = sendMails;
 
         if (!this._sendMails) {
-            logger.warn(`${Helper.loggerString(__dirname, MailTransport.name, "constructor")} Mail sending is simulated!`);
+            logger.warn(`${loggerString(__dirname, MailTransport.name, "constructor")} Mail sending is simulated!`);
         }
     }
 
@@ -58,7 +58,7 @@ export class MailTransport {
      */
     public async sendMail(mail: Mail): Promise<void> {
         if (!mail.validate()) {
-            const errStr: string = `${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
+            const errStr: string = `${loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
             logger.error(errStr);
             throw new Error(errStr);
         }
@@ -83,7 +83,7 @@ export class MailTransport {
 
         if (this._sendMails) {
             this._transporter.sendMail(mail).then((value: any) => {
-                logger.info(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail sent: ${value.messageId}!`);
+                logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} Mail sent: ${value.messageId}!`);
 
                 for (const item of smtpLogs) {
                     item.sent = 1;
@@ -91,7 +91,7 @@ export class MailTransport {
                 }
 
             }).catch((error: any) => {
-                logger.error(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Mail couldn't be sent \n ${error}!`);
+                logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} Mail couldn't be sent \n ${error}!`);
 
                 for (const item of smtpLogs) {
                     smtpLogFacade.insertLog(item);
@@ -99,7 +99,7 @@ export class MailTransport {
 
             });
         } else { // mail is simulated
-            logger.info(`${Helper.loggerString(__dirname, MailTransport.name, "sendMail")} Simulated mail was successfully sent!`);
+            logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} Simulated mail was successfully sent!`);
 
             // todo maybe refactor to batch insert
             for (const item of smtpLogs) {

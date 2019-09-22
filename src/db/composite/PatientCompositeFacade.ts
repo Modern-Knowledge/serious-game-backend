@@ -7,11 +7,11 @@ import { PatientFacade } from "../entity/user/PatientFacade";
 import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
 import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composite patients
@@ -127,7 +127,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
             } else {
                 const existingPatient: Patient = patientMap.get(patient.id);
 
-                if (!Helper.arrayContainsModel(patient.sessions[0], existingPatient.sessions)) {
+                if (!arrayContainsModel(patient.sessions[0], existingPatient.sessions)) {
                     existingPatient.sessions = existingPatient.sessions.concat(patient.sessions);
                 }
             }

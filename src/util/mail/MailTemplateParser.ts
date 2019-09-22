@@ -5,7 +5,7 @@
 
 import { SmtpMessage } from "../../lib/models/SmtpMessage";
 import logger from "../logger";
-import { Helper } from "../Helper";
+import { loggerString } from "../Helper";
 
 /**
  * replace placeholder variables in mail-message with passed mail params
@@ -30,15 +30,15 @@ export class MailTemplateParser {
         const matched: RegExpMatchArray = text.match(regexp);
 
         if (matched === null) {
-            const errorStr: string = `${Helper.loggerString(__dirname, MailTemplateParser.name, "parse")} No variables to replace!`;
+            const errorStr: string = `${loggerString(__dirname, MailTemplateParser.name, "parse")} No variables to replace!`;
             logger.error(errorStr);
             throw new Error(errorStr);
         }
 
         if (matched.length < this._mailParams.length) {
-            logger.warn(`${Helper.loggerString(__dirname, MailTemplateParser.name, "parse")} Found placeholder variables amount (${matched.length}) does not match passed replacement variables amount (${this._mailParams.length})! Surplus variables are discarded!`);
+            logger.warn(`${loggerString(__dirname, MailTemplateParser.name, "parse")} Found placeholder variables amount (${matched.length}) does not match passed replacement variables amount (${this._mailParams.length})! Surplus variables are discarded!`);
         } else if (matched.length > this._mailParams.length) {
-            const errorStr: string = `${Helper.loggerString(__dirname, MailTemplateParser.name, "parse")} Not enough replacement variables passed!`;
+            const errorStr: string = `${loggerString(__dirname, MailTemplateParser.name, "parse")} Not enough replacement variables passed!`;
             logger.error(errorStr);
             throw new Error(errorStr);
         }
@@ -47,7 +47,7 @@ export class MailTemplateParser {
             text = text.replace(matched[i], this._mailParams[i]);
         }
 
-        logger.debug(`${Helper.loggerString(__dirname, MailTemplateParser.name, "parse")} Message template parsed!`);
+        logger.debug(`${loggerString(__dirname, MailTemplateParser.name, "parse")} Message template parsed!`);
 
         return text;
     }

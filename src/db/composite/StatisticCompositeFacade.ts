@@ -7,11 +7,11 @@ import { StatisticFacade } from "../entity/game/StatisticFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
 import { ErrortextStatisticFacade } from "../entity/helptext/ErrortextStatisticFacade";
 import { Errortext } from "../../lib/models/Errortext";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composite statistics
@@ -123,7 +123,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
             } else {
                 const existingStatistic: Statistic = statisticMap.get(statistic.id);
 
-                if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
+                if (!arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
                     existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
                 }
             }

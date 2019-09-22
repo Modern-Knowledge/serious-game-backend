@@ -9,11 +9,11 @@ import { HelptextFacade } from "../entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "../entity/helptext/HelptextsGamesFacade";
 import { GameSetting } from "../../lib/models/GameSetting";
 import { Helptext } from "../../lib/models/Helptext";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composite games
@@ -147,11 +147,11 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             } else {
                 const existingGame: Game = gameMap.get(game.id);
 
-                if (!Helper.arrayContainsModel(game.helptexts[0], existingGame.helptexts)) {
+                if (!arrayContainsModel(game.helptexts[0], existingGame.helptexts)) {
                     existingGame.helptexts = existingGame.helptexts.concat(game.helptexts);
                 }
 
-                if (!Helper.arrayContainsModel(game.gameSettings[0], existingGame.gameSettings)) {
+                if (!arrayContainsModel(game.gameSettings[0], existingGame.gameSettings)) {
                     existingGame.gameSettings = existingGame.gameSettings.concat(game.gameSettings);
                 }
             }

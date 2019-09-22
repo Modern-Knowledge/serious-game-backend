@@ -14,9 +14,9 @@ import { SQLJoin } from "../sql/SQLJoin";
 import { SQLBlock } from "../sql/SQLBlock";
 import { JoinType } from "../sql/enums/JoinType";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
-import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { Ordering } from "../order/Ordering";
+import { arrayContainsModel } from "../../util/Helper";
 
 /**
  * retrieves composite recipes
@@ -129,7 +129,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
             } else {
                 const existingRecipe: Recipe = recipeMap.get(recipe.id);
 
-                if (!Helper.arrayContainsModel(recipe.ingredients[0], existingRecipe.ingredients)) {
+                if (!arrayContainsModel(recipe.ingredients[0], existingRecipe.ingredients)) {
                     existingRecipe.ingredients = existingRecipe.ingredients.concat(recipe.ingredients);
                 }
             }

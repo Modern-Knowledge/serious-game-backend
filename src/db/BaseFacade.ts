@@ -16,7 +16,6 @@ import { AbstractModel } from "../lib/models/AbstractModel";
 import { DatabaseConnection } from "../util/DatabaseConnection";
 import { FieldInfo, MysqlError } from "mysql";
 import logger from "../util/logger";
-import { Helper } from "../util/Helper";
 import { Filter } from "./filter/Filter";
 import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
@@ -25,6 +24,7 @@ import { Stopwatch } from "../util/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
 import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
+import { loggerString } from "../util/Helper";
 
 /**
  * base class for crud operations with the database
@@ -83,7 +83,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param filter filter for selected (can be different from facade filter
    */
   public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
-    logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} called`);
+    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} called`);
     BaseFacade.joinAnalyzer(this.joins);
     const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._ordering.orderBys);
     const selectQuery: BakedQuery = npq.bake();
@@ -93,7 +93,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     const s: Stopwatch = new Stopwatch();
     return new Promise<EntityType[]>((resolve, reject) => {
       const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
-        logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
+        logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
         if (error) {
           reject(error);
         }
@@ -108,10 +108,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         returnEntities = this.postProcessSelect(returnEntities);
         returnEntities = this._postProcessFilter(returnEntities);
 
-        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned!`);
+        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned!`);
 
         const elapsedTime = s.timeElapsed;
-        logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
+        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
         const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
         eta.analyse(s.measuredTime);
 
@@ -138,7 +138,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.insertId);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
+      logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
     });
   }
 
@@ -153,7 +153,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
     return new Promise<number>((resolve, reject) => {
       if (this._filter.isEmpty) {
-        const error: string = `${Helper.loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
+        const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
         logger.error(error);
         return reject(new Error(error));
       }
@@ -166,7 +166,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.affectedRows);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
+      logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
     });
   }
 
@@ -184,7 +184,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
     return new Promise<number>((resolve, reject) => {
       if (this._filter.isEmpty) {
-        const error: string = `${Helper.loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
+        const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
         logger.error(error);
         return reject(new Error(error));
       }
@@ -197,7 +197,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(results.affectedRows);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
+      logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
 
     });
   }
@@ -288,7 +288,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         resolve(returnArr);
       });
 
-      logger.debug(`${Helper.loggerString(__dirname, BaseFacade.name, "query")} ${query.sql} [${query.values}]`);
+      logger.debug(`${loggerString(__dirname, BaseFacade.name, "query")} ${query.sql} [${query.values}]`);
     });
   }
 
@@ -416,11 +416,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
       }
     }
 
-    logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+    logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
 
     const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
     if (oneToManyJoinAmount >= warnToManyJoins) {
-      logger.warn(`${Helper.loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+      logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
     }
 
   }

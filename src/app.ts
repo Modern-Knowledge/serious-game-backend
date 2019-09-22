@@ -12,7 +12,6 @@ import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import logger from "./util/logger";
 import { checkEnvFunction } from "./util/checkEnvVariables";
-import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
 import { accessLogStream } from "./util/morgan";
@@ -27,17 +26,18 @@ import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
+import { loggerString } from "./util/Helper";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
 if (config.error) { // .env not found
-  const message: string = `${Helper.loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
+  const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
   logger.error(message);
   throw new Error(message);
 }
-logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
+logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
 checkEnvFunction();
 
