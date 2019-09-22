@@ -3,14 +3,29 @@
  * All rights reserved.
  */
 
-import { EntityFacade } from "../EntityFacade";
 import { Ingredient } from "../../../lib/models/Ingredient";
 import { SQLAttributes } from "../../sql/SQLAttributes";
+import { FoodCategoryFacade } from "../enum/FoodCategoryFacade";
+import { CompositeFacade } from "../../composite/CompositeFacade";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { JoinType } from "../../sql/enums/JoinType";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { Filter } from "../../filter/Filter";
 
 /**
  * handles CRUD operations with the ingredient-entity
+ * contained Facades:
+ * - FoodCategoryFacade
+ *
+ * contained Joins:
+ * - food_categories (1:1)
  */
-export class IngredientFacade extends EntityFacade<Ingredient> {
+export class IngredientFacade extends CompositeFacade<Ingredient> {
+
+    private _foodCategoryFacade: FoodCategoryFacade;
+
+    private _withFoodCategoryJoin: boolean;
 
     /**
      * @param tableAlias
@@ -21,6 +36,10 @@ export class IngredientFacade extends EntityFacade<Ingredient> {
         } else {
             super("ingredients", "ig");
         }
+
+        this._foodCategoryFacade = new FoodCategoryFacade();
+
+        this._withFoodCategoryJoin = true;
     }
 
     /**
@@ -29,7 +48,15 @@ export class IngredientFacade extends EntityFacade<Ingredient> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] =  ["name", "image_id", "food_category_id"];
-        return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+
+        const ingredientAttributes: SQLAttributes = super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+
+        if (this._withFoodCategoryJoin) {
+            const foodCategoryAttributes: SQLAttributes = this._foodCategoryFacade.getSQLAttributes(excludedSQLAttributes);
+            foodCategoryAttributes.addSqlAttributes(foodCategoryAttributes);
+        }
+
+        return ingredientAttributes;
     }
 
     /**
@@ -53,7 +80,46 @@ export class IngredientFacade extends EntityFacade<Ingredient> {
             ingredient.foodCategoryId = result[this.name("food_category_id")];
         }
 
+        if (this._withFoodCategoryJoin) {
+            ingredient.foodCategory = this._foodCategoryFacade.fillEntity(result);
+        }
+
         return ingredient;
     }
 
+    /**
+     * creates the joins for the ingredient facade and returns them as a list
+     */
+    get joins(): SQLJoin[] {
+        const joins: SQLJoin[] = [];
+
+        if (this._withFoodCategoryJoin) {
+            const foodCategoryFacade: SQLBlock = new SQLBlock();
+            foodCategoryFacade.addText(`${this.tableAlias}.food_category_id = ${this._foodCategoryFacade.tableAlias}.id`);
+            joins.push(new SQLJoin(this._foodCategoryFacade.tableName, this._foodCategoryFacade.tableAlias, foodCategoryFacade, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+        }
+
+        return joins;
+    }
+
+    /**
+     * returns all sub facade filters of the facade as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.foodCategoryFacadeFilter,
+        ];
+    }
+
+    get foodCategoryFacadeFilter(): Filter {
+        return this._foodCategoryFacade.filter;
+    }
+
+    get withFoodCategoryJoin(): boolean {
+        return this._withFoodCategoryJoin;
+    }
+
+    set withFoodCategoryJoin(value: boolean) {
+        this._withFoodCategoryJoin = value;
+    }
 }

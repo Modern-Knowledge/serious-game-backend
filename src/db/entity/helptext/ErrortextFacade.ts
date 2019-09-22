@@ -71,6 +71,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
      */
     public fillEntity(result: any): Errortext {
         const errortext: Errortext = new Errortext();
+
         if (this._withTextJoin) {
             this._textFacade.fillTextEntity(result, errortext);
         }
