@@ -112,7 +112,7 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns the difficulty facade filter
+     * returns the difficultyFacadeFilter
      */
     get difficultyFacadeFilter(): Filter {
         return this._difficultyFacade.filter;

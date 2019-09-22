@@ -18,6 +18,7 @@ import { CompositeFacade } from "./CompositeFacade";
  * - StatisticFacade
  * - ErrortextFacade
  * - ErrortextStatisticFacade
+ *
  * contained Joins:
  * - errortexts_statistics (1:n)
  * - errortexts (1:n)
@@ -137,7 +138,13 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
         return [
             this.statisticFacadeFilter,
             this.errortextFacadeFilter,
+            this.severityFacadeFilter,
+            this.textFacadeFilter
         ];
+    }
+
+    get severityFacadeFilter(): Filter {
+        return this._errortextFacade.severityFacadeFilter;
     }
 
     get statisticFacadeFilter(): Filter {
@@ -146,6 +153,10 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
     get errortextFacadeFilter(): Filter {
         return this._errortextFacade.filter;
+    }
+
+    get textFacadeFilter(): Filter {
+        return this._errortextFacade.textFacadeFilter;
     }
 
     get withErrortextJoin(): boolean {

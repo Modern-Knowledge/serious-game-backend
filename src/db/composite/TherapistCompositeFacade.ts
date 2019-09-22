@@ -35,7 +35,8 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
     private _therapistPatientFacade: TherapistsPatientsFacade;
     private _sessionFacade: SessionFacade;
 
-    private _withUserJoin: boolean;
+    private _withTherapistUserJoin: boolean;
+    private _withPatientUserJoin: boolean;
     private _withPatientJoin: boolean;
     private _withSessionJoin: boolean;
 
@@ -54,7 +55,8 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         this._therapistPatientFacade = new TherapistsPatientsFacade();
         this._sessionFacade = new SessionFacade();
 
-        this._withUserJoin = true;
+        this._withTherapistUserJoin = true;
+        this._withPatientUserJoin = true;
         this._withPatientJoin = true;
         this._withSessionJoin = true;
     }
@@ -160,10 +162,20 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
      */
     protected get filters(): Filter[] {
         return [
+            this.therapistFilter,
             this.therapistUserFacadeFilter,
+            this.patientFilter,
             this.patientUserFacadeFilter,
             this.sessionFacadeFilter
         ];
+    }
+
+    get patientFilter(): Filter {
+        return this._patientFacade.filter;
+    }
+
+    get therapistFilter(): Filter {
+        return this._therapistFacade.filter;
     }
 
     get therapistUserFacadeFilter(): Filter {
@@ -178,14 +190,22 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         return this._sessionFacade.filter;
     }
 
-    get withUserJoin(): boolean {
-        return this._withUserJoin;
+    get withTherapistUserJoin(): boolean {
+        return this._withTherapistUserJoin;
     }
 
-    set withUserJoin(value: boolean) {
-        this._patientFacade.withUserJoin = value;
+    set withTherapistUserJoin(value: boolean) {
         this._therapistFacade.withUserJoin = value;
-        this._withUserJoin = value;
+        this._withTherapistUserJoin = value;
+    }
+
+    get withPatientUserJoin(): boolean {
+        return this._withPatientUserJoin;
+    }
+
+    set withPatientUserJoin(value: boolean) {
+        this._patientFacade.withUserJoin = value;
+        this._withPatientUserJoin = value;
     }
 
     get withPatientJoin(): boolean {

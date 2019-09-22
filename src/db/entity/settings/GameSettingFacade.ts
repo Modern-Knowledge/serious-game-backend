@@ -1,4 +1,3 @@
-import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { GameSetting } from "../../../lib/models/GameSetting";
 import { SQLJoin } from "../../sql/SQLJoin";
@@ -6,6 +5,8 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { JoinType } from "../../sql/enums/JoinType";
 import { DifficultyFacade } from "../enum/DifficultyFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { CompositeFacade } from "../../composite/CompositeFacade";
+import { Filter } from "../../filter/Filter";
 
 /**
  * handles CRUD operations with game-settings-entity
@@ -15,7 +16,7 @@ import { JoinCardinality } from "../../sql/enums/JoinCardinality";
  * contained Joins:
  *  - difficulties (1:1)
  */
-export class GameSettingFacade extends EntityFacade<GameSetting> {
+export class GameSettingFacade extends CompositeFacade<GameSetting> {
 
     private _difficultyFacade: DifficultyFacade;
 
@@ -89,6 +90,22 @@ export class GameSettingFacade extends EntityFacade<GameSetting> {
         }
 
         return joins;
+    }
+
+    /**
+     * returns all sub facade filters of the facade as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+          this.difficultyFacadeFilter
+        ];
+    }
+
+    /**
+     * returns the difficultyFacadeFilter
+     */
+    get difficultyFacadeFilter(): Filter {
+        return this._difficultyFacade.filter;
     }
 
     get withDifficultyJoin(): boolean {

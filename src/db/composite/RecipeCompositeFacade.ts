@@ -144,21 +144,29 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
         return [
             this.ingredientFilter,
             this.difficultyFilter,
+            this.foodCategoryFilter
         ];
     }
 
     /**
-     * returns the difficulty facade filter
+     * returns the difficultyFacadeFilter
      */
     get difficultyFilter(): Filter {
         return this._recipeFacade.difficultyFacadeFilter;
     }
 
     /**
-     * returns the ingredient facade filter
+     * returns the ingredientFacadeFilter
      */
     get ingredientFilter(): Filter {
         return this._ingredientFacade.filter;
+    }
+
+    /**
+     * returns the foodCategoryFilter
+     */
+    get foodCategoryFilter(): Filter {
+        return this._ingredientFacade.foodCategoryFacadeFilter;
     }
 
     get withIngredientsJoin(): boolean {

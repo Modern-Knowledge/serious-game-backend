@@ -39,6 +39,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     private _withGameSettingsJoin: boolean;
     private _withDifficultyJoin: boolean;
     private _withHelptextJoin: boolean;
+    private _withTextJoin: boolean;
 
     /**
      * @param tableAlias
@@ -58,6 +59,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         this._withGameSettingsJoin = true;
         this._withDifficultyJoin = true;
         this._withHelptextJoin = true;
+        this._withTextJoin = true;
     }
 
     /**
@@ -164,7 +166,17 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         return [
             this.gameFacadeFilter,
             this.helptextFacadeFilter,
+            this.textFacadeFilter,
+            this.difficultyFacadeFilter
         ];
+    }
+
+    get difficultyFacadeFilter(): Filter {
+        return this._gameSettingsFacade.difficultyFacadeFilter;
+    }
+
+    get textFacadeFilter(): Filter {
+        return this._helptextFacade.textFacadeFilter;
     }
 
     get gameFacadeFilter(): Filter {
@@ -173,6 +185,15 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
 
     get helptextFacadeFilter(): Filter {
         return this._helptextFacade.filter;
+    }
+
+    get withTextJoin(): boolean {
+        return this._withTextJoin;
+    }
+
+    set withTextJoin(value: boolean) {
+        this._helptextFacade.withTextJoin = value;
+        this._withTextJoin = value;
     }
 
     get withGameSettingsJoin(): boolean {

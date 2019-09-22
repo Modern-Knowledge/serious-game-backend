@@ -57,6 +57,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
             const textAttributes: SQLAttributes = this._textFacade.getSQLAttributes(excludedSQLAttributes);
             errortextAttributes.addSqlAttributes(textAttributes);
         }
+
         if (this._withSeverityJoin) {
             const severityAttributes: SQLAttributes = this._severityFacade.getSQLAttributes(excludedSQLAttributes);
             errortextAttributes.addSqlAttributes(severityAttributes);
@@ -114,6 +115,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     protected get filters(): Filter[] {
         return [
             this.textFacadeFilter,
+            this.severityFacadeFilter
         ];
     }
 
@@ -122,6 +124,13 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
      */
     get textFacadeFilter(): Filter {
         return this._textFacade.filter;
+    }
+
+    /**
+     * returns the severityFacadeFilter
+     */
+    get severityFacadeFilter(): Filter {
+        return this._severityFacade.filter;
     }
 
     get withTextJoin(): boolean {

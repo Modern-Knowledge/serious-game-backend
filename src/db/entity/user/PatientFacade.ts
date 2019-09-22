@@ -181,6 +181,9 @@ export class PatientFacade extends CompositeFacade<Patient> {
     this._withUserJoin = value;
   }
 
+  /**
+   * returns the facade filter that can be used for filtering model with id
+   */
   get idFilter(): Filter {
     return new Filter(this._userFacade.tableAlias);
   }

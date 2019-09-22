@@ -17,7 +17,7 @@ import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 
 /**
- * retrieves composite sessions with therapists (1:1), patients (1:1), statistics (1:1), game (1:1), game-settings (1:1)
+ * retrieves composite sessions
  * contained Facades:
  * - SessionFacade
  * - TherapistFacade
@@ -50,8 +50,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     private _gameSettingsFacade: GameSettingFacade;
 
     private _withTherapistJoin: boolean;
+    private _withTherapistUserJoin: boolean;
     private _withPatientJoin: boolean;
-    private _withUserJoin: boolean;
+    private _withPatientUserJoin: boolean;
+
     private _withStatisticCompositeJoin: boolean;
     private _withErrortextJoin: boolean;
     private _withTextJoin: boolean;
@@ -78,8 +80,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         this._gameSettingsFacade = new GameSettingFacade();
 
         this._withTherapistJoin = true;
+        this._withTherapistUserJoin = true;
         this._withPatientJoin = true;
-        this._withUserJoin = true;
+        this._withPatientUserJoin = true;
         this._withStatisticCompositeJoin = true;
         this._withErrortextJoin = true;
         this._withTextJoin = true;
@@ -231,11 +234,14 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             this.therapistFacadeFilter,
             this.therapistUserFacadeFilter,
             this.patientFacadeFilter,
+            this.patientUserFacadeFilter,
             this.statisticFacadeFilter,
             this.errortextFacadeFilter,
-            this.patientUserFacadeFilter,
+            this.textFacadeFilter,
+            this.severityFacadeFilter,
             this.gameFacadeFilter,
-            this.gameSettingFacadeFilter
+            this.gameSettingFacadeFilter,
+            this.difficultyFacadeFilter
         ];
     }
 
@@ -251,6 +257,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         return this._therapistFacade.filter;
     }
 
+    get patientUserFacadeFilter(): Filter {
+        return this._patientFacade.userFacadeFilter;
+    }
+
     get statisticFacadeFilter(): Filter {
         return this._statisticCompositeFacade.statisticFacadeFilter;
     }
@@ -259,8 +269,12 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         return this._statisticCompositeFacade.errortextFacadeFilter;
     }
 
-    get patientUserFacadeFilter(): Filter {
-        return this._patientFacade.userFacadeFilter;
+    get textFacadeFilter(): Filter {
+        return this._statisticCompositeFacade.textFacadeFilter;
+    }
+
+    get severityFacadeFilter(): Filter {
+        return this._statisticCompositeFacade.severityFacadeFilter;
     }
 
     get gameFacadeFilter(): Filter {
@@ -269,6 +283,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     get gameSettingFacadeFilter(): Filter {
         return this._gameSettingsFacade.filter;
+    }
+
+    get difficultyFacadeFilter(): Filter {
+        return this._gameSettingsFacade.difficultyFacadeFilter;
     }
 
     get withTherapistJoin(): boolean {
@@ -287,14 +305,22 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         this._withPatientJoin = value;
     }
 
-    get withUserJoin(): boolean {
-        return this._withUserJoin;
+    get withTherapistUserJoin(): boolean {
+        return this._withTherapistUserJoin;
     }
 
-    set withUserJoin(value: boolean) {
-        this._patientFacade.withUserJoin = value;
+    set withTherapistUserJoin(value: boolean) {
         this._therapistFacade.withUserJoin = value;
-        this._withUserJoin = value;
+        this._withTherapistUserJoin = value;
+    }
+
+    get withPatientUserJoin(): boolean {
+        return this._withPatientUserJoin;
+    }
+
+    set withPatientUserJoin(value: boolean) {
+        this._patientFacade.withUserJoin = value;
+        this._withPatientUserJoin = value;
     }
 
     get withStatisticCompositeJoin(): boolean {

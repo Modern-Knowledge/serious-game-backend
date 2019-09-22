@@ -140,6 +140,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
         ];
     }
 
+    /**
+     * returns the facade filter that can be used for filtering model with id
+     */
     get idFilter(): Filter {
         return new Filter(this._userFacade.tableAlias);
     }

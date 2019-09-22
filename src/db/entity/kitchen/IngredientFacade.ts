@@ -111,6 +111,9 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         ];
     }
 
+    /**
+     * returns the foodCategoryFilter
+     */
     get foodCategoryFacadeFilter(): Filter {
         return this._foodCategoryFacade.filter;
     }
