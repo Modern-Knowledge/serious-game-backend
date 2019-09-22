@@ -89,12 +89,12 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
 
         if (this._withGameSettingsJoin) {
             const gs: GameSetting = this._gameSettingsFacade.fillEntity(result);
-            g.addGameSetting(gs);
+            g.gameSettings.push(gs);
         }
 
         if (this._withHelptextJoin) {
             const ht: Helptext = this._helptextFacade.fillEntity(result);
-            g.addHelptext(ht);
+            g.helptexts.push(ht);
         }
 
 
@@ -145,11 +145,11 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
                 const existingGame: Game = gameMap.get(game.id);
 
                 if (!Helper.arrayContainsModel(game.helptexts[0], existingGame.helptexts)) {
-                    existingGame.addHelptexts(game.helptexts);
+                    existingGame.helptexts = existingGame.helptexts.concat(game.helptexts);
                 }
 
                 if (!Helper.arrayContainsModel(game.gameSettings[0], existingGame.gameSettings)) {
-                    existingGame.addGameSettings(game.gameSettings);
+                    existingGame.gameSettings = existingGame.gameSettings.concat(game.gameSettings);
                 }
             }
         }

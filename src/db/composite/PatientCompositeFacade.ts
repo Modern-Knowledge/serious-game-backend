@@ -83,7 +83,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
         if (this._withSessionJoin) {
             const s: Session = this._sessionFacade.fillEntity(result);
-            p.addSession(s);
+            p.sessions.push(s);
         }
 
         return p;
@@ -127,7 +127,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
                 const existingPatient: Patient = patientMap.get(patient.id);
 
                 if (!Helper.arrayContainsModel(patient.sessions[0], existingPatient.sessions)) {
-                    existingPatient.addSessions(patient.sessions);
+                    existingPatient.sessions = existingPatient.sessions.concat(patient.sessions);
                 }
             }
         }

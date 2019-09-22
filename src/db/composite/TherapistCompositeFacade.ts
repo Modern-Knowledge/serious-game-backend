@@ -30,181 +30,181 @@ import { CompositeFacade } from "./CompositeFacade";
  */
 export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
-  private _therapistFacade: TherapistFacade;
-  private _patientFacade: PatientFacade;
-  private _therapistPatientFacade: TherapistsPatientsFacade;
-  private _sessionFacade: SessionFacade;
+    private _therapistFacade: TherapistFacade;
+    private _patientFacade: PatientFacade;
+    private _therapistPatientFacade: TherapistsPatientsFacade;
+    private _sessionFacade: SessionFacade;
 
-  private _withUserJoin: boolean;
-  private _withPatientJoin: boolean;
-  private _withSessionJoin: boolean;
+    private _withUserJoin: boolean;
+    private _withPatientJoin: boolean;
+    private _withSessionJoin: boolean;
 
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("therapists", tableAlias);
-    } else {
-      super("therapists", "t");
-    }
-
-    this._therapistFacade = new TherapistFacade();
-    this._patientFacade = new PatientFacade();
-    this._therapistPatientFacade = new TherapistsPatientsFacade();
-    this._sessionFacade = new SessionFacade();
-
-    this._withUserJoin = true;
-    this._withPatientJoin = true;
-    this._withSessionJoin = true;
-  }
-
-  /**
-   * returns sql attributes that should be retrieved from the database
-   * @param excludedSQLAttributes attributes that should not be selected
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const returnAttributes: SQLAttributes = new SQLAttributes();
-
-    returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
-
-    if (this._withPatientJoin) {
-      returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
-      returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
-    }
-
-    if (this._withSessionJoin) {
-      returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
-    }
-
-    return returnAttributes;
-  }
-
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  protected fillEntity(result: any): Therapist {
-    const t: Therapist = this._therapistFacade.fillEntity(result);
-    if (this._withPatientJoin) {
-      const p: Patient = this._patientFacade.fillEntity(result);
-      t.addPatient(p);
-    }
-
-    if (this._withSessionJoin) {
-      const s: Session = this._sessionFacade.fillEntity(result);
-      t.addSession(s);
-    }
-
-    return t;
-  }
-
-  /**
-   * creates the joins for the composite therapists facade and returns them as a list
-   */
-  get joins(): SQLJoin[] {
-    let joins: SQLJoin[] = [];
-
-    joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
-
-    if (this._withPatientJoin) {
-      const therapistPatientJoin: SQLBlock = new SQLBlock();
-      therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-      joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
-
-      const patientTherapistJoin: SQLBlock = new SQLBlock();
-      patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
-      joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
-
-      joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
-    }
-
-    if (this._withSessionJoin) {
-      const sessionJoin: SQLBlock = new SQLBlock();
-      sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-      joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
-    }
-
-    return joins;
-  }
-
-  /**
-   * post process the results of the select query
-   * e.g.: handle joins
-   * @param entities entities that where returned from the database
-   */
-  protected postProcessSelect(entities: Therapist[]): Therapist[] {
-    const therapistMap = new Map<number, Therapist>();
-
-    for (const therapist of entities) {
-      if (!therapistMap.has(therapist.id)) {
-        therapistMap.set(therapist.id, therapist);
-      } else {
-        const existingTherapist: Therapist = therapistMap.get(therapist.id);
-
-        if (!Helper.arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
-          existingTherapist.addPatients(therapist.patients);
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("therapists", tableAlias);
+        } else {
+            super("therapists", "t");
         }
 
-        if (!Helper.arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
-          existingTherapist.addSessions(therapist.sessions);
-        }
-      }
+        this._therapistFacade = new TherapistFacade();
+        this._patientFacade = new PatientFacade();
+        this._therapistPatientFacade = new TherapistsPatientsFacade();
+        this._sessionFacade = new SessionFacade();
+
+        this._withUserJoin = true;
+        this._withPatientJoin = true;
+        this._withSessionJoin = true;
     }
 
-    return Array.from(therapistMap.values());
-  }
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const returnAttributes: SQLAttributes = new SQLAttributes();
 
-  /**
-   * returns all sub facade filters of the facade as an array
-   */
-  protected get filters(): Filter[] {
-    return [
-        this.therapistUserFacadeFilter,
-        this.patientUserFacadeFilter,
-        this.sessionFacadeFilter
-    ];
-  }
+        returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
 
-  get therapistUserFacadeFilter(): Filter {
-    return this._therapistFacade.userFacadeFilter;
-  }
+        if (this._withPatientJoin) {
+            returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
+        }
 
-  get patientUserFacadeFilter(): Filter {
-    return this._patientFacade.userFacadeFilter;
-  }
+        if (this._withSessionJoin) {
+            returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+        }
 
-  get sessionFacadeFilter(): Filter {
-    return this._sessionFacade.filter;
-  }
+        return returnAttributes;
+    }
 
-  get withUserJoin(): boolean {
-    return this._withUserJoin;
-  }
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): Therapist {
+        const t: Therapist = this._therapistFacade.fillEntity(result);
+        if (this._withPatientJoin) {
+            const p: Patient = this._patientFacade.fillEntity(result);
+            t.patients.push(p);
+        }
 
-  set withUserJoin(value: boolean) {
-    this._patientFacade.withUserJoin = value;
-    this._therapistFacade.withUserJoin = value;
-    this._withUserJoin = value;
-  }
+        if (this._withSessionJoin) {
+            const s: Session = this._sessionFacade.fillEntity(result);
+            t.sessions.push(s);
+        }
 
-  get withPatientJoin(): boolean {
-    return this._withPatientJoin;
-  }
+        return t;
+    }
 
-  set withPatientJoin(value: boolean) {
-    this._withPatientJoin = value;
-  }
+    /**
+     * creates the joins for the composite therapists facade and returns them as a list
+     */
+    get joins(): SQLJoin[] {
+        let joins: SQLJoin[] = [];
 
-  get withSessionJoin(): boolean {
-    return this._withSessionJoin;
-  }
+        joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
 
-  set withSessionJoin(value: boolean) {
-    this._withSessionJoin = value;
-  }
+        if (this._withPatientJoin) {
+            const therapistPatientJoin: SQLBlock = new SQLBlock();
+            therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
+            joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
 
-  get idFilter(): Filter {
-    return this.therapistUserFacadeFilter;
-  }
+            const patientTherapistJoin: SQLBlock = new SQLBlock();
+            patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
+            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+
+            joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
+        }
+
+        if (this._withSessionJoin) {
+            const sessionJoin: SQLBlock = new SQLBlock();
+            sessionJoin.addText(`${this._sessionFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
+            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+        }
+
+        return joins;
+    }
+
+    /**
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
+     */
+    protected postProcessSelect(entities: Therapist[]): Therapist[] {
+        const therapistMap = new Map<number, Therapist>();
+
+        for (const therapist of entities) {
+            if (!therapistMap.has(therapist.id)) {
+                therapistMap.set(therapist.id, therapist);
+            } else {
+                const existingTherapist: Therapist = therapistMap.get(therapist.id);
+
+                if (!Helper.arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
+                    existingTherapist.patients = existingTherapist.patients.concat(therapist.patients);
+                }
+
+                if (!Helper.arrayContainsModel(therapist.sessions[0], existingTherapist.sessions)) {
+                    existingTherapist.sessions = existingTherapist.sessions.concat(therapist.sessions);
+                }
+            }
+        }
+
+        return Array.from(therapistMap.values());
+    }
+
+    /**
+     * returns all sub facade filters of the facade as an array
+     */
+    protected get filters(): Filter[] {
+        return [
+            this.therapistUserFacadeFilter,
+            this.patientUserFacadeFilter,
+            this.sessionFacadeFilter
+        ];
+    }
+
+    get therapistUserFacadeFilter(): Filter {
+        return this._therapistFacade.userFacadeFilter;
+    }
+
+    get patientUserFacadeFilter(): Filter {
+        return this._patientFacade.userFacadeFilter;
+    }
+
+    get sessionFacadeFilter(): Filter {
+        return this._sessionFacade.filter;
+    }
+
+    get withUserJoin(): boolean {
+        return this._withUserJoin;
+    }
+
+    set withUserJoin(value: boolean) {
+        this._patientFacade.withUserJoin = value;
+        this._therapistFacade.withUserJoin = value;
+        this._withUserJoin = value;
+    }
+
+    get withPatientJoin(): boolean {
+        return this._withPatientJoin;
+    }
+
+    set withPatientJoin(value: boolean) {
+        this._withPatientJoin = value;
+    }
+
+    get withSessionJoin(): boolean {
+        return this._withSessionJoin;
+    }
+
+    set withSessionJoin(value: boolean) {
+        this._withSessionJoin = value;
+    }
+
+    get idFilter(): Filter {
+        return this.therapistUserFacadeFilter;
+    }
 }

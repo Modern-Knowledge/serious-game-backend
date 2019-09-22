@@ -215,7 +215,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
                 const statistic: Statistic = session.statistic;
 
                 if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
-                    existingStatistic.addErrortexts(statistic.errortexts);
+                    existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
                 }
             }
         }

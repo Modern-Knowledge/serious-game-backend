@@ -79,7 +79,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
         if (this._withErrortextJoin) {
             const et: Errortext = this._errortextFacade.fillEntity(result);
-            t.addErrortext(et);
+            t.errortexts.push(et);
         }
 
         return t;
@@ -122,7 +122,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
                 const existingStatistic: Statistic = statisticMap.get(statistic.id);
 
                 if (!Helper.arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
-                    existingStatistic.addErrortexts(statistic.errortexts);
+                    existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
                 }
             }
         }

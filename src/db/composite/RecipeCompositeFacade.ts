@@ -129,7 +129,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
                 const existingRecipe: Recipe = recipeMap.get(recipe.id);
 
                 if (!Helper.arrayContainsModel(recipe.ingredients[0], existingRecipe.ingredients)) {
-                    existingRecipe.ingredients.concat(recipe.ingredients);
+                    existingRecipe.ingredients = existingRecipe.ingredients.concat(recipe.ingredients);
                 }
             }
         }
