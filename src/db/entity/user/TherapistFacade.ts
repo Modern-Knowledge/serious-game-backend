@@ -11,6 +11,7 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
+import {SQLOrderBy} from "../../sql/SQLOrderBy";
 
 /**
  * handles CRUD operations with the therapist-entity
@@ -132,6 +133,13 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
+     * returns the facade filter that can be used for filtering model with id
+     */
+    get idFilter(): Filter {
+        return new Filter(this._userFacade.tableAlias);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
@@ -141,17 +149,26 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * returns the facade filter that can be used for filtering model with id
+     * returns the userFacadeFilter
      */
-    get idFilter(): Filter {
-        return new Filter(this._userFacade.tableAlias);
+    get userFacadeFilter(): Filter {
+        return this._userFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): SQLOrderBy[][] {
+        return [
+            this.userFacadeOrderBy
+        ];
     }
 
     /**
      * returns the userFacadeFilter
      */
-    get userFacadeFilter(): Filter {
-        return this._userFacade.filter;
+    get userFacadeOrderBy(): SQLOrderBy[] {
+        return this._userFacade.orderBy;
     }
 
     get withUserJoin(): boolean {

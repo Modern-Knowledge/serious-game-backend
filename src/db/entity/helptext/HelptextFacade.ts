@@ -8,6 +8,7 @@ import { TextFacade } from "./TextFacade";
 import { Helptext } from "../../../lib/models/Helptext";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
+import { SQLOrderBy } from "../../sql/SQLOrderBy";
 
 /**
  * handles CRUD operations with the helptext-entity
@@ -93,11 +94,21 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     ];
   }
 
-  /**
-   * returns the textFacadeFilter
-   */
   get textFacadeFilter(): Filter {
     return this._textFacade.filter;
+  }
+
+  /**
+   * returns all sub facade order-bys of the facade as an array
+   */
+  protected get orderBys(): SQLOrderBy[][] {
+    return [
+      this.textFacadeOrderBy,
+    ];
+  }
+
+  get textFacadeOrderBy(): SQLOrderBy[] {
+    return this._textFacade.orderBy;
   }
 
   get withTextJoin(): boolean {

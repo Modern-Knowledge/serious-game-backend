@@ -34,7 +34,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _tableAlias: string;
   private _attributes: string[];
 
-  protected _orderBys: SQLOrderBy[] = [];
+  private _orderBy: SQLOrderBy[] = [];
   protected _filter: Filter;
 
   private readonly _dbInstance: DatabaseConnection;
@@ -83,7 +83,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
     logger.info(`${Helper.loggerString(__dirname, BaseFacade.name, "select")} called`);
     BaseFacade.joinAnalyzer(this.joins);
-    const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._orderBys);
+    const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._orderBy);
     const selectQuery: BakedQuery = npq.bake();
     let returnEntities: EntityType[] = [];
     const params: (string | number | Date)[] = selectQuery.fillParameters();
@@ -330,7 +330,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
    * @param order attribute sort order (ASC|DESC)
    */
   public addOrderBy(attribute: string, order: SQLOrder): void {
-    this._orderBys.push(new SQLOrderBy(attribute, order, this.tableAlias));
+    this._orderBy.push(new SQLOrderBy(attribute, order, this.tableAlias));
   }
 
   /**
@@ -359,8 +359,19 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   /**
    * clear order bys
    */
-  public clearOrderBys(): void {
-    this._orderBys = [];
+  public clearOrderBy(): void {
+    this._orderBy = [];
+  }
+
+  /**
+   * retrieve array of order by values
+   */
+  get orderBy(): SQLOrderBy[] {
+    return this._orderBy;
+  }
+
+  set orderBy(value: SQLOrderBy[]) {
+    this._orderBy = value;
   }
 
   /**

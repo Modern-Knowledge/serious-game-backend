@@ -2,6 +2,7 @@ import { AbstractModel } from "../../lib/models/AbstractModel";
 import { EntityFacade } from "../entity/EntityFacade";
 import { Filter } from "../filter/Filter";
 import { SQLOperator } from "../sql/enums/SQLOperator";
+import { SQLOrderBy } from "../sql/SQLOrderBy";
 
 /**
  * base class for composite facades
@@ -21,6 +22,16 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
     }
 
     /**
+     * returns the entity by id
+     * @param id
+     * @param excludedSQLAttributes
+     */
+    public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
+        this.combineOrderBys();
+        return super.getById(id, excludedSQLAttributes);
+    }
+
+    /**
      * returns all entities that match the specified filter
      * @param excludedSQLAttributes
      */
@@ -28,6 +39,9 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
         if (this._autoCombineFilter) {
             this.combineFilters();
         }
+
+        this.combineOrderBys();
+
         return super.get(excludedSQLAttributes);
     }
 
@@ -40,7 +54,6 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
 
     /**
      * clears filters from the facades in the composite facade
-     * but not the facade filter itself
      */
     public clearFacadeFilters(): void {
         for (const filter of this.filters) {
@@ -82,5 +95,23 @@ export abstract class CompositeFacade<EntityType extends AbstractModel> extends 
      */
     set autoCombineFilter(value: boolean) {
         this._autoCombineFilter = value;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): (SQLOrderBy[])[] {
+        return [];
+    }
+
+    /**
+     * combines the composite facade order-bys to one order-by
+     */
+    private combineOrderBys(): void {
+        const compositeFacadeOrderBys: (SQLOrderBy[])[] = this.orderBys;
+
+        for (const orderBy of compositeFacadeOrderBys) {
+            this.orderBy = this.orderBy.concat(orderBy);
+        }
     }
 }

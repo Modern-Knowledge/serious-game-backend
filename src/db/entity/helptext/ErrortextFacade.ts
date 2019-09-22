@@ -8,6 +8,7 @@ import { TextFacade } from "./TextFacade";
 import { SeverityFacade } from "../enum/SeverityFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
+import {SQLOrderBy} from "../../sql/SQLOrderBy";
 
 /**
  * handles CRUD operations with the errortext-entity
@@ -119,18 +120,30 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         ];
     }
 
-    /**
-     * returns the userFacadeFilter
-     */
     get textFacadeFilter(): Filter {
         return this._textFacade.filter;
     }
 
-    /**
-     * returns the severityFacadeFilter
-     */
     get severityFacadeFilter(): Filter {
         return this._severityFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): SQLOrderBy[][] {
+        return [
+            this.textFacadeOrderBy,
+            this.severityFacadeOrderBy,
+        ];
+    }
+
+    get textFacadeOrderBy(): SQLOrderBy[] {
+        return this._textFacade.orderBy;
+    }
+
+    get severityFacadeOrderBy(): SQLOrderBy[] {
+        return this._severityFacade.orderBy;
     }
 
     get withTextJoin(): boolean {

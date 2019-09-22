@@ -13,6 +13,7 @@ import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
+import {SQLOrderBy} from "../sql/SQLOrderBy";
 
 /**
  * retrieves composites therapists
@@ -188,6 +189,39 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
     get sessionFacadeFilter(): Filter {
         return this._sessionFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): SQLOrderBy[][] {
+        return [
+            this.patientOrderBy,
+            this.therapistOrderBy,
+            this.therapistUserFacadeOrderBy,
+            this.patientUserFacadeOrderBy,
+            this.sessionFacadeOrderBy
+        ];
+    }
+
+    get patientOrderBy(): SQLOrderBy[] {
+        return this._patientFacade.orderBy;
+    }
+
+    get therapistOrderBy(): SQLOrderBy[] {
+        return this._therapistFacade.orderBy;
+    }
+
+    get therapistUserFacadeOrderBy(): SQLOrderBy[] {
+        return this._therapistFacade.orderBy;
+    }
+
+    get patientUserFacadeOrderBy(): SQLOrderBy[] {
+        return this._patientFacade.orderBy;
+    }
+
+    get sessionFacadeOrderBy(): SQLOrderBy[] {
+        return this._sessionFacade.orderBy;
     }
 
     get withTherapistUserJoin(): boolean {

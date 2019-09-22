@@ -13,6 +13,7 @@ import { Helper } from "../../util/Helper";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
+import { SQLOrderBy } from "../sql/SQLOrderBy";
 
 /**
  * retrieves composite games
@@ -164,7 +165,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
      */
     protected get filters(): Filter[] {
         return [
-            this.gameFacadeFilter,
+            this.gameSettingFacadeFilter,
             this.helptextFacadeFilter,
             this.textFacadeFilter,
             this.difficultyFacadeFilter
@@ -179,12 +180,40 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         return this._helptextFacade.textFacadeFilter;
     }
 
-    get gameFacadeFilter(): Filter {
+    get gameSettingFacadeFilter(): Filter {
         return this._gameSettingsFacade.filter;
     }
 
     get helptextFacadeFilter(): Filter {
         return this._helptextFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): SQLOrderBy[][] {
+        return [
+            this.difficultyFacadeOrderBy,
+            this.textFacadeOrderBy,
+            this.gameSettingFacadeOrderBy,
+            this.helptextFacadeOrderBy
+        ];
+    }
+
+    get difficultyFacadeOrderBy(): SQLOrderBy[] {
+        return this._gameSettingsFacade.orderBy;
+    }
+
+    get textFacadeOrderBy(): SQLOrderBy[] {
+        return this._helptextFacade.orderBy;
+    }
+
+    get gameSettingFacadeOrderBy(): SQLOrderBy[] {
+        return this._gameSettingsFacade.orderBy;
+    }
+
+    get helptextFacadeOrderBy(): SQLOrderBy[] {
+        return this._helptextFacade.orderBy;
     }
 
     get withTextJoin(): boolean {
