@@ -11,6 +11,7 @@ import passport from "passport";
 import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import logger from "./util/logger";
+import { checkEnvFunction } from "./util/checkEnvVariables";
 import { Helper } from "./util/Helper";
 import moment from "moment";
 import morgan from "morgan";
@@ -26,11 +27,6 @@ import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
-import {Mail} from "./util/mail/Mail";
-import {Recipient} from "./util/mail/Recipient";
-import {MailTransport} from "./util/mail/MailTransport";
-import {User} from "./lib/models/User";
-
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -43,41 +39,7 @@ if (config.error) { // .env not found
 }
 logger.info(`${Helper.loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 
-// check env variables
-(() => {
-  /**
-   * throw an error if these env variables are not present
-   */
-  const unsetRequiredVars: string[] = Helper.checkEnvVariables([
-    "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE"
-  ]);
-
-  if (unsetRequiredVars.length > 0) {
-    const errorStr = `${Helper.loggerString(__dirname, "", "", __filename)} Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
-    logger.error(errorStr);
-    throw new Error(errorStr);
-  }
-
-  /**
-   * print an warning, if these env variables are not present
-   */
-  const unsetOptionalVars: string[] = Helper.checkEnvVariables([
-    "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "SEND_MAILS"
-  ]);
-
-  if (unsetOptionalVars.length > 0) {
-    logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
-  }
-
-  const unsetMailVariables: string[] = Helper.checkEnvVariables(
-      ["MAIL_HOST", "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS"]
-  );
-
-  if (unsetMailVariables.length > 0) {
-    process.env.SEND_MAILS = "0";
-    logger.warn(`${Helper.loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
-  }
-})();
+checkEnvFunction();
 
 // Create Express server
 const app = express();
