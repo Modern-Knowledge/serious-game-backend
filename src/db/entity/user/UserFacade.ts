@@ -26,7 +26,7 @@ export class UserFacade extends EntityFacade<User> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "last_login", "failed_login_attempts", "status"];
+        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "status"];
 
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
@@ -112,6 +112,10 @@ export class UserFacade extends EntityFacade<User> {
             u.lastname = result[this.name("lastname")];
         }
 
+        if (result[this.name("gender")] !== undefined) {
+            u.gender = result[this.name("gender")];
+        }
+
         if (result[this.name("last_login")] !== undefined) {
             u.lastLogin = result[this.name("last_login")];
         }
@@ -150,6 +154,9 @@ export class UserFacade extends EntityFacade<User> {
 
         const lastnameAttribute: SQLValueAttribute = new SQLValueAttribute("lastname", prefix, user.lastname);
         attributes.addAttribute(lastnameAttribute);
+
+        const genderAttribute: SQLValueAttribute = new SQLValueAttribute("gender", prefix, user.gender);
+        attributes.addAttribute(genderAttribute);
 
         const lastLoginAttribute: SQLValueAttribute = new SQLValueAttribute("last_login", prefix, user.lastLogin);
         attributes.addAttribute(lastLoginAttribute);

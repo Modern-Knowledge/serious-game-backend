@@ -22,7 +22,9 @@ const router = express.Router();
  * Home page.
  */
 router.get("/", async (req: Request, res: Response) => {
-    // const facade: UserFacade = new UserFacade("u");
+     const facade: UserFacade = new UserFacade("u");
+     const user = await facade.getById(1);
+     console.log(user.fullNameWithSirOrMadam);
     // facade.addOrderBy("id", SQLOrder.DESC);
     // //
     // const filter: Filter = facade.filter;
@@ -102,14 +104,15 @@ router.get("/", async (req: Request, res: Response) => {
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
-    // const u = new User();
-    // u.forename = "Florian";
-    // u.lastname = "Mold";
-    // u.email = "florian.mold@live.at";
-    //
-    // const m = new Mail([u.recipient], passwordReset, ["Sandra Albrecht", "1234456"]);
-    //
-    // MailTransport.getInstance().sendMail(m);
+    const u = new User();
+    u.gender = 0;
+    u.forename = "Florian";
+    u.lastname = "Mold";
+    u.email = "florian.mold@live.at";
+
+    const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
+
+    MailTransport.getInstance().sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;

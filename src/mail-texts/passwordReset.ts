@@ -15,7 +15,7 @@ passwordReset.html = `
 <p>::code::</p>
 
 <b>Du hast diese Änderung nicht beantragt?</b>
-<p>Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren</p>
+<p>Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.</p>
 `;
 
 passwordReset.text = `
@@ -25,7 +25,7 @@ Wir haben eine Anfrage zum Zurücksetzen deines Passwortes erhalten. Gib folgend
 ::code::
 
 Du hast diese Änderung nicht beantragt?
-Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren
+Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.
 `;
 
 export default passwordReset;
