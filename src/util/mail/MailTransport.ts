@@ -56,7 +56,7 @@ export class MailTransport {
      * sends the provided mail
      * @param mail
      */
-    public async sendMail(mail: Mail): Promise<void> {
+    public sendMail(mail: Mail): void {
         if (!mail.validate()) {
             const errStr: string = `${loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
             logger.error(errStr);

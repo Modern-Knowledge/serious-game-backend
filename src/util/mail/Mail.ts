@@ -7,8 +7,8 @@
 import { Attachment } from "./Attachment";
 import { Recipient } from "./Recipient";
 import { MailPriority } from "./MailPriority";
-import { SmtpMessage } from "../../lib/models/SmtpMessage";
 import { MailTemplateParser } from "./MailTemplateParser";
+import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 
 /**
  * represents a Mail for nodemailer
@@ -24,11 +24,11 @@ export class Mail {
     public attachments: Attachment[] = [];
 
     /* Advanced fields */
-    private replyTo: string;
+    public replyTo: string;
 
     /* header options */
-    private priority: MailPriority = MailPriority.NORMAL;
-    private headers: any;
+    public priority: MailPriority = MailPriority.NORMAL;
+    public headers: any;
 
 
     /**
@@ -48,22 +48,10 @@ export class Mail {
 
     /**
      * validate mail
-     * check that required attributes are set
+     * check that required attributes are set (recipients, subject, text, html)
      */
     public validate(): boolean {
-        if (this.to.length === 0) {
-            return false;
-        }
-
-        if (this.subject.length === 0) {
-            return false;
-        }
-
-        if (this.text.length === 0) {
-            return false;
-        }
-
-        return this.html.length !== 0;
+        return !(this.to.length === 0 || this.subject.length === 0 || this.text.length === 0 || this.html.length === 0);
     }
 }
 

@@ -3,7 +3,6 @@
  * All rights reserved.
  */
 
-import { SmtpMessage } from "../../lib/models/SmtpMessage";
 import logger from "../logger";
 import { loggerString } from "../Helper";
 
