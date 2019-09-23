@@ -65,16 +65,10 @@ export class PatientFacade extends CompositeFacade<Patient> {
     public async insertPatient(patient: Patient): Promise<Patient> {
         const t: User = await this._userFacade.insertUser(patient);
 
-        const attributes: SQLValueAttributes = new SQLValueAttributes();
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableName, patient);
 
         const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", this.tableName, t.id);
         attributes.addAttribute(patientIdAttribute);
-
-        const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", this.tableName, patient.birthday);
-        attributes.addAttribute(birthdayAttribute);
-
-        const infoAttribute: SQLValueAttribute = new SQLValueAttribute("info", this.tableName, patient.info);
-        attributes.addAttribute(infoAttribute);
 
         return new Promise<Patient>((resolve, reject) => {
             this.insert(attributes).then(id => {
@@ -92,13 +86,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * @param patient patient to update
      */
     public async updatePatient(patient: Patient): Promise<number> {
-        const attributes: SQLValueAttributes = new SQLValueAttributes();
-
-        const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", this.tableAlias, patient.birthday);
-        attributes.addAttribute(birthdayAttribute);
-
-        const infoAttribute: SQLValueAttribute = new SQLValueAttribute("info", this.tableAlias, patient.info);
-        attributes.addAttribute(infoAttribute);
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, patient);
 
         const userRows: number = await this._userFacade.updateUser(patient);
         const patientRows: number = await this.update(attributes);
@@ -139,6 +127,23 @@ export class PatientFacade extends CompositeFacade<Patient> {
         }
 
         return p;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param patient entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, patient: Patient): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", prefix, patient.birthday);
+        attributes.addAttribute(birthdayAttribute);
+
+        const infoAttribute: SQLValueAttribute = new SQLValueAttribute("info", prefix, patient.info);
+        attributes.addAttribute(infoAttribute);
+
+        return attributes;
     }
 
     /**
