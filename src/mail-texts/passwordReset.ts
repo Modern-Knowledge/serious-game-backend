@@ -28,4 +28,4 @@ Du hast diese Änderung nicht beantragt?
 Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.
 `;
 
-export default passwordReset;
+export { passwordReset };

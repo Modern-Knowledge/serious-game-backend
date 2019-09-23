@@ -8,14 +8,28 @@ import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
 import lusca from "lusca";
 import passport from "passport";
-import * as dotenv from "dotenv";
-import { DotenvConfigOutput } from "dotenv";
-import logger from "./util/logger";
-import { checkEnvFunction } from "./util/checkEnvVariables";
 import moment from "moment";
 import morgan from "morgan";
-import { accessLogStream } from "./util/morgan";
+import * as dotenv from "dotenv";
+import { loggerString } from "./util/Helper";
+import { DotenvConfigOutput } from "dotenv";
 import cors from "cors";
+
+const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
+if (config.error) { // .env not found
+  const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
+  throw new Error(message);
+}
+
+import logger from "./util/logger";
+import { accessLogStream } from "./util/morgan";
+import { checkEnvFunction } from "./util/checkEnvVariables";
+
+logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
+checkEnvFunction();
+
+process.env.TZ = "Europe/Vienna";
+moment.locale("de");
 
 // Controllers (route handlers)
 import HomeController from "./controllers/HomeController";
@@ -26,20 +40,6 @@ import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
-import { loggerString } from "./util/Helper";
-
-process.env.TZ = "Europe/Vienna";
-moment.locale("de");
-
-const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
-if (config.error) { // .env not found
-  const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
-  logger.error(message);
-  throw new Error(message);
-}
-logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
-
-checkEnvFunction();
 
 // Create Express server
 const app = express();

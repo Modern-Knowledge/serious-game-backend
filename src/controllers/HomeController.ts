@@ -7,14 +7,13 @@ import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 import { User } from "../lib/models/User";
-import { MailTransport } from "../util/mail/MailTransport";
 import { Mail } from "../util/mail/Mail";
-import passwordReset from "../mail-texts/passwordReset";
+import { passwordReset } from "../mail-texts/passwordReset";
 import { MailPriority } from "../util/mail/MailPriority";
 import { Attachment } from "../util/mail/Attachment";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
-
+import { mailTransport } from "../util/mail/MailTransport";
 const router = express.Router();
 
 /**
@@ -24,7 +23,7 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
      const facade: UserFacade = new UserFacade("u");
      const user = await facade.getById(1);
-     console.log(user.fullNameWithSirOrMadam);
+     // console.log(user.fullNameWithSirOrMadam);
     // facade.addOrderBy("id", SQLOrder.DESC);
     // //
     // const filter: Filter = facade.filter;
@@ -112,7 +111,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
 
-    MailTransport.getInstance().sendMail(m);
+      mailTransport.sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;

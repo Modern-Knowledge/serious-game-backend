@@ -14,14 +14,10 @@ import { loggerString } from "../Helper";
 /**
  * class used to handle mail sending with nodemailer
  */
-export class MailTransport {
-    private static _instance: MailTransport;
-
-    private _sendMails: boolean;
+class MailTransport {
     private _transporter: any;
 
     private _configVariables = {
-        pool: true,
         host: process.env.MAIL_HOST,
         port: Number(process.env.MAIL_PORT),
         secure: process.env.MAIL_SECURE === "1",
@@ -32,13 +28,10 @@ export class MailTransport {
         logger: false,
     };
 
-    /**
-     * @param sendMails determines if mail is sent or simulated
-     */
-    private constructor(sendMails: boolean) {
-        this._sendMails = sendMails;
+    public constructor() {
+        logger.info(`${loggerString(__dirname, MailTransport.name, "constructor")} MailTransport instance was created`);
 
-        if (!this._sendMails) {
+        if (!(process.env.SEND_MAILS === "1")) {
             logger.warn(`${loggerString(__dirname, MailTransport.name, "constructor")} Mail sending is simulated!`);
         }
     }
@@ -46,8 +39,8 @@ export class MailTransport {
     /**
      * creates the connection to the mail host
      */
-    private createNodeMailer(): void {
-        if (this._sendMails) {
+    public createNodeMailer(): void {
+        if (process.env.SEND_MAILS === "1") {
             this._transporter = nodemailer.createTransport(this._configVariables);
         }
     }
@@ -73,7 +66,7 @@ export class MailTransport {
             smtpLog.subject = mail.subject;
             smtpLog.body = mail.html;
             smtpLog.rcptEmail = item.address;
-            smtpLog.simulated = this._sendMails ? 1 : 0;
+            smtpLog.simulated = (process.env.SEND_MAILS === "1") ? 1 : 0;
             smtpLog.sent = 0;
 
             smtpLogs.push(smtpLog);
@@ -81,7 +74,7 @@ export class MailTransport {
 
         const smtpLogFacade: SmtpLogFacade = new SmtpLogFacade();
 
-        if (this._sendMails) {
+        if (process.env.SEND_MAILS === "1") {
             this._transporter.sendMail(mail).then((value: any) => {
                 logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} Mail sent: ${value.messageId}!`);
 
@@ -107,16 +100,7 @@ export class MailTransport {
             }
         }
     }
-
-    /**
-     * returns instance of mail transporter
-     */
-    public static getInstance(): MailTransport {
-        if (!MailTransport._instance) {
-            MailTransport._instance = new MailTransport((process.env.SEND_MAILS === "1") || false);
-        }
-
-        return this._instance;
-    }
-
 }
+
+const mailTransport: MailTransport = new MailTransport();
+export { mailTransport };
