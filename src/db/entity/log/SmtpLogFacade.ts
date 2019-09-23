@@ -9,7 +9,6 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SmtpLog } from "../../../lib/models/SmtpLog";
 
-
 /**
  * handles CRUD operations with the smtp-logs
  */
@@ -40,22 +39,7 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      * @param smtpLog log to insert
      */
     public insertLog(smtpLog: SmtpLog): Promise<SmtpLog> {
-        const attributes: SQLValueAttributes = new SQLValueAttributes();
-
-        const loggerAttribute: SQLValueAttribute = new SQLValueAttribute("subject", this.tableName, smtpLog.subject);
-        attributes.addAttribute(loggerAttribute);
-
-        const loggerLevel: SQLValueAttribute = new SQLValueAttribute("body", this.tableName, smtpLog.body);
-        attributes.addAttribute(loggerLevel);
-
-        const loggerMethod: SQLValueAttribute = new SQLValueAttribute("rcpt_email", this.tableName, smtpLog.rcptEmail);
-        attributes.addAttribute(loggerMethod);
-
-        const loggerMessage: SQLValueAttribute = new SQLValueAttribute("simulated", this.tableName, smtpLog.simulated);
-        attributes.addAttribute(loggerMessage);
-
-        const loggerParams: SQLValueAttribute = new SQLValueAttribute("sent", this.tableName, smtpLog.sent);
-        attributes.addAttribute(loggerParams);
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, smtpLog);
 
         const createdAtDate: Date = new Date();
         const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
@@ -102,6 +86,32 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
         }
 
         return smtpLog;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param smtpLog entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, smtpLog: SmtpLog): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const logSubject: SQLValueAttribute = new SQLValueAttribute("subject", this.tableName, smtpLog.subject);
+        attributes.addAttribute(logSubject);
+
+        const logBody: SQLValueAttribute = new SQLValueAttribute("body", this.tableName, smtpLog.body);
+        attributes.addAttribute(logBody);
+
+        const logRcptMail: SQLValueAttribute = new SQLValueAttribute("rcpt_email", this.tableName, smtpLog.rcptEmail);
+        attributes.addAttribute(logRcptMail);
+
+        const logSimulated: SQLValueAttribute = new SQLValueAttribute("simulated", this.tableName, smtpLog.simulated);
+        attributes.addAttribute(logSimulated);
+
+        const logSent: SQLValueAttribute = new SQLValueAttribute("sent", this.tableName, smtpLog.sent);
+        attributes.addAttribute(logSent);
+
+        return attributes;
     }
 
 }

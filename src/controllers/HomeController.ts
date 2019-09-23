@@ -12,6 +12,8 @@ import { Mail } from "../util/mail/Mail";
 import passwordReset from "../mail-texts/passwordReset";
 import { MailPriority } from "../util/mail/MailPriority";
 import { Attachment } from "../util/mail/Attachment";
+import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
+import { TherapistPatient } from "../lib/models/TherapistPatient";
 
 const router = express.Router();
 
@@ -20,22 +22,22 @@ const router = express.Router();
  * Home page.
  */
 router.get("/", async (req: Request, res: Response) => {
-    const facade: UserFacade = new UserFacade("u");
-    facade.addOrderBy("id", SQLOrder.DESC);
+    // const facade: UserFacade = new UserFacade("u");
+    // facade.addOrderBy("id", SQLOrder.DESC);
+    // //
+    // const filter: Filter = facade.filter;
+    // // filter.addFilterAttribute(new FilterAttribute("der", "asdasd", SQLComparisonOperator.EQUAL));
+    // //
+    // // const users = await facade.getUsers();
+    // //
+    // // const u: User = new User();
+    // // await facade.insertUser(u);
     //
-    const filter: Filter = facade.filter;
-    // filter.addFilterAttribute(new FilterAttribute("der", "asdasd", SQLComparisonOperator.EQUAL));
+    // const therapistFacade: TherapistFacade = new TherapistFacade();
+    // const therapists = await therapistFacade.get();
     //
-    // const users = await facade.getUsers();
-    //
-    // const u: User = new User();
-    // await facade.insertUser(u);
-
-    const therapistFacade: TherapistFacade = new TherapistFacade();
-    const therapists = await therapistFacade.get();
-
-    const patientFacade: PatientFacade = new PatientFacade();
-    const patients = await patientFacade.get();
+    // const patientFacade: PatientFacade = new PatientFacade();
+    // const patients = await patientFacade.get();
 
     /* const patient1 = new Patient();
      patient1.id = 1;
@@ -53,19 +55,19 @@ router.get("/", async (req: Request, res: Response) => {
      const newpatient = await patientFacade.deletePatient(patient1);
      console.log(newpatient); */
 
-    const therapistCompFacade = new TherapistCompositeFacade();
-    const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
-    const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
-    const sessionFilter = therapistCompFacade.sessionFacadeFilter;
-
-    const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
-    theraOrderBy.addOrderBy("id");
-
-
-    // const patientOrderBy = therapistCompFacade.patientUserFacadeOrderBy;
-    // patientOrderBy.push(new SQLOrderBy("id", SQLOrder.ASC, "up"));
-
-    const thera = await therapistCompFacade.getById(1);
+    // const therapistCompFacade = new TherapistCompositeFacade();
+    // const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
+    // const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
+    // const sessionFilter = therapistCompFacade.sessionFacadeFilter;
+    //
+    // const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
+    // theraOrderBy.addOrderBy("id");
+    //
+    //
+    // // const patientOrderBy = therapistCompFacade.patientUserFacadeOrderBy;
+    // // patientOrderBy.push(new SQLOrderBy("id", SQLOrder.ASC, "up"));
+    //
+    // const thera = await therapistCompFacade.getById(1);
 
     // console.log(thera);
     //
@@ -94,20 +96,27 @@ router.get("/", async (req: Request, res: Response) => {
     // const sess = await sessionFacade.getSessions();
     // console.log(sess);
 
-    const sessionCompositeFacade = new SessionCompositeFacade();
-    const sessions = await sessionCompositeFacade.getById(1);
-    // console.log(sessions);
+    // const sessionCompositeFacade = new SessionCompositeFacade();
+    // const sessions = await sessionCompositeFacade.getById(1);
+    // // console.log(sessions);
+    //
+    // // sessionCompositeFacade.postProcessFilter;
+    //
+    // const u = new User();
+    // u.forename = "Florian";
+    // u.lastname = "Mold";
+    // u.email = "florian.mold@live.at";
+    //
+    // const m = new Mail([u.recipient], passwordReset, ["Sandra Albrecht", "1234456"]);
+    //
+    // MailTransport.getInstance().sendMail(m);
 
-    // sessionCompositeFacade.postProcessFilter;
+    const therapistPatient = new TherapistPatient();
+    therapistPatient.patientId = 501;
+    therapistPatient.therapistId = 1;
 
-    const u = new User();
-    u.forename = "Florian";
-    u.lastname = "Mold";
-    u.email = "florian.mold@live.at";
-
-    const m = new Mail([u.recipient], passwordReset, ["Sandra Albrecht", "1234456"]);
-
-    MailTransport.getInstance().sendMail(m);
+     const therapistsPatientsFacade = new TherapistsPatientsFacade();
+    //  console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
 
 
     res.jsonp("therapists");

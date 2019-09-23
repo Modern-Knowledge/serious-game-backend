@@ -1,6 +1,8 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { ErrortextStatistic } from "../../../lib/models/ErrortextStatistic";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with errortext-statistic-entity
@@ -49,6 +51,37 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
         }
 
         return errortextStatistic;
+    }
+
+    /**
+     * inserts a new errortext-statistic and returns the created errortext-statistic
+     * @param errortextStatistic
+     */
+    public insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, errortextStatistic);
+
+        return new Promise<ErrortextStatistic>((resolve, reject) => {
+            this.insert(attributes).then(id => {
+                resolve(errortextStatistic);
+            });
+        });
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param errortextStatistic entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, errortextStatistic: ErrortextStatistic): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const statisticIdAttribute: SQLValueAttribute = new SQLValueAttribute("statistic_id", prefix, errortextStatistic.statisticId);
+        attributes.addAttribute(statisticIdAttribute);
+
+        const errortextIdAttribute: SQLValueAttribute = new SQLValueAttribute("errortext_id", prefix, errortextStatistic.errortextId);
+        attributes.addAttribute(errortextIdAttribute);
+
+        return attributes;
     }
 
 }

@@ -36,7 +36,7 @@ export class UserFacade extends EntityFacade<User> {
      * @param user
      */
     public insertUser(user: User): Promise<User> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, user);
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableName, user);
 
         const createdAtDate = new Date();
         const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);

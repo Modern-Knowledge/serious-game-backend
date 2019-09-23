@@ -8,7 +8,6 @@ import { TextFacade } from "./TextFacade";
 import { SeverityFacade } from "../enum/SeverityFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
-import { SQLOrderBy } from "../../sql/SQLOrderBy";
 import { Ordering } from "../../order/Ordering";
 
 /**

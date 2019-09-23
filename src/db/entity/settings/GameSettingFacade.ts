@@ -7,7 +7,7 @@ import { DifficultyFacade } from "../enum/DifficultyFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
-import {Ordering} from "../../order/Ordering";
+import { Ordering } from "../../order/Ordering";
 
 /**
  * handles CRUD operations with game-settings-entity

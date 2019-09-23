@@ -1,4 +1,3 @@
-import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { JoinType } from "../../sql/enums/JoinType";
@@ -8,7 +7,6 @@ import { TextFacade } from "./TextFacade";
 import { Helptext } from "../../../lib/models/Helptext";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
-import { SQLOrderBy } from "../../sql/SQLOrderBy";
 import { Ordering } from "../../order/Ordering";
 
 /**

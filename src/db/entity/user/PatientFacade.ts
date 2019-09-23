@@ -165,9 +165,6 @@ export class PatientFacade extends CompositeFacade<Patient> {
         ];
     }
 
-    /**
-     * returns the userFacadeFilter
-     */
     get userFacadeFilter(): Filter {
         return this._userFacade.filter;
     }
