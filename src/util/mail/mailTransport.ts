@@ -66,7 +66,7 @@ class MailTransport {
             smtpLog.subject = mail.subject;
             smtpLog.body = mail.html;
             smtpLog.rcptEmail = item.address;
-            smtpLog.simulated = (process.env.SEND_MAILS === "1") ? 1 : 0;
+            smtpLog.simulated = (process.env.SEND_MAILS === "1") ? 0 : 1;
             smtpLog.sent = 0;
 
             smtpLogs.push(smtpLog);
