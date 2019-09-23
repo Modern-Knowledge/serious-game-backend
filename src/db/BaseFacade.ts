@@ -13,7 +13,6 @@ import { SQLUpdate } from "./sql/SQLUpdate";
 import { DeleteQuery } from "./sql/DeleteQuery";
 import { SQLDelete } from "./sql/SQLDelete";
 import { AbstractModel } from "../lib/models/AbstractModel";
-import { DatabaseConnection } from "../util/DatabaseConnection";
 import { FieldInfo, MysqlError } from "mysql";
 import logger from "../util/logger";
 import { Filter } from "./filter/Filter";
@@ -25,6 +24,7 @@ import { JoinCardinality } from "./sql/enums/JoinCardinality";
 import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
+import { databaseConnection } from "../util/databaseConnection";
 
 /**
  * base class for crud operations with the database
@@ -38,7 +38,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   private _ordering: Ordering;
   private _filter: Filter;
 
-  private readonly _dbInstance: DatabaseConnection;
 
   private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {return entities; };
 
@@ -49,7 +48,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   protected constructor(tableName: string, tableAlias: string) {
     this._tableName = tableName;
     this._tableAlias = tableAlias;
-    this._dbInstance = DatabaseConnection.getInstance();
 
     this._filter = new Filter(tableAlias);
     this._ordering = new Ordering(tableAlias);
@@ -92,7 +90,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
     const s: Stopwatch = new Stopwatch();
     return new Promise<EntityType[]>((resolve, reject) => {
-      const query = this._dbInstance.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = databaseConnection.connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
         if (error) {
           reject(error);
@@ -130,7 +128,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     const params: (string | number | Date)[] = insertQuery.fillParameters();
 
     return new Promise<number>((resolve, reject) => {
-      const query = this._dbInstance.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = databaseConnection.connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
         }
@@ -158,7 +156,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         return reject(new Error(error));
       }
 
-      const query = this._dbInstance.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = databaseConnection.connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
         }
@@ -189,7 +187,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         return reject(new Error(error));
       }
 
-      const query = this._dbInstance.connection.query(queryStr, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = databaseConnection.connection.query(queryStr, params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           return reject(error);
         }
@@ -276,7 +274,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
   public query(sql: string, params: string[] = []): Promise<any[]> {
     const returnArr: any[] = [];
     return new Promise<EntityType[]>((resolve, reject) => {
-      const query = this._dbInstance.connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+      const query = databaseConnection.connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
         if (error) {
           reject(error);
         }

@@ -13,7 +13,7 @@ import { MailPriority } from "../util/mail/MailPriority";
 import { Attachment } from "../util/mail/Attachment";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
-import { mailTransport } from "../util/mail/MailTransport";
+import { mailTransport } from "../util/mail/mailTransport";
 const router = express.Router();
 
 /**
@@ -111,7 +111,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
 
-      mailTransport.sendMail(m);
+     mailTransport.sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;

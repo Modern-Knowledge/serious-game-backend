@@ -29,7 +29,7 @@ class MailTransport {
     };
 
     public constructor() {
-        logger.info(`${loggerString(__dirname, MailTransport.name, "constructor")} MailTransport instance was created`);
+        logger.info(`${loggerString(__dirname, MailTransport.name, "constructor")} MailTransport instance was created!`);
 
         if (!(process.env.SEND_MAILS === "1")) {
             logger.warn(`${loggerString(__dirname, MailTransport.name, "constructor")} Mail sending is simulated!`);
