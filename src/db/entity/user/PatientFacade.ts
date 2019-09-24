@@ -87,11 +87,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
      */
     public async updatePatient(patient: Patient): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, patient);
-
-        const userRows: number = await this._userFacade.updateUser(patient);
-        const patientRows: number = await this.update(attributes);
-
-        return userRows + patientRows;
+        return await this.update(attributes, [{facade: this._userFacade, entity: patient}]);
     }
 
     /**

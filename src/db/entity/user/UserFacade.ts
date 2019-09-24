@@ -58,14 +58,7 @@ export class UserFacade extends EntityFacade<User> {
      * @param user user that should be updated
      */
     public updateUser(user: User): Promise<number> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, user);
-
-        const modifiedAtDate = new Date();
-        const modifiedAtAttribute: SQLValueAttribute = new SQLValueAttribute("modified_at", this.tableAlias, modifiedAtDate);
-        attributes.addAttribute(modifiedAtAttribute);
-
-        user.modifiedAt = modifiedAtDate;
-
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(user);
         return this.update(attributes);
     }
 

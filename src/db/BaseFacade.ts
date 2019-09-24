@@ -25,6 +25,7 @@ import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
 import { databaseConnection, TransactionQuery } from "../util/databaseConnection";
+import { SQLValueAttribute } from "./sql/SQLValueAttribute";
 
 /**
  * base class for crud operations with the database
@@ -165,38 +166,59 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     /**
      * executes an update query and returns the number of affected rows
      * @param attributes name-value pairs of the entity that should be changed
+     * @param additionalUpdates additionalUpdates to execute facade is for facade to execute update in, entity is the entity for updating
      */
-    public async update(attributes: SQLValueAttributes): Promise<number> {
-        const npq: Query = this.getUpdateQuery(attributes);
+    public async update(attributes: SQLValueAttributes, additionalUpdates?: {facade: any, entity: EntityType}[]): Promise<number> {
+        // array of queries
+        const funcArray: TransactionQuery[] = [{function: this.getUpdateQueryFn, attributes: attributes}];
+        if (additionalUpdates) {
+            for (const update of additionalUpdates) {
+                const func = {function: update.facade.getUpdateQueryFn, attributes: update.facade.getSQLUpdateValueAttributes(update.entity)};
+                funcArray.push(func);
+            }
+        }
+        return await databaseConnection.transaction(funcArray);
+    }
+
+    /**
+     * returns the function for executing delete queries
+     * @param connection
+     * @param attributes
+     */
+    protected getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<number> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
+        if (this._filter.isEmpty) {
+            const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update-query specified!`;
+            logger.error(error);
+            throw new Error(error);
+        }
+
+        const npq = this.getUpdateQuery(attributes);
 
         return new Promise<number>((resolve, reject) => {
-            if (this._filter.isEmpty) {
-                const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
-                logger.error(error);
-                return reject(new Error(error));
-            }
+            const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
 
-            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
+
                 if (error) {
                     logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
-                    reject(error);
+                    return reject(error);
                 }
 
-                const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
-                    connection.release(); // release pool connection
-
-                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
-
-                    if (error) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
-                        return reject(error);
-                    }
-
-                    resolve(results.affectedRows);
-                });
-
+                resolve(results.affectedRows);
             });
         });
+    };
+
+    protected getSQLUpdateValueAttributes(entity: EntityType): SQLValueAttributes {
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, entity);
+
+        const modifiedAtDate = new Date();
+        const modifiedAtAttribute: SQLValueAttribute = new SQLValueAttribute("modified_at", this.tableAlias, modifiedAtDate);
+        attributes.addAttribute(modifiedAtAttribute);
+
+        entity.modifiedAt = modifiedAtDate;
+
+        return attributes;
     }
 
     /**
@@ -319,6 +341,15 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         queryStr = queryStr.replace(regex, ""); // workaround for delete
 
         return {query: queryStr, params: params};
+    }
+
+    /**
+     * returns sql value attributes for insert-statement and update-statement
+     * @param prefix prefix before the sql attribute
+     * @param entity entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, entity: EntityType): SQLValueAttributes {
+        return new SQLValueAttributes();
     }
 
     /**
