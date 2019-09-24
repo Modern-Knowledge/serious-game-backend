@@ -43,10 +43,8 @@ export class UserFacade extends EntityFacade<User> {
 
         return new Promise<User>((resolve, reject) => {
             this.insert(attributes).then(id => {
-                if (id > 0) {
-                    user.id = id;
-                    resolve(user);
-                }
+                user.id = id;
+                resolve(user);
             });
         });
     }

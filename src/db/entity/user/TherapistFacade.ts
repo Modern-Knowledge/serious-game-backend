@@ -74,10 +74,8 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
         return new Promise<Therapist>((resolve, reject) => {
             this.insert(attributes).then(id => {
-                if (id >= 0) {
-                    therapist.id = t.id;
-                    resolve(therapist);
-                }
+                therapist.id = t.id;
+                resolve(therapist);
             });
         });
     }
