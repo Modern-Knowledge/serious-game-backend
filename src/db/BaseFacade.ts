@@ -99,7 +99,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
                     reject(error);
                 }
 
-                const query = connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+                const query = connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
@@ -135,78 +135,89 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     /**
      * executes an insert query and returns the id of the newly inserted row
      * @param attributes name-value pairs of attributes that should be inserted
+     * @param additionalQueries queries to execute in the transaction
      */
-    public insert(attributes: SQLValueAttributes): Promise<number> {
+    public async insert(attributes: SQLValueAttributes, additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
         const npq: InsertQuery = this.getInsertQuery(attributes);
         const insertQuery: BakedQuery = npq.bake();
         const params: (string | number | Date)[] = insertQuery.fillParameters();
 
-        return new Promise<number>((resolve, reject) => {
-            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
-                if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
-                    reject(error);
-                }
-
-                const query = connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        const insertQueryFn = (connection: PoolConnection): Promise<number> => {
+            return new Promise<number>((resolve, reject) => {
+                const query = connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
 
                     if (error) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
-                        return reject(error);
+                        return connection.rollback(() => {
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} Transaction changes are rollbacked!`);
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
+                            return reject(error);
+                        });
                     }
 
                     resolve(results.insertId);
                 });
             });
-        });
+        };
+
+        // array of queries
+        let funcArray = [insertQueryFn];
+        if (additionalQueries) {
+           funcArray = funcArray.concat(additionalQueries);
+        }
+        return await databaseConnection.transaction(funcArray);
     }
 
     /**
      * executes an update query and returns the number of affected rows
      * @param attributes name-value pairs of the entity that should be changed
+     * @param additionalQueries queries to execute in the transaction
      */
-    public update(attributes: SQLValueAttributes): Promise<number> {
+    public async update(attributes: SQLValueAttributes, additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
         const npq: UpdateQuery = this.getUpdateQuery(attributes, BaseFacade.getSQLFilter(this._filter));
         const updateQuery: BakedQuery = npq.bake();
         const params: (string | number | Date)[] = updateQuery.fillParameters();
 
-        return new Promise<number>((resolve, reject) => {
-            if (this._filter.isEmpty) {
-                const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
-                logger.error(error);
-                return reject(new Error(error));
-            }
+        if (this._filter.isEmpty) {
+            const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for delete query specified!`;
+            logger.error(error);
+            throw new Error(error);
+        }
 
-            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
-                if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
-                    reject(error);
-                }
-
-                const query = connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        const updateQueryFn = (connection: PoolConnection): Promise<number> => {
+            return new Promise<number>((resolve, reject) => {
+                const query = connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
 
                     if (error) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
-                        return reject(error);
+                        return connection.rollback(() => {
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} Transaction changes are rollbacked!`);
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
+                            return reject(error);
+                        });
                     }
 
                     resolve(results.affectedRows);
                 });
-
             });
-        });
+        };
+
+        // array of queries
+        let funcArray = [updateQueryFn];
+        if (additionalQueries) {
+            funcArray = funcArray.concat(additionalQueries);
+        }
+        return await databaseConnection.transaction(funcArray);
     }
 
     /**
      * executes a delete query and returns the number of affected rows
      */
-    public delete(): Promise<number> {
+    public async delete(additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
         const npq: DeleteQuery = this.getDeleteQuery(BaseFacade.getSQLFilter(this._filter));
         const deleteQuery: BakedQuery = npq.bake();
         const params: (string | number | Date)[] = deleteQuery.fillParameters();
@@ -215,32 +226,37 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
         queryStr = queryStr.replace(regex, ""); // workaround for delete
 
-        return new Promise<number>((resolve, reject) => {
-            if (this._filter.isEmpty) {
-                const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
-                logger.error(error);
-                return reject(new Error(error));
-            }
-            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
-                if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
-                    reject(error);
-                }
+        if (this._filter.isEmpty) {
+            const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
+            logger.error(error);
+            throw new Error(error);
+        }
 
-                const query = connection.query(queryStr, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+        const deleteQueryFn = (connection: PoolConnection): Promise<number> => {
+            return new Promise<number>((resolve, reject) => {
+                const query = connection.query(queryStr, params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
 
                     if (error) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
-                        return reject(error);
+                        return connection.rollback(() => {
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} Transaction changes are rollbacked!`);
+                            logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
+                            return reject(error);
+                        });
                     }
-
                     resolve(results.affectedRows);
                 });
             });
-        });
+        };
+
+        // array of queries
+        let funcArray = [deleteQueryFn];
+        if (additionalQueries) {
+            funcArray = funcArray.concat(additionalQueries);
+        }
+        return await databaseConnection.transaction(funcArray);
     }
 
     /**

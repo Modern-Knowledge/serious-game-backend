@@ -1,4 +1,4 @@
-import mysql, {FieldInfo, MysqlError, Pool, PoolConnection} from "mysql";
+import mysql, { FieldInfo, MysqlError, Pool, PoolConnection, Query, queryCallback } from "mysql";
 import logger from "./logger";
 import { loggerString } from "./Helper";
 
@@ -66,14 +66,64 @@ class DatabaseConnection {
 
     /**
      * retrieves a connection from the pool and executes the callback
-     * @param callback
+     * @param callback callback to execute if connection is retrieved
      */
     public poolQuery(callback: (err: MysqlError, connection: PoolConnection) => void): void {
         this._pool.getConnection(callback);
     }
 
-    public beginTransaction(callback: (err: MysqlError) => void): void {
+    /**
+     * executes the passed queries in a transactions
+     * @param queryCallbacks array of queries that are executed
+     */
+    public transaction(queryCallbacks: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
+        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} queries are going to be executed in a transaction!`);
 
+        return new Promise<number>((resolve, reject) => {
+            this.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
+                    return reject(error);
+                }
+
+                /**
+                 * begin transaction
+                 */
+                connection.beginTransaction(async (error: MysqlError) => {
+                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Begin transaction!`);
+
+                    if (error) {
+                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
+                        return reject(error);
+                    }
+
+                    let result = 0;
+
+                    /**
+                     * execute the queries in transaction
+                     */
+                    for (const item of queryCallbacks) {
+                        result += await item(connection);
+                    }
+
+                    /**
+                     * commit transaction
+                     */
+                    connection.commit((error: MysqlError) => {
+                        if (error) {
+                            return connection.rollback(() => {
+                                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction changes are rollbacked!`);
+                                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
+                                return reject(error);
+                            });
+                        }
+                        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction was executed successful!`);
+
+                        resolve(result);
+                    });
+                });
+            });
+        });
     }
 
     /**

@@ -99,10 +99,9 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * @param patient patient to delete
      */
     public async deletePatient(patient: Patient): Promise<number> {
-        this.filter.addFilterCondition("patient_id", patient.id, SQLComparisonOperator.EQUAL);
         const rows: number = await this.delete();
 
-        const userRows: number = await this._userFacade.deleteUser(patient);
+        const userRows: number = await this._userFacade.deleteUser();
 
         return rows + userRows;
     }

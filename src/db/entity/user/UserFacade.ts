@@ -72,8 +72,7 @@ export class UserFacade extends EntityFacade<User> {
     /**
      * deletes the specified user in the database and returns the number of affected rows
      */
-    public deleteUser(user: User): Promise<number> {
-        this.filter.addFilterCondition("id", user.id, SQLComparisonOperator.EQUAL);
+    public deleteUser(): Promise<number> {
         return this.delete();
     }
 
