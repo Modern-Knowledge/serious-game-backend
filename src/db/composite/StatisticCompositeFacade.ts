@@ -23,7 +23,7 @@ import { arrayContainsModel } from "../../util/Helper";
  * contained Joins:
  * - errortexts_statistics (1:n)
  * - errortexts (1:n)
- * - texts (1:1)
+ *   - texts (1:1)
  * - severities (1:1)
  */
 export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
@@ -133,23 +133,26 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
+     * delete the statistic and the errortexts
+     */
+    public async deleteStatisticComposite(): Promise<number> {
+        return await this.delete([this._errortextStatisticFacade, this]);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
         return [
-            this.statisticFacadeFilter,
             this.errortextFacadeFilter,
             this.severityFacadeFilter,
-            this.textFacadeFilter
+            this.textFacadeFilter,
+            this.errortextStatisticFilter
         ];
     }
 
     get severityFacadeFilter(): Filter {
         return this._errortextFacade.severityFacadeFilter;
-    }
-
-    get statisticFacadeFilter(): Filter {
-        return this._statisticFacade.filter;
     }
 
     get errortextFacadeFilter(): Filter {
@@ -158,6 +161,10 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
     get textFacadeFilter(): Filter {
         return this._errortextFacade.textFacadeFilter;
+    }
+
+    get errortextStatisticFilter(): Filter {
+        return this._errortextStatisticFacade.filter;
     }
 
     /**

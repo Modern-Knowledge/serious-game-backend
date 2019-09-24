@@ -263,7 +263,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     get statisticFacadeFilter(): Filter {
-        return this._statisticCompositeFacade.statisticFacadeFilter;
+        return this._statisticCompositeFacade.filter;
     }
 
     get errortextFacadeFilter(): Filter {

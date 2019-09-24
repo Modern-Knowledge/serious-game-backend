@@ -243,10 +243,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
     /**
      * executes a delete query in a transaction and returns the number of affected rows
+     * watch the order of the array
+     * statements are executed in this order
      */
     public async delete(additionalFacades?: any[]): Promise<number> {
         // array of queries
-        const funcArray: TransactionQuery[] = [{function: this.getDeleteQueryFn}];
+        const funcArray: TransactionQuery[] = [];
         if (additionalFacades) {
             for (const facade of additionalFacades) {
                 const func = {function: facade.getDeleteQueryFn};
