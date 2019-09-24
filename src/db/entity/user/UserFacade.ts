@@ -4,7 +4,7 @@ import { User } from "../../../lib/models/User";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
-
+import * as bcrypt from "bcryptjs";
 /**
  * handles CRUD operations with the user-entity
  */
@@ -37,6 +37,9 @@ export class UserFacade extends EntityFacade<User> {
      */
     public insertUser(user: User): Promise<User> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(user);
+
+        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", this.tableName, bcrypt.hashSync(user.password, 12));
+        attributes.addAttribute(passwordAttribute);
 
         return new Promise<User>((resolve, reject) => {
             this.insert(attributes).then(id => {
@@ -132,9 +135,6 @@ export class UserFacade extends EntityFacade<User> {
 
         const emailAttribute: SQLValueAttribute = new SQLValueAttribute("email", prefix, user.email);
         attributes.addAttribute(emailAttribute);
-
-        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", prefix, user.password);
-        attributes.addAttribute(passwordAttribute);
 
         const forenameAttribute: SQLValueAttribute = new SQLValueAttribute("forename", prefix, user.forename);
         attributes.addAttribute(forenameAttribute);
