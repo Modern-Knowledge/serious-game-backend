@@ -47,7 +47,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["therapist_id"];
+        const sqlAttributes: string[] = ["therapist_id", "role"];
 
         const therapistAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
 
@@ -66,7 +66,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     public async insertTherapist(therapist: Therapist): Promise<Therapist> {
         const t: User = await this._userFacade.insertUser(therapist);
 
-        const attributes: SQLValueAttributes = new SQLValueAttributes();
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableName, therapist);
 
         const therapistIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", this.tableName, t.id);
         attributes.addAttribute(therapistIdAttribute);
@@ -87,7 +87,12 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * @param therapist
      */
     public async updateTherapist(therapist: Therapist): Promise<number> {
-        return await this._userFacade.updateUser(therapist);
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, therapist);
+
+        const userRows: number = await this._userFacade.updateUser(therapist);
+        const therapistRows: number = await this.update(attributes);
+
+        return userRows + therapistRows;
     }
 
     /**
@@ -109,7 +114,25 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
             this._userFacade.fillUserEntity(result, t);
         }
 
+        if (result[this.name("role")] !== undefined) {
+            t.role = result[this.name("role")];
+        }
+
         return t;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param therapist entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, therapist: Therapist): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", prefix, therapist.role);
+        attributes.addAttribute(birthdayAttribute);
+
+        return attributes;
     }
 
     /**
