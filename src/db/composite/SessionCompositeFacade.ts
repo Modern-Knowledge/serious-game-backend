@@ -192,7 +192,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
         if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
-            gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_settings_id`);
+            gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_setting_id`);
             joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
