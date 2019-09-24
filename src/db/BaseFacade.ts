@@ -244,6 +244,41 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     }
 
     /**
+     * execute a sql query
+     * @param sql sql query to be executed
+     * @param params parameters for prepared query that are later replaced
+     */
+    public query(sql: string, params: string[] = []): Promise<any[]> {
+        const returnArr: any[] = [];
+        return new Promise<EntityType[]>((resolve, reject) => {
+            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "query")} ${error}`);
+                    reject(error);
+                }
+
+                const query = connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+                    connection.release(); // release pool connection
+
+                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "query")} ${query.sql} [${query.values}]`);
+
+                    if (error) {
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
+                        reject(error);
+                    }
+
+                    for (const item of results) {
+                        returnArr.push(item);
+                    }
+
+                    resolve(returnArr);
+                });
+
+            });
+        });
+    }
+
+    /**
      * creates and returns an insert-query
      * @param attributes columns that should be inserted
      */
@@ -307,30 +342,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         deleteQuery.where = where;
 
         return deleteQuery;
-    }
-
-    /**
-     * execute a sql query
-     * @param sql sql query to be executed
-     * @param params parameters for prepared query that are later replaced
-     */
-    public query(sql: string, params: string[] = []): Promise<any[]> {
-        const returnArr: any[] = [];
-        return new Promise<EntityType[]>((resolve, reject) => {
-            const query = databaseConnection.connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
-                if (error) {
-                    reject(error);
-                }
-
-                for (const item of results) {
-                    returnArr.push(item);
-                }
-
-                resolve(returnArr);
-            });
-
-            logger.debug(`${loggerString(__dirname, BaseFacade.name, "query")} ${query.sql} [${query.values}]`);
-        });
     }
 
     /**
