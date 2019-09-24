@@ -9,16 +9,11 @@ import * as jwt from "jsonwebtoken";
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
-  const {
-    body: { _email, _password, _forename, _lastname }
-  } = req;
   const therapistFacade = new TherapistFacade();
-  const therapist = new Therapist();
-  therapist.email = _email;
-  therapist.password = bcrypt.hashSync(_password, 8);
-  therapist.forename = _forename;
-  therapist.lastname = _lastname;
+  const therapist = new Therapist().deserialize(req.body);
+  therapist.password = bcrypt.hashSync(therapist.password, 8);
   therapist.status = Status.ACTIVE;
+  therapist.failedLoginAttempts = 0;
   const response = await therapistFacade.insertTherapist(therapist);
   const token = jwt.sign(
     { id: response.id, email: response.email },
