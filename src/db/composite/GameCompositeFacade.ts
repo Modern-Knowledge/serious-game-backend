@@ -97,7 +97,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
 
         if (this._withHelptextJoin) {
             const ht: Helptext = this._helptextFacade.fillEntity(result);
-            g.helptexts.push(ht);
+            g.helptexts.set(ht.name, ht);
         }
 
 
@@ -147,8 +147,10 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             } else {
                 const existingGame: Game = gameMap.get(game.id);
 
-                if (!arrayContainsModel(game.helptexts[0], existingGame.helptexts)) {
-                    existingGame.helptexts = existingGame.helptexts.concat(game.helptexts);
+                for (const key of game.helptexts.keys()) {
+                    if (!existingGame.helptexts.has(key)) {
+                        existingGame.helptexts.set(key, game.helptexts.get(key));
+                    }
                 }
 
                 if (!arrayContainsModel(game.gameSettings[0], existingGame.gameSettings)) {
