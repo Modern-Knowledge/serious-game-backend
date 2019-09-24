@@ -75,7 +75,6 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
             this.insert(attributes).then(id => {
                 if (id >= 0) {
                     therapist.id = t.id;
-                    therapist.createdAt = t.createdAt;
                     resolve(therapist);
                 }
             });
@@ -88,11 +87,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      */
     public async updateTherapist(therapist: Therapist): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, therapist);
-
-        const userRows: number = await this._userFacade.updateUser(therapist);
-        const therapistRows: number = await this.update(attributes);
-
-        return userRows + therapistRows;
+        return await this.update(attributes, [{facade: this._userFacade, entity: therapist}]);
     }
 
     /**
@@ -131,6 +126,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
         const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", prefix, therapist.role);
         attributes.addAttribute(birthdayAttribute);
+
+        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, therapist.role);
+        attributes.addAttribute(roleAttribute);
 
         return attributes;
     }

@@ -58,19 +58,19 @@ router.get("/", async (req: Request, res: Response) => {
      const newpatient = await patientFacade.deletePatient(patient1);
      console.log(newpatient); */
 
-    // const therapistCompFacade = new TherapistCompositeFacade();
+     const therapistCompFacade = new TherapistCompositeFacade();
     // const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
     // const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
     // const sessionFilter = therapistCompFacade.sessionFacadeFilter;
     //
-    // const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
-    // theraOrderBy.addOrderBy("id");
+     const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
+     theraOrderBy.addOrderBy("id");
     //
     //
     // // const patientOrderBy = therapistCompFacade.patientUserFacadeOrderBy;
     // // patientOrderBy.push(new SQLOrderBy("id", SQLOrder.ASC, "up"));
     //
-    // const thera = await therapistCompFacade.getById(1);
+    const thera = await therapistCompFacade.getById(1);
 
     // console.log(thera);
     //
@@ -99,12 +99,11 @@ router.get("/", async (req: Request, res: Response) => {
 
      const sessionCompositeFacade = new SessionCompositeFacade();
      const sessions = await sessionCompositeFacade.getById(1);
-     console.log(sessions);
+     // console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
     const u = new Patient();
-    u.id = 505;
     u.gender = 0;
     u.forename = "Florian";
     u.lastname = "Mold";
@@ -124,16 +123,13 @@ router.get("/", async (req: Request, res: Response) => {
 
     const userfacade = new UserFacade();
     // userfacade.filter.addFilterCondition("id", 1);
-    // console.log(await userfacade.deleteUser(u));
+    // / console.log(await userfacade.deleteUser(u));
 
     const patientFacade = new PatientFacade();
-    patientFacade.filter.addFilterCondition("patient_id", 0);
-    patientFacade.userFacadeFilter.addFilterCondition("id", 0);
+     patientFacade.filter.addFilterCondition("patient_id", 0);
+     patientFacade.userFacadeFilter.addFilterCondition("id", 0);
 
-    console.log(await patientFacade.deletePatient());
-
-
-
+     console.log(await patientFacade.updatePatient(u));
 
     res.jsonp("therapists");
 });

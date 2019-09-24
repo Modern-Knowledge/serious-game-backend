@@ -164,6 +164,22 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     }
 
     /**
+     * return attributes that are common to all inserts
+     * @param entity
+     */
+    protected getSQLInsertValueAttributes(entity: EntityType): SQLValueAttributes {
+        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableName, entity);
+
+        const createdAtDate = new Date();
+        const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
+        attributes.addAttribute(createdAtAttribute);
+
+        entity.createdAt = createdAtDate;
+
+        return attributes;
+    }
+
+    /**
      * executes an update query and returns the number of affected rows
      * @param attributes name-value pairs of the entity that should be changed
      * @param additionalUpdates additionalUpdates to execute facade is for facade to execute update in, entity is the entity for updating
@@ -209,6 +225,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         });
     };
 
+    /**
+     * return attributes that are common to all updates
+     * @param entity
+     */
     protected getSQLUpdateValueAttributes(entity: EntityType): SQLValueAttributes {
         const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, entity);
 

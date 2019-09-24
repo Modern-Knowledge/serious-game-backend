@@ -74,7 +74,6 @@ export class PatientFacade extends CompositeFacade<Patient> {
             this.insert(attributes).then(id => {
                 if (id > 0) {
                     patient.id = t.id;
-                    patient.createdAt = t.createdAt;
                     resolve(patient);
                 }
             });
