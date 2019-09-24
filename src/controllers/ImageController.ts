@@ -9,7 +9,7 @@ const router = express.Router();
 
 /**
  * GET /
- * Home page.
+ * Image by id.
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -17,16 +17,21 @@ router.get("/:id", async (req: Request, res: Response) => {
   const facade: ImageFacade = new ImageFacade();
   const filter: Filter = facade.filter;
   filter.addFilterCondition("id", id, SQLComparisonOperator.EQUAL);
-
-  const images = await facade.get();
-  let image: Image;
-
-  if (images.length > 0) {
-    image = images[0];
+  
+  try{
+    const images = await facade.get();
+    let image: Image;
+  
+    if (images.length > 0) {
+      image = images[0];
+    }
+  
+    res.type("image/png");
+    return res.send(image.image);
   }
-
-  res.type("image/png");
-  res.send(image.image);
+  catch(error){
+    return res.status(500).jsonp(error);
+  }
 });
 
 export default router;
