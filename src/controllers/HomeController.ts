@@ -14,6 +14,8 @@ import { Attachment } from "../util/mail/Attachment";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
 import { mailTransport } from "../util/mail/mailTransport";
+import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
+import { Patient } from "../lib/models/Patient";
 const router = express.Router();
 
 /**
@@ -88,22 +90,21 @@ router.get("/", async (req: Request, res: Response) => {
     // const patientCompositeFacade = new PatientCompositeFacade();
     // const patientComp = await patientCompositeFacade.get();
     //
-    // const gameCompositeFacade = new GameCompositeFacade();
-    // const gamesComp = await gameCompositeFacade.get();
-    // console.log(gamesComp[0].gameSettings[0]);
-    // console.log(gamesComp[0].gameSettings);
+     const gameCompositeFacade = new GameCompositeFacade();
+     const gamesComp = await gameCompositeFacade.get();
     //
     // const sessionFacade = new SessionFacade();
     // const sess = await sessionFacade.getSessions();
     // console.log(sess);
 
-    // const sessionCompositeFacade = new SessionCompositeFacade();
-    // const sessions = await sessionCompositeFacade.getById(1);
-    // // console.log(sessions);
+     const sessionCompositeFacade = new SessionCompositeFacade();
+     const sessions = await sessionCompositeFacade.getById(1);
+     console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
-    const u = new User();
+    const u = new Patient();
+    u.id = 505;
     u.gender = 0;
     u.forename = "Florian";
     u.lastname = "Mold";
@@ -115,10 +116,23 @@ router.get("/", async (req: Request, res: Response) => {
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;
-    therapistPatient.therapistId = 1;
+    therapistPatient.therapistId = 3;
 
-     const therapistsPatientsFacade = new TherapistsPatientsFacade();
-    //  console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
+     // const therapistsPatientsFacade = new TherapistsPatientsFacade();
+     // therapistsPatientsFacade.filter.addFilterCondition("therapist_id", 6);
+     // console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
+
+    const userfacade = new UserFacade();
+    // userfacade.filter.addFilterCondition("id", 1);
+    // console.log(await userfacade.deleteUser(u));
+
+    const patientFacade = new PatientFacade();
+    patientFacade.filter.addFilterCondition("patient_id", 0);
+    patientFacade.userFacadeFilter.addFilterCondition("id", 0);
+
+    console.log(await patientFacade.deletePatient());
+
+
 
 
     res.jsonp("therapists");

@@ -96,14 +96,9 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
     /**
      * deletes the specified therapist in the database and returns the number of affected rows
-     * @param patient patient to delete
      */
-    public async deletePatient(patient: Patient): Promise<number> {
-        const rows: number = await this.delete();
-
-        const userRows: number = await this._userFacade.deleteUser();
-
-        return rows + userRows;
+    public async deletePatient(): Promise<number> {
+        return await this.delete([this._userFacade]);
     }
 
     /**

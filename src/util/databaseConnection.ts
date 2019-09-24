@@ -1,6 +1,12 @@
 import mysql, { FieldInfo, MysqlError, Pool, PoolConnection, Query, queryCallback } from "mysql";
 import logger from "./logger";
 import { loggerString } from "./Helper";
+import { SQLValueAttributes } from "../db/sql/SQLValueAttributes";
+
+export interface TransactionQuery {
+    function: ((connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<number>);
+    attributes?: SQLValueAttributes;
+}
 
 /**
  * handles database connection and database interaction
@@ -74,9 +80,9 @@ class DatabaseConnection {
 
     /**
      * executes the passed queries in a transactions
-     * @param queryCallbacks array of queries that are executed
+     * @param queryCallbacks array of queries that are executed in the transaction
      */
-    public transaction(queryCallbacks: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
+    public transaction(queryCallbacks: TransactionQuery[]): Promise<number> {
         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} queries are going to be executed in a transaction!`);
 
         return new Promise<number>((resolve, reject) => {
@@ -103,13 +109,14 @@ class DatabaseConnection {
                      * execute the queries in transaction
                      */
                     for (const item of queryCallbacks) {
-                        result += await item(connection);
+                        result += await item.function(connection, item.attributes);
                     }
 
                     /**
                      * commit transaction
                      */
                     connection.commit((error: MysqlError) => {
+
                         if (error) {
                             return connection.rollback(() => {
                                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction changes are rollbacked!`);

@@ -24,7 +24,7 @@ import { JoinCardinality } from "./sql/enums/JoinCardinality";
 import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
-import { databaseConnection } from "../util/databaseConnection";
+import { databaseConnection, TransactionQuery } from "../util/databaseConnection";
 
 /**
  * base class for crud operations with the database
@@ -84,12 +84,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
      */
     public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
         logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} called`);
+        this.joinAnalyzer();
 
-        BaseFacade.joinAnalyzer(this.joins);
-        const npq: SelectQuery = this.getSelectQuery(attributes, this.joins, BaseFacade.getSQLFilter(filter), this._ordering.orderBys);
-        const selectQuery: BakedQuery = npq.bake();
+        const npq: Query = this.getSelectQuery(attributes, filter);
+
         let returnEntities: EntityType[] = [];
-        const params: (string | number | Date)[] = selectQuery.fillParameters();
 
         const s: Stopwatch = new Stopwatch();
         return new Promise<EntityType[]>((resolve, reject) => {
@@ -99,7 +98,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
                     reject(error);
                 }
 
-                const query = connection.query(selectQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
+                const query = connection.query(npq.query, npq.params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ${query.sql} [${query.values}]`);
@@ -135,153 +134,122 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     /**
      * executes an insert query and returns the id of the newly inserted row
      * @param attributes name-value pairs of attributes that should be inserted
-     * @param additionalQueries queries to execute in the transaction
+     * @param additionalFacades queries to execute in the transaction
      */
-    public async insert(attributes: SQLValueAttributes, additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
-        const npq: InsertQuery = this.getInsertQuery(attributes);
-        const insertQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = insertQuery.fillParameters();
+    public async insert(attributes: SQLValueAttributes, additionalFacades?: any[]): Promise<number> {
+        const npq: Query = this.getInsertQuery(attributes);
 
-        const insertQueryFn = (connection: PoolConnection): Promise<number> => {
-            return new Promise<number>((resolve, reject) => {
-                const query = connection.query(insertQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
+        return new Promise<number>((resolve, reject) => {
+            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
+                    reject(error);
+                }
+
+                const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
 
                     if (error) {
-                        return connection.rollback(() => {
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} Transaction changes are rollbacked!`);
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
-                            return reject(error);
-                        });
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
+                        return reject(error);
                     }
 
                     resolve(results.insertId);
                 });
             });
-        };
-
-        // array of queries
-        let funcArray = [insertQueryFn];
-        if (additionalQueries) {
-           funcArray = funcArray.concat(additionalQueries);
-        }
-        return await databaseConnection.transaction(funcArray);
+        });
     }
 
     /**
      * executes an update query and returns the number of affected rows
      * @param attributes name-value pairs of the entity that should be changed
-     * @param additionalQueries queries to execute in the transaction
      */
-    public async update(attributes: SQLValueAttributes, additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
-        const npq: UpdateQuery = this.getUpdateQuery(attributes, BaseFacade.getSQLFilter(this._filter));
-        const updateQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = updateQuery.fillParameters();
+    public async update(attributes: SQLValueAttributes): Promise<number> {
+        const npq: Query = this.getUpdateQuery(attributes);
 
-        if (this._filter.isEmpty) {
-            const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for delete query specified!`;
-            logger.error(error);
-            throw new Error(error);
-        }
+        return new Promise<number>((resolve, reject) => {
+            if (this._filter.isEmpty) {
+                const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update query specified!`;
+                logger.error(error);
+                return reject(new Error(error));
+            }
 
-        const updateQueryFn = (connection: PoolConnection): Promise<number> => {
-            return new Promise<number>((resolve, reject) => {
-                const query = connection.query(updateQuery.getBakedSQL(), params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
+            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
+                    reject(error);
+                }
+
+                const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
 
                     if (error) {
-                        return connection.rollback(() => {
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} Transaction changes are rollbacked!`);
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
-                            return reject(error);
-                        });
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
+                        return reject(error);
                     }
 
                     resolve(results.affectedRows);
                 });
-            });
-        };
 
+            });
+        });
+    }
+
+    /**
+     * executes a delete query in a transaction and returns the number of affected rows
+     */
+    public async delete(additionalFacades?: any[]): Promise<number> {
         // array of queries
-        let funcArray = [updateQueryFn];
-        if (additionalQueries) {
-            funcArray = funcArray.concat(additionalQueries);
+        const funcArray: TransactionQuery[] = [{function: this.getDeleteQueryFn}];
+        if (additionalFacades) {
+            for (const facade of additionalFacades) {
+                const func = {function: facade.getDeleteQueryFn};
+                funcArray.push(func);
+            }
         }
         return await databaseConnection.transaction(funcArray);
     }
 
     /**
-     * executes a delete query and returns the number of affected rows
+     * returns the function for executing delete queries
+     * @param connection
      */
-    public async delete(additionalQueries?: ((connection: PoolConnection) => Promise<number>)[]): Promise<number> {
-        const npq: DeleteQuery = this.getDeleteQuery(BaseFacade.getSQLFilter(this._filter));
-        const deleteQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = deleteQuery.fillParameters();
-
-        let queryStr: string = deleteQuery.getBakedSQL();
-        const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
-        queryStr = queryStr.replace(regex, ""); // workaround for delete
-
+    protected getDeleteQueryFn: (connection: PoolConnection) => Promise<number> = (connection: PoolConnection) => {
         if (this._filter.isEmpty) {
             const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
             logger.error(error);
             throw new Error(error);
         }
 
-        const deleteQueryFn = (connection: PoolConnection): Promise<number> => {
-            return new Promise<number>((resolve, reject) => {
-                const query = connection.query(queryStr, params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
-                    connection.release(); // release pool connection
+        const npq = this.getDeleteQuery();
 
-                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
+        return new Promise<number>((resolve, reject) => {
+            const query = connection.query(npq.query, npq.params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
 
-                    if (error) {
-                        return connection.rollback(() => {
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} Transaction changes are rollbacked!`);
-                            logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
-                            return reject(error);
-                        });
-                    }
-                    resolve(results.affectedRows);
-                });
+                logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
+
+                if (error) {
+                    return connection.rollback(() => {
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} Transaction changes are rollbacked!`);
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
+                        return reject(error);
+                    });
+                }
+                resolve(results.affectedRows);
             });
-        };
-
-        // array of queries
-        let funcArray = [deleteQueryFn];
-        if (additionalQueries) {
-            funcArray = funcArray.concat(additionalQueries);
-        }
-        return await databaseConnection.transaction(funcArray);
-    }
-
-    /**
-     * creates and returns an insert-query
-     * @param attributes columns that should be inserted
-     */
-    private getInsertQuery(attributes: SQLValueAttributes): InsertQuery {
-        const insertQuery: InsertQuery = new InsertQuery();
-
-        const insert: SQLInsert = new SQLInsert(this._tableName);
-
-        insert.attributes = attributes;
-        insertQuery.insert = insert;
-
-        return insertQuery;
-    }
+        });
+    };
 
     /**
      * creates and returns a select-query
      * @param attributes columns that should be selected
-     * @param joins joins for the select query
-     * @param where where-conditions for the select-query
-     * @param orderBy order by attributes
+     * @param filter select query filtering
      */
-    private getSelectQuery(attributes: SQLAttributes, joins: SQLJoin[], where: SQLWhere, orderBy: SQLOrderBy[]): SelectQuery {
+    private getSelectQuery(attributes: SQLAttributes, filter: Filter): Query {
         const npq: SelectQuery = new SelectQuery();
 
         const select: SQLSelect = new SQLSelect(attributes);
@@ -289,40 +257,68 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
         npq.sqlSelect = select;
         npq.sqlFrom = from;
-        npq.addJoins(joins);
-        npq.sqlWhere = where;
-        npq.sqlOrderBy = orderBy;
+        npq.addJoins(this.joins);
+        npq.sqlWhere = BaseFacade.getSQLFilter(filter);
+        npq.sqlOrderBy = this._ordering.orderBys;
 
-        return npq;
+        const selectQuery: BakedQuery = npq.bake();
+        const params: (string | number | Date)[] = selectQuery.fillParameters();
+
+        return {query: selectQuery.getBakedSQL(), params: params};
+    }
+
+    /**
+     * creates and returns an insert-query
+     * @param attributes columns that should be inserted
+     */
+    private getInsertQuery(attributes: SQLValueAttributes): Query {
+        const npq: InsertQuery = new InsertQuery();
+        const insert: SQLInsert = new SQLInsert(this._tableName);
+
+        insert.attributes = attributes;
+        npq.insert = insert;
+
+        const insertQuery: BakedQuery = npq.bake();
+        const params: (string | number | Date)[] = insertQuery.fillParameters();
+
+        return {query: insertQuery.getBakedSQL(), params: params};
     }
 
     /**
      * creates and returns an update-query
      * @param attributes columns that should be set
-     * @param where where-conditions for the update-query
      */
-    private getUpdateQuery(attributes: SQLValueAttributes, where: SQLWhere): UpdateQuery {
-        const updateQuery: UpdateQuery = new UpdateQuery();
+    private getUpdateQuery(attributes: SQLValueAttributes): Query {
+        const npq: UpdateQuery = new UpdateQuery();
         const update: SQLUpdate = new SQLUpdate(this._tableName, this._tableAlias);
 
         update.attributes = attributes;
-        updateQuery.update = update;
-        updateQuery.where = where;
+        npq.update = update;
+        npq.where = BaseFacade.getSQLFilter(this._filter);
 
-        return updateQuery;
+        const updateQuery: BakedQuery = npq.bake();
+        const params: (string | number | Date)[] = updateQuery.fillParameters();
+
+        return {query: updateQuery.getBakedSQL(), params: params};
     }
 
     /**
      * creates and returns a delete-query
-     * @param where where-condition for the delete-query
      */
-    private getDeleteQuery(where: SQLWhere): DeleteQuery {
-        const deleteQuery: DeleteQuery = new DeleteQuery();
+    private getDeleteQuery(): Query {
+        const npq: DeleteQuery = new DeleteQuery();
 
-        deleteQuery.delete = new SQLDelete(this._tableName, this._tableAlias);
-        deleteQuery.where = where;
+        npq.delete = new SQLDelete(this._tableName, this._tableAlias);
+        npq.where = BaseFacade.getSQLFilter(this._filter);
 
-        return deleteQuery;
+        const deleteQuery: BakedQuery = npq.bake();
+        const params: (string | number | Date)[] = deleteQuery.fillParameters();
+
+        let queryStr: string = deleteQuery.getBakedSQL();
+        const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
+        queryStr = queryStr.replace(regex, ""); // workaround for delete
+
+        return {query: queryStr, params: params};
     }
 
     /**
@@ -433,13 +429,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
     /**
      * returns performance infos (amount, cardinality) about the sql joins
-     * @param joins
      */
-    private static joinAnalyzer(joins: SQLJoin[]): void {
+    private joinAnalyzer(): void {
         let oneToManyJoinAmount = 0;
         let oneToOneJoinAmount = 0;
 
-        for (const join of joins) {
+        for (const join of this.joins) {
             if (join.joinCardinality === JoinCardinality.ONE_TO_MANY) {
                 oneToManyJoinAmount++;
             }
@@ -449,7 +444,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
             }
         }
 
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${this.joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
 
         const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
         if (oneToManyJoinAmount >= warnToManyJoins) {
@@ -489,4 +484,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
         this._postProcessFilter = value;
     }
+}
+
+interface Query {
+    query: string;
+    params: (string | number | Date)[];
 }
