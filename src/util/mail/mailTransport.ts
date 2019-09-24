@@ -87,7 +87,6 @@ class MailTransport {
         } else { // mail is simulated
             logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} Simulated mail was successfully sent!`);
 
-            // todo maybe refactor to batch insert
             for (const item of smtpLogs) {
                 smtpLogFacade.insertLog(item);
             }

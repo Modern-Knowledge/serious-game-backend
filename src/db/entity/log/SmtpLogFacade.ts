@@ -35,20 +35,17 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * inserts a new smtp-log and returns the id of the created smtp-log
+     * inserts a new smtp-log and sets the id of the created smtp-log
      * @param smtpLog log to insert
      */
-    public insertLog(smtpLog: SmtpLog): Promise<SmtpLog> {
+    public insertLog(smtpLog: SmtpLog): SmtpLog {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(smtpLog);
 
-        return new Promise<SmtpLog>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                if (id > 0) {
-                    smtpLog.id = id;
-                    resolve(smtpLog);
-                }
-            });
+        this.insert(attributes).then(id => {
+            smtpLog.id = id;
         });
+
+        return smtpLog;
     }
 
     /**
