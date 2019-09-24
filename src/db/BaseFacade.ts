@@ -378,7 +378,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         return this._filter;
     }
 
-
     /**
      * returns the ordering of the facade (order-by)
      */
