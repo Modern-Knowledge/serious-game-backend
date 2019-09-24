@@ -35,17 +35,12 @@ export class LogFacade extends EntityFacade<Log> {
      * @param log
      */
     public insertLog(log: Log): Promise<Log> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, log);
-
-        const createdAtDate: Date = new Date();
-        const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
-        attributes.addAttribute(createdAtAttribute);
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(log);
 
         return new Promise<Log>((resolve, reject) => {
             this.insert(attributes).then(id => {
                 if (id > 0) {
                     log.id = id;
-                    log.createdAt = createdAtDate;
                     resolve(log);
                 }
             });

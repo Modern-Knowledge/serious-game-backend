@@ -103,7 +103,7 @@ router.get("/", async (req: Request, res: Response) => {
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
-    const u = new Patient();
+    const u = new Patient(); 
     u.gender = 0;
     u.forename = "Florian";
     u.lastname = "Mold";

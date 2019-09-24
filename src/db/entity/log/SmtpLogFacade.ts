@@ -39,17 +39,12 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      * @param smtpLog log to insert
      */
     public insertLog(smtpLog: SmtpLog): Promise<SmtpLog> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, smtpLog);
-
-        const createdAtDate: Date = new Date();
-        const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
-        attributes.addAttribute(createdAtAttribute);
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(smtpLog);
 
         return new Promise<SmtpLog>((resolve, reject) => {
             this.insert(attributes).then(id => {
                 if (id > 0) {
                     smtpLog.id = id;
-                    smtpLog.createdAt = createdAtDate;
                     resolve(smtpLog);
                 }
             });

@@ -55,17 +55,12 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * @param statistic Statistic to insert
      */
     public insertStatistic(statistic: Statistic): Promise<Statistic> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, statistic);
-
-        const createdAtDate = new Date();
-        const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
-        attributes.addAttribute(createdAtAttribute);
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(statistic);
 
         return new Promise<Statistic>((resolve, reject) => {
             this.insert(attributes).then(id => {
                 if (id > 0) {
                     statistic.id = id;
-                    statistic.createdAt = createdAtDate;
                     resolve(statistic);
                 }
             });

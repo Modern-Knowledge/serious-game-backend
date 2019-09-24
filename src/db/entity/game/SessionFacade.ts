@@ -81,17 +81,12 @@ export class SessionFacade extends EntityFacade<Session> {
      * @param session
      */
     public async insertSession(session: Session): Promise<Session> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, session);
-
-        const createdAtDate = new Date();
-        const createdAtAttribute: SQLValueAttribute = new SQLValueAttribute("created_at", this.tableName, createdAtDate);
-        attributes.addAttribute(createdAtAttribute);
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(session);
 
         return new Promise<Session>((resolve, reject) => {
             this.insert(attributes).then(id => {
                 if (id > 0) {
                     session.id = id;
-                    session.createdAt = createdAtDate;
                     resolve(session);
                 }
             });
