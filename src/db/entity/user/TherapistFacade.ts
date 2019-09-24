@@ -12,6 +12,7 @@ import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
+import { Roles } from '../../../lib/enums/Roles';
 
 /**
  * handles CRUD operations with the therapist-entity
@@ -124,10 +125,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     protected getSQLValueAttributes(prefix: string, therapist: Therapist): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const birthdayAttribute: SQLValueAttribute = new SQLValueAttribute("birthday", prefix, therapist.role);
-        attributes.addAttribute(birthdayAttribute);
-
-        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, therapist.role);
+        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, Roles.USER);
         attributes.addAttribute(roleAttribute);
 
         return attributes;
