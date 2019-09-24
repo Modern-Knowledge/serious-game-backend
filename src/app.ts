@@ -40,6 +40,8 @@ import RegisterController from "./controllers/RegisterController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
+import TherapistController from "./controllers/TherapistController";
+import PatientController from "./controllers/PatientController";
 
 // Create Express server
 const app = express();
@@ -78,6 +80,7 @@ app.use("/register", RegisterController);
 app.use("/users", UserController);
 app.use("/logging", LoggingController);
 app.use("/images", ImageController);
-
+app.use("/therapists", TherapistController);
+app.use("/patients", PatientController);
 
 export default app;
