@@ -228,6 +228,13 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
+     * deletes the session, the statistic and the errortextStatistic
+     */
+    public async deleteSessionComposite(): Promise<number> {
+        return await this.delete([this._statisticCompositeFacade.errortextStatisticFacade, this._statisticCompositeFacade, this]);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
@@ -237,6 +244,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             this.patientFacadeFilter,
             this.patientUserFacadeFilter,
             this.statisticFacadeFilter,
+            this.errortextStatisticFacadeFilter,
             this.errortextFacadeFilter,
             this.textFacadeFilter,
             this.severityFacadeFilter,
@@ -264,6 +272,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     get statisticFacadeFilter(): Filter {
         return this._statisticCompositeFacade.filter;
+    }
+
+    get errortextStatisticFacadeFilter(): Filter {
+        return this._statisticCompositeFacade.errortextStatisticFilter;
     }
 
     get errortextFacadeFilter(): Filter {

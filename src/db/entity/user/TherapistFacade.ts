@@ -12,7 +12,7 @@ import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
-import { Roles } from '../../../lib/enums/Roles';
+import { Roles } from "../../../lib/enums/Roles";
 
 /**
  * handles CRUD operations with the therapist-entity
@@ -91,10 +91,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
     /**
      * deletes the specified therapist in the database and returns the number of affected rows
-     * @param therapist
      */
-    public async deleteTherapist(therapist: Therapist): Promise<number> {
-        return await this.delete([this._userFacade]);
+    public async deleteTherapist(): Promise<number> {
+        return await this.delete([this, this._userFacade]);
     }
 
     /**

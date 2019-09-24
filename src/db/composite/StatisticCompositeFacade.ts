@@ -133,7 +133,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * delete the statistic and the errortexts
+     * delete the statistic and the errortextStatistic
      */
     public async deleteStatisticComposite(): Promise<number> {
         return await this.delete([this._errortextStatisticFacade, this]);
@@ -219,5 +219,13 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     set withSeverityJoin(value: boolean) {
         this._errortextFacade.withSeverityJoin = value;
         this._withSeverityJoin = value;
+    }
+
+    get errortextFacade(): ErrortextFacade {
+        return this._errortextFacade;
+    }
+
+    get errortextStatisticFacade(): ErrortextStatisticFacade {
+        return this._errortextStatisticFacade;
     }
 }

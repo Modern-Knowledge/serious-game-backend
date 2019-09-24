@@ -137,6 +137,13 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
+     * delete the patient, the user and the patient settings
+     */
+    public async deletePatientComposite(): Promise<number> {
+        return await this.delete([this._patientSettingsFacade, this, this._patientFacade.userFacade]);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
