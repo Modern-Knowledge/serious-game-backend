@@ -97,6 +97,18 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
+     * checks if the given id belongs to a therapist
+     * @param therapist
+     */
+    public async isTherapist(id: number): Promise<boolean> {
+        //TODO: use getById
+        const filter = this.filter;
+        filter.addFilterCondition("therapist_id", id, SQLComparisonOperator.EQUAL);
+        const therapists = await this.get();
+        return therapists.length > 0;
+    }
+
+    /**
      * fills the entity
      * @param result result for filling
      */
