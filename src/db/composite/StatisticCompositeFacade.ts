@@ -96,7 +96,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
         if (this._withErrortextJoin) {
             const statisticErrortextJoin: SQLBlock = new SQLBlock();
             statisticErrortextJoin.addText(`${this._errortextStatisticFacade.tableAlias}.statistic_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(new SQLJoin(this._errortextStatisticFacade.tableName, this._errortextStatisticFacade.tableAlias, statisticErrortextJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
             const errortextStatisticJoin: SQLBlock = new SQLBlock();
             errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
