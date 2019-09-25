@@ -119,6 +119,6 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     get idFilter(): Filter {
-        return new Filter(this._textFacade.tableAlias);
+        return this._textFacade.idFilter;
     }
 }
