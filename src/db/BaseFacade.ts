@@ -117,7 +117,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
                     returnEntities = this.postProcessSelect(returnEntities);
                     returnEntities = this._postProcessFilter(returnEntities);
 
-                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} results returned!`);
+                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} result(s) returned!`);
 
                     const elapsedTime = s.timeElapsed;
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
