@@ -26,7 +26,6 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["starttime", "endtime"];
-
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
@@ -57,7 +56,11 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     public async insertStatistic(statistic: Statistic): Promise<Statistic> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(statistic);
 
-        await this.insert(attributes);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            statistic.id = result[0].insertedId;
+        }
 
         return statistic;
     }

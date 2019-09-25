@@ -36,7 +36,12 @@ export class UserFacade extends EntityFacade<User> {
      */
     public async insertUser(user: User): Promise<User> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(user);
-        await this.insert(attributes);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            user.id = result[0].insertedId;
+        }
+
         return user;
     }
 
