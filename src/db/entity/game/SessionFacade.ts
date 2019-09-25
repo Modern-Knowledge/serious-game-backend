@@ -83,14 +83,9 @@ export class SessionFacade extends EntityFacade<Session> {
     public async insertSession(session: Session): Promise<Session> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(session);
 
-        return new Promise<Session>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                if (id > 0) {
-                    session.id = id;
-                    resolve(session);
-                }
-            });
-        });
+        await this.insert(attributes);
+
+        return session;
     }
 
     /**

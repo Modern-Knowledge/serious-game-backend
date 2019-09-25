@@ -26,7 +26,6 @@ export class LogFacade extends EntityFacade<Log> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["logger", "level", "method", "message", "params", "user_id"];
-
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
@@ -37,9 +36,7 @@ export class LogFacade extends EntityFacade<Log> {
     public insertLog(log: Log): Log {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(log);
 
-        this.insert(attributes).then(id => {
-            log.id = id;
-        });
+        this.insert(attributes);
 
         return log;
     }
@@ -88,22 +85,22 @@ export class LogFacade extends EntityFacade<Log> {
     protected getSQLValueAttributes(prefix: string, log: Log): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const loggerAttribute: SQLValueAttribute = new SQLValueAttribute("logger", this.tableName, log.logger);
+        const loggerAttribute: SQLValueAttribute = new SQLValueAttribute("logger", prefix, log.logger);
         attributes.addAttribute(loggerAttribute);
 
-        const loggerLevel: SQLValueAttribute = new SQLValueAttribute("level", this.tableName, log.level);
+        const loggerLevel: SQLValueAttribute = new SQLValueAttribute("level", prefix, log.level);
         attributes.addAttribute(loggerLevel);
 
-        const loggerMethod: SQLValueAttribute = new SQLValueAttribute("method", this.tableName, log.method);
+        const loggerMethod: SQLValueAttribute = new SQLValueAttribute("method", prefix, log.method);
         attributes.addAttribute(loggerMethod);
 
-        const loggerMessage: SQLValueAttribute = new SQLValueAttribute("message", this.tableName, log.message);
+        const loggerMessage: SQLValueAttribute = new SQLValueAttribute("message", prefix, log.message);
         attributes.addAttribute(loggerMessage);
 
-        const loggerParams: SQLValueAttribute = new SQLValueAttribute("params", this.tableName, log.params.join(" "));
+        const loggerParams: SQLValueAttribute = new SQLValueAttribute("params", prefix, log.params.join(" "));
         attributes.addAttribute(loggerParams);
 
-        const userIdParams: SQLValueAttribute = new SQLValueAttribute("user_id", this.tableName, log.userId);
+        const userIdParams: SQLValueAttribute = new SQLValueAttribute("user_id", prefix, log.userId);
         attributes.addAttribute(userIdParams);
 
         return attributes;

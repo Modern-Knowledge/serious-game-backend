@@ -41,9 +41,7 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     public insertLog(smtpLog: SmtpLog): SmtpLog {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(smtpLog);
 
-        this.insert(attributes).then(id => {
-            smtpLog.id = id;
-        });
+        this.insert(attributes);
 
         return smtpLog;
     }
@@ -88,19 +86,19 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     protected getSQLValueAttributes(prefix: string, smtpLog: SmtpLog): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const logSubject: SQLValueAttribute = new SQLValueAttribute("subject", this.tableName, smtpLog.subject);
+        const logSubject: SQLValueAttribute = new SQLValueAttribute("subject", prefix, smtpLog.subject);
         attributes.addAttribute(logSubject);
 
-        const logBody: SQLValueAttribute = new SQLValueAttribute("body", this.tableName, smtpLog.body);
+        const logBody: SQLValueAttribute = new SQLValueAttribute("body", prefix, smtpLog.body);
         attributes.addAttribute(logBody);
 
-        const logRcptMail: SQLValueAttribute = new SQLValueAttribute("rcpt_email", this.tableName, smtpLog.rcptEmail);
+        const logRcptMail: SQLValueAttribute = new SQLValueAttribute("rcpt_email", prefix, smtpLog.rcptEmail);
         attributes.addAttribute(logRcptMail);
 
-        const logSimulated: SQLValueAttribute = new SQLValueAttribute("simulated", this.tableName, smtpLog.simulated);
+        const logSimulated: SQLValueAttribute = new SQLValueAttribute("simulated", prefix, smtpLog.simulated);
         attributes.addAttribute(logSimulated);
 
-        const logSent: SQLValueAttribute = new SQLValueAttribute("sent", this.tableName, smtpLog.sent);
+        const logSent: SQLValueAttribute = new SQLValueAttribute("sent", prefix, smtpLog.sent);
         attributes.addAttribute(logSent);
 
         return attributes;

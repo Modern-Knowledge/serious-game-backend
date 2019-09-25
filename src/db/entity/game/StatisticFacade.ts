@@ -54,17 +54,12 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * inserts a new statistic and returns the created user
      * @param statistic Statistic to insert
      */
-    public insertStatistic(statistic: Statistic): Promise<Statistic> {
+    public async insertStatistic(statistic: Statistic): Promise<Statistic> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(statistic);
 
-        return new Promise<Statistic>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                if (id > 0) {
-                    statistic.id = id;
-                    resolve(statistic);
-                }
-            });
-        });
+        await this.insert(attributes);
+
+        return statistic;
     }
 
     /**

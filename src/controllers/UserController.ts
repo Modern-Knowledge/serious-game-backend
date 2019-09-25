@@ -30,7 +30,7 @@ router.get("/related", async (req: Request, res: Response) => {
         : new PatientCompositeFacade();
 
       const user = await userFacade.getById(data.id);
-      logger.debug(user);
+      logger.debug("" + user);
       if (!user) return res.status(404).send("User not found.");
       return res.status(200).jsonp(user);
     } catch (error) {
