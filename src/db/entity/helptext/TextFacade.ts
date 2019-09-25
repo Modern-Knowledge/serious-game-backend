@@ -24,7 +24,6 @@ export class TextFacade extends EntityFacade<Text> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["name", "text"];
-
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 

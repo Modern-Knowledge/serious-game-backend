@@ -3,9 +3,16 @@ import logger from "./logger";
 import { loggerString } from "./Helper";
 import { SQLValueAttributes } from "../db/sql/SQLValueAttributes";
 
+/**
+ * interface that defines queries that can used in a transaction
+ * function: executes insert, update or delete query (getInsertQueryFn, getUpdateQueryFn, getDeleteQueryFn in BaseFacade are examples for functions that can be passed)
+ * attributes: sqlvalueAttributes that are injected into the insert or update query
+ * callBackOnInsert: callback that is called, if the query returns a insertId. The function is called with the returned inserted id. Used to set id
+ */
 export interface TransactionQuery {
-    function: ((connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<number>);
+    function: ((connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any>);
     attributes?: SQLValueAttributes;
+    callBackOnInsert?: (insertId: number, attributes: SQLValueAttributes) => void;
 }
 
 /**
@@ -79,15 +86,16 @@ class DatabaseConnection {
     }
 
     /**
-     * executes the passed queries in a transactions
+     * executes the passed queries in a transaction
+     * queries can be of type insert, update, delete
      * @param queryCallbacks array of queries that are executed in the transaction
      */
-    public transaction(queryCallbacks: TransactionQuery[]): Promise<number> {
+    public transaction(queryCallbacks: TransactionQuery[]): Promise<any[]> {
         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} queries are going to be executed in a transaction!`);
 
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<any[]>((resolve, reject) => {
             this.poolQuery((error: MysqlError, connection: PoolConnection) => {
-                if (error) {
+                if (error) { // error with pool
                     logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
                     return reject(error);
                 }
@@ -98,26 +106,33 @@ class DatabaseConnection {
                 connection.beginTransaction(async (error: MysqlError) => {
                     logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Begin transaction!`);
 
-                    if (error) {
+                    if (error) { // error with starting transaction
                         logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
                         return reject(error);
                     }
 
-                    let result = 0;
+                    const result: any[]  = [];
 
+                    let response = undefined;
                     /**
-                     * execute the queries in transaction
+                     * execute the queries in a transaction
                      */
-                    for (const item of queryCallbacks) {
-                        result += await item.function(connection, item.attributes);
+                    for (let i = 0; i < queryCallbacks.length; i++) {
+                        response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
+
+                        if (response && response.insertedId && i < queryCallbacks.length - 1) { // query was insert query
+                            queryCallbacks[i].callBackOnInsert(response.insertedId, queryCallbacks[i + 1].attributes); // execute callback with attributes of next element
+                        }
+
+                        result.push(response);
                     }
 
                     /**
                      * commit transaction
                      */
                     connection.commit((error: MysqlError) => {
-
-                        if (error) {
+                        connection.release();
+                        if (error) { // error when committing
                             return connection.rollback(() => {
                                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction changes are rollbacked!`);
                                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);

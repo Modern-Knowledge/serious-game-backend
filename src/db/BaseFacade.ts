@@ -16,7 +16,6 @@ import { AbstractModel } from "../lib/models/AbstractModel";
 import { FieldInfo, MysqlError, PoolConnection } from "mysql";
 import logger from "../util/logger";
 import { Filter } from "./filter/Filter";
-import { SQLOrderBy } from "./sql/SQLOrderBy";
 import { SQLOrder } from "./sql/SQLOrder";
 import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/Stopwatch";
@@ -135,36 +134,54 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     /**
      * executes an insert query and returns the id of the newly inserted row
      * @param attributes name-value pairs of attributes that should be inserted
-     * @param additionalFacades queries to execute in the transaction
+     * @param additionalInserts queries to execute in the transaction
+     * watch the order of the array
+     * statements are executed in this order
+     * facade: facade to execute insert in
+     * entity: entity to insert
+     * callBackOnInsert: callback that is executed after the insert, last callback in array will not be executed
+     * returns all inserted ids as array
      */
-    public async insert(attributes: SQLValueAttributes, additionalFacades?: any[]): Promise<number> {
-        const npq: Query = this.getInsertQuery(attributes);
+    public async insert(attributes: SQLValueAttributes, additionalInserts?: {facade: any, entity: EntityType, callBackOnInsert?: any}[]): Promise<any[]> {
+        // array of queries
+        const funcArray: TransactionQuery[] = [];
+        if (additionalInserts) {
+            for (const insert of additionalInserts) {
+                const func: TransactionQuery = {function: insert.facade.getInsertQueryFn, attributes: insert.facade.getSQLInsertValueAttributes(insert.entity), callBackOnInsert: insert.callBackOnInsert};
+                funcArray.push(func);
+            }
+        } else {
+            funcArray.push({function: this.getInsertQueryFn, attributes: attributes});
+        }
 
-        return new Promise<number>((resolve, reject) => {
-            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
-                if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
-                    reject(error);
-                }
-
-                const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
-                    connection.release(); // release pool connection
-
-                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
-
-                    if (error) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
-                        return reject(error);
-                    }
-
-                    resolve(results.insertId);
-                });
-            });
-        });
+        return await databaseConnection.transaction(funcArray);
     }
 
     /**
-     * return attributes that are common to all inserts
+     * returns the function for executing insert queries
+     * @param connection
+     * @param attributes
+     */
+    public getInsertQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
+        const npq: Query = this.getInsertQuery(attributes);
+
+        return new Promise<any>((resolve, reject) => {
+            const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
+                logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
+
+                if (error) {
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
+                    return reject(error);
+                }
+
+                resolve({insertedId: results.insertId});
+            });
+        });
+    };
+
+    /**
+     * use this before getSQLValueAttributes
+     * return attributes that are common to all inserts (created_at)
      * @param entity
      */
     protected getSQLInsertValueAttributes(entity: EntityType): SQLValueAttributes {
@@ -183,25 +200,32 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
      * executes an update query and returns the number of affected rows
      * @param attributes name-value pairs of the entity that should be changed
      * @param additionalUpdates additionalUpdates to execute facade is for facade to execute update in, entity is the entity for updating
+     * watch the order of the array
+     * statements are executed in this order
+     * facade: facade to execute update in
+     * entity: entity to insert
      */
     public async update(attributes: SQLValueAttributes, additionalUpdates?: {facade: any, entity: EntityType}[]): Promise<number> {
         // array of queries
-        const funcArray: TransactionQuery[] = [{function: this.getUpdateQueryFn, attributes: attributes}];
+        const funcArray: TransactionQuery[] = [];
         if (additionalUpdates) {
             for (const update of additionalUpdates) {
-                const func = {function: update.facade.getUpdateQueryFn, attributes: update.facade.getSQLUpdateValueAttributes(update.entity)};
+                const func: TransactionQuery = {function: update.facade.getUpdateQueryFn, attributes: update.facade.getSQLUpdateValueAttributes(update.entity)};
                 funcArray.push(func);
             }
+        }  else {
+            funcArray.push({function: this.getUpdateQueryFn, attributes: attributes});
         }
-        return await databaseConnection.transaction(funcArray);
+        const result = await databaseConnection.transaction(funcArray);
+        return result.reduce((pv, cv) => pv + cv, 0);
     }
 
     /**
-     * returns the function for executing delete queries
+     * returns the function for executing update queries
      * @param connection
      * @param attributes
      */
-    protected getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<number> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
+    public getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
         if (this._filter.isEmpty) {
             const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update-query specified!`;
             logger.error(error);
@@ -210,7 +234,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
         const npq = this.getUpdateQuery(attributes);
 
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
 
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
@@ -242,6 +266,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
     }
 
     /**
+     * if no additionalFacade is provided, than the current (this) is used
      * executes a delete query in a transaction and returns the number of affected rows
      * watch the order of the array
      * statements are executed in this order
@@ -251,18 +276,22 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
         const funcArray: TransactionQuery[] = [];
         if (additionalFacades) {
             for (const facade of additionalFacades) {
-                const func = {function: facade.getDeleteQueryFn};
+                const func: TransactionQuery = {function: facade.getDeleteQueryFn};
                 funcArray.push(func);
             }
+        } else {
+          funcArray.push({function: this.getDeleteQueryFn});
         }
-        return await databaseConnection.transaction(funcArray);
+
+        const result = await databaseConnection.transaction(funcArray);
+        return result.reduce((pv, cv) => pv + cv, 0);
     }
 
     /**
      * returns the function for executing delete queries
      * @param connection
      */
-    protected getDeleteQueryFn: (connection: PoolConnection) => Promise<number> = (connection: PoolConnection) => {
+    public getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> = (connection: PoolConnection) => {
         if (this._filter.isEmpty) {
             const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
             logger.error(error);
@@ -271,7 +300,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel> {
 
         const npq = this.getDeleteQuery();
 
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             const query = connection.query(npq.query, npq.params, (error: MysqlError, results: any, fields: FieldInfo[]) => {
 
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);

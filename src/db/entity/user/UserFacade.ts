@@ -3,8 +3,8 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 import * as bcrypt from "bcryptjs";
+
 /**
  * handles CRUD operations with the user-entity
  */
@@ -27,7 +27,6 @@ export class UserFacade extends EntityFacade<User> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "status"];
-
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
@@ -35,18 +34,10 @@ export class UserFacade extends EntityFacade<User> {
      * inserts a new user and returns the created user
      * @param user
      */
-    public insertUser(user: User): Promise<User> {
+    public async insertUser(user: User): Promise<User> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(user);
-
-        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", this.tableName, bcrypt.hashSync(user.password, 12));
-        attributes.addAttribute(passwordAttribute);
-
-        return new Promise<User>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                user.id = id;
-                resolve(user);
-            });
-        });
+        await this.insert(attributes);
+        return user;
     }
 
     /**
@@ -133,6 +124,9 @@ export class UserFacade extends EntityFacade<User> {
 
         const emailAttribute: SQLValueAttribute = new SQLValueAttribute("email", prefix, user.email);
         attributes.addAttribute(emailAttribute);
+
+        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", prefix, bcrypt.hashSync(user.password, 12));
+        attributes.addAttribute(passwordAttribute);
 
         const forenameAttribute: SQLValueAttribute = new SQLValueAttribute("forename", prefix, user.forename);
         attributes.addAttribute(forenameAttribute);

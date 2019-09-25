@@ -89,19 +89,19 @@ router.get("/", async (req: Request, res: Response) => {
      const statisticCompFacade = new StatisticCompositeFacade();
      statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
     statisticCompFacade.filter.addFilterCondition("id", 0);
-    const statisticComp = await statisticCompFacade.deleteStatisticComposite();
+    // const statisticComp = await statisticCompFacade.deleteStatisticComposite();
 
-    console.log(statisticComp);
+    // console.log(statisticComp);
     //
      const patientCompositeFacade = new PatientCompositeFacade();
      patientCompositeFacade.patientSettingFacadeFilter.addFilterCondition("id", 0);
      patientCompositeFacade.patientUserFacadeFilter.addFilterCondition("id", 0);
      patientCompositeFacade.filter.addFilterCondition("patient_id", 0);
-     const patientComp = await patientCompositeFacade.deletePatientComposite();
+    // const patientComp = await patientCompositeFacade.deletePatientComposite();
     //
      const gameCompositeFacade = new GameCompositeFacade();
-     const gamesComp = await gameCompositeFacade.getById(1);
-     console.log(gamesComp);
+    // const gamesComp = await gameCompositeFacade.getById(1);
+     // console.log(gamesComp);
     //
     // const sessionFacade = new SessionFacade();
     // const sess = await sessionFacade.getSessions();
@@ -111,8 +111,8 @@ router.get("/", async (req: Request, res: Response) => {
      sessionCompositeFacade.filter.addFilterCondition("id", 0);
      sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", 0);
      sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", 0);
-      const sessions = await sessionCompositeFacade.deleteSessionComposite();
-      console.log(sessions);
+     // const sessions = await sessionCompositeFacade.deleteSessionComposite();
+      // console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
@@ -121,6 +121,7 @@ router.get("/", async (req: Request, res: Response) => {
     u.forename = "Florian";
     u.lastname = "Mold";
     u.email = "florian.mold@live.at";
+    u.password = "dklfjslkdf0";
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
 
@@ -135,14 +136,20 @@ router.get("/", async (req: Request, res: Response) => {
      // console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
 
     const userfacade = new UserFacade();
-    // userfacade.filter.addFilterCondition("id", 1);
-    // / console.log(await userfacade.deleteUser(u));
+    //  userfacade.filter.addFilterCondition("id", 1);
+     // console.log(await userfacade.insertUser(u));
 
-    const patientFacade = new UserFacade();
-     patientFacade.filter.addFilterCondition("id", 0);
-     // patientFacade.userFacadeFilter.addFilterCondition("id", 0);
+    const patientFacade = new TherapistFacade();
+    // patientFacade.isTherapist(1003);
+   //  patientFacade.filter.addFilterCondition("therapist_id", 0);
+   //  patientFacade.userFacadeFilter.addFilterCondition("id", 0);
 
-      console.log(await patientFacade.deleteUser());
+    // console.log(await patientFacade.insertTherapist(u));
+    // await patientFacade.updateTherapist(u);
+    // await patientFacade.updateUserTherapist(u);
+   // await patientFacade.deleteTherapist();
+
+
 
     res.jsonp("therapists");
 });

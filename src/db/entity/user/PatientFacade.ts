@@ -1,9 +1,7 @@
 import { UserFacade } from "./UserFacade";
-import { User } from "../../../lib/models/User";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { JoinType } from "../../sql/enums/JoinType";
 import { SQLBlock } from "../../sql/SQLBlock";
@@ -43,12 +41,18 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
     /**
      * returns sql attributes that should be retrieved from the database
+     * used in select statements
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["patient_id", "birthday", "info"];
+        let excludedDefaultAttributes: string[] = ["id"];
 
-        const patientsAttributes: SQLAttributes = new SQLAttributes(this.tableAlias, sqlAttributes);
+        if (excludedSQLAttributes) {
+            excludedDefaultAttributes = excludedDefaultAttributes.concat(excludedSQLAttributes);
+        }
+
+        const patientsAttributes: SQLAttributes = super.getSQLAttributes(excludedDefaultAttributes, sqlAttributes);
 
         if (this._withUserJoin) {
             const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
@@ -63,35 +67,47 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * @param patient patient to insert
      */
     public async insertPatient(patient: Patient): Promise<Patient> {
-        const t: User = await this._userFacade.insertUser(patient);
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patient);
 
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableName, patient);
+        /**
+         * callback that is called after a user was inserted
+         * @param insertId user id that was inserted before
+         * @param attributes to append to
+         */
+        const onInsertUser = (insertId: number, attributes: SQLValueAttributes) => {
+            patient.id = insertId;
+            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", this.tableName, patient.id);
+            attributes.addAttribute(patientIdAttribute);
+        };
 
-        const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", this.tableName, t.id);
-        attributes.addAttribute(patientIdAttribute);
+        await this.insert(attributes, [{facade: this._userFacade, entity: patient, callBackOnInsert: onInsertUser}, {facade: this, entity: patient}]);
 
-        return new Promise<Patient>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                patient.id = t.id;
-                resolve(patient);
-            });
-        });
+        return patient;
     }
 
     /**
-     * updates the given therapist in the database and returns the number of affected rows
+     * updates the patient and the associated user in a transaction
      * @param patient patient to update
      */
-    public async updatePatient(patient: Patient): Promise<number> {
-        const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, patient);
-        return await this.update(attributes, [{facade: this._userFacade, entity: patient}]);
+    public updateUserPatient(patient: Patient): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
+        return this.update(attributes, [{facade: this, entity: patient}, {facade: this._userFacade, entity: patient}]);
     }
 
     /**
-     * deletes the specified therapist in the database and returns the number of affected rows
+     * updates the patients and returns the number of affected rows
+     * @param patient patient to update
      */
-    public async deletePatient(): Promise<number> {
-        return await this.delete([this, this._userFacade]);
+    public updatePatient(patient: Patient): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
+        return this.update(attributes);
+    }
+
+    /**
+     * deletes the patient and the associated user
+     */
+    public deletePatient(): Promise<number> {
+        return this.delete([this, this._userFacade]);
     }
 
     /**
@@ -100,6 +116,8 @@ export class PatientFacade extends CompositeFacade<Patient> {
      */
     public fillEntity(result: any): Patient {
         const p: Patient = new Patient();
+
+        this.fillDefaultAttributes(result, p);
 
         if (this._withUserJoin) {
             this._userFacade.fillUserEntity(result, p);

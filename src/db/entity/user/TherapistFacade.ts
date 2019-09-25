@@ -1,10 +1,8 @@
 import { UserFacade } from "./UserFacade";
 import { Therapist } from "../../../lib/models/Therapist";
-import { User } from "../../../lib/models/User";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { JoinType } from "../../sql/enums/JoinType";
 import { SQLBlock } from "../../sql/SQLBlock";
@@ -23,206 +21,195 @@ import { Roles } from "../../../lib/enums/Roles";
  * - users (1:1)
  */
 export class TherapistFacade extends CompositeFacade<Therapist> {
-  private _userFacade: UserFacade;
+    private _userFacade: UserFacade;
 
-  private _withUserJoin: boolean;
+    private _withUserJoin: boolean;
 
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("therapists", tableAlias);
-    } else {
-      super("therapists", "t");
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("therapists", tableAlias);
+        } else {
+            super("therapists", "t");
+        }
+
+        this._userFacade = new UserFacade("ut");
+
+        this._withUserJoin = true;
     }
 
-    this._userFacade = new UserFacade("ut");
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const sqlAttributes: string[] = ["therapist_id", "role"];
+        let excludedDefaultAttributes: string[] = ["id"];
 
-    this._withUserJoin = true;
-  }
+        if (excludedSQLAttributes) {
+            excludedDefaultAttributes = excludedDefaultAttributes.concat(excludedSQLAttributes);
+        }
 
-  /**
-   * returns sql attributes that should be retrieved from the database
-   * @param excludedSQLAttributes attributes that should not be selected
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["therapist_id", "role"];
+        const therapistsAttributes: SQLAttributes = super.getSQLAttributes(excludedDefaultAttributes, sqlAttributes);
 
-    const therapistAttributes: SQLAttributes = new SQLAttributes(
-      this.tableAlias,
-      sqlAttributes
-    );
+        if (this._withUserJoin) {
+            const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(excludedSQLAttributes);
+            therapistsAttributes.addSqlAttributes(userAttributes);
+        }
 
-    if (this._withUserJoin) {
-      const userAttributes: SQLAttributes = this._userFacade.getSQLAttributes(
-        excludedSQLAttributes
-      );
-      therapistAttributes.addSqlAttributes(userAttributes);
+        return therapistsAttributes;
     }
 
-    return therapistAttributes;
-  }
+    /**
+     * inserts a new therapist and returns the created therapist
+     * @param therapist
+     */
+    public async insertTherapist(therapist: Therapist): Promise<Therapist> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(therapist);
 
-  /**
-   * inserts a new therapist and returns the created therapist
-   * @param therapist
-   */
-  public async insertTherapist(therapist: Therapist): Promise<Therapist> {
-    const t: User = await this._userFacade.insertUser(therapist);
+        /**
+         * callback that is called after a user was inserted
+         * @param insertId user id that was inserted before
+         * @param attributes to append to
+         */
+        const onInsertUser = (insertId: number, attributes: SQLValueAttributes) => {
+            therapist.id = insertId;
+            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", this.tableName, therapist.id);
+            attributes.addAttribute(patientIdAttribute);
+        };
 
-    const attributes: SQLValueAttributes = this.getSQLValueAttributes(
-      this.tableName,
-      therapist
-    );
+        await this.insert(attributes, [{facade: this._userFacade, entity: therapist, callBackOnInsert: onInsertUser}, {facade: this, entity: therapist}]);
 
-    const therapistIdAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "therapist_id",
-      this.tableName,
-      t.id
-    );
-    attributes.addAttribute(therapistIdAttribute);
-
-    return new Promise<Therapist>((resolve, reject) => {
-      this.insert(attributes).then(id => {
-        therapist.id = t.id;
-        resolve(therapist);
-      });
-    });
-  }
-
-  /**
-   * updates the given therapist in the database and returns the number of affected rows
-   * @param therapist
-   */
-  public async updateTherapist(therapist: Therapist): Promise<number> {
-    const attributes: SQLValueAttributes = this.getSQLValueAttributes(
-      this.tableAlias,
-      therapist
-    );
-    return await this.update(attributes, []);
-  }
-
-  /**
-   * deletes the specified therapist in the database and returns the number of affected rows
-   */
-  public async deleteTherapist(): Promise<number> {
-    return await this.delete([this, this._userFacade]);
-  }
-
-  /**
-   * checks if the given id belongs to a therapist
-   * @param therapist
-   */
-  public async isTherapist(id: number): Promise<boolean> {
-    //TODO: use getById
-    const filter = this.filter;
-    filter.addFilterCondition("therapist_id", id, SQLComparisonOperator.EQUAL);
-    const therapists = await this.get();
-    return therapists.length > 0;
-  }
-
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  public fillEntity(result: any): Therapist {
-    const t: Therapist = new Therapist();
-
-    if (this._withUserJoin) {
-      this._userFacade.fillUserEntity(result, t);
+        return therapist;
     }
 
-    if (result[this.name("role")] !== undefined) {
-      t.role = result[this.name("role")];
+    /**
+     * updates the patient and the associated user in a transaction
+     * @param therapist
+     */
+    public async updateUserTherapist(therapist: Therapist): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
+        return this.update(attributes, [{facade: this, entity: therapist}, {facade: this._userFacade, entity: therapist}]);
     }
 
-    return t;
-  }
-
-  /**
-   * return common sql attributes for insert and update statement
-   * @param prefix prefix before the sql attribute
-   * @param therapist entity to take values from
-   */
-  protected getSQLValueAttributes(
-    prefix: string,
-    therapist: Therapist
-  ): SQLValueAttributes {
-    const attributes: SQLValueAttributes = new SQLValueAttributes();
-
-    const roleAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "role",
-      prefix,
-      Roles.USER
-    );
-    attributes.addAttribute(roleAttribute);
-
-    return attributes;
-  }
-
-  /**
-   * creates the joins for the therapist facade and returns them as a list
-   */
-  get joins(): SQLJoin[] {
-    const joins: SQLJoin[] = [];
-
-    if (this._withUserJoin) {
-      const userJoin: SQLBlock = new SQLBlock();
-      userJoin.addText(
-        `${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`
-      );
-      joins.push(
-        new SQLJoin(
-          this._userFacade.tableName,
-          this._userFacade.tableAlias,
-          userJoin,
-          JoinType.JOIN,
-          JoinCardinality.ONE_TO_ONE
-        )
-      );
+    /**
+     * updates the therapists and returns the number of affected rows
+     * @param therapist
+     */
+    public async updateTherapist(therapist: Therapist): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
+        return this.update(attributes);
     }
 
-    return joins;
-  }
+    /**
+     * deletes the specified therapist in the database and returns the number of affected rows
+     */
+    public async deleteTherapist(): Promise<number> {
+        return await this.delete([this, this._userFacade]);
+    }
 
-  /**
-   * returns the facade filter that can be used for filtering model with id
-   */
-  get idFilter(): Filter {
-    return this._userFacade.idFilter;
-  }
+    /**
+     * checks if the given id belongs to a therapist
+     * @param id
+     */
+    public async isTherapist(id: number): Promise<boolean> {
+        const therapist = await this.getById(id);
+        return therapist !== undefined;
+    }
 
-  /**
-   * returns all sub facade filters of the facade as an array
-   */
-  protected get filters(): Filter[] {
-    return [this.userFacadeFilter];
-  }
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    public fillEntity(result: any): Therapist {
+        const t: Therapist = new Therapist();
 
-  /**
-   * returns the userFacadeFilter
-   */
-  get userFacadeFilter(): Filter {
-    return this._userFacade.filter;
-  }
+        if (this._withUserJoin) {
+            this._userFacade.fillUserEntity(result, t);
+        }
 
-  /**
-   * returns all sub facade order-bys of the facade as an array
-   */
-  protected get orderBys(): Ordering[] {
-    return [this.userFacadeOrderBy];
-  }
+        if (result[this.name("role")] !== undefined) {
+            t.role = result[this.name("role")];
+        }
 
-  get userFacadeOrderBy(): Ordering {
-    return this._userFacade.ordering;
-  }
+        return t;
+    }
 
-  get withUserJoin(): boolean {
-    return this._withUserJoin;
-  }
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param therapist entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, therapist: Therapist): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-  set withUserJoin(value: boolean) {
-    this._withUserJoin = value;
-  }
+        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, Roles.USER);
+        attributes.addAttribute(roleAttribute);
+
+        return attributes;
+    }
+
+    /**
+     * creates the joins for the therapist facade and returns them as a list
+     */
+    get joins(): SQLJoin[] {
+        const joins: SQLJoin[] = [];
+
+        if (this._withUserJoin) {
+            const userJoin: SQLBlock = new SQLBlock();
+            userJoin.addText(`${this.tableAlias}.therapist_id = ${this._userFacade.tableAlias}.id`);
+            joins.push(new SQLJoin(
+                    this._userFacade.tableName,
+                    this._userFacade.tableAlias,
+                    userJoin,
+                    JoinType.JOIN,
+                    JoinCardinality.ONE_TO_ONE
+                )
+            );
+        }
+
+        return joins;
+    }
+
+    /**
+     * returns the facade filter that can be used for filtering model with id
+     */
+    get idFilter(): Filter {
+        return this._userFacade.idFilter;
+    }
+
+    /**
+     * returns all sub facade filters of the facade as an array
+     */
+    protected get filters(): Filter[] {
+        return [this.userFacadeFilter];
+    }
+
+    /**
+     * returns the userFacadeFilter
+     */
+    get userFacadeFilter(): Filter {
+        return this._userFacade.filter;
+    }
+
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): Ordering[] {
+        return [this.userFacadeOrderBy];
+    }
+
+    get userFacadeOrderBy(): Ordering {
+        return this._userFacade.ordering;
+    }
+
+    get withUserJoin(): boolean {
+        return this._withUserJoin;
+    }
+
+    set withUserJoin(value: boolean) {
+        this._withUserJoin = value;
+    }
 }
