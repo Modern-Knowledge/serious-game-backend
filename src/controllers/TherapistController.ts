@@ -1,6 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
+import { JWTHelper } from "../util/JWTHelper";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { Therapist } from "../lib/models/Therapist";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
@@ -32,7 +32,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 /**
- * GET /
+ * POST /
  * Insert a therapist.
  */
 router.post("/", async (req: Request, res: Response) => {
@@ -42,13 +42,8 @@ router.post("/", async (req: Request, res: Response) => {
   therapist.failedLoginAttempts = 0;
   try{
     const response = await therapistFacade.insertTherapist(therapist);
-    const token = jwt.sign(
-      { id: response.id, email: response.email },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: 3600 // expires in 1 hour
-      }
-    );
+    const jwtHelper: JWTHelper = new JWTHelper();
+    const token = await jwtHelper.signToken(response);
     return res.status(201).jsonp({ auth: true, token: token, user: response });
   }
   catch(error) {

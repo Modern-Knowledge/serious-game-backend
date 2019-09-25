@@ -31,9 +31,9 @@ export abstract class EntityFacade<EntityType extends AbstractModel> extends Bas
    * @param excludedSQLAttributes
    */
     public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
+        //TODO: fix getById
         const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
         this.idFilter.addFilterCondition("id", id, SQLComparisonOperator.EQUAL);
-
         const result: EntityType[] = await this.select(attributes, this.idFilter);
 
         if (result.length >= 0) {
