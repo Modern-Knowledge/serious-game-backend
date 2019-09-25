@@ -1,8 +1,10 @@
 import express from "express";
 import { Request, Response } from "express";
-import { UserFacade } from "../db/entity/user/UserFacade";
 import logger from "../util/logger";
-import * as jwt from "jsonwebtoken";
+import { TherapistFacade } from '../db/entity/user/TherapistFacade';
+import { PatientFacade } from '../db/entity/user/PatientFacade';
+import { SQLComparisonOperator } from '../db/sql/SQLComparisonOperator';
+import { JWTHelper } from '../util/JWTHelper';
 const router = express.Router();
 
 /**
@@ -10,16 +12,23 @@ const router = express.Router();
  * Get the user belonging to the sent JWT.
  */
 router.get("/related", async (req: Request, res: Response) => {
-  const userFacade = new UserFacade();
   const token = req.headers["x-access-token"].toString();
   if (!token) return res.status(401).send({ auth: false, message: "No token provided." });
-
-  return jwt.verify(token, process.env.SECRET_KEY, async function(err, decoded) {
+  const jwtHelper: JWTHelper = new JWTHelper();
+  return jwtHelper.verifyToken(token, async function(err, decoded){
     if (err) return res.status(500).send({ auth: false, message: "Failed to authenticate token." });
     try{
-      const users = await userFacade.get();
       const data: any = decoded;
-      const user = users.find(user => user.email === data.email);
+      const userFacade = data.therapist ? new TherapistFacade() : new PatientFacade();
+      //TODO: use getById
+      const filter = userFacade.filter;
+      filter.addFilterCondition(data.therapist ? "therapist_id" : "patient_id", data.id, SQLComparisonOperator.EQUAL);
+      const users = await userFacade.get();
+      let user;
+      if (users.length == 0) {
+        return res.status(401).send("Invalid credentials.");
+      }
+      user = users[0];
       if (!user) return res.status(404).send("User not found.");
       const {id, email, forename, lastname} = user;
       return res.status(200).jsonp({id, email, forename, lastname});
@@ -27,7 +36,6 @@ router.get("/related", async (req: Request, res: Response) => {
     catch(error){
       return res.status(500).jsonp(error);
     }
-    
   });
 });
 

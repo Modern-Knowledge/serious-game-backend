@@ -1,9 +1,9 @@
 import express from "express";
 import { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { Patient } from '../lib/models/Patient';
 import { Status } from '../lib/enums/Status';
+import { JWTHelper } from '../util/JWTHelper';
 const router = express.Router();
 
 /**
@@ -41,13 +41,8 @@ router.post("/", async (req: Request, res: Response) => {
   patient.failedLoginAttempts = 0;
   try{
     const response = await patientFacade.insertPatient(patient);
-    const token = jwt.sign(
-      { id: response.id, email: response.email },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: 3600 // expires in 1 hour
-      }
-    );
+    const jwtHelper: JWTHelper = new JWTHelper();
+    const token = await jwtHelper.signToken(response);
     return res.status(201).jsonp({ auth: true, token: token, user: response });
   }
   catch(error) {
