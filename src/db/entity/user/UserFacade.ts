@@ -26,7 +26,7 @@ export class UserFacade extends EntityFacade<User> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "status"];
+        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "status", "resetcode", "resetcode_validuntil"];
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
@@ -116,6 +116,14 @@ export class UserFacade extends EntityFacade<User> {
             u.status = result[this.name("status")];
         }
 
+        if (result[this.name("resetcode")] !== undefined) {
+            u.resetcode = result[this.name("resetcode")];
+        }
+
+        if (result[this.name("resetcode_validuntil")] !== undefined) {
+            u.resetcodeValidUntil = result[this.name("resetcode_validuntil")];
+        }
+
         return u;
     }
 
@@ -153,6 +161,12 @@ export class UserFacade extends EntityFacade<User> {
 
         const statusAttribute: SQLValueAttribute = new SQLValueAttribute("status", prefix, user.status);
         attributes.addAttribute(statusAttribute);
+
+        const resetcodeAttribute: SQLValueAttribute = new SQLValueAttribute("resetcode", prefix, user.resetcode);
+        attributes.addAttribute(resetcodeAttribute);
+
+        const resetcodeValidUntilAttribute: SQLValueAttribute = new SQLValueAttribute("resetcode_validuntil", prefix, user.resetcodeValidUntil);
+        attributes.addAttribute(resetcodeValidUntilAttribute);
 
         return attributes;
     }

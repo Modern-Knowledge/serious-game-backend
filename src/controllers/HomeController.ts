@@ -17,6 +17,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../util/http/HttpResponse";
+import {TherapistCompositeFacade} from "../db/composite/TherapistCompositeFacade";
 
 const router = express.Router();
 
@@ -60,7 +61,8 @@ router.get("/", async (req: Request, res: Response) => {
      const newpatient = await patientFacade.deletePatient(patient1);
      console.log(newpatient); */
 
-     // const therapistCompFacade = new TherapistCompositeFacade();
+      const therapistCompFacade = new TherapistCompositeFacade();
+      console.log(await therapistCompFacade.get());
     // const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
     // const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
     // const sessionFilter = therapistCompFacade.sessionFacadeFilter;
