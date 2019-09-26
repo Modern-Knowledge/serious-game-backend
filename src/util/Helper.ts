@@ -34,3 +34,13 @@ export function arrayContainsModel<T extends AbstractModel>(search: T, values: T
     return false;
 }
 
+export function generatePasswordResetToken(length: number): number {
+    const timestamp: number = new Date().getTime();
+
+    const token = timestamp % (10 ** length);
+
+    console.log(timestamp, token);
+
+    return token;
+}
+
