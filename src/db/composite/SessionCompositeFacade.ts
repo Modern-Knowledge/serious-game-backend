@@ -66,7 +66,11 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         }
 
         this._sessionFacade = new SessionFacade();
-        this._patientFacade = new PatientFacade();
+
+        // tableAliases
+        this._patientFacade = new PatientFacade("patcomp");
+        this._patientFacade.userFacade.tableAlias = "patcompUser";
+
         this._statisticCompositeFacade = new StatisticCompositeFacade();
         this._gameFacade = new GameFacade();
         this._gameSettingsFacade = new GameSettingFacade();
@@ -114,7 +118,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      * fills the entity
      * @param result result for filling
      */
-    protected fillEntity(result: any): Session {
+    public fillEntity(result: any): Session {
         const s: Session = this._sessionFacade.fillEntity(result);
 
         if (this._withStatisticCompositeJoin) {

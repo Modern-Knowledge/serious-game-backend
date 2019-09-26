@@ -12,6 +12,7 @@ import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
 import { arrayContainsModel } from "../../util/Helper";
+import { SessionCompositeFacade } from "./SessionCompositeFacade";
 
 /**
  * retrieves composite patients
@@ -29,7 +30,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     private _patientFacade: PatientFacade;
     private _patientSettingsFacade: PatientSettingFacade;
-    private _sessionFacade: SessionFacade;
+    private _sessionCompositeFacade: SessionCompositeFacade;
 
     private _withUserJoin: boolean;
     private _withPatientSettingJoin: boolean;
@@ -47,7 +48,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
         this._patientFacade = new PatientFacade();
         this._patientSettingsFacade = new PatientSettingFacade();
-        this._sessionFacade = new SessionFacade();
+        this._sessionCompositeFacade = new SessionCompositeFacade();
 
         this._withUserJoin = true;
         this._withPatientSettingJoin = true;
@@ -66,7 +67,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
             returnAttributes.addSqlAttributes(this._patientSettingsFacade.getSQLAttributes(excludedSQLAttributes));
         }
         if (this._withSessionJoin) {
-            returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._sessionCompositeFacade.getSQLAttributes(excludedSQLAttributes));
         }
 
         return returnAttributes;
@@ -76,14 +77,14 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
      * fills the entity
      * @param result result for filling
      */
-    protected fillEntity(result: any): Patient {
+    public fillEntity(result: any): Patient {
         const p: Patient = this._patientFacade.fillEntity(result);
         if (this._withPatientSettingJoin) {
             p.patientSetting = this._patientSettingsFacade.fillEntity(result);
         }
 
         if (this._withSessionJoin) {
-            const s: Session = this._sessionFacade.fillEntity(result);
+            const s: Session = this._sessionCompositeFacade.fillEntity(result);
             p.sessions.push(s);
         }
 
@@ -106,8 +107,11 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
         if (this._withSessionJoin) {
             const sessionJoin: SQLBlock = new SQLBlock();
-            sessionJoin.addText(`${this._sessionFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._sessionFacade.tableName, this._sessionFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            sessionJoin.addText(`${this._sessionCompositeFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
+            joins.push(new SQLJoin(this._sessionCompositeFacade.tableName, this._sessionCompositeFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+
+            joins = joins.concat(this._sessionCompositeFacade.joins); // add patient joins (....todo)
+
         }
 
         return joins;
@@ -163,7 +167,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     get sessionFacadeFilter(): Filter {
-        return this._sessionFacade.filter;
+        return this._sessionCompositeFacade.filter;
     }
 
     /**
@@ -186,7 +190,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     get sessionFacadeOrderBy(): Ordering {
-        return this._sessionFacade.ordering;
+        return this._sessionCompositeFacade.ordering;
     }
 
     get withUserJoin(): boolean {

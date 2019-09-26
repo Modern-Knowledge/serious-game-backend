@@ -95,11 +95,9 @@ router.get("/", async (req: Request, res: Response) => {
 
     // console.log(statisticComp);
     //
-     const patientCompositeFacade = new PatientCompositeFacade();
-     patientCompositeFacade.patientSettingFacadeFilter.addFilterCondition("id", 0);
-     patientCompositeFacade.patientUserFacadeFilter.addFilterCondition("id", 0);
-     patientCompositeFacade.filter.addFilterCondition("patient_id", 0);
-    // const patientComp = await patientCompositeFacade.deletePatientComposite();
+    const patientCompositeFacade = new PatientCompositeFacade();
+    const patientComp = await patientCompositeFacade.get();
+    console.log(patientComp);
     //
      const gameCompositeFacade = new GameCompositeFacade();
     // const gamesComp = await gameCompositeFacade.getById(1);
