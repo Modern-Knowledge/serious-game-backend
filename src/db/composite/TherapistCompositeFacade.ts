@@ -113,11 +113,11 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         if (this._withPatientJoin) {
             const therapistPatientJoin: SQLBlock = new SQLBlock();
             therapistPatientJoin.addText(`${this._therapistPatientFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-            joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(new SQLJoin(this._therapistPatientFacade.tableName, this._therapistPatientFacade.tableAlias, therapistPatientJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
             const patientTherapistJoin: SQLBlock = new SQLBlock();
             patientTherapistJoin.addText(`${this._therapistPatientFacade.tableAlias}.patient_id = ${this._patientFacade.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientTherapistJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
         }

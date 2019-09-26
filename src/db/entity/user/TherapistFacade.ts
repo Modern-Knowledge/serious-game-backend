@@ -164,7 +164,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
                     this._userFacade.tableName,
                     this._userFacade.tableAlias,
                     userJoin,
-                    JoinType.JOIN,
+                    JoinType.LEFT_JOIN,
                     JoinCardinality.ONE_TO_ONE
                 )
             );

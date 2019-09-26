@@ -160,7 +160,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
         if (this._withUserJoin) {
             const userJoin: SQLBlock = new SQLBlock();
             userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;
