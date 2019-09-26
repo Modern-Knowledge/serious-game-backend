@@ -1,5 +1,3 @@
-import { EntityFacade } from "../entity/EntityFacade";
-import { TherapistFacade } from "../entity/user/TherapistFacade";
 import { PatientFacade } from "../entity/user/PatientFacade";
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { SQLJoin } from "../sql/SQLJoin";
@@ -21,15 +19,12 @@ import { arrayContainsModel } from "../../util/Helper";
  * retrieves composite sessions
  * contained Facades:
  * - SessionFacade
- * - TherapistFacade
  * - PatientFacade
  * - StatisticCompositeFacade
  * - GameFacade
  * - GameSettingFacade
  *
  * contained Joins:
- * - therapists (1:1)
- *  - users (1:1)
  * - patients (1:1)
  *  - users (1:1)
  * - statistics (1:1)
@@ -44,14 +39,11 @@ import { arrayContainsModel } from "../../util/Helper";
 export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     private _sessionFacade: SessionFacade;
-    private _therapistFacade: TherapistFacade;
     private _patientFacade: PatientFacade;
     private _statisticCompositeFacade: StatisticCompositeFacade;
     private _gameFacade: GameFacade;
     private _gameSettingsFacade: GameSettingFacade;
 
-    private _withTherapistJoin: boolean;
-    private _withTherapistUserJoin: boolean;
     private _withPatientJoin: boolean;
     private _withPatientUserJoin: boolean;
 
@@ -74,14 +66,11 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         }
 
         this._sessionFacade = new SessionFacade();
-        this._therapistFacade = new TherapistFacade();
         this._patientFacade = new PatientFacade();
         this._statisticCompositeFacade = new StatisticCompositeFacade();
         this._gameFacade = new GameFacade();
         this._gameSettingsFacade = new GameSettingFacade();
 
-        this._withTherapistJoin = true;
-        this._withTherapistUserJoin = true;
         this._withPatientJoin = true;
         this._withPatientUserJoin = true;
         this._withStatisticCompositeJoin = true;
@@ -101,10 +90,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         const returnAttributes: SQLAttributes = new SQLAttributes();
 
         returnAttributes.addSqlAttributes(this._sessionFacade.getSQLAttributes(excludedSQLAttributes));
-
-        if (this._withTherapistJoin) {
-            returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
-        }
 
         if (this._withPatientJoin) {
             returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
@@ -131,12 +116,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      */
     protected fillEntity(result: any): Session {
         const s: Session = this._sessionFacade.fillEntity(result);
+
         if (this._withStatisticCompositeJoin) {
             s.statistic = this._statisticCompositeFacade.fillEntity(result);
-        }
-
-        if (this._withTherapistJoin) {
-            s.therapist = this._therapistFacade.fillEntity(result);
         }
 
         if (this._withPatientJoin) {
@@ -172,14 +154,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
-        }
-
-        if (this._withTherapistJoin) {
-            const therapistJoin: SQLBlock = new SQLBlock();
-            therapistJoin.addText(`${this._therapistFacade.tableAlias}.therapist_id = ${this.tableAlias}.therapist_id`);
-            joins.push(new SQLJoin(this._therapistFacade.tableName, this._therapistFacade.tableAlias, therapistJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
-
-            joins = joins.concat(this._therapistFacade.joins); // add therapist joins (user)
         }
 
         if (this._withStatisticCompositeJoin) {
@@ -239,8 +213,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      */
     protected get filters(): Filter[] {
         return [
-            this.therapistFacadeFilter,
-            this.therapistUserFacadeFilter,
             this.patientFacadeFilter,
             this.patientUserFacadeFilter,
             this.statisticFacadeFilter,
@@ -252,14 +224,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             this.gameSettingFacadeFilter,
             this.difficultyFacadeFilter
         ];
-    }
-
-    get therapistFacadeFilter(): Filter {
-        return this._therapistFacade.filter;
-    }
-
-    get therapistUserFacadeFilter(): Filter {
-        return this._therapistFacade.userFacadeFilter;
     }
 
     get patientFacadeFilter(): Filter {
@@ -307,8 +271,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      */
     protected get orderBys(): Ordering[] {
         return [
-            this.therapistFacadeOrderBy,
-            this.therapistUserFacadeOrderBy,
             this.patientFacadeOrderBy,
             this.patientUserFacadeOrderBy,
             this.statisticFacadeOrderBy,
@@ -319,14 +281,6 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
             this.gameSettingFacadeOrderBy,
             this.difficultyFacadeOrderBy
         ];
-    }
-
-    get therapistFacadeOrderBy(): Ordering {
-        return this._therapistFacade.ordering;
-    }
-
-    get therapistUserFacadeOrderBy(): Ordering {
-        return this._therapistFacade.userFacadeOrderBy;
     }
 
     get patientFacadeOrderBy(): Ordering {
@@ -365,29 +319,12 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         return this._gameSettingsFacade.difficultyFacadeOrderBy;
     }
 
-    get withTherapistJoin(): boolean {
-        return this._withTherapistJoin;
-    }
-
-    set withTherapistJoin(value: boolean) {
-        this._withTherapistJoin = value;
-    }
-
     get withPatientJoin(): boolean {
         return this._withPatientJoin;
     }
 
     set withPatientJoin(value: boolean) {
         this._withPatientJoin = value;
-    }
-
-    get withTherapistUserJoin(): boolean {
-        return this._withTherapistUserJoin;
-    }
-
-    set withTherapistUserJoin(value: boolean) {
-        this._therapistFacade.withUserJoin = value;
-        this._withTherapistUserJoin = value;
     }
 
     get withPatientUserJoin(): boolean {

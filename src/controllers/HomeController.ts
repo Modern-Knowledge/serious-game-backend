@@ -111,7 +111,7 @@ router.get("/", async (req: Request, res: Response) => {
      sessionCompositeFacade.filter.addFilterCondition("id", 0);
      sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", 0);
      sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", 0);
-     // const sessions = await sessionCompositeFacade.deleteSessionComposite();
+      const sessions = await sessionCompositeFacade.get();
       // console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;

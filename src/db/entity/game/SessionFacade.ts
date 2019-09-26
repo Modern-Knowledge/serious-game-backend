@@ -31,7 +31,7 @@ export class SessionFacade extends EntityFacade<Session> {
             excludedAttrDefault = excludedAttrDefault.concat(excludedSQLAttributes);
         }
 
-        const sqlAttributes: string[] = ["game_id", "patient_id", "statistic_id", "therapist_id", "date", "game_setting_id"];
+        const sqlAttributes: string[] = ["game_id", "patient_id", "statistic_id", "date", "game_setting_id"];
 
         return super.getSQLAttributes(excludedAttrDefault, sqlAttributes);
     }
@@ -59,10 +59,6 @@ export class SessionFacade extends EntityFacade<Session> {
 
         if (result[this.name("statistic_id")] !== undefined) {
             session.statisticId = result[this.name("statistic_id")];
-        }
-
-        if (result[this.name("therapist_id")] !== undefined) {
-            session.therapistId = result[this.name("therapist_id")];
         }
 
         if (result[this.name("date")] !== undefined) {
@@ -105,9 +101,6 @@ export class SessionFacade extends EntityFacade<Session> {
 
         const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", prefix, session.patientId);
         attributes.addAttribute(patientIdAttribute);
-
-        const therapistIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", prefix, session.therapistId);
-        attributes.addAttribute(therapistIdAttribute);
 
         const statisticIdAttribute: SQLValueAttribute = new SQLValueAttribute("statistic_id", prefix, session.statisticId);
         attributes.addAttribute(statisticIdAttribute);
