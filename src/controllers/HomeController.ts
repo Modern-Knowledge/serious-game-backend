@@ -1,26 +1,23 @@
 import express, { Request, Response } from "express";
 import { UserFacade } from "../db/entity/user/UserFacade";
-import { SQLOrder } from "../db/sql/SQLOrder";
-import { Filter } from "../db/filter/Filter";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
-import { User } from "../lib/models/User";
 import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
-import { MailPriority } from "../util/mail/MailPriority";
-import { Attachment } from "../util/mail/Attachment";
-import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
-import { mailTransport } from "../util/mail/mailTransport";
 import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
-import { Patient } from "../lib/models/Patient";
 import { Therapist } from "../lib/models/Therapist";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
-import {StatisticFacade} from "../db/entity/game/StatisticFacade";
-import {Statistic} from "../lib/models/Statistic";
+import { StatisticFacade } from "../db/entity/game/StatisticFacade";
+import { Statistic } from "../lib/models/Statistic";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../util/http/HttpResponse";
+
 const router = express.Router();
 
 /**
@@ -87,7 +84,7 @@ router.get("/", async (req: Request, res: Response) => {
     //
     const statistic: Statistic = new Statistic();
       const statisticFacade = new StatisticFacade();
-      statisticFacade.insertStatistic(statistic);
+      // statisticFacade.insertStatistic(statistic);
     //
      const statisticCompFacade = new StatisticCompositeFacade();
      statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
@@ -140,7 +137,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const userfacade = new UserFacade();
       userfacade.filter.addFilterCondition("id", 1);
-      console.log(await userfacade.insertUser(u));
+      // console.log(await userfacade.insertUser(u));
 
     const patientFacade = new TherapistFacade();
     // patientFacade.isTherapist(1003);
@@ -152,9 +149,11 @@ router.get("/", async (req: Request, res: Response) => {
     // await patientFacade.updateUserTherapist(u);
    // await patientFacade.deleteTherapist();
 
+    const response = new HttpResponse<Therapist>(HttpResponseStatus.SUCCESS, u, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
+    console.log(response);
 
 
-    res.jsonp("therapists");
+    res.jsonp(response);
 });
 
 export default router;
