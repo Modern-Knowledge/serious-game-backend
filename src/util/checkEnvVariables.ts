@@ -23,12 +23,15 @@ function checkEnvVariables(variables: string[]): string[] {
     return variables.filter(checkEnvVariable);
 }
 
+/**
+ * check if all required environment variables are set
+ */
 export function checkEnvFunction(): void {
     /**
      * throw an error if these env variables are not present
      */
     const unsetRequiredVars: string[] = checkEnvVariables([
-        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE"
+        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION"
     ]);
 
     if (unsetRequiredVars.length > 0) {
