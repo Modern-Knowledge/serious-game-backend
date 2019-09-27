@@ -66,6 +66,10 @@ export class UserFacade extends EntityFacade<User> {
      * @param result result for filling
      */
     protected fillEntity(result: any): User {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const u: User = new User();
         this.fillUserEntity(result, u);
 
@@ -80,47 +84,47 @@ export class UserFacade extends EntityFacade<User> {
     public fillUserEntity(result: any, u: User): User {
         this.fillDefaultAttributes(result, u);
 
-        if (result[this.name("email")] !== undefined) {
+        if (result[this.name("email")]) {
             u.email = result[this.name("email")];
         }
 
-        if (result[this.name("password")] !== undefined) {
+        if (result[this.name("password")]) {
             u.password = result[this.name("password")];
         }
 
-        if (result[this.name("forename")] !== undefined) {
+        if (result[this.name("forename")]) {
             u.forename = result[this.name("forename")];
         }
 
-        if (result[this.name("lastname")] !== undefined) {
+        if (result[this.name("lastname")]) {
             u.lastname = result[this.name("lastname")];
         }
 
-        if (result[this.name("gender")] !== undefined) {
+        if (result[this.name("gender")]) {
             u.gender = result[this.name("gender")];
         }
 
-        if (result[this.name("last_login")] !== undefined) {
+        if (result[this.name("last_login")]) {
             u.lastLogin = result[this.name("last_login")];
         }
 
-        if (result[this.name("failed_login_attempts")] !== undefined) {
+        if (result[this.name("failed_login_attempts")]) {
             u.failedLoginAttempts = result[this.name("failed_login_attempts")];
         }
 
-        if (result[this.name("login_cooldown")] !== undefined) {
+        if (result[this.name("login_cooldown")]) {
             u.loginCoolDown = result[this.name("login_cooldown")];
         }
 
-        if (result[this.name("status")] !== undefined) {
+        if (result[this.name("status")]) {
             u.status = result[this.name("status")];
         }
 
-        if (result[this.name("resetcode")] !== undefined) {
+        if (result[this.name("resetcode")]) {
             u.resetcode = result[this.name("resetcode")];
         }
 
-        if (result[this.name("resetcode_validuntil")] !== undefined) {
+        if (result[this.name("resetcode_validuntil")]) {
             u.resetcodeValidUntil = result[this.name("resetcode_validuntil")];
         }
 

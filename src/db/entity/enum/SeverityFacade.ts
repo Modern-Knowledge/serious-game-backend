@@ -33,11 +33,15 @@ export class SeverityFacade extends EntityFacade<Severity> {
      * @param result result for filling
      */
     public fillEntity(result: any): Severity {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const severity: Severity = new Severity();
 
         this.fillDefaultAttributes(result, severity);
 
-        if (result[this.name("severity")] !== undefined) {
+        if (result[this.name("severity")]) {
             severity.severity = result[this.name("severity")];
         }
 

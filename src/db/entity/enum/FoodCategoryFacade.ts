@@ -38,11 +38,15 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
      * @param result result for filling
      */
     public fillEntity(result: any): FoodCategory {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const foodCategory: FoodCategory = new FoodCategory();
 
         this.fillDefaultAttributes(result, foodCategory);
 
-        if (result[this.name("name")] !== undefined) {
+        if (result[this.name("name")]) {
             foodCategory.name = result[this.name("name")];
         }
 

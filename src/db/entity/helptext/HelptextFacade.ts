@@ -60,6 +60,10 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
      * @param result result for filling
      */
     public fillEntity(result: any): Helptext {
+        if (!result[this.name("helptext_id")]) {
+            return undefined;
+        }
+
         const helptext: Helptext = new Helptext();
 
         if (this._withTextJoin) {

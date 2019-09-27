@@ -72,18 +72,25 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
      * @param result result for filling
      */
     public fillEntity(result: any): Errortext {
+        if (!result[this.name("error_id")]) {
+            return undefined;
+        }
+
         const errortext: Errortext = new Errortext();
 
         if (this._withTextJoin) {
             this._textFacade.fillTextEntity(result, errortext);
         }
 
-        if (result[this.name("severity_id")] !== undefined) {
+        if (result[this.name("severity_id")]) {
             errortext.severityId = result[this.name("severity_id")];
         }
 
         if (this._withSeverityJoin) {
-            errortext.severity = this._severityFacade.fillEntity(result);
+            const severity = this._severityFacade.fillEntity(result);
+            if (severity) {
+                errortext.severity = severity;
+            }
         }
 
         return errortext;
@@ -98,13 +105,13 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         if (this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.error_id = ${this._textFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         if (this._withSeverityJoin) {
             const severityJoin: SQLBlock = new SQLBlock();
             severityJoin.addText(`${this.tableAlias}.severity_id = ${this._severityFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;

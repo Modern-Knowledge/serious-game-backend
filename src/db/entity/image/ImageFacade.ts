@@ -34,11 +34,15 @@ export class ImageFacade extends EntityFacade<Image> {
      * @param result result for filling
      */
     protected fillEntity(result: any): Image {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const i: Image = new Image();
 
         this.fillDefaultAttributes(result, i);
 
-        if (result[this.name("image")] !== undefined) {
+        if (result[this.name("image")]) {
             i.image = result[this.name("image")];
         }
 

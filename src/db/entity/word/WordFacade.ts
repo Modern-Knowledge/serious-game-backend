@@ -7,41 +7,45 @@ import { Word } from "../../../lib/models/Word";
  */
 export class WordFacade extends EntityFacade<Word> {
 
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("words", tableAlias);
-    } else {
-      super("words", "w");
-    }
-  }
-
-  /**
-   * returns sql attributes that should be retrieved from the database
-   * @param excludedSQLAttributes attributes that should not be selected
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] =  ["name"];
-
-    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
-  }
-
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  protected fillEntity(result: any): Word {
-    const word: Word = new Word();
-
-    this.fillDefaultAttributes(result, word);
-
-    if (result[this.name("name")] !== undefined) {
-      word.name = result[this.name("name")];
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("words", tableAlias);
+        } else {
+            super("words", "w");
+        }
     }
 
-    return word;
-  }
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const sqlAttributes: string[] =  ["name"];
+
+        return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    }
+
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): Word {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
+        const word: Word = new Word();
+
+        this.fillDefaultAttributes(result, word);
+
+        if (result[this.name("name")]) {
+            word.name = result[this.name("name")];
+        }
+
+        return word;
+    }
 
 }

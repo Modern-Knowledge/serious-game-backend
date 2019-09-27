@@ -32,6 +32,10 @@ export class TextFacade extends EntityFacade<Text> {
      * @param result result for filling
      */
     protected fillEntity(result: any): Text {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const text: Text = new Text();
         this.fillTextEntity(result, text);
 
@@ -46,11 +50,11 @@ export class TextFacade extends EntityFacade<Text> {
     public fillTextEntity(result: any, text: Text): Text {
         this.fillDefaultAttributes(result, text);
 
-        if (result[this.name("name")] !== undefined) {
+        if (result[this.name("name")]) {
             text.name = result[this.name("name")];
         }
 
-        if (result[this.name("text")] !== undefined) {
+        if (result[this.name("text")]) {
             text.text = result[this.name("text")];
         }
 

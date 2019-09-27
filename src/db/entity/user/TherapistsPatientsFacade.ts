@@ -44,11 +44,11 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
   protected fillEntity(result: any): TherapistPatient {
     const therapistPatient: TherapistPatient = new TherapistPatient();
 
-    if (result[this.name("therapist_id")] !== undefined) {
+    if (result[this.name("therapist_id")]) {
       therapistPatient.therapistId = result[this.name("therapist_id")];
     }
 
-    if (result[this.name("patient_id")] !== undefined) {
+    if (result[this.name("patient_id")]) {
       therapistPatient.patientId = result[this.name("patient_id")];
     }
 

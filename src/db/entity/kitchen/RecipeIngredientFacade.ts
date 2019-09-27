@@ -37,15 +37,19 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
      * @param result result for filling
      */
     public fillEntity(result: any): RecipeIngredient {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const recipeIngredient: RecipeIngredient = new RecipeIngredient();
 
         this.fillDefaultAttributes(result, recipeIngredient);
 
-        if (result[this.name("recipe_id")] !== undefined) {
+        if (result[this.name("recipe_id")]) {
             recipeIngredient.recipeId = result[this.name("recipe_id")];
         }
 
-        if (result[this.name("ingredient_id")] !== undefined) {
+        if (result[this.name("ingredient_id")]) {
             recipeIngredient.ingredientId = result[this.name("ingredient_id")];
         }
 

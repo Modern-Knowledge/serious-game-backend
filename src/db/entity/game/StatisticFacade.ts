@@ -34,15 +34,19 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * @param result result for filling
      */
     public fillEntity(result: any): Statistic {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const statistic: Statistic = new Statistic();
 
         this.fillDefaultAttributes(result, statistic);
 
-        if (result[this.name("starttime")] !== undefined) {
+        if (result[this.name("starttime")]) {
             statistic.startTime = result[this.name("starttime")];
         }
 
-        if (result[this.name("endtime")] !== undefined) {
+        if (result[this.name("endtime")]) {
             statistic.endTime = result[this.name("endtime")];
         }
 

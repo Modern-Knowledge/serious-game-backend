@@ -67,7 +67,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
         this._sessionFacade = new SessionFacade();
 
-        // tableAliases
+        // set tableAliases
         this._patientFacade = new PatientFacade("patcomp");
         this._patientFacade.userFacade.tableAlias = "patcompUser";
 
@@ -119,22 +119,38 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      * @param result result for filling
      */
     public fillEntity(result: any): Session {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const s: Session = this._sessionFacade.fillEntity(result);
 
         if (this._withStatisticCompositeJoin) {
-            s.statistic = this._statisticCompositeFacade.fillEntity(result);
+            const statistic = this._statisticCompositeFacade.fillEntity(result);
+            if (statistic) {
+                s.statistic = statistic;
+            }
         }
 
         if (this._withPatientJoin) {
-            s.patient = this._patientFacade.fillEntity(result);
+            const patient = this._patientFacade.fillEntity(result);
+            if (patient) {
+                s.patient = patient;
+            }
         }
 
         if (this._withGameJoin) {
-            s.game = this._gameFacade.fillEntity(result);
+            const game = this._gameFacade.fillEntity(result);
+            if (game) {
+                s.game = this._gameFacade.fillEntity(result);
+            }
         }
 
         if (this._withGameSettingsJoin) {
-            s.gameSetting = this._gameSettingsFacade.fillEntity(result);
+            const gameSetting = this._gameSettingsFacade.fillEntity(result);
+            if (gameSetting) {
+                s.gameSetting = this._gameSettingsFacade.fillEntity(result);
+            }
         }
 
         return s;
@@ -149,13 +165,13 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withGameJoin) {
             const gameJoin: SQLBlock = new SQLBlock();
             gameJoin.addText(`${this._gameFacade.tableAlias}.id = ${this.tableAlias}.game_id`);
-            joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         if (this._withPatientJoin) {
             const patientJoin: SQLBlock = new SQLBlock();
             patientJoin.addText(`${this._patientFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
         }
@@ -163,7 +179,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withStatisticCompositeJoin) {
             const statisticJoin: SQLBlock = new SQLBlock();
             statisticJoin.addText(`${this._statisticCompositeFacade.tableAlias}.id = ${this.tableAlias}.statistic_id`);
-            joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._statisticCompositeFacade.joins); // add statistic joins (errortext)
         }
@@ -171,7 +187,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_setting_id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }

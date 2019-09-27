@@ -35,9 +35,7 @@ export class LogFacade extends EntityFacade<Log> {
      */
     public insertLog(log: Log): Log {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(log);
-
         this.insert(attributes);
-
         return log;
     }
 
@@ -46,31 +44,35 @@ export class LogFacade extends EntityFacade<Log> {
      * @param result retrieved result
      */
     public fillEntity(result: any): Log {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const l: Log = new Log();
 
         this.fillDefaultAttributes(result, l);
 
-        if (result[this.name("logger")] !== undefined) {
+        if (result[this.name("logger")]) {
             l.logger = result[this.name("logger")];
         }
 
-        if (result[this.name("level")] !== undefined) {
+        if (result[this.name("level")]) {
             l.level = result[this.name("level")];
         }
 
-        if (result[this.name("method")] !== undefined) {
+        if (result[this.name("method")]) {
             l.method = result[this.name("method")];
         }
 
-        if (result[this.name("message")] !== undefined) {
+        if (result[this.name("message")]) {
             l.message = result[this.name("message")];
         }
 
-        if (result[this.name("params")] !== undefined) {
+        if (result[this.name("params")]) {
             l.params = result[this.name("params")].split(" ");
         }
 
-        if (result[this.name("user_id")] !== undefined) {
+        if (result[this.name("user_id")]) {
             l.userId = result[this.name("user_id")];
         }
 

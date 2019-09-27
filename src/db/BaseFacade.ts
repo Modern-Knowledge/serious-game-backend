@@ -29,7 +29,7 @@ import { SQLValueAttribute } from "./sql/SQLValueAttribute";
 /**
  * base class for crud operations with the database
  */
-export abstract class BaseFacade<EntityType extends AbstractModel> {
+export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
     private _tableName: string;
     private _tableAlias: string;

@@ -5,7 +5,6 @@ import { JoinType } from "../sql/enums/JoinType";
 import { Patient } from "../../lib/models/Patient";
 import { PatientFacade } from "../entity/user/PatientFacade";
 import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
-import { SessionFacade } from "../entity/game/SessionFacade";
 import { Session } from "../../lib/models/Session";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
@@ -19,12 +18,22 @@ import { SessionCompositeFacade } from "./SessionCompositeFacade";
  * contained Facades:
  * - PatientFacade
  * - PatientSettingFacade
- * - SessionFacade
+ * - SessionCompositeFacade
  *
  * contained Joins:
  * - users (1:1)
  * - patient_setting (1:1)
  * - sessions (1:n)
+ *   - patient (1:1)
+ *     - users (1:1)
+ *   - statistics (1:1)
+ *     - errortexts_statistics (1:n)
+ *     - errortexts (1:n)
+ *     - texts (1:1)
+ *     - severities (1:1)
+ *   - games (1:1)
+ *   - games_settings (1:1)
+ *     - difficulty (1:1)
  */
 export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
@@ -34,7 +43,16 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     private _withUserJoin: boolean;
     private _withPatientSettingJoin: boolean;
-    private _withSessionJoin: boolean;
+    private _withSessionCompositeJoin: boolean;
+    private _withPatientSessionJoin: boolean;
+    private _withPatientUserSessionJoin: boolean;
+    private _withStatisticCompositeJoin: boolean;
+    private _withErrortextJoin: boolean;
+    private _withTextJoin: boolean;
+    private _withSeverityJoin: boolean;
+    private _withGameJoin: boolean;
+    private _withGameSettingsJoin: boolean;
+    private _withDifficultyJoin: boolean;
 
     /**
      * @param tableAlias
@@ -52,7 +70,17 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
         this._withUserJoin = true;
         this._withPatientSettingJoin = true;
-        this._withSessionJoin = true;
+        this._withSessionCompositeJoin = true;
+
+        this._withPatientSessionJoin = true;
+        this._withPatientUserSessionJoin = true;
+        this._withStatisticCompositeJoin = true;
+        this._withErrortextJoin = true;
+        this._withTextJoin = true;
+        this._withSeverityJoin = true;
+        this._withGameJoin = true;
+        this._withGameSettingsJoin = true;
+        this._withDifficultyJoin = true;
     }
 
     /**
@@ -63,10 +91,11 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
         const returnAttributes: SQLAttributes = new SQLAttributes();
 
         returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
+
         if (this._withPatientSettingJoin) {
             returnAttributes.addSqlAttributes(this._patientSettingsFacade.getSQLAttributes(excludedSQLAttributes));
         }
-        if (this._withSessionJoin) {
+        if (this._withSessionCompositeJoin) {
             returnAttributes.addSqlAttributes(this._sessionCompositeFacade.getSQLAttributes(excludedSQLAttributes));
         }
 
@@ -78,14 +107,24 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
      * @param result result for filling
      */
     public fillEntity(result: any): Patient {
-        const p: Patient = this._patientFacade.fillEntity(result);
-        if (this._withPatientSettingJoin) {
-            p.patientSetting = this._patientSettingsFacade.fillEntity(result);
+        if (!result[this.name("patient_id")]) {
+            return undefined;
         }
 
-        if (this._withSessionJoin) {
+        const p: Patient = this._patientFacade.fillEntity(result);
+
+        if (this._withPatientSettingJoin) {
+            const patientSetting = this._patientSettingsFacade.fillEntity(result);
+            if (patientSetting) {
+                p.patientSetting = this._patientSettingsFacade.fillEntity(result);
+            }
+        }
+
+        if (this._withSessionCompositeJoin) {
             const s: Session = this._sessionCompositeFacade.fillEntity(result);
-            p.sessions.push(s);
+            if (s) {
+                p.sessions.push(s);
+            }
         }
 
         return p;
@@ -102,15 +141,15 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
         if (this._withPatientSettingJoin) {
             const patientSettingJoin: SQLBlock = new SQLBlock();
             patientSettingJoin.addText(`${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
-        if (this._withSessionJoin) {
+        if (this._withSessionCompositeJoin) {
             const sessionJoin: SQLBlock = new SQLBlock();
             sessionJoin.addText(`${this._sessionCompositeFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
             joins.push(new SQLJoin(this._sessionCompositeFacade.tableName, this._sessionCompositeFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
-            joins = joins.concat(this._sessionCompositeFacade.joins); // add patient joins (....todo)
+            joins = joins.concat(this._sessionCompositeFacade.joins); // add session composite joins (game, patient, user, statistic, errortext, game-settings, difficulty)
 
         }
 
@@ -209,12 +248,93 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
         this._withPatientSettingJoin = value;
     }
 
-    get withSessionJoin(): boolean {
-        return this._withSessionJoin;
+    get withSessionCompositeJoin(): boolean {
+        return this._withSessionCompositeJoin;
     }
 
-    set withSessionJoin(value: boolean) {
-        this._withSessionJoin = value;
+    set withSessionCompositeJoin(value: boolean) {
+        this._withSessionCompositeJoin = value;
+    }
+
+    get withPatientSessionJoin(): boolean {
+        return this._withPatientSessionJoin;
+    }
+
+    set withPatientSessionJoin(value: boolean) {
+        this._sessionCompositeFacade.withPatientJoin = value;
+        this._withPatientSessionJoin = value;
+    }
+
+    get withPatientUserSessionJoin(): boolean {
+        return this._withPatientUserSessionJoin;
+    }
+
+    set withPatientUserSessionJoin(value: boolean) {
+        this._sessionCompositeFacade.withPatientUserJoin = value;
+        this._withPatientUserSessionJoin = value;
+    }
+
+    get withStatisticCompositeJoin(): boolean {
+        return this._withStatisticCompositeJoin;
+    }
+
+    set withStatisticCompositeJoin(value: boolean) {
+        this._sessionCompositeFacade.withStatisticCompositeJoin = value;
+        this._withStatisticCompositeJoin = value;
+    }
+
+    get withErrortextJoin(): boolean {
+        return this._withErrortextJoin;
+    }
+
+    set withErrortextJoin(value: boolean) {
+        this._sessionCompositeFacade.withErrortextJoin = value;
+        this._withErrortextJoin = value;
+    }
+
+    get withTextJoin(): boolean {
+        return this._withTextJoin;
+    }
+
+    set withTextJoin(value: boolean) {
+        this._sessionCompositeFacade.withTextJoin = value;
+        this._withTextJoin = value;
+    }
+
+    get withSeverityJoin(): boolean {
+        return this._withSeverityJoin;
+    }
+
+    set withSeverityJoin(value: boolean) {
+        this._sessionCompositeFacade.withSeverityJoin = value;
+        this._withSeverityJoin = value;
+    }
+
+    get withGameJoin(): boolean {
+        return this._withGameJoin;
+    }
+
+    set withGameJoin(value: boolean) {
+        this._sessionCompositeFacade.withGameJoin = value;
+        this._withGameJoin = value;
+    }
+
+    get withGameSettingsJoin(): boolean {
+        return this._withGameSettingsJoin;
+    }
+
+    set withGameSettingsJoin(value: boolean) {
+        this._sessionCompositeFacade.withGameSettingsJoin = value;
+        this._withGameSettingsJoin = value;
+    }
+
+    get withDifficultyJoin(): boolean {
+        return this._withDifficultyJoin;
+    }
+
+    set withDifficultyJoin(value: boolean) {
+        this._sessionCompositeFacade.withDifficultyJoin = value;
+        this._withDifficultyJoin = value;
     }
 
     get idFilter(): Filter {

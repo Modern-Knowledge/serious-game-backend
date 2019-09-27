@@ -33,11 +33,15 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
      * @param result result for filling
      */
     public fillEntity(result: any): Difficulty {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const difficulty: Difficulty = new Difficulty();
 
         this.fillDefaultAttributes(result, difficulty);
 
-        if (result[this.name("difficulty")] !== undefined) {
+        if (result[this.name("difficulty")]) {
             difficulty.difficulty = result[this.name("difficulty")];
         }
 

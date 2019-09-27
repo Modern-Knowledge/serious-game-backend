@@ -41,31 +41,35 @@ export class SessionFacade extends EntityFacade<Session> {
      * @param result result for filling
      */
     public fillEntity(result: any): Session {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const session: Session = new Session();
 
         this.fillDefaultAttributes(result, session);
 
-        if (result[this.name("id")] !== undefined) {
+        if (result[this.name("id")]) {
             session.id = result[this.name("id")];
         }
 
-        if (result[this.name("game_id")] !== undefined) {
+        if (result[this.name("game_id")]) {
             session.gameId = result[this.name("game_id")];
         }
 
-        if (result[this.name("patient_id")] !== undefined) {
+        if (result[this.name("patient_id")]) {
             session.patientId = result[this.name("patient_id")];
         }
 
-        if (result[this.name("statistic_id")] !== undefined) {
+        if (result[this.name("statistic_id")]) {
             session.statisticId = result[this.name("statistic_id")];
         }
 
-        if (result[this.name("date")] !== undefined) {
+        if (result[this.name("date")]) {
             session.date = result[this.name("date")];
         }
 
-        if (result[this.name("game_setting_id")] !== undefined) {
+        if (result[this.name("game_setting_id")]) {
             session.gameSettingId = result[this.name("game_setting_id")];
         }
 

@@ -124,13 +124,17 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * @param result result for filling
      */
     public fillEntity(result: any): Therapist {
+        if (!result[this.name("therapist_id")]) {
+            return undefined;
+        }
+
         const t: Therapist = new Therapist();
 
         if (this._withUserJoin) {
             this._userFacade.fillUserEntity(result, t);
         }
 
-        if (result[this.name("role")] !== undefined) {
+        if (result[this.name("role")]) {
             t.role = result[this.name("role")];
         }
 

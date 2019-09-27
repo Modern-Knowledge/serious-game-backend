@@ -59,20 +59,27 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
      * @param result result for filling
      */
     public fillEntity(result: any): GameSetting {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const gameSetting: GameSetting = new GameSetting();
 
         this.fillDefaultAttributes(result, gameSetting);
 
-        if (result[this.name("game_id")] !== undefined) {
+        if (result[this.name("game_id")]) {
             gameSetting.gameId = result[this.name("game_id")];
         }
 
-        if (result[this.name("difficulty_id")] !== undefined) {
+        if (result[this.name("difficulty_id")]) {
             gameSetting.difficultyId = result[this.name("difficulty_id")];
         }
 
         if (this._withDifficultyJoin) {
-            gameSetting.difficulty = this._difficultyFacade.fillEntity(result);
+            const difficulty = this._difficultyFacade.fillEntity(result);
+            if (difficulty) {
+                gameSetting.difficulty = this._difficultyFacade.fillEntity(result);
+            }
         }
 
         return gameSetting;

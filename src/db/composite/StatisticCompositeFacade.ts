@@ -77,11 +77,17 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
      * @param result result for filling
      */
     public fillEntity(result: any): Statistic {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const t: Statistic = this._statisticFacade.fillEntity(result);
 
         if (this._withErrortextJoin) {
             const et: Errortext = this._errortextFacade.fillEntity(result);
-            t.errortexts.push(et);
+            if (et) {
+                t.errortexts.push(et);
+            }
         }
 
         return t;
@@ -100,7 +106,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
             const errortextStatisticJoin: SQLBlock = new SQLBlock();
             errortextStatisticJoin.addText(`${this._errortextStatisticFacade.tableAlias}.errortext_id = ${this._errortextFacade.tableAlias}.error_id`);
-            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextStatisticJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._errortextFacade.joins); // add errortext joins (text, severity)
         }

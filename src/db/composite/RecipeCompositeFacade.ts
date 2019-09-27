@@ -82,11 +82,17 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
      * @param result result for filling
      */
     protected fillEntity(result: any): Recipe {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const r: Recipe = this._recipeFacade.fillEntity(result);
 
         if (this._withIngredientsJoin) {
             const ing: Ingredient = this._ingredientFacade.fillEntity(result);
-            r.ingredients.push(ing);
+            if (ing) {
+                r.ingredients.push(ing);
+            }
         }
 
         return r;

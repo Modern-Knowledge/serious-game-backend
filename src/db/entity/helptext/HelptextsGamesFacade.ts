@@ -40,11 +40,11 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
     protected fillEntity(result: any): HelptextGame {
         const helptextGames: HelptextGame = new HelptextGame();
 
-        if (result[this.name("game_id")] !== undefined) {
+        if (result[this.name("game_id")]) {
             helptextGames.gameId = result[this.name("game_id")];
         }
 
-        if (result[this.name("helptext_id")] !== undefined) {
+        if (result[this.name("helptext_id")]) {
             helptextGames.helptextId = result[this.name("helptext_id")];
         }
 

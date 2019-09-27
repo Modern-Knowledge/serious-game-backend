@@ -42,11 +42,11 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     protected fillEntity(result: any): ErrortextStatistic {
         const errortextStatistic: ErrortextStatistic = new ErrortextStatistic();
 
-        if (result[this.name("errortext_id")] !== undefined) {
+        if (result[this.name("errortext_id")]) {
             errortextStatistic.errortextId = result[this.name("errortext_id")];
         }
 
-        if (result[this.name("statistic_id")] !== undefined) {
+        if (result[this.name("statistic_id")]) {
             errortextStatistic.statisticId = result[this.name("statistic_id")];
         }
 

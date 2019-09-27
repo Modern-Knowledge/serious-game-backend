@@ -33,15 +33,19 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
      * @param result result for filling
      */
     public fillEntity(result: any): PatientSetting {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const patientSetting: PatientSetting = new PatientSetting();
 
         this.fillDefaultAttributes(result, patientSetting);
 
-        if (result[this.name("neglect")] !== undefined) {
+        if (result[this.name("neglect")]) {
             patientSetting.neglect = result[this.name("neglect")];
         }
 
-        if (result[this.name("patient_id")] !== undefined) {
+        if (result[this.name("patient_id")]) {
             patientSetting.patientId = result[this.name("patient_id")];
         }
 

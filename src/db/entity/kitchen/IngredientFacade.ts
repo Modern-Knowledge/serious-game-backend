@@ -65,24 +65,31 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
      * @param result result for filling
      */
     public fillEntity(result: any): Ingredient {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const ingredient: Ingredient = new Ingredient();
 
         this.fillDefaultAttributes(result, ingredient);
 
-        if (result[this.name("name")] !== undefined) {
+        if (result[this.name("name")]) {
             ingredient.name = result[this.name("name")];
         }
 
-        if (result[this.name("image_id")] !== undefined) {
+        if (result[this.name("image_id")]) {
             ingredient.imageId = result[this.name("image_id")];
         }
 
-        if (result[this.name("food_category_id")] !== undefined) {
+        if (result[this.name("food_category_id")]) {
             ingredient.foodCategoryId = result[this.name("food_category_id")];
         }
 
         if (this._withFoodCategoryJoin) {
-            ingredient.foodCategory = this._foodCategoryFacade.fillEntity(result);
+            const foodCategory = this._foodCategoryFacade.fillEntity(result);
+            if (foodCategory) {
+                ingredient.foodCategory = this._foodCategoryFacade.fillEntity(result);
+            }
         }
 
         return ingredient;

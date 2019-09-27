@@ -88,16 +88,24 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
      * @param result result for filling
      */
     protected fillEntity(result: any): Game {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const g: Game = this._gameFacade.fillEntity(result);
 
         if (this._withGameSettingsJoin) {
             const gs: GameSetting = this._gameSettingsFacade.fillEntity(result);
-            g.gameSettings.push(gs);
+            if (gs) {
+                g.gameSettings.push(gs);
+            }
         }
 
         if (this._withHelptextJoin) {
             const ht: Helptext = this._helptextFacade.fillEntity(result);
-            g.helptexts.set(ht.name, ht);
+            if (ht) {
+                g.helptexts.set(ht.name, ht);
+            }
         }
 
 

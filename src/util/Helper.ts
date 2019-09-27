@@ -24,7 +24,11 @@ export function loggerString(directory: string, className: string, methodName: s
  * @param search model to search for
  * @param values array to search in
  */
-export function arrayContainsModel<T extends AbstractModel>(search: T, values: T[]): boolean {
+export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values: T[]): boolean {
+    if (!search) { // value is undefined
+        return false;
+    }
+
     for (const item of values) {
         if (search.id === item.id) {
             return true;

@@ -65,24 +65,31 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
      * @param result result for filling
      */
     public fillEntity(result: any): Recipe {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const recipe: Recipe = new Recipe();
 
         this.fillDefaultAttributes(result, recipe);
 
-        if (result[this.name("name")] !== undefined) {
+        if (result[this.name("name")]) {
             recipe.name = result[this.name("name")];
         }
 
-        if (result[this.name("description")] !== undefined) {
+        if (result[this.name("description")]) {
             recipe.description = result[this.name("description")];
         }
 
-        if (result[this.name("difficulty_id")] !== undefined) {
+        if (result[this.name("difficulty_id")]) {
             recipe.difficultyId = result[this.name("difficulty_id")];
         }
 
         if (this._withDifficultyJoin) {
-            recipe.difficulty = this._difficultyFacade.fillEntity(result);
+            const difficulty = this._difficultyFacade.fillEntity(result);
+            if (difficulty) {
+                recipe.difficulty = this._difficultyFacade.fillEntity(result);
+            }
         }
 
         return recipe;

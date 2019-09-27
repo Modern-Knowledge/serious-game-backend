@@ -51,27 +51,31 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      * @param result retrieved result
      */
     public fillEntity(result: any): SmtpLog {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const smtpLog: SmtpLog = new SmtpLog();
 
         this.fillDefaultAttributes(result, smtpLog);
 
-        if (result[this.name("subject")] !== undefined) {
+        if (result[this.name("subject")]) {
             smtpLog.subject = result[this.name("subject")];
         }
 
-        if (result[this.name("body")] !== undefined) {
+        if (result[this.name("body")]) {
             smtpLog.body = result[this.name("body")];
         }
 
-        if (result[this.name("rcpt_email")] !== undefined) {
+        if (result[this.name("rcpt_email")]) {
             smtpLog.rcptEmail = result[this.name("rcpt_email")];
         }
 
-        if (result[this.name("simulated")] !== undefined) {
+        if (result[this.name("simulated")]) {
             smtpLog.simulated = result[this.name("simulated")];
         }
 
-        if (result[this.name("sent")] !== undefined) {
+        if (result[this.name("sent")]) {
             smtpLog.sent = result[this.name("sent")];
         }
 

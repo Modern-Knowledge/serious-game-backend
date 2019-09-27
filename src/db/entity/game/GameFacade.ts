@@ -32,15 +32,19 @@ export class GameFacade extends EntityFacade<Game> {
    * @param result result for filling
    */
   public fillEntity(result: any): Game {
+    if (!result[this.name("id")]) {
+      return undefined;
+    }
+
     const game: Game = new Game();
 
     this.fillDefaultAttributes(result, game);
 
-    if (result[this.name("name")] !== undefined) {
+    if (result[this.name("name")]) {
       game.name = result[this.name("name")];
     }
 
-    if (result[this.name("description")] !== undefined) {
+    if (result[this.name("description")]) {
       game.description = result[this.name("description")];
     }
 

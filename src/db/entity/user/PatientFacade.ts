@@ -115,19 +115,21 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * @param result result for filling
      */
     public fillEntity(result: any): Patient {
-        const p: Patient = new Patient();
+        if (!result[this.name("patient_id")]) {
+            return undefined;
+        }
 
-        this.fillDefaultAttributes(result, p);
+        const p: Patient = new Patient();
 
         if (this._withUserJoin) {
             this._userFacade.fillUserEntity(result, p);
         }
 
-        if (result[this.name("birthday")] !== undefined) {
+        if (result[this.name("birthday")]) {
             p.birthday = result[this.name("birthday")];
         }
 
-        if (result[this.name("info")] !== undefined) {
+        if (result[this.name("info")]) {
             p.info = result[this.name("info")];
         }
 

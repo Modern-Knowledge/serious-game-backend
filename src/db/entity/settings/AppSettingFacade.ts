@@ -33,6 +33,10 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
      * @param result result for filling
      */
     protected fillEntity(result: any): AppSetting {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const appSetting: AppSetting = new AppSetting();
 
         this.fillDefaultAttributes(result, appSetting);

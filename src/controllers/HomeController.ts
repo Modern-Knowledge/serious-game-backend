@@ -17,7 +17,8 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../util/http/HttpResponse";
-import {TherapistCompositeFacade} from "../db/composite/TherapistCompositeFacade";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { PatientFacade } from "../db/entity/user/PatientFacade";
 
 const router = express.Router();
 
@@ -39,11 +40,11 @@ router.get("/", async (req: Request, res: Response) => {
     // // const u: User = new User();
     // // await facade.insertUser(u);
     //
-    // const therapistFacade: TherapistFacade = new TherapistFacade();
-    // const therapists = await therapistFacade.get();
+     const therapistFacade: TherapistFacade = new TherapistFacade();
+     // const therapists = await therapistFacade.get();
     //
-    // const patientFacade: PatientFacade = new PatientFacade();
-    // const patients = await patientFacade.get();
+     const patientFacade: PatientFacade = new PatientFacade();
+    //  const patients = await patientFacade.get();
 
     /* const patient1 = new Patient();
      patient1.id = 1;
@@ -62,7 +63,7 @@ router.get("/", async (req: Request, res: Response) => {
      console.log(newpatient); */
 
       const therapistCompFacade = new TherapistCompositeFacade();
-      console.log(await therapistCompFacade.get());
+       // await therapistCompFacade.get();
     // const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
     // const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
     // const sessionFilter = therapistCompFacade.sessionFacadeFilter;
@@ -89,18 +90,18 @@ router.get("/", async (req: Request, res: Response) => {
       // statisticFacade.insertStatistic(statistic);
     //
      const statisticCompFacade = new StatisticCompositeFacade();
-     statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
-    statisticCompFacade.filter.addFilterCondition("id", 0);
-    // const statisticComp = await statisticCompFacade.deleteStatisticComposite();
+     // statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
+    // statisticCompFacade.filter.addFilterCondition("id", 0);
+     const statisticComp = await statisticCompFacade.get();
 
     // console.log(statisticComp);
     //
     const patientCompositeFacade = new PatientCompositeFacade();
-    const patientComp = await patientCompositeFacade.get();
-    console.log(patientComp);
+    //  const patientComp = await patientCompositeFacade.get();
+    // console.log(patientComp);
     //
      const gameCompositeFacade = new GameCompositeFacade();
-    // const gamesComp = await gameCompositeFacade.getById(1);
+    //  const gamesComp = await gameCompositeFacade.getById(1);
      // console.log(gamesComp);
     //
     // const sessionFacade = new SessionFacade();
@@ -111,7 +112,7 @@ router.get("/", async (req: Request, res: Response) => {
      sessionCompositeFacade.filter.addFilterCondition("id", 0);
      sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", 0);
      sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", 0);
-      const sessions = await sessionCompositeFacade.get();
+     //  const sessions = await sessionCompositeFacade.get();
       // console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;
@@ -139,7 +140,7 @@ router.get("/", async (req: Request, res: Response) => {
       userfacade.filter.addFilterCondition("id", 1);
       // console.log(await userfacade.insertUser(u));
 
-    const patientFacade = new TherapistFacade();
+   //  const patientFacade = new TherapistFacade();
     // patientFacade.isTherapist(1003);
    //  patientFacade.filter.addFilterCondition("therapist_id", 0);
    //  patientFacade.userFacadeFilter.addFilterCondition("id", 0);
@@ -149,11 +150,8 @@ router.get("/", async (req: Request, res: Response) => {
     // await patientFacade.updateUserTherapist(u);
    // await patientFacade.deleteTherapist();
 
-    const response = new HttpResponse<Therapist>(HttpResponseStatus.SUCCESS, u, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
-    console.log(response);
-
-
-    res.jsonp(response);
+    const response = new HttpResponse<Therapist>(HttpResponseStatus.SUCCESS, statisticComp, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
+    res.jsonp(statisticComp);
 });
 
 export default router;
