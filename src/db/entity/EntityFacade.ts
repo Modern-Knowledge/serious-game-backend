@@ -15,7 +15,7 @@ import { loggerString } from "../../util/Helper";
 /**
  * base facade for entities
  */
-export abstract class EntityFacade<EntityType extends AbstractModel> extends BaseFacade<EntityType> {
+export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>> extends BaseFacade<EntityType> {
 
     /**
      * @param tableName

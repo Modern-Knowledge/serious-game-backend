@@ -9,7 +9,7 @@ import { Ordering } from "../order/Ordering";
  * base class for composite facades
  * contains methods for filtering composite facades
  */
-export abstract class CompositeFacade<EntityType extends AbstractModel> extends EntityFacade<EntityType> {
+export abstract class CompositeFacade<EntityType extends AbstractModel<EntityType>> extends EntityFacade<EntityType> {
 
     private _sqlOperator: SQLOperator = SQLOperator.AND;
     private _autoCombineFilter: boolean = true;
