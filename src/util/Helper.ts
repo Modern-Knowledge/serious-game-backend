@@ -42,7 +42,7 @@ export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values
  * generates a password reset token with the specified length
  * @param length length of the password token
  */
-export function generatePasswordResetToken(length: number): number {
+export function generatePasswordResetToken(length: number = 8): number {
     const timestamp: number = new Date().getTime();
     return timestamp % (10 ** length);
 }

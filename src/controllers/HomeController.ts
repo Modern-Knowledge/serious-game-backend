@@ -19,6 +19,8 @@ import {
 } from "../util/http/HttpResponse";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
+import { generatePasswordResetToken } from "../util/Helper";
+import moment from "moment";
 
 const router = express.Router();
 
@@ -27,9 +29,9 @@ const router = express.Router();
  * Home page.
  */
 router.get("/", async (req: Request, res: Response) => {
-     const facade: UserFacade = new UserFacade("u");
-     // const user = await facade.getById(1);
-     // console.log(user.fullNameWithSirOrMadam);
+    const facade: UserFacade = new UserFacade("u");
+    // const user = await facade.getById(1);
+    // console.log(user.fullNameWithSirOrMadam);
     // facade.addOrderBy("id", SQLOrder.DESC);
     // //
     // const filter: Filter = facade.filter;
@@ -40,10 +42,10 @@ router.get("/", async (req: Request, res: Response) => {
     // // const u: User = new User();
     // // await facade.insertUser(u);
     //
-     const therapistFacade: TherapistFacade = new TherapistFacade();
-     // const therapists = await therapistFacade.get();
+    const therapistFacade: TherapistFacade = new TherapistFacade();
+    // const therapists = await therapistFacade.get();
     //
-     const patientFacade: PatientFacade = new PatientFacade();
+    const patientFacade: PatientFacade = new PatientFacade();
     //  const patients = await patientFacade.get();
 
     /* const patient1 = new Patient();
@@ -62,14 +64,14 @@ router.get("/", async (req: Request, res: Response) => {
      const newpatient = await patientFacade.deletePatient(patient1);
      console.log(newpatient); */
 
-      const therapistCompFacade = new TherapistCompositeFacade();
-       // await therapistCompFacade.get();
+    const therapistCompFacade = new TherapistCompositeFacade();
+    // await therapistCompFacade.get();
     // const theraUserFilter = therapistCompFacade.therapistUserFacadeFilter;
     // const patientUserFilter = therapistCompFacade.patientUserFacadeFilter;
     // const sessionFilter = therapistCompFacade.sessionFacadeFilter;
     //
-     // const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
-     // theraOrderBy.addOrderBy("id");
+    // const theraOrderBy = therapistCompFacade.therapistUserFacadeOrderBy;
+    // theraOrderBy.addOrderBy("id");
     //
     //
     // // const patientOrderBy = therapistCompFacade.patientUserFacadeOrderBy;
@@ -86,13 +88,13 @@ router.get("/", async (req: Request, res: Response) => {
     //  console.log(await errortextFacade.getErrorTexts());
     //
     const statistic: Statistic = new Statistic();
-      const statisticFacade = new StatisticFacade();
-      // statisticFacade.insertStatistic(statistic);
+    const statisticFacade = new StatisticFacade();
+    // statisticFacade.insertStatistic(statistic);
     //
-     const statisticCompFacade = new StatisticCompositeFacade();
-     // statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
+    const statisticCompFacade = new StatisticCompositeFacade();
+    // statisticCompFacade.errortextStatisticFilter.addFilterCondition("statistic_id", 0);
     // statisticCompFacade.filter.addFilterCondition("id", 0);
-     const statisticComp = await statisticCompFacade.get();
+    const statisticComp = await statisticCompFacade.get();
 
     // console.log(statisticComp);
     //
@@ -100,20 +102,20 @@ router.get("/", async (req: Request, res: Response) => {
     //  const patientComp = await patientCompositeFacade.get();
     // console.log(patientComp);
     //
-     const gameCompositeFacade = new GameCompositeFacade();
+    const gameCompositeFacade = new GameCompositeFacade();
     //  const gamesComp = await gameCompositeFacade.getById(1);
-     // console.log(gamesComp);
+    // console.log(gamesComp);
     //
     // const sessionFacade = new SessionFacade();
     // const sess = await sessionFacade.getSessions();
     // console.log(sess);
 
-     const sessionCompositeFacade = new SessionCompositeFacade();
-     sessionCompositeFacade.filter.addFilterCondition("id", 0);
-     sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", 0);
-     sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", 0);
-     //  const sessions = await sessionCompositeFacade.get();
-      // console.log(sessions);
+    const sessionCompositeFacade = new SessionCompositeFacade();
+    sessionCompositeFacade.filter.addFilterCondition("id", 0);
+    sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", 0);
+    sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", 0);
+    //  const sessions = await sessionCompositeFacade.get();
+    // console.log(sessions);
     //
     // // sessionCompositeFacade.postProcessFilter;
     //
@@ -123,32 +125,40 @@ router.get("/", async (req: Request, res: Response) => {
     u.lastname = "Mold";
     u.email = "florian.mold@live.at";
     u.password = "dklfjslkdf0";
+    u.resetcodeValidUntil = new Date("2019-10-20");
+    console.log(u);
+
+    const token = generatePasswordResetToken(8);
+    u.resetcode = token;
+
+    console.log(u.validatePasswordResetToken(token));
+
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
 
-     // mailTransport.sendMail(m);
+    // mailTransport.sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;
     therapistPatient.therapistId = 3;
 
-     // const therapistsPatientsFacade = new TherapistsPatientsFacade();
-     // therapistsPatientsFacade.filter.addFilterCondition("therapist_id", 6);
-     // console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
+    // const therapistsPatientsFacade = new TherapistsPatientsFacade();
+    // therapistsPatientsFacade.filter.addFilterCondition("therapist_id", 6);
+    // console.log(await therapistsPatientsFacade.insertTherapistPatient(therapistPatient));
 
     const userfacade = new UserFacade();
-      userfacade.filter.addFilterCondition("id", 1);
-      // console.log(await userfacade.insertUser(u));
+    userfacade.filter.addFilterCondition("id", 1);
+    // console.log(await userfacade.insertUser(u));
 
-   //  const patientFacade = new TherapistFacade();
+    //  const patientFacade = new TherapistFacade();
     // patientFacade.isTherapist(1003);
-   //  patientFacade.filter.addFilterCondition("therapist_id", 0);
-   //  patientFacade.userFacadeFilter.addFilterCondition("id", 0);
+    //  patientFacade.filter.addFilterCondition("therapist_id", 0);
+    //  patientFacade.userFacadeFilter.addFilterCondition("id", 0);
 
     // console.log(await patientFacade.insertTherapist(u));
     // await patientFacade.updateTherapist(u);
     // await patientFacade.updateUserTherapist(u);
-   // await patientFacade.deleteTherapist();
+    // await patientFacade.deleteTherapist();
 
     const response = new HttpResponse<Therapist>(HttpResponseStatus.SUCCESS, statisticComp, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
     res.jsonp(statisticComp);
