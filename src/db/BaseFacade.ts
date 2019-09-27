@@ -25,6 +25,7 @@ import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
 import { databaseConnection, TransactionQuery } from "../util/databaseConnection";
 import { SQLValueAttribute } from "./sql/SQLValueAttribute";
+import {JoinType} from "./sql/enums/JoinType";
 
 /**
  * base class for crud operations with the database
@@ -515,6 +516,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         let oneToManyJoinAmount = 0;
         let oneToOneJoinAmount = 0;
 
+        let leftJoinAmount = 0;
+        let innerJoinAmount = 0;
+
         for (const join of this.joins) {
             if (join.joinCardinality === JoinCardinality.ONE_TO_MANY) {
                 oneToManyJoinAmount++;
@@ -523,9 +527,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
             if (join.joinCardinality === JoinCardinality.ONE_TO_ONE) {
                 oneToOneJoinAmount++;
             }
+
+            if (join.joinType === JoinType.LEFT_JOIN) {
+                leftJoinAmount++;
+            }
+
+            if (join.joinType === JoinType.JOIN) {
+                innerJoinAmount++;
+            }
         }
 
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${this.joins.length} joins! (${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
 
         const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
         if (oneToManyJoinAmount >= warnToManyJoins) {
