@@ -1,12 +1,21 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import errorHandler from "errorhandler";
 
 import app from "./app";
 import logger from "./util/logger";
+import { inProduction } from "./util/Helper";
 
 /**
  * Error Handler. Provides full stack - remove for production
  */
-app.use(errorHandler());
+// todo wrap in if inProduction
+if (!inProduction()) {
+  app.use(errorHandler());
+}
 
 /**
  * Start Express server.
