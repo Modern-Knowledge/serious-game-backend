@@ -14,6 +14,7 @@ import * as dotenv from "dotenv";
 import { loggerString } from "./util/Helper";
 import { DotenvConfigOutput } from "dotenv";
 import cors from "cors";
+import { logRequest, startMeasureRequestTime, stopMeasureRequestTime} from "./util/middleware";
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
 if (config.error) { // .env not found
@@ -45,6 +46,7 @@ import PatientController from "./controllers/PatientController";
 // Create Express server
 const app = express();
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+app.use(morgan("dev"));
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // Express configuration
@@ -68,6 +70,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(startMeasureRequestTime);
+
+// log request with winston
+app.use(logRequest);
+
 /**
  * Primary app routes.
  */
@@ -80,5 +87,7 @@ app.use("/logging", LoggingController);
 app.use("/images", ImageController);
 app.use("/therapists", TherapistController);
 app.use("/patients", PatientController);
+
+app.use(stopMeasureRequestTime);
 
 export default app;

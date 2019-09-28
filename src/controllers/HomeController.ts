@@ -33,7 +33,7 @@ const router = express.Router();
  * GET /
  * Home page.
  */
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response, next: any) => {
     const facade: UserFacade = new UserFacade("u");
     // const user = await facade.getById(1);
     // console.log(user.fullNameWithSirOrMadam);
@@ -164,6 +164,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const response = new HttpResponse<Therapist>(HttpResponseStatus.SUCCESS, statisticComp, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
     res.jsonp(statisticComp);
+    next();
 });
 
 export default router;
