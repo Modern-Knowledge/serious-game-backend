@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express, { Request, Response } from "express";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
@@ -19,8 +24,8 @@ import {
 } from "../util/http/HttpResponse";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { generatePasswordResetToken } from "../util/Helper";
 import moment from "moment";
+import { generatePasswordResetToken, setPasswordResetToken } from "../util/password/passwordHelper";
 
 const router = express.Router();
 
@@ -126,12 +131,9 @@ router.get("/", async (req: Request, res: Response) => {
     u.email = "florian.mold@live.at";
     u.password = "dklfjslkdf0";
     u.resetcodeValidUntil = new Date("2019-10-20");
+
+    setPasswordResetToken(u);
     console.log(u);
-
-    const token = generatePasswordResetToken(8);
-    u.resetcode = token;
-
-    console.log(u.validatePasswordResetToken(token));
 
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);

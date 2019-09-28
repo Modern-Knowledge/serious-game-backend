@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { AbstractModel } from "../lib/models/AbstractModel";
 
 
@@ -38,12 +43,5 @@ export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values
     return false;
 }
 
-/**
- * generates a password reset token with the specified length
- * @param length length of the password token
- */
-export function generatePasswordResetToken(length: number = 8): number {
-    const timestamp: number = new Date().getTime();
-    return timestamp % (10 ** length);
-}
+
 
