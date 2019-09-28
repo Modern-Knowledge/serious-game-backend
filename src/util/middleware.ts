@@ -29,6 +29,7 @@ export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
     const stopwatch: Stopwatch = res.locals.stopwatch;
     logger.info(`${req.method} "${req.protocol}://${req.hostname}${req.path}" ${stopwatch.timeElapsed}`);
     new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime);
+    next();
 }
 
 /**

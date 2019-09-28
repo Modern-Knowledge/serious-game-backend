@@ -18,7 +18,7 @@ import morgan from "morgan";
 import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import { inProduction, loggerString } from "./util/Helper";
-
+import cors from "cors";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -28,11 +28,10 @@ import {
 
 const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
-  const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
-  throw new Error(message);
+    const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
+    throw new Error(message);
 }
 
-import cors from "cors";
 import { logRequest, startMeasureRequestTime, stopMeasureRequestTime } from "./util/middleware";
 import logger from "./util/logger";
 import { accessLogStream } from "./util/morgan";
@@ -49,7 +48,7 @@ const app = express();
 
 // set morgan logger
 app.use(morgan(inProduction() ? "combined" : "dev"));
-app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("combined", {stream: accessLogStream}));
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
@@ -60,7 +59,7 @@ const options: cors.CorsOptions = {}; // TODO: set cors options correct
 app.use(cors(options));
 app.use(compression());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -97,15 +96,34 @@ app.use("/therapists", TherapistController);
 app.use("/patients", PatientController);
 
 // last middleware that is executed in a correct route
+// gets skipped if error occurs in any route
 app.use(stopMeasureRequestTime);
 
 // take care of 404 errors
 // matches all routes
+// only execute if nothing is sent before -> 404 route not found
 app.use((req: Request, res: Response, next: any) => {
-    const message: HttpResponseMessage = new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Route not found");
-    res.status(404).json(new HttpResponse(HttpResponseStatus.ERROR, undefined, [message]));
+    if (!res.headersSent) {
+        const error: Error = new Error("Route not found");
+        res.locals.status = 404;
+        next(error);
+    }
 });
 
+// development error handler
+// will print stacktrace
+app.use((err: Error, req: Request, res: Response, next: any) => {
+    const message = new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, err.message);
+    let data;
+
+    if (!inProduction()) {
+        data = err.stack;
+    }
+    const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, [message]);
+    logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
+
+    res.status(res.locals.status || 500).send(httpResponse);
+});
 
 
 export default app;
