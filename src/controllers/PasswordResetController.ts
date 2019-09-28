@@ -39,10 +39,13 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         }
         user = users[0];
 
-        // check if user has already a token
+        // check if user has already a token todo
 
         // generate token for reset
         setPasswordResetToken(user);
+
+        // async update user with new token
+        userFacade.updateUser(user);
 
         const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString(), user.resetcodeValidUntil.toDateString()]);
         mailTransport.sendMail(m);
@@ -63,5 +66,14 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         next(e);
     }
 });
+
+/**
+ * POST /resend-code
+ * resend reset token with mail
+ */
+router.post("/resend-code", async (req: Request, res: Response, next: any) => {
+
+});
+
 
 export default router;
