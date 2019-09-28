@@ -15,6 +15,9 @@ import { setPasswordResetToken } from "../util/password/passwordHelper";
 import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
 import { mailTransport } from "../util/mail/mailTransport";
+import moment from "moment";
+import logger from "../util/logger";
+import { loggerString } from "../util/Helper";
 
 const router = express.Router();
 
@@ -39,13 +42,16 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         }
         user = users[0];
 
-        // check if user has already a token todo
+        // check if token exists
+        if (user.resetcode && user.resetcodeValidUntil && !(moment().isAfter(user.resetcodeValidUntil))) {
+            logger.info(`${loggerString(__dirname, "PasswordResetController/reset", "")} No password reset token for ${user.email} was generated, because the current token is still valid!`);
+        } else {
+            // generate token for reset
+            setPasswordResetToken(user);
 
-        // generate token for reset
-        setPasswordResetToken(user);
-
-        // async update user with new token
-        userFacade.updateUser(user);
+            // async update user with new token
+            userFacade.updateUser(user);
+        }
 
         const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString(), user.resetcodeValidUntil.toDateString()]);
         mailTransport.sendMail(m);
@@ -65,14 +71,6 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
     } catch (e) {
         next(e);
     }
-});
-
-/**
- * POST /resend-code
- * resend reset token with mail
- */
-router.post("/resend-code", async (req: Request, res: Response, next: any) => {
-
 });
 
 
