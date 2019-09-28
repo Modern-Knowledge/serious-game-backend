@@ -4,14 +4,14 @@ import { WordFacade } from "../db/entity/word/WordFacade";
 
 const router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
-  const words = wordFacade.get();
+  const words = await wordFacade.get();
   res.jsonp(words);
 });
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
-  const word = wordFacade.getById(req.params.id);
+  const word = await wordFacade.getById(req.params.id);
   res.jsonp(word);
 });
 
