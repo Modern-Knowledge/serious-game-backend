@@ -10,21 +10,22 @@ const passwordReset = new SmtpMessage();
 passwordReset.subject = "Zurücksetzen des Passwortes";
 
 passwordReset.html = `
-<h2>Hallo ::name::</h2>
-<p>Wir haben eine Anfrage zum Zurücksetzen deines Passwortes erhalten. Gib folgenden Code zum Zurücksetzen des Passwortes ein:</p>
+<h2>Sehr geehrte/r ::name::</h2>
+<p>Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten. Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:</p>
 <p>::code::</p>
+<p>Der Code ist gültig bis: ::validUntil::</p>
 
-<b>Du hast diese Änderung nicht beantragt?</b>
+<b>Sie haben diese Änderung nicht beantragt?</b>
 <p>Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.</p>
 `;
 
 passwordReset.text = `
-Hallo ::name::
+Sehr geehrte/r ::name::
 
-Wir haben eine Anfrage zum Zurücksetzen deines Passwortes erhalten. Gib folgenden Code zum Zurücksetzen des Passwortes ein:
+Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten. Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:
 ::code::
 
-Du hast diese Änderung nicht beantragt?
+Sie haben diese Änderung nicht beantragt?
 Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.
 `;
 

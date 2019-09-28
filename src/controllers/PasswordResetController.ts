@@ -44,7 +44,7 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         // generate token for reset
         setPasswordResetToken(user);
 
-        const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString()]);
+        const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString(), user.resetcodeValidUntil.toDateString()]);
         mailTransport.sendMail(m);
 
         res.status(200).json(
