@@ -6,9 +6,9 @@
 /**
  * https://github.com/omniti-labs/jsend
  */
-export class HttpResponse<Entity> {
+export class HttpResponse {
     private readonly status: HttpResponseStatus;
-    private readonly data?: Entity;
+    private readonly data?: any;
     private readonly messages?: HttpResponseMessage[];
 
     /**

@@ -12,7 +12,6 @@ import { inProduction } from "./util/Helper";
 /**
  * Error Handler. Provides full stack - remove for production
  */
-// todo wrap in if inProduction
 if (!inProduction()) {
   app.use(errorHandler());
 }
