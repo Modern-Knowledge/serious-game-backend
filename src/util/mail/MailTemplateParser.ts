@@ -21,7 +21,7 @@ export class MailTemplateParser {
 
     /**
      * replaces the placeholder variables with real values
-     * if variable amount does not match warnings and errors are printed
+     * if variable amount does not match the specified, warnings and errors are printed
      * @param text string that ist processed
      */
     public parse(text: string): string {
