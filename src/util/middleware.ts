@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import { Stopwatch } from "./Stopwatch";
 import logger from "./logger";
 import { ExecutionTimeAnalyser } from "./ExecutionTimeAnalyser";
+import { getRequestUrl } from "./Helper";
 
 
 /**
@@ -27,7 +28,7 @@ export function startMeasureRequestTime(req: Request, res: Response, next: any) 
  */
 export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
     const stopwatch: Stopwatch = res.locals.stopwatch;
-    logger.info(`${req.method} "${req.protocol}://${req.hostname}${req.path}" ${stopwatch.timeElapsed}`);
+    logger.info(`${req.method} "${getRequestUrl(req)}" ${stopwatch.timeElapsed}`);
     new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime);
     next();
 }
@@ -39,6 +40,6 @@ export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
  * @param next
  */
 export function logRequest(req: Request, res: Response, next: any) {
-    logger.info(`${req.method} ${req.protocol}://${req.hostname}${req.path} called!  ${JSON.stringify(req.body)}`);
+    logger.info(`${req.method} ${getRequestUrl(req)} called!  ${JSON.stringify(req.body)}`);
     next();
 }

@@ -4,6 +4,7 @@
  */
 
 import { AbstractModel } from "../lib/models/AbstractModel";
+import { Request } from "express";
 
 
 /**
@@ -50,5 +51,14 @@ export function inProduction(): boolean {
     return process.env.NODE_ENV === "production";
 }
 
+
+/**
+ * returns the current request url + parameters formatted as string
+ * e.g.: http://localhost/home
+ * @param req
+ */
+export function getRequestUrl(req: Request): string {
+    return `${req.protocol}://${req.hostname}${req.path}`;
+}
 
 
