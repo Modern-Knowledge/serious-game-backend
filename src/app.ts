@@ -41,6 +41,7 @@ import LoggingController from "./controllers/LoggingController";
 import ImageController from "./controllers/ImageController";
 import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
+import RecipeController from "./controllers/RecipeController";
 
 // Create Express server
 const app = express();
@@ -80,5 +81,6 @@ app.use("/logging", LoggingController);
 app.use("/images", ImageController);
 app.use("/therapists", TherapistController);
 app.use("/patients", PatientController);
+app.use("/recipes", RecipeController);
 
 export default app;
