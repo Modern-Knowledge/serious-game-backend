@@ -43,5 +43,12 @@ export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values
     return false;
 }
 
+/**
+ * returns if app is in production mode
+ */
+export function inProduction(): boolean {
+    return process.env.NODE_ENV === "production";
+}
+
 
 

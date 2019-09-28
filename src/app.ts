@@ -11,12 +11,12 @@ import passport from "passport";
 import moment from "moment";
 import morgan from "morgan";
 import * as dotenv from "dotenv";
-import { loggerString } from "./util/Helper";
+import { inProduction, loggerString } from "./util/Helper";
 import { DotenvConfigOutput } from "dotenv";
 import cors from "cors";
-import { logRequest, startMeasureRequestTime, stopMeasureRequestTime} from "./util/middleware";
+import { logRequest, startMeasureRequestTime, stopMeasureRequestTime } from "./util/middleware";
 
-const config: DotenvConfigOutput = dotenv.config({path: ".env", debug: process.env.NODE_ENV !== "production"});
+const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
   const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
   throw new Error(message);
@@ -45,8 +45,7 @@ import PatientController from "./controllers/PatientController";
 
 // Create Express server
 const app = express();
-app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-app.use(morgan("dev"));
+app.use(morgan(inProduction() ? "combined" : "dev"));
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // Express configuration
