@@ -2,10 +2,10 @@
  * Copyright (c) 2019 Florian Mold
  * All rights reserved.
  */
-import {Request, Response} from "express";
-import {Stopwatch} from "./Stopwatch";
+import { Request, Response } from "express";
+import { Stopwatch } from "./Stopwatch";
 import logger from "./logger";
-import {ExecutionTimeAnalyser} from "./ExecutionTimeAnalyser";
+import { ExecutionTimeAnalyser } from "./ExecutionTimeAnalyser";
 
 
 /**
@@ -29,7 +29,6 @@ export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
     const stopwatch: Stopwatch = res.locals.stopwatch;
     logger.info(`${req.method} "${req.protocol}://${req.hostname}${req.path}" ${stopwatch.timeElapsed}`);
     new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime);
-    next();
 }
 
 /**
