@@ -29,7 +29,7 @@ export function startMeasureRequestTime(req: Request, res: Response, next: any) 
 export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
     const stopwatch: Stopwatch = res.locals.stopwatch;
     logger.info(`${req.method} "${getRequestUrl(req)}" ${stopwatch.timeElapsed}`);
-    new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime);
+    new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, getRequestUrl(req));
     next();
 }
 

@@ -124,7 +124,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
 
                     const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
-                    eta.analyse(s.measuredTime);
+                    eta.analyse(s.measuredTime, BaseFacade.name + ".select");
 
                     resolve(returnEntities);
                 });
