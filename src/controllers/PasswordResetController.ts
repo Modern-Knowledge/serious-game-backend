@@ -34,13 +34,11 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
     userFacade.filter.addFilterCondition("email", email);
 
     try {
-        const users = await userFacade.get();
+        const user = await userFacade.getOne();
 
-        let user;
-        if (users.length === 0) {
-            res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, undefined, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse ${email} wurde nicht gefunden!`)]));
+        if (user) {
+            res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL, undefined, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse ${email} wurde nicht gefunden!`)]));
         }
-        user = users[0];
 
         // check if token exists
         if (user.resetcode && user.resetcodeValidUntil && !(moment().isAfter(user.resetcodeValidUntil))) {
@@ -59,6 +57,7 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {
+                    user_id: user.id,
                     reset_code: {
                         valid_until: user.resetcodeValidUntil
                     }
@@ -72,6 +71,72 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
         next(e);
     }
 });
+
+/**
+ * POST /reset
+ * checks if the passed email exists
+ * generates reset token
+ * send mail with token to user
+ */
+router.post("/reset/:token", async (req: Request, res: Response, next: any) => {
+    const { token } = req.params;
+    const { password, userId } = req.body;
+
+    const userFacade = new UserFacade();
+
+    try {
+        const user = await userFacade.getById(userId);
+
+        // check if token is valid
+        if (user.resetcode && user.resetcodeValidUntil) {
+            if (user.resetcode === token) {
+                res.status(400).json(
+                    new HttpResponse(HttpResponseStatus.FAIL,
+                        undefined,
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der eingegebene Code "${token}" ist nicht korrekt!`)
+                        ]
+                    )
+                );
+            } else if (moment().isAfter(user.resetcodeValidUntil)) {
+                res.status(400).json(
+                    new HttpResponse(HttpResponseStatus.FAIL,
+                        undefined,
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
+                        ]
+                    )
+                );
+            }
+        } else {
+            res.status(400).json(
+                new HttpResponse(HttpResponseStatus.ERROR,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für den Account wurde keine Passwort Rücketzung angefordert!`)
+                    ]
+                )
+            );
+        }
+
+        user.password = password;
+        user.resetcode = undefined;
+        user.resetcodeValidUntil = undefined;
+
+        await userFacade.updateUser(user);
+
+        res.status(200).json(
+          new HttpResponse(HttpResponseStatus.SUCCESS, undefined,
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)]
+          )
+        );
+        next();
+    } catch (e) {
+        next(e);
+    }
+});
+
 
 
 export default router;
