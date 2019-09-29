@@ -18,7 +18,8 @@ import { mailTransport } from "../util/mail/mailTransport";
 import moment from "moment";
 import logger from "../util/logger";
 import { loggerString } from "../util/Helper";
-import { formatDate } from "../lib/utils/dateFormatter";
+import { formatDate, formatDateTime} from "../lib/utils/dateFormatter";
+import { passwordResettet } from "../mail-texts/passwordResettet";
 
 const router = express.Router();
 
@@ -93,7 +94,7 @@ router.post("/reset-password", async (req: Request, res: Response, next: any) =>
 
         // check if token is valid
         if (user.resetcode && user.resetcodeValidUntil) {
-            if (user.resetcode === token) {
+            if (user.resetcode !== Number(token)) {
                 return res.status(400).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
                         undefined,
@@ -112,7 +113,6 @@ router.post("/reset-password", async (req: Request, res: Response, next: any) =>
                     )
                 );
             }
-            next();
         } else {
             return res.status(400).json(
                 new HttpResponse(HttpResponseStatus.ERROR,
@@ -129,6 +129,9 @@ router.post("/reset-password", async (req: Request, res: Response, next: any) =>
         user.resetcodeValidUntil = undefined;
 
         await userFacade.updateUser(user);
+
+        const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL]);
+        mailTransport.sendMail(m);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS, undefined,

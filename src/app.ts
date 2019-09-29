@@ -26,6 +26,9 @@ import {
     HttpResponseStatus
 } from "./util/http/HttpResponse";
 
+process.env.TZ = "Europe/Vienna";
+moment.locale("de");
+
 const config: DotenvConfigOutput = dotenv.config({path: ".env"});
 if (config.error) { // .env not found
     const message: string = `${loggerString(__dirname, "", "", __filename)} .env couldn't be loaded!`;
@@ -39,9 +42,6 @@ import { checkEnvFunction } from "./util/checkEnvVariables";
 
 logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 checkEnvFunction();
-
-process.env.TZ = "Europe/Vienna";
-moment.locale("de");
 
 // Create Express server
 const app = express();
@@ -77,7 +77,6 @@ import ImageController from "./controllers/ImageController";
 import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
 import PasswordResetController from "./controllers/PasswordResetController";
-
 
 app.use(startMeasureRequestTime);
 

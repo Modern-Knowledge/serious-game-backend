@@ -5,6 +5,7 @@
 
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { Request } from "express";
+import {formatDateTime} from "../lib/utils/dateFormatter";
 
 
 /**
@@ -22,7 +23,7 @@ export function loggerString(directory: string, className: string, methodName: s
         file = fileName.split("dist/")[1];
     }
 
-    return `${((dir[1] !== undefined) ? dir[1] : "") + "/" + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
+    return `[${formatDateTime()}] ${((dir[1] !== undefined) ? dir[1] : "") + "/" + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
 }
 
 /**
