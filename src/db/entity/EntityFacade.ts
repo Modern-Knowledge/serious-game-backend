@@ -41,7 +41,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
           return result[0];
         }
 
-        const errorMsg: string = `${loggerString(__dirname, BaseFacade.name, "select")} More than one result returned! (${result.length})`;
+        const errorMsg: string = `${loggerString(__dirname, EntityFacade.name, "getById")} More than one result returned! (${result.length})`;
         logger.error(errorMsg);
         throw new Error(errorMsg);
     }
@@ -53,6 +53,23 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
       const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
       return this.select(attributes, this.filter);
+    }
+
+    /**
+     * returns the first entity that matches the specified filter
+     * @param excludedSQLAttributes
+     */
+    public async getOne(excludedSQLAttributes?: string[]): Promise<EntityType> {
+        const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
+        const result: EntityType[] = await this.select(attributes, this.filter);
+
+        if (result.length >= 0) {
+            return result[0];
+        }
+
+        const errorMsg: string = `${loggerString(__dirname, EntityFacade.name, "getOne")} More than one result returned! (${result.length})`;
+        logger.error(errorMsg);
+        throw new Error(errorMsg);
     }
 
     /**

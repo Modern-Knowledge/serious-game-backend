@@ -47,6 +47,20 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
+     * returns all entities that match the specified filter
+     * @param excludedSQLAttributes
+     */
+    public async getOne(excludedSQLAttributes?: string[]): Promise<EntityType> {
+        if (this._autoCombineFilter) {
+            this.combineFilters();
+        }
+
+        this.combineOrderBys();
+
+        return super.getOne(excludedSQLAttributes);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
