@@ -16,7 +16,7 @@ import moment from "moment";
  */
 export function setPasswordResetToken(user: User): void {
     user.resetcode = generatePasswordResetToken(8);
-    user.resetcodeValidUntil = moment().add(7, "days").toDate();
+    user.resetcodeValidUntil = moment().add(1, "days").toDate();
 }
 
 /**
