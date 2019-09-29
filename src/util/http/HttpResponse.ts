@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+import { inProduction } from "../Helper";
+
 /**
  * https://github.com/omniti-labs/jsend
  */
@@ -19,7 +21,7 @@ export class HttpResponse {
     public constructor(status: HttpResponseStatus, data?: any, messages?: HttpResponseMessage[]) {
         this.status = status;
 
-        if (data) {
+        if (data && !inProduction()) {
             this.data = data;
         } else {
             this.data = undefined;

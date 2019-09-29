@@ -18,8 +18,9 @@ import { mailTransport } from "../util/mail/mailTransport";
 import moment from "moment";
 import logger from "../util/logger";
 import { loggerString } from "../util/Helper";
-import { formatDate, formatDateTime} from "../lib/utils/dateFormatter";
+import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
+import {body, check, validationResult} from "express-validator";
 
 const router = express.Router();
 
@@ -29,7 +30,15 @@ const router = express.Router();
  * generates reset token
  * send mail with token to user
  */
-router.post("/reset", async (req: Request, res: Response, next: any) => {
+router.post("/reset", [
+    check("email").normalizeEmail().isEmail()
+], async (req: Request, res: Response, next: any) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, {errors: errors.array()}, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Übergebene Parameter sind nicht valide!`)]));
+    }
+
     const {email} = req.body;
 
     const userFacade = new UserFacade();
@@ -78,8 +87,19 @@ router.post("/reset", async (req: Request, res: Response, next: any) => {
  * checks if the passed user exists
  * validates reset token
  * resets passwords
+ * sends email to user that password his/her was resettet
  */
-router.post("/reset-password", async (req: Request, res: Response, next: any) => {
+router.post("/reset-password",  [
+    check("password").isLength({min: 6}),
+    check("email").normalizeEmail().isEmail(),
+    check("token").isNumeric().isLength({min: 8})
+], async (req: Request, res: Response, next: any) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, {errors: errors.array()}, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Übergebene Parameter sind nicht valide!`)]));
+    }
+    
     const {password, email, token} = req.body;
 
     const userFacade = new UserFacade();
@@ -130,7 +150,7 @@ router.post("/reset-password", async (req: Request, res: Response, next: any) =>
 
         await userFacade.updateUser(user);
 
-        const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL]);
+        const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
         mailTransport.sendMail(m);
 
         return res.status(200).json(
