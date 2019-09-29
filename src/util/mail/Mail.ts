@@ -41,6 +41,7 @@ export class Mail {
         const parser = new MailTemplateParser(replacementParams);
 
         this.to = to;
+        this.replyTo = process.env.SUPPORT_MAIL || this.from;
         this.subject = messageTemplate.subject;
         this.text = parser.parse(messageTemplate.text);
         this.html = parser.parse(messageTemplate.html);
