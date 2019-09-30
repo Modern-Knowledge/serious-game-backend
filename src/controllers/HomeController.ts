@@ -26,6 +26,7 @@ import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFaca
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import moment from "moment";
 import { generatePasswordResetToken, setPasswordResetToken } from "../util/password/passwordHelper";
+import {mailTransport} from "../util/mail/mailTransport";
 
 const router = express.Router();
 
@@ -137,8 +138,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456", new Date().toDateString()]);
-
-    // mailTransport.sendMail(m);
+     mailTransport.sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;

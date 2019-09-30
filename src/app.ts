@@ -54,6 +54,7 @@ app.use(morgan("combined", {stream: accessLogStream}));
 
 // Express configuration
 app.set("port", process.env.PORT || 3000);
+app.set("env", inProduction() ? "production" : "development");
 
 // options for cors middleware
 const options: cors.CorsOptions = {}; // TODO: set cors options correct

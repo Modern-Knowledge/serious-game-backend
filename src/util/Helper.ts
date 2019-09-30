@@ -23,7 +23,11 @@ export function loggerString(directory: string, className: string, methodName: s
         file = fileName.split("dist/")[1];
     }
 
-    return `[${formatDateTime()}] ${((dir[1] !== undefined) ? dir[1] : "") + "/" + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
+    if (!directory && !className && !methodName && !fileName) {
+        return `[${formatDateTime()}]`;
+    }
+
+    return `[${formatDateTime()}] ${((dir[1]) ? dir[1] + "/" : "") + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
 }
 
 /**

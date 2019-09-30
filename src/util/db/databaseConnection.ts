@@ -96,7 +96,7 @@ class DatabaseConnection {
      * @param queryCallbacks array of queries that are executed in the transaction
      */
     public transaction(queryCallbacks: TransactionQuery[]): Promise<any[]> {
-        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} queries are going to be executed in a transaction!`);
+        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} going to be executed in a transaction!`);
 
         return new Promise<any[]>((resolve, reject) => {
             this.poolQuery((error: MysqlError, connection: PoolConnection) => {
@@ -126,7 +126,9 @@ class DatabaseConnection {
                         response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
 
                         if (response && response.insertedId && i < queryCallbacks.length - 1) { // query was insert query
-                            queryCallbacks[i].callBackOnInsert(response.insertedId, queryCallbacks[i + 1].attributes); // execute callback with attributes of next element
+                            if (queryCallbacks[i].callBackOnInsert) {
+                                queryCallbacks[i].callBackOnInsert(response.insertedId, queryCallbacks[i + 1].attributes); // execute callback with attributes of next element
+                            }
                         }
 
                         result.push(response);

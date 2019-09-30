@@ -7,7 +7,7 @@ import errorHandler from "errorhandler";
 
 import app from "./app";
 import logger from "./util/log/logger";
-import { inProduction } from "./util/Helper";
+import { inProduction, loggerString } from "./util/Helper";
 
 /**
  * Error Handler. Provides full stack - remove for production
@@ -20,8 +20,8 @@ if (!inProduction()) {
  * Start Express server.
  */
 const server = app.listen(app.get("port"), () => {
-  logger.info("App is running at http://localhost:%d in %s mode", app.get("port"), app.get("env"));
-  logger.info("Press CTRL-C to stop");
+  logger.info(`${loggerString(__dirname, "", "", __filename)} App is running at http://localhost:${app.get("port")} in ${app.get("env")} mode`);
+  logger.info(`${loggerString(__dirname, "", "", __filename)} Press CTRL-C to stop`);
 });
 
 export default server;
