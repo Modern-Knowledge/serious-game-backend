@@ -32,6 +32,8 @@ Sehr geehrte/r ::name::
 Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten. Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:
 ::code::
 
+Der Code ist gültig bis: ::validUntil::
+
 Sie haben diese Änderung nicht beantragt?
 Falls Sie kein neues Passwort beantragt haben, können Sie diese E-Mail ignorieren.
 `;
