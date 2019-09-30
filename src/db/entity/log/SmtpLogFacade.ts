@@ -71,11 +71,11 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
             smtpLog.rcptEmail = result[this.name("rcpt_email")];
         }
 
-        if (result[this.name("simulated")]) {
+        if (result[this.name("simulated")] !== undefined) {
             smtpLog.simulated = result[this.name("simulated")];
         }
 
-        if (result[this.name("sent")]) {
+        if (result[this.name("sent")] !== undefined) {
             smtpLog.sent = result[this.name("sent")];
         }
 
