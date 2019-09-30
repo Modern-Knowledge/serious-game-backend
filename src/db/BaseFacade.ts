@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { SQLAttributes } from "./sql/SQLAttributes";
 import { SQLWhere } from "./sql/SQLWhere";
 import { SQLJoin } from "./sql/SQLJoin";
@@ -14,16 +19,16 @@ import { DeleteQuery } from "./sql/DeleteQuery";
 import { SQLDelete } from "./sql/SQLDelete";
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { FieldInfo, MysqlError, PoolConnection } from "mysql";
-import logger from "../util/logger";
+import logger from "../util/log/logger";
 import { Filter } from "./filter/Filter";
 import { SQLOrder } from "./sql/SQLOrder";
 import { Error } from "tslint/lib/error";
-import { Stopwatch } from "../util/Stopwatch";
+import { Stopwatch } from "../util/analysis/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
-import { ExecutionTimeAnalyser } from "../util/ExecutionTimeAnalyser";
+import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
-import { databaseConnection, TransactionQuery } from "../util/databaseConnection";
+import { databaseConnection, TransactionQuery } from "../util/db/databaseConnection";
 import { SQLValueAttribute } from "./sql/SQLValueAttribute";
 import {JoinType} from "./sql/enums/JoinType";
 

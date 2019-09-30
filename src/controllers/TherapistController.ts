@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { JWTHelper } from "../util/JWTHelper";
@@ -7,7 +12,7 @@ import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFa
 import { Status } from "../lib/enums/Status";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
 import { Patient } from "../lib/models/Patient";
-import logger from "../util/logger";
+import logger from "../util/log/logger";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 const router = express.Router();
 

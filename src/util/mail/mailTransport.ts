@@ -4,7 +4,7 @@
  */
 
 import { Mail } from "./Mail";
-import logger from "../logger";
+import logger from "../log/logger";
 import { SmtpLog } from "../../lib/models/SmtpLog";
 
 import * as nodemailer from "nodemailer";

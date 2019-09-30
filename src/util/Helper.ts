@@ -5,7 +5,7 @@
 
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { Request } from "express";
-import {formatDateTime} from "../lib/utils/dateFormatter";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 
 
 /**

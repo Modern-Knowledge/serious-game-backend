@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
+
+import logger from "../log/logger";
+import { loggerString } from "../Helper";
+
 /**
  * analyses execution time based on environment variables
  * prints warnings and errors if execution time is to high
  */
-import logger from "./logger";
-import { loggerString } from "./Helper";
-
 export class ExecutionTimeAnalyser {
 
     private readonly _warnExecutionTime: number;

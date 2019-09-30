@@ -16,11 +16,11 @@ import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
 import { mailTransport } from "../util/mail/mailTransport";
 import moment from "moment";
-import logger from "../util/logger";
+import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
-import {body, check, validationResult} from "express-validator";
+import { body, check, validationResult } from "express-validator";
 
 const router = express.Router();
 
@@ -99,7 +99,7 @@ router.post("/reset-password",  [
     if (!errors.isEmpty()) {
         return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, {errors: errors.array()}, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Übergebene Parameter sind nicht valide!`)]));
     }
-    
+
     const {password, email, token} = req.body;
 
     const userFacade = new UserFacade();

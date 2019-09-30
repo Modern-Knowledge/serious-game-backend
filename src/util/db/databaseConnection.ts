@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import mysql, { FieldInfo, MysqlError, Pool, PoolConnection, Query, queryCallback } from "mysql";
-import logger from "./logger";
-import { loggerString } from "./Helper";
-import { SQLValueAttributes } from "../db/sql/SQLValueAttributes";
+import logger from "../log/logger";
+import { loggerString } from "../Helper";
+import { SQLValueAttributes } from "../../db/sql/SQLValueAttributes";
 
 /**
  * interface that defines queries that can used in a transaction

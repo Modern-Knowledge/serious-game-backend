@@ -136,7 +136,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     console.log(u);
 
 
-    const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456"]);
+    const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456", new Date().toDateString()]);
 
     // mailTransport.sendMail(m);
 

@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { TherapistPatient } from "../../../lib/models/TherapistPatient";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import logger from "../../../util/logger";
+import logger from "../../../util/log/logger";
 import { SQLComparisonOperator } from "../../../db/sql/SQLComparisonOperator";
 import { SQLOperator } from "../../../db/sql/enums/SQLOperator";
 

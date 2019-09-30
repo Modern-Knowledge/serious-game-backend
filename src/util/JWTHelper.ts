@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 /**
  * Helper for using jwt functions
  */
 
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from '../db/entity/user/TherapistFacade';
-import logger from './logger';
+import logger from './log/logger';
 export class JWTHelper {
 
   private readonly _secretKey: string = process.env.SECRET_KEY;

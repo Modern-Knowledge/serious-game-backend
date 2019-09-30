@@ -7,7 +7,7 @@ import { BaseFacade } from "../BaseFacade";
 import { AbstractModel } from "../../lib/models/AbstractModel";
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
-import logger from "../../util/logger";
+import logger from "../../util/log/logger";
 import { Filter } from "../filter/Filter";
 import { SQLValueAttributes } from "../sql/SQLValueAttributes";
 import { loggerString } from "../../util/Helper";

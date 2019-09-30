@@ -3,11 +3,14 @@
  * All rights reserved.
  */
 import { Request, Response } from "express";
-import { Stopwatch } from "./Stopwatch";
-import logger from "./logger";
-import { ExecutionTimeAnalyser } from "./ExecutionTimeAnalyser";
+import { Stopwatch } from "./analysis/Stopwatch";
+import logger from "./log/logger";
+import { ExecutionTimeAnalyser } from "./analysis/ExecutionTimeAnalyser";
 import { getRequestUrl } from "./Helper";
 
+/**
+ * This file provides request middleware for express
+ */
 
 /**
  * Middleware that starts a timer for measuring duration of a request

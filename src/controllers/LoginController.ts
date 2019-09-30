@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express, { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
@@ -6,7 +11,7 @@ import { FilterAttribute } from "../db/filter/FilterAttribute";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { TherapistFacade } from '../db/entity/user/TherapistFacade';
 import { JWTHelper } from '../util/JWTHelper';
-import logger from '../util/logger';
+import logger from '../util/log/logger';
 
 const router = express.Router();
 

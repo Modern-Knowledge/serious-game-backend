@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-import logger from "../logger";
+import logger from "../log/logger";
 import { loggerString } from "../Helper";
 
 /**

@@ -1,6 +1,11 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
-import logger from "../util/logger";
+import logger from "../util/log/logger";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";

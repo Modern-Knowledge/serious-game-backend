@@ -1,6 +1,11 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 /**
  * simple stopwatch to measure execution time
- * stopwatch is autostarted
+ * stopwatch is autostarted when instanced
  */
 export class Stopwatch {
   private readonly _name: string;

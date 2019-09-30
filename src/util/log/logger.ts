@@ -5,7 +5,7 @@
 
 import { Logger, LoggerOptions, transports } from "winston";
 import "winston-daily-rotate-file";
-import { inProduction } from "./Helper";
+import { inProduction } from "../Helper";
 
 const logDir = "logs/";
 

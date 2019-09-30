@@ -6,7 +6,7 @@
 import errorHandler from "errorhandler";
 
 import app from "./app";
-import logger from "./util/logger";
+import logger from "./util/log/logger";
 import { inProduction } from "./util/Helper";
 
 /**

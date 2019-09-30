@@ -3,8 +3,8 @@
  * All rights reserved.
  */
 
-import logger from "./logger";
-import { loggerString } from "./Helper";
+import logger from "../log/logger";
+import { loggerString } from "../Helper";
 
 /**
  * check if environment does not exist
