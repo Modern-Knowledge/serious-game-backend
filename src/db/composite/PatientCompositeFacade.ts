@@ -180,10 +180,10 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * delete the patient, the user and the patient settings
+     * delete the patient, the user and the patient settings and the session
      */
     public async deletePatientComposite(): Promise<number> {
-        return await this.delete([this._patientSettingsFacade, this, this._patientFacade.userFacade]);
+        return await this.delete([this._patientSettingsFacade, this._sessionCompositeFacade, this, this._patientFacade.userFacade]);
     }
 
     /**
