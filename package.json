@@ -56,7 +56,8 @@
     "rotating-file-stream": "^1.4.2",
     "uuid": "^3.3.3",
     "winston": "^2.4.4",
-    "winston-daily-rotate-file": "^3.10.0"
+    "winston-daily-rotate-file": "^3.10.0",
+    "validator": "latest"
   },
   "devDependencies": {
     "@types/async": "^3.0.0",
@@ -91,6 +92,7 @@
     "@types/shelljs": "^0.8.5",
     "@types/supertest": "^2.0.7",
     "@types/uuid": "^3.4.5",
+    "@types/validator": "^10.11.3",
     "@types/winston": "^2.3.9",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",

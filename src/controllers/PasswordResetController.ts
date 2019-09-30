@@ -21,6 +21,7 @@ import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { body, check, validationResult } from "express-validator";
+import { passwordValidator } from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
@@ -90,7 +91,7 @@ router.post("/reset", [
  * sends email to user that password his/her was resettet
  */
 router.post("/reset-password",  [
-    check("password").isLength({min: 6}),
+    check("password").isLength({min: 6}).custom(passwordValidator),
     check("email").normalizeEmail().isEmail(),
     check("token").isNumeric().isLength({min: 8})
 ], async (req: Request, res: Response, next: any) => {
