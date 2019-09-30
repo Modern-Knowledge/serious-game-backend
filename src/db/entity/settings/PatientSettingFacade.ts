@@ -41,7 +41,7 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
         this.fillDefaultAttributes(result, patientSetting);
 
-        if (result[this.name("neglect")]) {
+        if (result[this.name("neglect")] !== undefined) {
             patientSetting.neglect = result[this.name("neglect")];
         }
 

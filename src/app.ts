@@ -19,6 +19,7 @@ import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import { inProduction, loggerString } from "./util/Helper";
 import cors from "cors";
+import helmet from "helmet";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -45,6 +46,7 @@ checkEnvFunction();
 
 // Create Express server
 const app = express();
+app.use(helmet());
 
 // set morgan logger
 app.use(morgan(inProduction() ? "combined" : "dev"));

@@ -108,7 +108,7 @@ export class UserFacade extends EntityFacade<User> {
             u.lastLogin = result[this.name("last_login")];
         }
 
-        if (result[this.name("failed_login_attempts")]) {
+        if (result[this.name("failed_login_attempts")] !== undefined) {
             u.failedLoginAttempts = result[this.name("failed_login_attempts")];
         }
 
