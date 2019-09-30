@@ -5,6 +5,13 @@
 
 import { SmtpMessage } from "./SmtpMessage";
 
+/**
+ * Template for sending the user an E-Mail with the reset-token for the password
+ * Params (3):
+ * - ::name:: name of the recipient
+ * - ::code:: reset-token for resetting the password
+ * - ::validUntil:: day when the token expires
+ */
 const passwordReset = new SmtpMessage();
 
 passwordReset.subject = "Zurücksetzen des Passwortes";
