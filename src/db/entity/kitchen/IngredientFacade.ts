@@ -104,7 +104,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         if (this._withFoodCategoryJoin) {
             const foodCategoryFacade: SQLBlock = new SQLBlock();
             foodCategoryFacade.addText(`${this.tableAlias}.food_category_id = ${this._foodCategoryFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._foodCategoryFacade.tableName, this._foodCategoryFacade.tableAlias, foodCategoryFacade, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._foodCategoryFacade.tableName, this._foodCategoryFacade.tableAlias, foodCategoryFacade, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;
