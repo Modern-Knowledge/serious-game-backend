@@ -94,7 +94,7 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
         if (this._withDifficultyJoin) {
             const difficultyJoin: SQLBlock = new SQLBlock();
             difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;
