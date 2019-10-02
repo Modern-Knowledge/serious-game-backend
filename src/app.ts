@@ -117,12 +117,17 @@ app.use((req: Request, res: Response, next: any) => {
 // development error handler
 // will print stacktrace
 app.use((err: Error, req: Request, res: Response, next: any) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+
     const message = new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, err.message);
     let data;
 
     if (!inProduction()) {
         data = err.stack;
     }
+
     const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, [message]);
     logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
 

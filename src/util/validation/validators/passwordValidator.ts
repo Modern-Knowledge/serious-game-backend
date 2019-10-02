@@ -4,10 +4,18 @@
  */
 
 import { CustomValidator } from "express-validator";
+import { retrieveValidationMessage } from "../validationMessages";
 
-export const passwordValidator: CustomValidator = (value: any) => {
-    // length: >= 6
-    // zahlen: optional
-    // sonderzeichen: optional
-    return true;
+/**
+ * additional passwordValidator
+ * checks if password matches password-confirmation in body
+ * @param password password to check
+ * @param req request to check against
+ */
+export const passwordValidator: CustomValidator = (password: any, { req }) => {
+    if (password !== req.body.password_confirmation) {
+        return Promise.reject(retrieveValidationMessage("password", "not_matching"));
+    }
+
+    return Promise.resolve(true);
 };
