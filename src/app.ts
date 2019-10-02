@@ -80,6 +80,8 @@ import ImageController from "./controllers/ImageController";
 import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
 import PasswordResetController from "./controllers/PasswordResetController";
+import RecipeController from "./controllers/RecipeController";
+import WordController from "./controllers/WordController";
 
 /**
  * measure response time
@@ -102,6 +104,8 @@ app.use("/images", ImageController);
 app.use("/therapists", TherapistController);
 app.use("/patients", PatientController);
 app.use("/password", PasswordResetController);
+app.use("/recipes", RecipeController);
+app.use("/words", WordController);
 
 // take care of 404 errors
 // matches all routes
