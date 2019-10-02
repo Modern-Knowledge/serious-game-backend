@@ -21,7 +21,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import moment from "moment";

@@ -9,7 +9,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { check, validationResult } from "express-validator";
