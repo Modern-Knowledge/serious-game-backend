@@ -19,7 +19,7 @@ import { loggerString } from "../Helper";
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
-for (const category of ["email", "gender", "forename", "lastname", "password", "token"]) {
+for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id"]) {
     validationMessages.set(category, new Map());
 
 }
@@ -59,6 +59,11 @@ validationMessages.get("password").set("not_matching", new HttpResponseMessage(H
  */
 validationMessages.get("token").set("length", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Token ist zu kurz. (genau ${process.env.PASSWORD_TOKEN_LENGTH} Zeichen)`));
 validationMessages.get("token").set("format", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Token darf nur aus Zahlen bestehen!`));
+
+/**
+ * validation messages for id
+ */
+validationMessages.get("id").set("numeric", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die ID darf nur Zahlen beinhalten!`));
 
 
 
