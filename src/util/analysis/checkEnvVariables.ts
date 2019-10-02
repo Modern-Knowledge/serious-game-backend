@@ -31,7 +31,7 @@ export function checkEnvFunction(): void {
      * throw an error if these env variables are not present
      */
     const unsetRequiredVars: string[] = checkEnvVariables([
-        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION"
+        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION", "PASSWORD_TOKEN_LENGTH", "PASSWORD_LENGTH"
     ]);
 
     if (unsetRequiredVars.length > 0) {
@@ -44,7 +44,8 @@ export function checkEnvFunction(): void {
      * print an warning, if these env variables are not present
      */
     const unsetOptionalVars: string[] = checkEnvVariables([
-        "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "SEND_MAILS", "MAX_FAILED_LOGIN_ATTEMPTS"
+        "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME",
+        "SEND_MAILS", "MAX_FAILED_LOGIN_ATTEMPTS", "LOGIN_COOLDOWN_TIME_HOURS"
     ]);
 
     if (unsetOptionalVars.length > 0) {
