@@ -48,7 +48,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
         if (tableAlias) {
             super("recipes", tableAlias);
         } else {
-            super("recipes", "r");
+            super("recipes", "rec");
         }
 
         this._recipeFacade = new RecipeFacade();

@@ -28,8 +28,14 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] =  ["name", "description", "difficulty_id"];
-        return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+        const sqlAttributes: string[] =  ["recipe_id", "ingredient_id"];
+        let excludedDefaultAttributes: string[] = ["id"];
+
+        if (excludedSQLAttributes) {
+            excludedDefaultAttributes = excludedDefaultAttributes.concat(excludedSQLAttributes);
+        }
+
+        return super.getSQLAttributes(excludedDefaultAttributes, sqlAttributes);
     }
 
     /**

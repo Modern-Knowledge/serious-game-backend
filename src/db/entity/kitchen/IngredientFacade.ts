@@ -54,7 +54,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
 
         if (this._withFoodCategoryJoin) {
             const foodCategoryAttributes: SQLAttributes = this._foodCategoryFacade.getSQLAttributes(excludedSQLAttributes);
-            foodCategoryAttributes.addSqlAttributes(foodCategoryAttributes);
+            ingredientAttributes.addSqlAttributes(foodCategoryAttributes);
         }
 
         return ingredientAttributes;
