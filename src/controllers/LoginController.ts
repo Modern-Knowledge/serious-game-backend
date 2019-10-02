@@ -58,7 +58,7 @@ router.post("/login", [
         const user: User = await userFacade.getOne();
 
         if (!user) {
-            logger.debug(`${loggerString("", "POST LoginController/login")} User with e-mail ${email} was not found!`);
+            logger.debug(`${loggerString()} POST LoginController/login: User with e-mail ${email} was not found!`);
             return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
                 undefined,
                 [
@@ -69,7 +69,7 @@ router.post("/login", [
 
         // check if user is allowed to login
         if (user.loginCoolDown && moment().isBefore(user.loginCoolDown)) {
-            logger.debug(`${loggerString("", "POST LoginController/login")} The account of the user with the id ${user.id} is locked until ${formatDateTime(user.loginCoolDown)}!`);
+            logger.debug(`${loggerString()} POST LoginController/login: The account of the user with the id ${user.id} is locked until ${formatDateTime(user.loginCoolDown)}!`);
             return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
                 undefined,
                 [
@@ -81,7 +81,7 @@ router.post("/login", [
         const valid = bcrypt.compareSync(password, user.password);
 
         if (!valid) {
-            logger.debug(`${loggerString("", "POST LoginController/login")} The user with the id ${user.id} has entered an invalid password!`);
+            logger.debug(`${loggerString()} POST LoginController/login: The user with the id ${user.id} has entered an invalid password!`);
             const additionalMessages: HttpResponseMessage[] = [];
             user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
 
@@ -91,7 +91,7 @@ router.post("/login", [
             if (user.failedLoginAttempts > maxFailedLoginAttempts) {
                 user.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
 
-                logger.debug(`${loggerString("", "POST LoginController/login")} The user with the id ${user.id} has more failed login attempts than allowed and is now locked until ${formatDateTime(user.loginCoolDown)}`);
+                logger.debug(`${loggerString()} POST LoginController/login: The user with the id ${user.id} has more failed login attempts than allowed and is now locked until ${formatDateTime(user.loginCoolDown)}`);
 
                 additionalMessages.push(
                     new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
@@ -120,7 +120,7 @@ router.post("/login", [
         // async update user
         userFacade.updateUser(user);
 
-        logger.debug(`${loggerString("", "POST LoginController/login")} The user with the id ${user.id} has logged in successfully!`);
+        logger.debug(`${loggerString()} POST LoginController/login: The user with the id ${user.id} has logged in successfully!`);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {auth: true, token: token},
