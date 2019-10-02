@@ -21,23 +21,29 @@ import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { body, check, validationResult } from "express-validator";
-import { passwordValidator } from "../util/validation/validators/passwordValidator";
+import { retrieveValidationMessage, toHttpResponseMessage } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
 /**
  * POST /reset
+ *
  * checks if the passed email exists
  * generates reset token
  * send mail with token to user
  */
 router.post("/reset", [
-    check("email").normalizeEmail().isEmail()
+    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, {errors: errors.array()}, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Übergebene Parameter sind nicht valide!`)]));
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
     }
 
     const {email} = req.body;
@@ -49,7 +55,13 @@ router.post("/reset", [
         const user = await userFacade.getOne();
 
         if (!user) {
-            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL, undefined, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse ${email} wurde nicht gefunden!`)]));
+            return res.status(404).json(
+                new HttpResponse(HttpResponseStatus.FAIL,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse ${email} wurde nicht gefunden!`)
+                    ]
+                ));
         }
 
         // check if token exists
@@ -75,7 +87,8 @@ router.post("/reset", [
                     }
                 },
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`)]
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`)
+                ]
             )
         );
     } catch (e) {
@@ -85,20 +98,26 @@ router.post("/reset", [
 
 /**
  * POST /reset-password
- * checks if the passed user exists
+ *
+ * checks if the passed email exists
  * validates reset token
  * resets passwords
- * sends email to user that password his/her was resettet
+ * sends email to user that his/her password was resettet
  */
 router.post("/reset-password",  [
-    check("password").isLength({min: 6}).custom(passwordValidator),
-    check("email").normalizeEmail().isEmail(),
-    check("token").isNumeric().isLength({min: 8})
+    check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
+    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+    check("token").isNumeric().isLength({min: 8}).withMessage(retrieveValidationMessage("token", "invalid"))
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL, {errors: errors.array()}, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Übergebene Parameter sind nicht valide!`)]));
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
     }
 
     const {password, email, token} = req.body;
@@ -157,7 +176,8 @@ router.post("/reset-password",  [
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS, undefined,
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)]
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)
+                ]
             )
         );
     } catch (e) {
