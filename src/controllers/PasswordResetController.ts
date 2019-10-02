@@ -69,7 +69,7 @@ router.post("/reset", [
 
         // check if token exists
         if (user.resetcode && user.resetcodeValidUntil && !(moment().isAfter(user.resetcodeValidUntil))) {
-            logger.info(`${loggerString(__dirname, "PasswordResetController/reset", "")} No password reset token for ${user.email} was generated, because the current token is still valid!`);
+            logger.info(`${loggerString("", "POST PasswordResetController/reset")} No password reset token for ${user.email} was generated, because the current token is still valid!`);
         } else {
             // generate token for reset
             setPasswordResetToken(user);

@@ -13,26 +13,19 @@ import { getRequestUrl, loggerString } from "./Helper";
  */
 
 /**
- * Middleware that starts a timer for measuring duration of a request
+ * Middleware that measures the response time
  * @param req
  * @param res
  * @param next
  */
-export function startMeasureRequestTime(req: Request, res: Response, next: any) {
-    res.locals.stopwatch = new Stopwatch("Request Time"); // start stopwatch
-    next();
-}
+export function measureRequestTime(req: Request, res: Response, next: any) {
+    const stopwatch = new Stopwatch("Request Time"); // start stopwatch
 
-/**
- * stops the timer started in startMeasureTime and prints the response time
- * @param req
- * @param res
- * @param next
- */
-export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
-    const stopwatch: Stopwatch = res.locals.stopwatch;
-    logger.info(`${loggerString("", "", "", "")} ${req.method} "${getRequestUrl(req)}" ${stopwatch.timeElapsed}`);
-    new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, getRequestUrl(req));
+    res.on("finish", () => {
+        logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" ${stopwatch.timeElapsed}`);
+        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, getRequestUrl(req));
+    });
+
     next();
 }
 
@@ -43,6 +36,6 @@ export function stopMeasureRequestTime(req: Request, res: Response, next: any) {
  * @param next
  */
 export function logRequest(req: Request, res: Response, next: any) {
-    logger.info(`${loggerString("", "", "", "")} ${req.method} ${getRequestUrl(req)} called! ${JSON.stringify(req.body)}`);
+    logger.info(`${loggerString()} ${req.method} ${getRequestUrl(req)} called! ${JSON.stringify(req.body)}`);
     next();
 }

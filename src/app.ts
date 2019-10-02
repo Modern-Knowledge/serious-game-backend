@@ -36,7 +36,7 @@ if (config.error) { // .env not found
     throw new Error(message);
 }
 
-import { logRequest, startMeasureRequestTime, stopMeasureRequestTime } from "./util/middleware";
+import { logRequest, measureRequestTime } from "./util/middleware";
 import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
@@ -81,7 +81,10 @@ import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
 import PasswordResetController from "./controllers/PasswordResetController";
 
-app.use(startMeasureRequestTime);
+/**
+ * measure response time
+ */
+app.use(measureRequestTime);
 
 // log request with winston
 app.use(logRequest);
@@ -99,10 +102,6 @@ app.use("/images", ImageController);
 app.use("/therapists", TherapistController);
 app.use("/patients", PatientController);
 app.use("/password", PasswordResetController);
-
-// last middleware that is executed in a correct route
-// gets skipped if error occurs in any route
-app.use(stopMeasureRequestTime);
 
 // take care of 404 errors
 // matches all routes

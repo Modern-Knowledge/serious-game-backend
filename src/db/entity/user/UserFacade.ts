@@ -26,7 +26,7 @@ export class UserFacade extends EntityFacade<User> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "status", "resetcode", "resetcode_validuntil"];
+        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "login_cooldown", "status", "resetcode", "resetcode_validuntil"];
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 

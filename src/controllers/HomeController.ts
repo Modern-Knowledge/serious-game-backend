@@ -163,8 +163,8 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     // await patientFacade.deleteTherapist();
 
     const response = new HttpResponse(HttpResponseStatus.SUCCESS, statisticComp, [new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere"), new HttpResponseMessage(HttpResponseMessageSeverity.INFO, "dere")]);
-    res.jsonp(statisticComp);
-    next();
+    return res.jsonp(statisticComp);
+    // next();
     // next(new Error("dslkf"));
 });
 

@@ -16,18 +16,18 @@ import { formatDateTime } from "../lib/utils/dateFormatter";
  * @param methodName method which is executed
  * @param fileName file where the method is executed (only if not in class)
  */
-export function loggerString(directory: string, className: string, methodName: string, fileName?: string): string {
+export function loggerString(directory?: string, className?: string, methodName?: string, fileName?: string): string {
+    if (!directory && !className && !methodName && !fileName) {
+        return `[${formatDateTime()}]`;
+    }
+
     const dir: string[] = directory.split("dist/");
     let file: string = "";
     if (fileName) {
         file = fileName.split("dist/")[1];
     }
 
-    if (!directory && !className && !methodName && !fileName) {
-        return `[${formatDateTime()}]`;
-    }
-
-    return `[${formatDateTime()}] ${((dir[1]) ? dir[1] + "/" : "") + className}${methodName !== "" ? "." : ""}${methodName}${file}:`;
+    return `[${formatDateTime()}] ${((dir[1]) ? dir[1] + "/" : "") + className}${methodName ? "." : ""}${methodName ? methodName : ""}${file}:`;
 }
 
 /**
