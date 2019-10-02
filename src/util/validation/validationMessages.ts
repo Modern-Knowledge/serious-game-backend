@@ -19,7 +19,7 @@ import { loggerString } from "../Helper";
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
-for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id"]) {
+for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist"]) {
     validationMessages.set(category, new Map());
 
 }
@@ -66,7 +66,11 @@ validationMessages.get("token").set("format", new HttpResponseMessage(HttpRespon
 validationMessages.get("id").set("numeric", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die ID darf nur Zahlen beinhalten!`));
 
 
-
+/**
+ * validation messages for therapist
+ */
+validationMessages.get("therapist").set("value_true", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Diesem Endpoint muss ein/e TherapeutIn übergeben werden!`));
+validationMessages.get("therapist").set("value_false", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Diesem Endpoint muss ein/e PatientIn übergeben werden!`));
 
 
 

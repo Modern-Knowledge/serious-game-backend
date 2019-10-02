@@ -18,13 +18,15 @@ import {
     retrieveValidationMessage,
     toHttpResponseMessage
 } from "../util/validation/validationMessages";
-import {passwordValidator} from "../util/validation/validators/passwordValidator";
-import {emailValidator} from "../util/validation/validators/emailValidator";
+import { passwordValidator } from "../util/validation/validators/passwordValidator";
+import { emailValidator } from "../util/validation/validators/emailValidator";
 const router = express.Router();
 
 /**
  * GET /
  * Get patient by id.
+ *
+ * todo
  */
 router.get("/:id", async (req: Request, res: Response) => {
     res.jsonp("UserController");
@@ -69,6 +71,11 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - password
  * - password_confirmation
  * - therapist: false
+ *
+ * response:
+ * - auth: is the user authenticated
+ * - token: generated jwt token
+ * - user: generated therapist
  */
 router.post("/", [
     check("email").normalizeEmail()
@@ -93,6 +100,8 @@ router.post("/", [
 
     check("password_confirmation").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+
+    check("therapist").equals("false").withMessage(retrieveValidationMessage("therapist", "value_false"))
 
 ], async (req: Request, res: Response, next: any) => {
 

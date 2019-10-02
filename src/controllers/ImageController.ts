@@ -18,8 +18,11 @@ import {
 const router = express.Router();
 
 /**
- * GET /
- * Image by id.
+ * GET /:id
+ * returns image by id
+ *
+ * params:
+ * - id: id of the image
  */
 router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
