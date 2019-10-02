@@ -29,8 +29,8 @@ const router = express.Router();
  * - password: password of the user
  */
 router.post("/login", [
-  check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
-  check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+    check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
+    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
@@ -43,59 +43,60 @@ router.post("/login", [
         ));
     }
 
-  const userFacade = new UserFacade();
+    const userFacade = new UserFacade();
 
-  const { email, password } = req.body;
+    const {email, password} = req.body;
 
-  const filter = userFacade.filter;
-  filter.addFilterCondition("email", email);
+    const filter = userFacade.filter;
+    filter.addFilterCondition("email", email);
 
-  try {
-    const user: User = await userFacade.getOne();
+    try {
+        const user: User = await userFacade.getOne();
 
-    if (!user) {
-        return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
-            ]
-        ));
-    }
+        if (!user) {
+            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+                ]
+            ));
+        }
 
-    const valid = bcrypt.compareSync(password, user.password);
+        const valid = bcrypt.compareSync(password, user.password);
 
-    if (!valid) {
-        user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
+        if (!valid) {
+            user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
+            userFacade.updateUser(user);
+
+
+
+            return res.status(401).json(new HttpResponse(HttpResponseStatus.FAIL,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`)
+                ]
+            ));
+        }
+
+        const jwtHelper: JWTHelper = new JWTHelper();
+        const token = await jwtHelper.signToken(user);
+
+        user.lastLogin = new Date();
+        user.failedLoginAttempts = 0;
+        user.loginCoolDown = undefined;
+
+        // async update user
         userFacade.updateUser(user);
 
-        return res.status(401).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
+        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+            {auth: true, token: token},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`)
             ]
         ));
+    } catch (error) {
+        return next(error);
     }
-
-    const jwtHelper: JWTHelper = new JWTHelper();
-    const token = await jwtHelper.signToken(user);
-
-    user.lastLogin = new Date();
-    user.failedLoginAttempts = 0;
-    user.loginCoolDown = undefined;
-
-    // async upate user
-    userFacade.updateUser(user);
-
-    return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-        { auth: true, token: token },
-        [
-            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`)
-        ]
-    ));
-  }
-  catch (error) {
-      return next(error);
-  }
 });
 
 export default router;

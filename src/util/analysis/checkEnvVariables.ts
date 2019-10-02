@@ -44,13 +44,16 @@ export function checkEnvFunction(): void {
      * print an warning, if these env variables are not present
      */
     const unsetOptionalVars: string[] = checkEnvVariables([
-        "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "SEND_MAILS"
+        "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME", "SEND_MAILS", "MAX_FAILED_LOGIN_ATTEMPTS"
     ]);
 
     if (unsetOptionalVars.length > 0) {
         logger.warn(`${loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
     }
 
+    /**
+     * print an warning, if these env variables are not present
+     */
     const unsetMailVariables: string[] = checkEnvVariables(
         ["MAIL_HOST", "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS"]
     );
