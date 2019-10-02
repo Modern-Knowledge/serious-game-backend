@@ -20,8 +20,12 @@ import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
-import { body, check, validationResult } from "express-validator";
-import { retrieveValidationMessage, toHttpResponseMessage } from "../util/validation/validationMessages";
+import { check, validationResult } from "express-validator";
+import {
+    logValidatorErrors,
+    retrieveValidationMessage,
+    toHttpResponseMessage
+} from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -41,6 +45,8 @@ router.post("/reset", [
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        logValidatorErrors("POST PasswordResetController/reset-password", errors.array());
+
         return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
             undefined,
             [
@@ -58,6 +64,8 @@ router.post("/reset", [
         const user = await userFacade.getOne();
 
         if (!user) {
+            logger.debug(`${loggerString()} POST PasswordResetController/reset: User with e-mail ${email} was not found!`);
+
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
                     undefined,
@@ -69,17 +77,21 @@ router.post("/reset", [
 
         // check if token exists
         if (user.resetcode && user.resetcodeValidUntil && !(moment().isAfter(user.resetcodeValidUntil))) {
-            logger.info(`${loggerString("", "POST PasswordResetController/reset")} No password reset token for ${user.email} was generated, because the current token is still valid!`);
+            logger.info(`${loggerString()} POST PasswordResetController/reset: No password reset token for ${user.email} was generated, because the current token is still valid!`);
         } else {
             // generate token for reset
             setPasswordResetToken(user);
 
             // async update user with new token
             userFacade.updateUser(user);
+
+            logger.debug(`${loggerString()} POST PasswordResetController/reset: Password reset token for user with id ${user.id} was generated!`);
         }
 
         const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDate(user.resetcodeValidUntil)]);
         mailTransport.sendMail(m);
+
+        logger.debug(`${loggerString()} POST PasswordResetController/reset: Password reset token was successfully sent to user with id ${user.id}!`);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -113,13 +125,21 @@ router.post("/reset", [
  * - token: token for resetting the password
  */
 router.post("/reset-password",  [
-    check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
-    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
-    check("token").isNumeric().isLength({min: 8}).withMessage(retrieveValidationMessage("token", "invalid"))
+    check("password")
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+
+    check("email").normalizeEmail()
+        .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+
+    check("token")
+        .isNumeric().withMessage(retrieveValidationMessage("token", "format"))
+        .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(retrieveValidationMessage("token", "length"))
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        logValidatorErrors("POST PasswordResetController/reset-password", errors.array());
+
         return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
             undefined,
             [
@@ -137,6 +157,7 @@ router.post("/reset-password",  [
         const user = await userFacade.getOne(email);
 
         if (!user) {
+            logger.debug(`${loggerString()} POST PasswordResetController/reset-password: User with e-mail ${email} was not found!`);
             return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
                 undefined,
                 [
@@ -147,7 +168,12 @@ router.post("/reset-password",  [
 
         // check if token is valid
         if (user.resetcode && user.resetcodeValidUntil) {
+
+            logger.debug(`${loggerString()} POST PasswordResetController/reset-password: Validating password reset token for user with id ${user.id}!`);
+
             if (user.resetcode !== Number(token)) {
+                logger.debug(`${loggerString()} POST PasswordResetController/reset-password: User with id ${user.id} has passed an invalid password reset token!`);
+
                 return res.status(400).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
                         undefined,
@@ -156,6 +182,8 @@ router.post("/reset-password",  [
                         ]
                     ));
             } else if (moment().isAfter(user.resetcodeValidUntil)) {
+                logger.debug(`${loggerString()} POST PasswordResetController/reset-password: The password reset token for the user with ${user.id} is not valid anymore! (expired at ${user.resetcodeValidUntil})`);
+
                 return res.status(400).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
                         undefined,
@@ -165,6 +193,8 @@ router.post("/reset-password",  [
                     ));
             }
         } else {
+            logger.debug(`${loggerString()} POST PasswordResetController/reset-password: User with id ${user.id} has not requested a password token!`);
+
             return res.status(400).json(
                 new HttpResponse(HttpResponseStatus.ERROR,
                     undefined,
@@ -179,6 +209,8 @@ router.post("/reset-password",  [
         user.resetcodeValidUntil = undefined;
 
         await userFacade.updateUser(user);
+
+        logger.debug(`${loggerString()} POST PasswordResetController/reset-password: The new Password for user with id ${user.id} has been set!`);
 
         const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
         mailTransport.sendMail(m);

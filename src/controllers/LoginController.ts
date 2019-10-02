@@ -8,7 +8,11 @@ import * as bcrypt from "bcryptjs";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { JWTHelper } from "../util/JWTHelper";
 import { check, validationResult } from "express-validator";
-import { retrieveValidationMessage, toHttpResponseMessage } from "../util/validation/validationMessages";
+import {
+    logValidatorErrors,
+    retrieveValidationMessage,
+    toHttpResponseMessage
+} from "../util/validation/validationMessages";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -33,12 +37,17 @@ const router = express.Router();
  * - password: password of the user
  */
 router.post("/login", [
-    check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
-    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+    check("password")
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+
+    check("email").normalizeEmail()
+        .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        logValidatorErrors("POST LoginController/login", errors.array());
+
         return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
             undefined,
             [

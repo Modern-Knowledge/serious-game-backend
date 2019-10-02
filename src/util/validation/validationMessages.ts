@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../http/HttpResponse";
+import logger from "../log/logger";
+import { loggerString } from "../Helper";
 
 /**
  * contains validation messages
@@ -20,10 +22,11 @@ validationMessages.set("token", new Map());
 
 validationMessages.get("email").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Die E-Mail ist nicht gültig!"));
 
-validationMessages.get("password").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Das Passwort ist nicht gültig!"));
-validationMessages.get("password").set("criteria", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Das Passwort entspricht nicht den vorgegebenen Kriterien!"));
+validationMessages.get("password").set("length", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`));
 
-validationMessages.get("token").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Das Token ist nicht gültig!"));
+validationMessages.get("token").set("length", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Token ist zu kurz. (genau ${process.env.PASSWORD_TOKEN_LENGTH} Zeichen)`));
+validationMessages.get("token").set("format", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Token darf nur aus Zahlen bestehen!`));
+
 
 /**
  * retrieves the validationMessage by category and messageName
@@ -35,15 +38,26 @@ export function retrieveValidationMessage(category: string, messageName: string)
 }
 
 /**
- * converts error[] that is produced by express-validator to HttpResponseMessage[]
- * @param errors
+ * converts error array that is produced by express-validator to HttpResponseMessage[] for responding to client
+ * @param errors error array that is returned by express validator
  */
 export function toHttpResponseMessage(errors: any[]): HttpResponseMessage[] {
     const httpErrors: HttpResponseMessage[] = [];
 
     for (const error of errors) {
-        httpErrors.push(new HttpResponseMessage(error.msg.severity, `${error.msg.message} (${error.value})`));
+        httpErrors.push(new HttpResponseMessage(error.msg.severity, `${error.msg.message} (${error.param !== "password" ? error.value : ""})`));
     }
 
     return httpErrors;
+}
+
+/**
+ * logs errors to console that are produced by express-validator
+ * @param endpoint endpoint that reports the errors
+ * @param errors error array that is returned by express validator
+ */
+export function logValidatorErrors(endpoint: string, errors: any[]): void {
+    for (const error of errors) {
+        logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, Ort: ${error.location}, Text: ${error.msg.message}, Wert: ${error.param !== "password" ? error.value : ""}`);
+    }
 }

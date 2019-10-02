@@ -10,7 +10,7 @@ import moment from "moment";
 
 /**
  * generates and sets the password reset token for the passed user
- * passwordResetToken is 8 digits long
+ * passwordResetToken is  digits long
  * resetToken is valid 7 days from now
  * @param user
  */
