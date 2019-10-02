@@ -256,7 +256,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     };
 
     /**
-     * return attributes that are common to all updates
+     * return attributes that are common to all updates (modified_at)
      * @param entity
      */
     protected getSQLUpdateValueAttributes(entity: EntityType): SQLValueAttributes {

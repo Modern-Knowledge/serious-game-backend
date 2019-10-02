@@ -31,6 +31,9 @@ const router = express.Router();
  * checks if the passed email exists
  * generates reset token
  * send mail with token to user
+ *
+ * body:
+ * - email: email of the user that wants to change his/her password
  */
 router.post("/reset", [
     check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
@@ -59,7 +62,7 @@ router.post("/reset", [
                 new HttpResponse(HttpResponseStatus.FAIL,
                     undefined,
                     [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse ${email} wurde nicht gefunden!`)
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
                     ]
                 ));
         }
@@ -103,6 +106,11 @@ router.post("/reset", [
  * validates reset token
  * resets passwords
  * sends email to user that his/her password was resettet
+ *
+ * body:
+ * - password: new password for the user
+ * - email: email of the user that wants to change his/her password
+ * - token: token for resetting the password
  */
 router.post("/reset-password",  [
     check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
@@ -129,7 +137,12 @@ router.post("/reset-password",  [
         const user = await userFacade.getOne(email);
 
         if (!user) {
-            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL, undefined, [new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die E-Mail Adresse "${email}" wurde nicht gefunden!`)]));
+            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+                ]
+            ));
         }
 
         // check if token is valid
@@ -141,8 +154,7 @@ router.post("/reset-password",  [
                         [
                             new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der eingegebene Code "${token}" ist nicht korrekt!`)
                         ]
-                    )
-                );
+                    ));
             } else if (moment().isAfter(user.resetcodeValidUntil)) {
                 return res.status(400).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
@@ -150,18 +162,16 @@ router.post("/reset-password",  [
                         [
                             new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
                         ]
-                    )
-                );
+                    ));
             }
         } else {
             return res.status(400).json(
                 new HttpResponse(HttpResponseStatus.ERROR,
                     undefined,
                     [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für den Account wurde keine Passwort Rücketzung angefordert!`)
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
                     ]
-                )
-            );
+                ));
         }
 
         user.password = password;
@@ -174,7 +184,8 @@ router.post("/reset-password",  [
         mailTransport.sendMail(m);
 
         return res.status(200).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS, undefined,
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)
                 ]

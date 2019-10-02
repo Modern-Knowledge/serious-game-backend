@@ -4,44 +4,97 @@
  */
 
 import express, { Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
 import { UserFacade } from "../db/entity/user/UserFacade";
-import { FilterAttribute } from "../db/filter/FilterAttribute";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
-import { TherapistFacade } from '../db/entity/user/TherapistFacade';
-import { JWTHelper } from '../util/JWTHelper';
-import logger from '../util/log/logger';
+import { JWTHelper } from "../util/JWTHelper";
+import { check, validationResult } from "express-validator";
+import { retrieveValidationMessage, toHttpResponseMessage } from "../util/validation/validationMessages";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../util/http/HttpResponse";
+import { User } from "../lib/models/User";
 
 const router = express.Router();
 
 /**
- * POST /
+ * POST /login
+ *
  * Login with email and password.
+ *
+ * body:
+ * - email: email of the user
+ * - password: password of the user
  */
-router.post("/login", async (req: Request, res: Response) => {
-  const userFacade = new UserFacade();
-  
-  const {body: { email, password }} = req;
-  const filter = userFacade.filter;
-  filter.addFilterCondition("email", email, SQLComparisonOperator.EQUAL);
-  try{
-    const users = await userFacade.get();
+router.post("/login", [
+  check("password").isLength({min: 6}).withMessage(retrieveValidationMessage("password", "invalid")),
+  check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+], async (req: Request, res: Response, next: any) => {
 
-    let user;
-    if (users.length == 0) {
-      return res.status(401).send("Invalid credentials.");
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
     }
-    user = users[0];
+
+  const userFacade = new UserFacade();
+
+  const { email, password } = req.body;
+
+  const filter = userFacade.filter;
+  filter.addFilterCondition("email", email);
+
+  try {
+    const user: User = await userFacade.getOne();
+
+    if (!user) {
+        return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+            ]
+        ));
+    }
 
     const valid = bcrypt.compareSync(password, user.password);
-    if (!valid) return res.status(401).send("Invalid credentials.");
+
+    if (!valid) {
+        user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
+        userFacade.updateUser(user);
+
+        return res.status(401).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`)
+            ]
+        ));
+    }
+
     const jwtHelper: JWTHelper = new JWTHelper();
     const token = await jwtHelper.signToken(user);
-    return res.status(200).send({ auth: true, token: token });
-  } 
-  catch(error){
-    return res.status(500).jsonp(error);
+
+    user.lastLogin = new Date();
+    user.failedLoginAttempts = 0;
+    user.loginCoolDown = undefined;
+
+    // async upate user
+    userFacade.updateUser(user);
+
+    return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+        { auth: true, token: token },
+        [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`)
+        ]
+    ));
+  }
+  catch (error) {
+      return next(error);
   }
 });
 
