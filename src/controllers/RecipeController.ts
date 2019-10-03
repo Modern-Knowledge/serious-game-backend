@@ -5,6 +5,10 @@ import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMess
 
 const router = express.Router();
 
+/**
+ * GET
+ * Get all recipes.
+ */
 router.get("/", async (req: Request, res: Response) => {
   const recipeFacade = new RecipeCompositeFacade();
   const recipes = await recipeFacade.get();
@@ -23,6 +27,11 @@ router.get("/", async (req: Request, res: Response) => {
     ]
   ));
 });
+
+/**
+ * GET
+ * Get a recipe by id.
+ */
 router.get("/:id", async (req: Request, res: Response) => {
   const recipeFacade = new RecipeCompositeFacade();
   const recipe = await recipeFacade.getById(req.params.id);

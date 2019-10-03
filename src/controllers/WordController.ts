@@ -5,6 +5,10 @@ import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMess
 
 const router = express.Router();
 
+/**
+ * GET
+ * Get all words.
+ */
 router.get("/", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
   const words = await wordFacade.get();
@@ -23,6 +27,11 @@ router.get("/", async (req: Request, res: Response) => {
     ]
   ));
 });
+
+/**
+ * GET
+ * Get a word by id.
+ */
 router.get("/:id", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
   const word = await wordFacade.getById(req.params.id);
