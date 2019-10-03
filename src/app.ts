@@ -25,7 +25,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "./util/http/HttpResponse";
+} from "./lib/utils/http/HttpResponse";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
