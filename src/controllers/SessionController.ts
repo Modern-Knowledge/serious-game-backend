@@ -210,10 +210,9 @@ router.delete("/:id", [
  * statistic.starttime is set to [now]
  *
  * body:
- * - game_id: id of the patient
- * - patient_id: id of the patient
- * - therapist_id: id of the therapist
- * - game_setting_id: id of the game_setting
+ * - _gameId: id of the patient
+ * - _patientId: id of the patient
+ * - _gameSettingId: id of the game_setting
  *
  * response:
  * - session: created session

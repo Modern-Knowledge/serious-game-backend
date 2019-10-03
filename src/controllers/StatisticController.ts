@@ -17,6 +17,8 @@ import {
 } from "../util/validation/validationMessages";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
+import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
+import moment from "moment";
 
 const router = express.Router();
 
@@ -48,7 +50,7 @@ router.get("/:id", [
     }
 
     const id = Number(req.params.id);
-    const statisticFacade = new StatisticFacade();
+    const statisticFacade = new StatisticCompositeFacade();
 
     try {
         const statistic = await statisticFacade.getById(id);
@@ -83,8 +85,14 @@ router.get("/:id", [
  * - statistic: updated statistic
  */
 router.put("/", [
-    check("_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
-    // todo validate dates
+    check("_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_startTime")
+        .isISO8601().withMessage(retrieveValidationMessage("date", "invalid"))
+        .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(retrieveValidationMessage("date", "wrong_order")),
+
+    check("_endTime")
+        .isISO8601().withMessage(retrieveValidationMessage("date", "invalid"))
+
 ], async (req: Request, res: Response, next: any) => {
 
     const errors = validationResult(req);
@@ -115,7 +123,7 @@ router.put("/", [
                 new HttpResponse(HttpResponseStatus.FAIL,
                     undefined,
                     [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik mit ${statistic.id} konnte nicht aktualisiert werden!`)
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik konnte nicht aktualisiert werden!`)
                     ]
                 )
             );

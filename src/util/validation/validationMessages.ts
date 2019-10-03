@@ -19,7 +19,7 @@ import { loggerString } from "../Helper";
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
-for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist"]) {
+for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date"]) {
     validationMessages.set(category, new Map());
 
 }
@@ -65,13 +65,17 @@ validationMessages.get("token").set("format", new HttpResponseMessage(HttpRespon
  */
 validationMessages.get("id").set("numeric", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die ID darf nur Zahlen beinhalten!`));
 
-
 /**
  * validation messages for therapist
  */
 validationMessages.get("therapist").set("value_true", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Diesem Endpoint muss ein/e TherapeutIn übergeben werden!`));
 validationMessages.get("therapist").set("value_false", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Diesem Endpoint muss ein/e PatientIn übergeben werden!`));
 
+/**
+ * validation messages for date
+ */
+validationMessages.get("date").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Kein gültiges Datum übergeben!`));
+validationMessages.get("date").set("wrong_order", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Start muss zeitlich vor dem Ende liegen!`));
 
 
 
