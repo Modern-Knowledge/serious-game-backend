@@ -89,20 +89,20 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - user: generated therapist
  */
 router.post("/", [
-    check("email").normalizeEmail()
+    check("_email").normalizeEmail()
         .not().isEmpty().withMessage(retrieveValidationMessage("email", "empty"))
         .isEmail().withMessage(retrieveValidationMessage("email", "invalid"))
         .custom(emailValidator),
 
-    check("forename").escape().trim()
+    check("_forename").escape().trim()
         .not().isEmpty().withMessage(retrieveValidationMessage("forename", "empty"))
         .isAlpha().withMessage(retrieveValidationMessage("forename", "non_alpha")),
 
-    check("lastname").escape().trim()
+    check("_lastname").escape().trim()
         .not().isEmpty().withMessage(retrieveValidationMessage("lastname", "empty"))
         .isAlpha().withMessage(retrieveValidationMessage("lastname", "non_alpha")),
 
-    check("password").trim()
+    check("_password").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length"))
         .custom(passwordValidator).withMessage(retrieveValidationMessage("password", "not_matching")),
 
