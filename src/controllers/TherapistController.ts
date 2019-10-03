@@ -245,7 +245,25 @@ router.delete("/:id", [
     therapistCompositeFacade.therapistUserFacadeFilter.addFilterCondition("id", id);
     therapistCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("therapist_id", id);
 
+    const therapistFacade = new TherapistFacade();
+
     try {
+
+        const therapist = await therapistFacade.isTherapist(id);
+        // check if user is therapist
+        if (!therapist) {
+
+            logger.debug(`${loggerString()} DELETE TherapistController/:id: Therapist with id ${id} was not found!`);
+
+            return res.status(404).json(
+                new HttpResponse(HttpResponseStatus.FAIL,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
+                    ]
+                )
+            );
+        }
 
         await therapistCompositeFacade.deleteTherapistComposite();
 
@@ -255,7 +273,7 @@ router.delete("/:id", [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 undefined,
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id}`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde erfolgreich gelöscht!`)
                 ]
             )
         );
