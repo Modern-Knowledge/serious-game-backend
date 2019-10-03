@@ -12,45 +12,98 @@ import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { JWTHelper } from "../util/JWTHelper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../lib/utils/http/HttpResponse";
+import { loggerString } from "../util/Helper";
+
 const router = express.Router();
 
 /**
  * GET /
  * Get the user belonging to the sent JWT.
+ *
+ * header:
+ * x-access-token: jwt token
+ *
+ * response:
+ * - user: therapist or patient
  */
-router.get("/related", async (req: Request, res: Response) => {
-  const token = req.headers["x-access-token"].toString();
-  if (!token)
-    return res.status(401).send({ auth: false, message: "No token provided." });
-  const jwtHelper: JWTHelper = new JWTHelper();
-  return jwtHelper.verifyToken(token, async function(err, decoded) {
-    if (err)
-      return res
-        .status(500)
-        .send({ auth: false, message: "Failed to authenticate token." });
-    try {
-      const data: any = decoded;
-      const userFacade = data.therapist
-        ? new TherapistCompositeFacade()
-        : new PatientCompositeFacade();
+router.get("/related", async (req: Request, res: Response, next: any) => {
+    const token = req.headers["x-access-token"].toString();
 
-      const user = await userFacade.getById(data.id);
-      logger.debug("" + user);
-      if (!user) return res.status(404).send("User not found.");
-      return res.status(200).jsonp(user);
-    } catch (error) {
-      return res.status(500).jsonp(error);
+    if (!token) {
+        logger.debug(`${loggerString()} GET UserController/related: No token was provided!`);
+
+        return res.status(401).json(
+            new HttpResponse(HttpResponseStatus.FAIL,
+                {auth: false, message: "No token provided."},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es wurde kein Token übergeben!`)
+                ]
+            )
+        );
     }
-  });
+
+    try {
+        const jwtHelper: JWTHelper = new JWTHelper();
+        return await jwtHelper.verifyToken(token, async (err, decoded) => {
+            if (err) {
+                logger.debug(`${loggerString()} GET UserController/related: Error when verifying token for user!`);
+
+                return res.status(500).json(
+                    new HttpResponse(HttpResponseStatus.FAIL,
+                        {auth: false, message: "Failed to authenticate token."},
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Token konnte nicht authentifiziert werden!`)
+                        ]
+                    )
+                );
+            }
+
+            const data: any = decoded;
+            const userFacade = data.therapist ? new TherapistCompositeFacade() : new PatientCompositeFacade();
+
+            const user = await userFacade.getById(data.id);
+
+            if (!user) {
+                logger.debug(`${loggerString()} GET UserController/related: User with id ${data.id} was not found!`);
+
+                return res.status(404).json(
+                    new HttpResponse(HttpResponseStatus.FAIL,
+                        undefined,
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `BenutzerIn mit ID ${data.id} konnte nicht gefunden werden!`)
+                        ]
+                    )
+                );
+            }
+
+            logger.debug(`${loggerString()} GET UserController/related: Retrieved related user with id ${data.id}`);
+
+            return res.status(200).json(
+                new HttpResponse(HttpResponseStatus.SUCCESS,
+                    user
+                )
+            );
+        });
+    } catch (error) {
+        next(error);
+    }
 });
 
 /**
+ * todo: needed
+ *
  * GET /
  * Get a user by id.
  */
 router.get("/:id", async (req: Request, res: Response) => {
-  logger.debug(req.params.id);
-  res.jsonp("UserController");
+    logger.debug(req.params.id);
+    res.jsonp("UserController");
 });
 
 export default router;

@@ -163,6 +163,9 @@ router.post("/", [
  * body:
  * - id:
  * - patients: array of patients
+ *
+ * response:
+ * - therapist: updated therapist
  */
 router.put("/:id", async (req: Request, res: Response, next: any) => {
     const therapistFacade = new TherapistFacade();
