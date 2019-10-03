@@ -20,6 +20,7 @@ import {
 } from "../util/validation/validationMessages";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { emailValidator } from "../util/validation/validators/emailValidator";
+import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 const router = express.Router();
 
 /**
@@ -136,6 +137,78 @@ router.post("/", [
         );
     }
     catch (error) {
+        return next(error);
+    }
+});
+
+/**
+ *
+ * DELETE /:id
+ *
+ * deletes the given patient, the user, the sessions, patient_settings and the connection to the therapists
+ *
+ * params:
+ * - id: id of the patient
+ *
+ * response:
+ */
+router.delete("/:id", [
+    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logValidatorErrors("DELETE PatientController/:id", errors.array());
+
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
+    }
+
+    const id = Number(req.params.id);
+
+    const patientCompositeFacade = new PatientCompositeFacade();
+    patientCompositeFacade.filter.addFilterCondition("patient_id", id);
+    patientCompositeFacade.patientUserFacadeFilter.addFilterCondition("id", id);
+    patientCompositeFacade.patientSettingFacadeFilter.addFilterCondition("patient_id", id);
+    patientCompositeFacade.sessionFacadeFilter.addFilterCondition("patient_id", id);
+    patientCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("patient_id", id);
+
+    const patientFacade = new PatientFacade();
+
+    try {
+
+        const patient = await patientFacade.isPatient(id);
+        // check if user is therapist
+        if (!patient) {
+            logger.debug(`${loggerString()} DELETE PatientController/:id: Patient with id ${id} was not found!`);
+
+            return res.status(404).json(
+                new HttpResponse(HttpResponseStatus.FAIL,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} wurde nicht gefunden!`)
+                    ]
+                )
+            );
+        }
+
+        await patientCompositeFacade.deletePatientComposite();
+
+        logger.debug(`${loggerString()} DELETE PatientController/:id: Patient with id ${id} was successfully deleted!`);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich gelöscht!`)
+                ]
+            )
+        );
+    } catch (error) {
         return next(error);
     }
 });

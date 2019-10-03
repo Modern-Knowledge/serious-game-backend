@@ -12,6 +12,7 @@ import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
 import { arrayContainsModel } from "../../util/Helper";
 import { SessionCompositeFacade } from "./SessionCompositeFacade";
+import {TherapistsPatientsFacade} from "../entity/user/TherapistsPatientsFacade";
 
 /**
  * retrieves composite patients
@@ -19,6 +20,7 @@ import { SessionCompositeFacade } from "./SessionCompositeFacade";
  * - PatientFacade
  * - PatientSettingFacade
  * - SessionCompositeFacade
+ * - TherapistPatientsFacade
  *
  * contained Joins:
  * - users (1:1)
@@ -40,6 +42,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     private _patientFacade: PatientFacade;
     private _patientSettingsFacade: PatientSettingFacade;
     private _sessionCompositeFacade: SessionCompositeFacade;
+    private _therapistPatientFacade: TherapistsPatientsFacade;
 
     private _withUserJoin: boolean;
     private _withPatientSettingJoin: boolean;
@@ -67,6 +70,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
         this._patientFacade = new PatientFacade();
         this._patientSettingsFacade = new PatientSettingFacade();
         this._sessionCompositeFacade = new SessionCompositeFacade();
+        this._therapistPatientFacade = new TherapistsPatientsFacade();
 
         this._withUserJoin = true;
         this._withPatientSettingJoin = true;
@@ -180,10 +184,10 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * delete the patient, the user and the patient settings and the session
+     * delete the patient, the user, the patient settings, the session and the connection to the patients
      */
     public async deletePatientComposite(): Promise<number> {
-        return await this.delete([this._patientSettingsFacade, this._sessionCompositeFacade, this, this._patientFacade.userFacade]);
+        return await this.delete([this._patientSettingsFacade, this._sessionCompositeFacade, this._therapistPatientFacade, this, this._patientFacade.userFacade]);
     }
 
     /**
@@ -207,6 +211,10 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     get sessionFacadeFilter(): Filter {
         return this._sessionCompositeFacade.filter;
+    }
+
+    get therapistPatientFacadeFilter(): Filter {
+        return this._therapistPatientFacade.filter;
     }
 
     /**
