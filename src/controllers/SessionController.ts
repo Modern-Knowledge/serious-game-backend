@@ -54,6 +54,19 @@ router.get("/:id", [
     try {
         const session = await sessionCompositeFacade.getById(id);
 
+        if (!session) {
+            logger.debug(`${loggerString()} GET SessionController/:id: Session with id ${id} not found!`);
+
+            return res.status(404).json(
+                new HttpResponse(HttpResponseStatus.FAIL,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
+                    ]
+                )
+            );
+        }
+
         logger.debug(`${loggerString()} GET SessionController/:id: Session with id ${id} was successfully loaded!`);
 
         return res.status(200).json(
@@ -104,6 +117,7 @@ router.get("/patient/:id", [
     try {
         const sessions: Session[] = await sessionCompositeFacade.get();
 
+        // todo: do we need this check?
         if (!sessions) {
             logger.debug(`${loggerString()} GET SessionController/patient/:id: Sessions for patient with id ${id} were not found!`);
 
@@ -163,6 +177,7 @@ router.delete("/:id", [
     const sessionCompositeFacade = new SessionCompositeFacade();
 
     try {
+        // check if session exists
         const session: Session = await sessionCompositeFacade.getById(id);
 
         if (!session) {
