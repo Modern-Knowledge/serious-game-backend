@@ -34,7 +34,7 @@ router.get("/:id", async (req: Request, res: Response) => {
       ]
     ));
   }
-  return res.status(201).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+  return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     recipe,
     [
         new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
