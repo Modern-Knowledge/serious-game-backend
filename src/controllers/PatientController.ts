@@ -83,9 +83,6 @@ router.post("/", [
         .isEmail().withMessage(retrieveValidationMessage("email", "invalid"))
         .custom(emailValidator),
 
-    check("gender").escape().trim()
-        .isInt({min: 0, max: 2}).withMessage(retrieveValidationMessage("gender", "wrong_value")),
-
     check("forename").escape().trim()
         .not().isEmpty().withMessage(retrieveValidationMessage("forename", "empty"))
         .isAlpha().withMessage(retrieveValidationMessage("forename", "non_alpha")),
