@@ -117,20 +117,6 @@ router.get("/patient/:id", [
     try {
         const sessions: Session[] = await sessionCompositeFacade.get();
 
-        // todo: do we need this check?
-        if (!sessions) {
-            logger.debug(`${loggerString()} GET SessionController/patient/:id: Sessions for patient with id ${id} were not found!`);
-
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es wurden keine Spielsitzungen gefunden!`)
-                    ]
-                )
-            );
-        }
-
         logger.debug(`${loggerString()} GET SessionController/patient/:id: Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`);
 
         return res.status(200).json(
@@ -233,13 +219,11 @@ router.delete("/:id", [
  * - session: created session
  */
 router.post("/", [
-    check("game_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_gameId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
 
-    check("patient_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_patientId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
 
-    check("therapist_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
-
-    check("game_setting_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_gameSettingId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
 
 ], async (req: Request, res: Response, next: any) => {
 
