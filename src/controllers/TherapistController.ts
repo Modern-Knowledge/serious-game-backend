@@ -29,13 +29,14 @@ import {
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { loggerString } from "../util/Helper";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 const router = express.Router();
 
 /**
  * GET /
  * Get a therapist by id.
  *
- * todo
+ * todo: needed?
  */
 router.get("/:id", async (req: Request, res: Response) => {
     res.jsonp("UserController");
@@ -152,7 +153,8 @@ router.post("/", [
 /**
  * todo: maybe new name for route
  *
- * PUT /
+ * PUT /:id
+ *
  * Update a therapist by id.
  * removes all old patients from therapist
  * add all new patients to therapist
@@ -201,6 +203,59 @@ router.put("/:id", async (req: Request, res: Response, next: any) => {
                 therapist,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn wurde erfolgreich aktualisiert!`)
+                ]
+            )
+        );
+    } catch (error) {
+        return next(error);
+    }
+});
+
+/**
+ *
+ * DELETE /:id
+ *
+ * deletes the given therapist, the user and removes the connection to the patients
+ *
+ * params:
+ * - id: id of the therapist
+ *
+ * response:
+ */
+router.delete("/:id", [
+    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logValidatorErrors("DELETE TherapistController/:id", errors.array());
+
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
+    }
+
+    const id = Number(req.params.id);
+
+    const therapistCompositeFacade = new TherapistCompositeFacade();
+    therapistCompositeFacade.filter.addFilterCondition("therapist_id", id);
+    therapistCompositeFacade.therapistUserFacadeFilter.addFilterCondition("id", id);
+    therapistCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("therapist_id", id);
+
+    try {
+
+        await therapistCompositeFacade.deleteTherapistComposite();
+
+        logger.debug(`${loggerString()} DELETE TherapistController/:id: Therapist with id ${id} was successfully deleted!`);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id}`)
                 ]
             )
         );
