@@ -1,11 +1,5 @@
 import express, { Request, Response } from "express";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
-import {
-    HttpResponse,
-    HttpResponseMessage,
-    HttpResponseMessageSeverity,
-    HttpResponseStatus
-} from "../util/http/HttpResponse";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { check, validationResult } from "express-validator";
@@ -14,6 +8,12 @@ import {
     retrieveValidationMessage,
     toHttpResponseMessage
 } from "../util/validation/validationMessages";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
 

@@ -14,13 +14,12 @@ import { TherapistPatient } from "../lib/models/TherapistPatient";
 import { Patient } from "../lib/models/Patient";
 import logger from "../util/log/logger";
 import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
-import { loggerString } from "../util/Helper";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { check, validationResult } from "express-validator";
 import {
     logValidatorErrors,
@@ -29,6 +28,7 @@ import {
 } from "../util/validation/validationMessages";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
+import { loggerString } from "../util/Helper";
 const router = express.Router();
 
 /**

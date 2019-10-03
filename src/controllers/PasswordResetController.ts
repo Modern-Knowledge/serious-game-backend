@@ -10,7 +10,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { setPasswordResetToken } from "../util/password/passwordHelper";
 import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";

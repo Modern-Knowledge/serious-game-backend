@@ -18,7 +18,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { User } from "../lib/models/User";
 import moment from "moment";
 import { formatDateTime } from "../lib/utils/dateFormatter";
