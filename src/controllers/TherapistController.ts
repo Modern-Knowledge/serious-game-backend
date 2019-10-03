@@ -150,10 +150,21 @@ router.post("/", [
 });
 
 /**
+ * todo: maybe new name for route
+ *
  * PUT /
  * Update a therapist by id.
+ * removes all old patients from therapist
+ * add all new patients to therapist
+ *
+ * params:
+ * - id:
+ *
+ * body:
+ * - id:
+ * - patients: array of patients
  */
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response, next: any) => {
     const therapistFacade = new TherapistFacade();
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
@@ -161,22 +172,37 @@ router.put("/:id", async (req: Request, res: Response) => {
     try {
         const therapistPatient = new TherapistPatient();
         therapistPatient.therapistId = therapist.id;
+
+        // remove all patients from therapist
         await therapistPatientsFacade.syncPatients(therapistPatient);
 
+        logger.debug(`${loggerString()} PUT TherapistController/:id: All patients from therapist with id ${therapist.id} were removed!`);
+
+        // reassign patients
         for (const patient of therapist.patients) {
             therapistPatient.patientId = patient.id;
             await therapistPatientsFacade.insertTherapistPatient(therapistPatient);
         }
+
+        logger.debug(`${loggerString()} PUT TherapistController/:id: Reassigned all patients to the therapist with id ${therapist.id}!`);
+
         const filter = therapistFacade.filter;
-        filter.addFilterCondition(
-            "therapist_id",
-            therapist.id,
-            SQLComparisonOperator.EQUAL
-        );
+        filter.addFilterCondition("therapist_id", therapist.id);
+
         await therapistFacade.updateTherapist(therapist);
-        return res.status(200).jsonp(therapist);
+
+        logger.debug(`${loggerString()} PUT TherapistController/:id: Updated therapist with id ${therapist.id}`);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                therapist,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn wurde erfolgreich aktualisiert!`)
+                ]
+            )
+        );
     } catch (error) {
-        return res.status(500).jsonp(error);
+        return next(error);
     }
 });
 
