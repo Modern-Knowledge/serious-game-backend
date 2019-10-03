@@ -216,4 +216,8 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     set withUserJoin(value: boolean) {
         this._withUserJoin = value;
     }
+
+    get userFacade(): UserFacade {
+        return this._userFacade;
+    }
 }

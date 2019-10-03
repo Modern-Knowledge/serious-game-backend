@@ -82,7 +82,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
         if (this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
         }
 
         return joins;

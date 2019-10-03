@@ -7,8 +7,6 @@ import { SQLBlock } from "../sql/SQLBlock";
 import { JoinType } from "../sql/enums/JoinType";
 import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacade";
 import { Patient } from "../../lib/models/Patient";
-import { SessionFacade } from "../entity/game/SessionFacade";
-import { Session } from "../../lib/models/Session";
 import { Filter } from "../filter/Filter";
 import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
@@ -83,7 +81,6 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         }
 
         const t: Therapist = this._therapistFacade.fillEntity(result);
-        console.log(t);
 
         if (this._withPatientJoin) {
             const p: Patient = this._patientFacade.fillEntity(result);
@@ -143,6 +140,13 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
     }
 
     /**
+     * delete the therapist, the user and the therapist-patient connection
+     */
+    public async deleteTherapistComposite(): Promise<number> {
+        return await this.delete([this._therapistPatientFacade, this, this._therapistFacade.userFacade]);
+    }
+
+    /**
      * returns all sub facade filters of the facade as an array
      */
     protected get filters(): Filter[] {
@@ -151,6 +155,7 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
             this.therapistUserFacadeFilter,
             this.patientFilter,
             this.patientUserFacadeFilter,
+            this.therapistPatientFacadeFilter
         ];
     }
 
@@ -168,6 +173,10 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
     get patientUserFacadeFilter(): Filter {
         return this._patientFacade.userFacadeFilter;
+    }
+
+    get therapistPatientFacadeFilter(): Filter {
+        return this._therapistPatientFacade.filter;
     }
 
     /**
@@ -227,4 +236,6 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
     get idFilter(): Filter {
         return this.therapistUserFacadeFilter;
     }
+
+
 }

@@ -78,8 +78,8 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     });
   }
   /**
-   * delete patients that are not in the given entity
-   * @param therapistPatients entities to take the ids values from
+   * delete all patients from therapist
+   * @param therapistPatient entities to take the ids values from
    */
   public async syncPatients(therapistPatient: TherapistPatient) {
     const filter = this.filter;

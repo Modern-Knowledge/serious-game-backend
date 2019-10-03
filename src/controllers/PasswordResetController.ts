@@ -10,7 +10,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { setPasswordResetToken } from "../util/password/passwordHelper";
 import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
@@ -196,7 +196,7 @@ router.post("/reset-password",  [
             logger.debug(`${loggerString()} POST PasswordResetController/reset-password: User with id ${user.id} has not requested a password token!`);
 
             return res.status(400).json(
-                new HttpResponse(HttpResponseStatus.ERROR,
+                new HttpResponse(HttpResponseStatus.FAIL,
                     undefined,
                     [
                         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)

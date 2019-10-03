@@ -129,11 +129,11 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withHelptextJoin) {
             const helptextGamesJoin: SQLBlock = new SQLBlock();
             helptextGamesJoin.addText(`${this._helptextsGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
             const helptextsJoin: SQLBlock = new SQLBlock();
             helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
-            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._helptextFacade.joins); // add helptext joins (text)
         }

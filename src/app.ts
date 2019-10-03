@@ -25,7 +25,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "./util/http/HttpResponse";
+} from "./lib/utils/http/HttpResponse";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -82,6 +82,8 @@ import PatientController from "./controllers/PatientController";
 import PasswordResetController from "./controllers/PasswordResetController";
 import RecipeController from "./controllers/RecipeController";
 import WordController from "./controllers/WordController";
+import SessionController from "./controllers/SessionController";
+import HelptextController from "./controllers/HelptextController";
 
 /**
  * measure response time
@@ -96,7 +98,6 @@ app.use(logRequest);
  */
 app.use("/home", HomeController);
 app.use("/", LoginController);
-app.use("/game", GameController);
 app.use("/version", VersionController);
 app.use("/users", UserController);
 app.use("/logging", LoggingController);
@@ -106,6 +107,9 @@ app.use("/patients", PatientController);
 app.use("/password", PasswordResetController);
 app.use("/recipes", RecipeController);
 app.use("/words", WordController);
+app.use("/sessions", SessionController);
+app.use("/games", GameController);
+app.use("/helptexts", HelptextController);
 
 // take care of 404 errors
 // matches all routes

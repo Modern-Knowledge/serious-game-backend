@@ -1,37 +1,71 @@
 import express, { Request, Response } from "express";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
-import { Filter } from "../db/filter/Filter";
-import { FilterAttribute } from "../db/filter/FilterAttribute";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
-import { Image } from "../lib/models/Image";
+import logger from "../util/log/logger";
+import { loggerString } from "../util/Helper";
+import { check, validationResult } from "express-validator";
+import {
+    logValidatorErrors,
+    retrieveValidationMessage,
+    toHttpResponseMessage
+} from "../util/validation/validationMessages";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
 
 /**
- * GET /
- * Image by id.
+ * GET /:id
+ * returns image by id
+ *
+ * params:
+ * - id: id of the image
  */
-router.get("/:id", async (req: Request, res: Response) => {
-  const id = req.params.id;
+router.get("/:id", [
+    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
 
-  const facade: ImageFacade = new ImageFacade();
-  const filter: Filter = facade.filter;
-  filter.addFilterCondition("id", id, SQLComparisonOperator.EQUAL);
-  
-  try{
-    const images = await facade.get();
-    let image: Image;
-  
-    if (images.length > 0) {
-      image = images[0];
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logValidatorErrors("POST ImageController/:id", errors.array());
+
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
     }
-  
-    res.type("image/png");
-    return res.send(image.image);
-  }
-  catch(error){
-    return res.status(500).jsonp(error);
-  }
+
+    const id = Number(req.params.id);
+
+    const facade: ImageFacade = new ImageFacade();
+
+    try {
+        const image = await facade.getById(id);
+
+        if (!image) {
+            logger.debug(`${loggerString()} POST ImageController/:id: The image with id ${id} does not exist!`);
+
+            return res.status(404).json(
+                new HttpResponse(HttpResponseStatus.FAIL,
+                    undefined,
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der id ${id} wurde nicht gefunden!`)
+                    ]
+                ));
+        }
+
+        logger.debug(`${loggerString()} POST ImageController/:id: The image with id ${id} was successfully loaded!`);
+
+        return res.status(200).send(image.image);
+    }
+    catch (error) {
+        return next(error);
+    }
 });
 
 export default router;

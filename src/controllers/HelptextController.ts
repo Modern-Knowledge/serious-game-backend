@@ -1,27 +1,27 @@
 import express from "express";
 import { Request, Response } from "express";
-import { RecipeCompositeFacade } from '../db/composite/RecipeCompositeFacade';
 import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from '../lib/utils/http/HttpResponse';
+import { HelptextFacade } from '../db/entity/helptext/HelptextFacade';
 
 const router = express.Router();
 
 /**
  * GET
- * Get all recipes.
+ * Get all helptexts.
  */
 router.get("/", async (req: Request, res: Response) => {
-  const recipeFacade = new RecipeCompositeFacade();
-  const recipes = await recipeFacade.get();
-  if(!recipes.length){
+  const helptextFacade = new HelptextFacade();
+  const helptexts = await helptextFacade.get();
+  if(!helptexts.length){
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
-          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es konnten keine Rezepte gefunden werden.`)
+          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es konnten keine Hilfetexte gefunden werden.`)
       ]
     ));
   }
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-    recipes,
+    helptexts,
     [
         new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
     ]
@@ -30,23 +30,23 @@ router.get("/", async (req: Request, res: Response) => {
 
 /**
  * GET
- * Get a recipe by id.
+ * Get a helptext by id.
  */
 router.get("/:id", async (req: Request, res: Response) => {
-  const recipeFacade = new RecipeCompositeFacade();
-  const recipe = await recipeFacade.getById(req.params.id);
-  if(!recipe){
+  const helptextFacade = new HelptextFacade();
+  const helptext = await helptextFacade.getById(req.params.id);
+  if(!helptext){
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
-          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Rezept konnte nicht gefunden werden.`)
+          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Hilfetext konnte nicht gefunden werden.`)
       ]
     ));
   }
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-    recipe,
+    helptext,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Hilfetext wurde erfolgreich gefunden.`)
     ]
   ));
 });

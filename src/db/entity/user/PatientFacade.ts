@@ -111,6 +111,15 @@ export class PatientFacade extends CompositeFacade<Patient> {
     }
 
     /**
+     * checks if the given id belongs to a therapist
+     * @param id
+     */
+    public async isPatient(id: number): Promise<boolean> {
+        const patient = await this.getById(id);
+        return patient !== undefined;
+    }
+
+    /**
      * fills the entity
      * @param result result for filling
      */

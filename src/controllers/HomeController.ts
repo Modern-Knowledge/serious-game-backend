@@ -21,12 +21,12 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../util/http/HttpResponse";
+} from "../lib/utils/http/HttpResponse";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import moment from "moment";
 import { generatePasswordResetToken, setPasswordResetToken } from "../util/password/passwordHelper";
-import {mailTransport} from "../util/mail/mailTransport";
+import { mailTransport } from "../util/mail/mailTransport";
 
 const router = express.Router();
 
@@ -138,7 +138,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 
 
     const m = new Mail([u.recipient], passwordReset, [u.fullNameWithSirOrMadam, "1234456", new Date().toDateString()]);
-     mailTransport.sendMail(m);
+    // mailTransport.sendMail(m);
 
     const therapistPatient = new TherapistPatient();
     therapistPatient.patientId = 501;
