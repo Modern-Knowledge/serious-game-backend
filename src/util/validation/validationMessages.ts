@@ -5,7 +5,6 @@
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 import logger from "../log/logger";
 import { loggerString } from "../Helper";
-import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 
 /**
  * contains validation messages
