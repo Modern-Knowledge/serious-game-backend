@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from '../lib/utils/http/HttpResponse';
-import { HelptextFacade } from '../db/entity/helptext/HelptextFacade';
+import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
+import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
   const helptextFacade = new HelptextFacade();
   const helptexts = await helptextFacade.get();
-  if(!helptexts.length){
+  if (!helptexts.length) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -23,7 +23,7 @@ router.get("/", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     helptexts,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });
@@ -34,8 +34,8 @@ router.get("/", async (req: Request, res: Response) => {
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const helptextFacade = new HelptextFacade();
-  const helptext = await helptextFacade.getById(req.params.id);
-  if(!helptext){
+  const helptext = await helptextFacade.getById(Number(req.params.id));
+  if (!helptext) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [

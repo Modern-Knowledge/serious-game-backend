@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import { WordFacade } from "../db/entity/word/WordFacade";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from '../lib/utils/http/HttpResponse';
+import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
   const words = await wordFacade.get();
-  if(!words.length){
+  if (!words.length) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -23,7 +23,7 @@ router.get("/", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     words,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });
@@ -34,8 +34,8 @@ router.get("/", async (req: Request, res: Response) => {
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const wordFacade = new WordFacade();
-  const word = await wordFacade.getById(req.params.id);
-  if(!word){
+  const word = await wordFacade.getById(Number(req.params.id));
+  if (!word) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -46,7 +46,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     word,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });

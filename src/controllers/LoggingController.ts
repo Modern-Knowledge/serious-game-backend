@@ -10,7 +10,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import logger from "../util/log/logger";
-import {loggerString} from "../util/Helper";
+import { loggerString } from "../util/Helper";
 
 const router = express.Router();
 

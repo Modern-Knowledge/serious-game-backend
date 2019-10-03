@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
-import { RecipeCompositeFacade } from '../db/composite/RecipeCompositeFacade';
-import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from '../lib/utils/http/HttpResponse';
+import { RecipeCompositeFacade } from "../db/composite/RecipeCompositeFacade";
+import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
   const recipeFacade = new RecipeCompositeFacade();
   const recipes = await recipeFacade.get();
-  if(!recipes.length){
+  if (!recipes.length) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -23,7 +23,7 @@ router.get("/", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     recipes,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });
@@ -34,8 +34,8 @@ router.get("/", async (req: Request, res: Response) => {
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const recipeFacade = new RecipeCompositeFacade();
-  const recipe = await recipeFacade.getById(req.params.id);
-  if(!recipe){
+  const recipe = await recipeFacade.getById(Number(req.params.id));
+  if (!recipe) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -46,7 +46,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     recipe,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });

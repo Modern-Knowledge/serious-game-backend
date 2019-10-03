@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
-import { GameCompositeFacade } from '../db/composite/GameCompositeFacade';
-import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from '../lib/utils/http/HttpResponse';
+import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
+import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
   const gameFacade = new GameCompositeFacade();
   const games = await gameFacade.get();
-  if(!games.length){
+  if (!games.length) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
@@ -23,7 +23,7 @@ router.get("/", async (req: Request, res: Response) => {
   return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
     games,
     [
-        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, null)
+        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
     ]
   ));
 });
@@ -34,8 +34,8 @@ router.get("/", async (req: Request, res: Response) => {
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const gameFacade = new GameCompositeFacade();
-  const game = await gameFacade.getById(req.params.id);
-  if(!game){
+  const game = await gameFacade.getById(Number(req.params.id));
+  if (!game) {
     res.json(new HttpResponse(HttpResponseStatus.FAIL,
       undefined,
       [
