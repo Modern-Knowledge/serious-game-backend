@@ -248,11 +248,10 @@ router.delete("/:id", [
     const therapistFacade = new TherapistFacade();
 
     try {
-
         const therapist = await therapistFacade.isTherapist(id);
+
         // check if user is therapist
         if (!therapist) {
-
             logger.debug(`${loggerString()} DELETE TherapistController/:id: Therapist with id ${id} was not found!`);
 
             return res.status(404).json(
