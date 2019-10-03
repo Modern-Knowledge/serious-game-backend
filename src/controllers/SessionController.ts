@@ -16,6 +16,9 @@ import {
     toHttpResponseMessage
 } from "../util/validation/validationMessages";
 import { Session } from "../lib/models/Session";
+import { SessionFacade } from "../db/entity/game/SessionFacade";
+import { StatisticFacade } from "../db/entity/game/StatisticFacade";
+import { Statistic } from "../lib/models/Statistic";
 
 const router = express.Router();
 
@@ -188,6 +191,82 @@ router.delete("/:id", [
                 undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich gelöscht!`)
+                ]
+            )
+        );
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+
+/**
+ * POST /
+ *
+ * creates a new session and a statistic
+ *
+ * session.date is set to [now]
+ * statistic.starttime is set to [now]
+ *
+ * body:
+ * - game_id: id of the patient
+ * - patient_id: id of the patient
+ * - therapist_id: id of the therapist
+ * - game_setting_id: id of the game_setting
+ *
+ * response:
+ * - session: created session
+ */
+router.post("/", [
+    check("game_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+
+    check("patient_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+
+    check("therapist_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+
+    check("game_setting_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+
+], async (req: Request, res: Response, next: any) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logValidatorErrors("POST SessionController/", errors.array());
+
+        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+            undefined,
+            [
+                ...toHttpResponseMessage(errors.array())
+            ]
+        ));
+    }
+
+    const sessionFacade = new SessionFacade();
+    const session = new Session().deserialize(req.body);
+    session.date = new Date();
+
+    const statisticFacade = new StatisticFacade();
+    const statistic = new Statistic();
+    statistic.startTime = new Date();
+
+    try {
+        // insert statistic
+        const insertedStatistic = await statisticFacade.insertStatistic(statistic);
+
+        logger.debug(`${loggerString()} POST SessionController/: Statistic with id ${insertedStatistic.id} for new session was successfully created!`);
+
+        session.statisticId = insertedStatistic.id;
+        session.statistic = insertedStatistic;
+
+        // insert statistic
+        const insertedSession = await sessionFacade.insertSession(session);
+
+        logger.debug(`${loggerString()} POST SessionController/: Session with id ${insertedSession.id} was successfully created!`);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                insertedSession,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich erstellt`)
                 ]
             )
         );
