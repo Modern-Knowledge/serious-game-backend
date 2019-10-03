@@ -77,8 +77,6 @@ validationMessages.get("therapist").set("value_false", new HttpResponseMessage(H
 validationMessages.get("date").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Kein gültiges Datum übergeben!`));
 validationMessages.get("date").set("wrong_order", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Start muss zeitlich vor dem Ende liegen!`));
 
-
-
 /**
  * retrieves the validationMessage by category and messageName
  * @param category category of the message
@@ -86,6 +84,15 @@ validationMessages.get("date").set("wrong_order", new HttpResponseMessage(HttpRe
  */
 export function retrieveValidationMessage(category: string, messageName: string): HttpResponseMessage {
     return validationMessages.get(category).get(messageName);
+}
+
+/**
+ * shortcut method for retrieveValidationMessage
+ * @param category
+ * @param messageName
+ */
+export function rVM(category: string, messageName: string): HttpResponseMessage {
+    return retrieveValidationMessage(category, messageName);
 }
 
 /**
@@ -103,6 +110,7 @@ export function toHttpResponseMessage(errors: any[]): HttpResponseMessage[] {
 }
 
 /**
+ * todo: move to validationHelper.ts
  * logs errors to console that are produced by express-validator
  * @param endpoint endpoint that reports the errors
  * @param errors error array that is returned by express validator
