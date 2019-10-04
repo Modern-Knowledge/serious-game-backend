@@ -11,9 +11,7 @@ import { Therapist } from "../lib/models/Therapist";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { Status } from "../lib/enums/Status";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
-import { Patient } from "../lib/models/Patient";
 import logger from "../util/log/logger";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -30,6 +28,7 @@ import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { loggerString } from "../util/Helper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 const router = express.Router();
 
 /**
@@ -113,16 +112,8 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST TherapistController/", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST TherapistController/", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const therapistFacade = new TherapistFacade();
@@ -169,7 +160,14 @@ router.post("/", [
  * response:
  * - therapist: updated therapist
  */
-router.put("/:id", async (req: Request, res: Response, next: any) => {
+router.put("/:id", [
+    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    if (!checkRouteValidation("PUT TherapistController/:id", req, res)) {
+        return sendDefault400Response(req, res);
+    }
+
     const therapistFacade = new TherapistFacade();
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
@@ -226,16 +224,8 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("DELETE TherapistController/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("DELETE TherapistController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);

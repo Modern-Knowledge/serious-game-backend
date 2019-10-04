@@ -24,6 +24,7 @@ import moment from "moment";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 
 const router = express.Router();
 
@@ -44,16 +45,8 @@ router.post("/login", [
         .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST LoginController/login", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST LoginController/login", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const userFacade = new UserFacade();

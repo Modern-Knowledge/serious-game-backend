@@ -26,6 +26,7 @@ import {
     retrieveValidationMessage,
     toHttpResponseMessage
 } from "../util/validation/validationMessages";
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 
 const router = express.Router();
 
@@ -43,16 +44,8 @@ router.post("/reset", [
     check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST PasswordResetController/reset-password", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const {email} = req.body;
@@ -136,16 +129,8 @@ router.post("/reset-password",  [
         .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(retrieveValidationMessage("token", "length"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST PasswordResetController/reset-password", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST PasswordResetController/reset-password", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const {password, email, token} = req.body;

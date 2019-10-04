@@ -96,7 +96,7 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
 });
 
 /**
- * todo: needed
+ * todo: needed?
  *
  * GET /
  * Get a user by id.

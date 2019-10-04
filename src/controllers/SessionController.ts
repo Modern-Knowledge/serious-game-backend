@@ -19,6 +19,7 @@ import { Session } from "../lib/models/Session";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 
 const router = express.Router();
 
@@ -36,16 +37,8 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("GET SessionController/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("GET SessionController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -98,16 +91,8 @@ router.get("/patient/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("GET SessionController/patient/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("GET SessionController/patient/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -147,16 +132,8 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("DELETE SessionController/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("DELETE SessionController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -226,16 +203,8 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST SessionController/", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST SessionController/", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const sessionFacade = new SessionFacade();

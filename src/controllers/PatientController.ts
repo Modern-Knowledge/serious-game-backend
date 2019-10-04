@@ -21,6 +21,7 @@ import {
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 const router = express.Router();
 
 /**
@@ -103,16 +104,8 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("POST PatientController/", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST PatientController/", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const patientFacade = new PatientFacade();
@@ -156,16 +149,8 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("DELETE PatientController/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("DELETE PatientController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);

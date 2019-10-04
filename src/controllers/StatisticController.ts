@@ -19,6 +19,7 @@ import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
 import moment from "moment";
+import { checkRouteValidation, sendDefault400Response } from '../util/validation/validationHelper'
 
 const router = express.Router();
 
@@ -37,16 +38,8 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("GET StatisticController/:id", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -95,16 +88,8 @@ router.put("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        logValidatorErrors("PUT StatisticController/", errors.array());
-
-        return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-            undefined,
-            [
-                ...toHttpResponseMessage(errors.array())
-            ]
-        ));
+    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+        return sendDefault400Response(req, res);
     }
 
     const statistic = new Statistic().deserialize(req.body);
