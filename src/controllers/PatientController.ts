@@ -22,7 +22,7 @@ import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import {http4xxResponse} from "../util/http/httpResponses";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
