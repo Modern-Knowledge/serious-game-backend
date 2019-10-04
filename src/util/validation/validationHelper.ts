@@ -36,7 +36,7 @@ export function checkRouteValidation(endpoint: string, req: Request, res: Respon
  * @param req request object
  * @param res response object
  */
-export function sendDefault400Response(req: Request, res: Response): Response {
+export function failedValidation400Response(req: Request, res: Response): Response {
     return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
         undefined,
         [

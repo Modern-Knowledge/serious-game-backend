@@ -24,7 +24,7 @@ import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { loggerString } from "../util/Helper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
-import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import {logEndpoint} from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -114,7 +114,7 @@ router.post("/", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const therapistFacade = new TherapistFacade();
@@ -164,7 +164,7 @@ router.put("/:id", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const therapistFacade = new TherapistFacade();
@@ -224,7 +224,7 @@ router.delete("/:id", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const id = Number(req.params.id);

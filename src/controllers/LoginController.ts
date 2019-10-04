@@ -20,7 +20,7 @@ import moment from "moment";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
-import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -46,7 +46,7 @@ router.post("/login", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const userFacade = new UserFacade();

@@ -22,7 +22,7 @@ import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { check, validationResult } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
-import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -44,7 +44,7 @@ router.post("/reset", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const {email} = req.body;
@@ -129,7 +129,7 @@ router.post("/reset-password",  [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const {password, email, token} = req.body;

@@ -20,7 +20,7 @@ import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
 import moment from "moment";
-import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -43,7 +43,7 @@ router.get("/:id", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -94,7 +94,7 @@ router.put("/", [
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
-        return sendDefault400Response(req, res);
+        return failedValidation400Response(req, res);
     }
 
     const statistic = new Statistic().deserialize(req.body);
