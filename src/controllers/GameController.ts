@@ -35,7 +35,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             games,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele erfolgreich geladen!")
             ]
         ));
     } catch (e) {

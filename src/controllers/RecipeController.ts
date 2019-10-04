@@ -40,7 +40,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             recipes,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Rezepte erfolgreich geladen!`)
             ]
         ));
     } catch (e) {
