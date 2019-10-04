@@ -21,6 +21,7 @@ import { Statistic } from "../lib/models/Statistic";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
 import moment from "moment";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -51,7 +52,7 @@ router.get("/:id", [
     try {
         const statistic = await statisticFacade.getById(id);
 
-        logger.debug(`${loggerString()} GET SessionController/:id: Statistic with id ${id} was successfully loaded!`);
+        logEndpoint(controllerName, `Statistic with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -106,7 +107,7 @@ router.put("/", [
         const affectedRows = await statisticFacade.updateStatistic(statistic);
 
         if (affectedRows <= 0) { // check amount of affected rows
-            logger.debug(`${loggerString()} PUT SessionController/: Statistic with id ${statistic.id} couldn't be updated!`);
+            logEndpoint(controllerName, `Statistic with id ${statistic.id} couldn't be updated!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
@@ -118,7 +119,7 @@ router.put("/", [
             );
         }
 
-        logger.debug(`${loggerString()} PUT SessionController/: Statistic with id ${statistic.id} was successfully updated!`);
+        logEndpoint(controllerName, `Statistic with id ${statistic.id} was successfully updated!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

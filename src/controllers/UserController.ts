@@ -19,6 +19,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { loggerString } from "../util/Helper";
+import {logEndpoint} from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
     const token = req.headers["x-access-token"].toString();
 
     if (!token) {
-        logger.debug(`${loggerString()} GET UserController/related: No token was provided!`);
+        logEndpoint(controllerName, `No token was provided!`, req);
 
         return res.status(401).json(
             new HttpResponse(HttpResponseStatus.FAIL,
@@ -55,7 +56,7 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
         const jwtHelper: JWTHelper = new JWTHelper();
         return await jwtHelper.verifyToken(token, async (err, decoded) => {
             if (err) {
-                logger.debug(`${loggerString()} GET UserController/related: Error when verifying token for user!`);
+                logEndpoint(controllerName, `Error when verifying token for user!`, req);
 
                 return res.status(500).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
@@ -73,7 +74,7 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
             const user = await userFacade.getById(data.id);
 
             if (!user) {
-                logger.debug(`${loggerString()} GET UserController/related: User with id ${data.id} was not found!`);
+                logEndpoint(controllerName, `User with id ${data.id} was not found!`, req);
 
                 return res.status(404).json(
                     new HttpResponse(HttpResponseStatus.FAIL,
@@ -85,7 +86,7 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
                 );
             }
 
-            logger.debug(`${loggerString()} GET UserController/related: Retrieved related user with id ${data.id}`);
+            logEndpoint(controllerName, `Retrieved related user with id ${data.id}`, req);
 
             return res.status(200).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,

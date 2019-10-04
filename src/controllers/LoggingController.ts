@@ -16,6 +16,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
+import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     try {
         const logs = await facade.get();
 
-        logger.debug(`${loggerString()} GET LoggingController/: All logs loaded successfully!`);
+        logEndpoint(controllerName, `All logs loaded successfully!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -71,7 +72,7 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
             facade.insertLog(log);
         }
 
-        logger.debug(`${loggerString()} POST LoggingController/create: logs successfully created`);
+        logEndpoint(controllerName, `${req.body.length} logs successfully created!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

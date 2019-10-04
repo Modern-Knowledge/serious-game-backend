@@ -21,6 +21,8 @@ import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 
 const router = express.Router();
 
@@ -51,7 +53,7 @@ router.get("/:id", [
         const session = await sessionCompositeFacade.getById(id);
 
         if (!session) {
-            logger.debug(`${loggerString()} GET SessionController/:id: Session with id ${id} not found!`);
+            logEndpoint(controllerName, `Session with id ${id} not found!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
@@ -63,7 +65,7 @@ router.get("/:id", [
             );
         }
 
-        logger.debug(`${loggerString()} GET SessionController/:id: Session with id ${id} was successfully loaded!`);
+        logEndpoint(controllerName, `Session with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -105,7 +107,7 @@ router.get("/patient/:id", [
     try {
         const sessions: Session[] = await sessionCompositeFacade.get();
 
-        logger.debug(`${loggerString()} GET SessionController/patient/:id: Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`);
+        logEndpoint(controllerName, `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -147,7 +149,7 @@ router.delete("/:id", [
         const session: Session = await sessionCompositeFacade.getById(id);
 
         if (!session) {
-            logger.debug(`${loggerString()} DELETE SessionController/:id: Session with id ${id} was not found!`);
+            logEndpoint(controllerName, `Session with id ${id} was not found!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
@@ -165,7 +167,7 @@ router.delete("/:id", [
 
         await sessionCompositeFacade.deleteSessionComposite();
 
-        logger.debug(`${loggerString()} DELETE SessionController/:id: Session with id ${id} was successfully deleted!`);
+        logEndpoint(controllerName, `Session with id ${id} was successfully deleted!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -222,7 +224,7 @@ router.post("/", [
         // insert statistic
         const insertedStatistic = await statisticFacade.insertStatistic(statistic);
 
-        logger.debug(`${loggerString()} POST SessionController/: Statistic with id ${insertedStatistic.id} for new session was successfully created!`);
+        logEndpoint(controllerName, `Statistic with id ${insertedStatistic.id} for new session was successfully created!`, req);
 
         session.statisticId = insertedStatistic.id;
         session.statistic = insertedStatistic;
@@ -230,7 +232,7 @@ router.post("/", [
         // insert statistic
         const insertedSession = await sessionFacade.insertSession(session);
 
-        logger.debug(`${loggerString()} POST SessionController/: Session with id ${insertedSession.id} was successfully created!`);
+        logEndpoint(controllerName, `Session with id ${insertedSession.id} was successfully created!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

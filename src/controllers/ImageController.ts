@@ -16,6 +16,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -45,18 +46,18 @@ router.get("/:id", [
         const image = await facade.getById(id);
 
         if (!image) {
-            logger.debug(`${loggerString()} POST ImageController/:id: The image with id ${id} does not exist!`);
+            logEndpoint(controllerName, `The image with id ${id} does not exist!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
                     undefined,
                     [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der id ${id} wurde nicht gefunden!`)
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der ID ${id} wurde nicht gefunden!`)
                     ]
                 ));
         }
 
-        logger.debug(`${loggerString()} POST ImageController/:id: The image with id ${id} was successfully loaded!`);
+        logEndpoint(controllerName, `The image with id ${id} was successfully loaded!`, req);
 
         return res.status(200).send(image.image);
     }

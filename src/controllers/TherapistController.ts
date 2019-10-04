@@ -25,6 +25,7 @@ import { passwordValidator } from "../util/validation/validators/passwordValidat
 import { loggerString } from "../util/Helper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import {logEndpoint} from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -54,7 +55,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     try {
         const therapists = await therapistFacade.get();
 
-        logger.debug(`${loggerString()} GET TherapistController/: Return all therapists!`);
+        logEndpoint(controllerName, `Return all therapists!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -126,7 +127,7 @@ router.post("/", [
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.signToken(response);
 
-        logger.debug(`${loggerString()} POST TherapistController/: Therapist with id ${response.id} was successfully created!`);
+        logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -177,7 +178,7 @@ router.put("/:id", [
         // remove all patients from therapist
         await therapistPatientsFacade.syncPatients(therapistPatient);
 
-        logger.debug(`${loggerString()} PUT TherapistController/:id: All patients from therapist with id ${therapist.id} were removed!`);
+        logEndpoint(controllerName, `All patients from therapist with id ${therapist.id} were removed!`, req);
 
         // reassign patients
         for (const patient of therapist.patients) {
@@ -185,14 +186,14 @@ router.put("/:id", [
             await therapistPatientsFacade.insertTherapistPatient(therapistPatient);
         }
 
-        logger.debug(`${loggerString()} PUT TherapistController/:id: Reassigned all patients to the therapist with id ${therapist.id}!`);
+        logEndpoint(controllerName, `Reassigned all patients to the therapist with id ${therapist.id}!`, req);
 
         const filter = therapistFacade.filter;
         filter.addFilterCondition("therapist_id", therapist.id);
 
         await therapistFacade.updateTherapist(therapist);
 
-        logger.debug(`${loggerString()} PUT TherapistController/:id: Updated therapist with id ${therapist.id}`);
+        logEndpoint(controllerName, `Updated therapist with id ${therapist.id}!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -240,7 +241,7 @@ router.delete("/:id", [
 
         // check if user is therapist
         if (!therapist) {
-            logger.debug(`${loggerString()} DELETE TherapistController/:id: Therapist with id ${id} was not found!`);
+            logEndpoint(controllerName, `Therapist with id ${id} was not found!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
@@ -254,7 +255,7 @@ router.delete("/:id", [
 
         await therapistCompositeFacade.deleteTherapistComposite();
 
-        logger.debug(`${loggerString()} DELETE TherapistController/:id: Therapist with id ${id} was successfully deleted!`);
+        logEndpoint(controllerName, `Therapist with id ${id} was successfully deleted!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

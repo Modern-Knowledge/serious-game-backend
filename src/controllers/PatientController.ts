@@ -23,6 +23,7 @@ import { passwordValidator } from "../util/validation/validators/passwordValidat
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
 
@@ -48,7 +49,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     try {
         const patients = await patientFacade.get();
 
-        logger.debug(`${loggerString()} PatientController/: Return all patients!`);
+        logEndpoint(controllerName, `Return all patients!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -122,7 +123,7 @@ router.post("/", [
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.signToken(response);
 
-        logger.debug(`${loggerString()} POST PatientController/: Patient with id ${response.id} was successfully created!`);
+        logEndpoint(controllerName, `Patient with id ${response.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
@@ -173,7 +174,7 @@ router.delete("/:id", [
         const patient = await patientFacade.isPatient(id);
         // check if user is therapist
         if (!patient) {
-            logger.debug(`${loggerString()} DELETE PatientController/:id: Patient with id ${id} was not found!`);
+            logEndpoint(controllerName, `Patient with id ${id} was not found!`, req);
 
             return res.status(404).json(
                 new HttpResponse(HttpResponseStatus.FAIL,
@@ -187,7 +188,7 @@ router.delete("/:id", [
 
         await patientCompositeFacade.deletePatientComposite();
 
-        logger.debug(`${loggerString()} DELETE PatientController/:id: Patient with id ${id} was successfully deleted!`);
+        logEndpoint(controllerName, `Patient with id ${id} was successfully deleted!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
