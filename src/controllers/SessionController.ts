@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import logger from "../util/log/logger";
@@ -10,11 +15,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { Session } from "../lib/models/Session";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
@@ -37,7 +38,7 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("GET SessionController/:id", req, res)) {
+    if (!checkRouteValidation("SessionController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -91,7 +92,7 @@ router.get("/patient/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("GET SessionController/patient/:id", req, res)) {
+    if (!checkRouteValidation("SessionController/patient/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -132,7 +133,7 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("DELETE SessionController/:id", req, res)) {
+    if (!checkRouteValidation("SessionController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -203,7 +204,7 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST SessionController/", req, res)) {
+    if (!checkRouteValidation("SessionController/", req, res)) {
         return sendDefault400Response(req, res);
     }
 

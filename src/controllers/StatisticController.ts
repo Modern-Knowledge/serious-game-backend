@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
@@ -10,16 +15,12 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
 import moment from "moment";
-import { checkRouteValidation, sendDefault400Response } from '../util/validation/validationHelper'
+import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+    if (!checkRouteValidation("StatisticController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -88,7 +89,7 @@ router.put("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+    if (!checkRouteValidation("StatisticController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 

@@ -21,11 +21,7 @@ import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
 
 const router = express.Router();
@@ -44,7 +40,7 @@ router.post("/reset", [
     check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+    if (!checkRouteValidation("PasswordResetController/reset", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -129,7 +125,7 @@ router.post("/reset-password",  [
         .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(retrieveValidationMessage("token", "length"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST PasswordResetController/reset-password", req, res)) {
+    if (!checkRouteValidation("PasswordResetController/reset-password", req, res)) {
         return sendDefault400Response(req, res);
     }
 

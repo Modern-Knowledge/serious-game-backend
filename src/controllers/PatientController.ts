@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
@@ -13,11 +18,7 @@ import {
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
@@ -44,7 +45,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
     try {
         const patients = await patientFacade.get();
 
-        logger.debug(`${loggerString()} GET PatientController/: Return all patients!`);
+        logger.debug(`${loggerString()} PatientController/: Return all patients!`);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

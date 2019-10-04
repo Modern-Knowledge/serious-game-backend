@@ -8,11 +8,7 @@ import * as bcrypt from "bcryptjs";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { JWTHelper } from "../util/JWTHelper";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -43,9 +39,10 @@ router.post("/login", [
 
     check("email").normalizeEmail()
         .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST LoginController/login", req, res)) {
+    if (!checkRouteValidation("LoginController/login", req, res)) {
         return sendDefault400Response(req, res);
     }
 

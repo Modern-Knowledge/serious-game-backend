@@ -1,13 +1,14 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express, { Request, Response } from "express";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
 import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -29,7 +30,7 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST ImageController/:id", req, res)) {
+    if (!checkRouteValidation("ImageController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 

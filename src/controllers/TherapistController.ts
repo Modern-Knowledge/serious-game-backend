@@ -19,11 +19,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { check, validationResult } from "express-validator";
-import {
-    logValidatorErrors,
-    retrieveValidationMessage,
-    toHttpResponseMessage
-} from "../util/validation/validationMessages";
+import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { loggerString } from "../util/Helper";
@@ -112,7 +108,7 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("POST TherapistController/", req, res)) {
+    if (!checkRouteValidation("TherapistController/", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -164,7 +160,7 @@ router.put("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("PUT TherapistController/:id", req, res)) {
+    if (!checkRouteValidation("TherapistController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -224,7 +220,7 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("DELETE TherapistController/:id", req, res)) {
+    if (!checkRouteValidation("TherapistController/:id", req, res)) {
         return sendDefault400Response(req, res);
     }
 
