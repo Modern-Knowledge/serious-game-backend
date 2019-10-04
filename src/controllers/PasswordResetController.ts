@@ -16,14 +16,13 @@ import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
 import { mailTransport } from "../util/mail/mailTransport";
 import moment from "moment";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -58,13 +57,9 @@ router.post("/reset", [
         if (!user) {
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
-                    ]
-                ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
+            ]);
         }
 
         // check if token exists
@@ -143,12 +138,9 @@ router.post("/reset-password",  [
         if (!user) {
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
-            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
-                undefined,
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
-                ]
-            ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+            ]);
         }
 
         // check if token is valid
@@ -158,34 +150,23 @@ router.post("/reset-password",  [
             if (user.resetcode !== Number(token)) {
                 logEndpoint(controllerName, `User with id ${user.id} has passed an invalid password reset token!`, req);
 
-                return res.status(400).json(
-                    new HttpResponse(HttpResponseStatus.FAIL,
-                        undefined,
-                        [
-                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der eingegebene Code "${token}" ist nicht korrekt!`)
-                        ]
-                    ));
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der eingegebene Code "${token}" ist nicht korrekt!`)
+                ], 400);
+
             } else if (moment().isAfter(user.resetcodeValidUntil)) {
                 logEndpoint(controllerName, `The password reset token for the user with ${user.id} is not valid anymore! (expired at ${user.resetcodeValidUntil})`, req);
 
-                return res.status(400).json(
-                    new HttpResponse(HttpResponseStatus.FAIL,
-                        undefined,
-                        [
-                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
-                        ]
-                    ));
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
+                ], 400);
             }
         } else {
             logEndpoint(controllerName, `User with id ${user.id} has not requested a password token!`, req);
 
-            return res.status(400).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
-                    ]
-                ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
+            ], 400);
         }
 
         user.password = password;

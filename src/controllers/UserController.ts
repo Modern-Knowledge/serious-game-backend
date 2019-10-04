@@ -6,9 +6,6 @@
 import express from "express";
 import { Request, Response } from "express";
 import logger from "../util/log/logger";
-import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 import { JWTHelper } from "../util/JWTHelper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
@@ -18,8 +15,8 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { loggerString } from "../util/Helper";
-import {logEndpoint} from "../util/log/endpointLogger";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -42,14 +39,9 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
     if (!token) {
         logEndpoint(controllerName, `No token was provided!`, req);
 
-        return res.status(401).json(
-            new HttpResponse(HttpResponseStatus.FAIL,
-                {auth: false, message: "No token provided."},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es wurde kein Token übergeben!`)
-                ]
-            )
-        );
+        return http4xxResponse(res, [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Es wurde kein Token übergeben!`)
+        ], 401, {auth: false, message: "No token provided."});
     }
 
     try {
@@ -58,14 +50,9 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
             if (err) {
                 logEndpoint(controllerName, `Error when verifying token for user!`, req);
 
-                return res.status(500).json(
-                    new HttpResponse(HttpResponseStatus.FAIL,
-                        {auth: false, message: "Failed to authenticate token."},
-                        [
-                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Token konnte nicht authentifiziert werden!`)
-                        ]
-                    )
-                );
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Token konnte nicht authentifiziert werden!`)
+                ], 400, {auth: false, message: "Failed to authenticate token."});
             }
 
             const data: any = decoded;
@@ -76,14 +63,9 @@ router.get("/related", async (req: Request, res: Response, next: any) => {
             if (!user) {
                 logEndpoint(controllerName, `User with id ${data.id} was not found!`, req);
 
-                return res.status(404).json(
-                    new HttpResponse(HttpResponseStatus.FAIL,
-                        undefined,
-                        [
-                            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `BenutzerIn mit ID ${data.id} konnte nicht gefunden werden!`)
-                        ]
-                    )
-                );
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `BenutzerIn mit ID ${data.id} konnte nicht gefunden werden!`)
+                ], 400);
             }
 
             logEndpoint(controllerName, `Retrieved related user with id ${data.id}`, req);

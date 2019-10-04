@@ -5,8 +5,6 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -14,7 +12,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { Session } from "../lib/models/Session";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
@@ -22,7 +20,7 @@ import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { formatDateTime } from "../lib/utils/dateFormatter";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -55,14 +53,9 @@ router.get("/:id", [
         if (!session) {
             logEndpoint(controllerName, `Session with id ${id} not found!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
-                    ]
-                )
-            );
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
+            ]);
         }
 
         logEndpoint(controllerName, `Session with id ${id} was successfully loaded!`, req);
@@ -151,14 +144,9 @@ router.delete("/:id", [
         if (!session) {
             logEndpoint(controllerName, `Session with id ${id} was not found!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
-                    ]
-                )
-            );
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
+            ]);
         }
 
         sessionCompositeFacade.filter.addFilterCondition("id", session.id);

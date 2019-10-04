@@ -7,7 +7,7 @@ import express, { Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { JWTHelper } from "../util/JWTHelper";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import {
     HttpResponse,
@@ -18,10 +18,9 @@ import {
 import { User } from "../lib/models/User";
 import moment from "moment";
 import { formatDateTime } from "../lib/utils/dateFormatter";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -37,6 +36,7 @@ const controllerName = "LoginController";
  * - password: password of the user
  */
 router.post("/login", [
+
     check("password")
         .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
 
@@ -62,24 +62,18 @@ router.post("/login", [
         if (!user) {
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
-            return res.status(404).json(new HttpResponse(HttpResponseStatus.FAIL,
-                undefined,
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ein Konto mit der E-Mail Adresse "${email}" wurde nicht gefunden!`)
-                ]
-            ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ein Konto mit der E-Mail Adresse "${email}" wurde nicht gefunden!`)
+            ]);
         }
 
         // check if user is allowed to login
         if (user.loginCoolDown && moment().isBefore(user.loginCoolDown)) {
             logEndpoint(controllerName, `The account of the user with the id ${user.id} is locked until ${formatDateTime(user.loginCoolDown)}!`, req);
 
-            return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
-                undefined,
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler fehlgeschlagener Loginversuche gesperrt ist. Ihr Account ist ab ${formatDateTime(user.loginCoolDown)} wieder freigeschalten.`)
-                ]
-            ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler fehlgeschlagener Loginversuche gesperrt ist. Ihr Account ist ab ${formatDateTime(user.loginCoolDown)} wieder freigeschalten.`)
+            ], 400);
         }
 
         const valid = bcrypt.compareSync(password, user.password);
@@ -106,13 +100,10 @@ router.post("/login", [
 
             userFacade.updateUser(user);
 
-            return res.status(401).json(new HttpResponse(HttpResponseStatus.FAIL,
-                undefined,
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
-                        ...additionalMessages
-                ]
-            ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
+                ...additionalMessages
+            ], 401);
         }
 
         const jwtHelper: JWTHelper = new JWTHelper();

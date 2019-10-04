@@ -5,18 +5,12 @@
 
 import express, { Request, Response } from "express";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
-import {
-    HttpResponse,
-    HttpResponseMessage,
-    HttpResponseMessageSeverity,
-    HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -48,13 +42,9 @@ router.get("/:id", [
         if (!image) {
             logEndpoint(controllerName, `The image with id ${id} does not exist!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der ID ${id} wurde nicht gefunden!`)
-                    ]
-                ));
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der ID ${id} wurde nicht gefunden!`)
+            ]);
         }
 
         logEndpoint(controllerName, `The image with id ${id} was successfully loaded!`, req);

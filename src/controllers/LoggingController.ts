@@ -14,8 +14,6 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();

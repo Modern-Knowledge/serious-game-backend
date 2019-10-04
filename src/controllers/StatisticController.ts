@@ -5,16 +5,13 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import { PatientFacade } from "../db/entity/user/PatientFacade";
-import logger from "../util/log/logger";
-import { loggerString } from "../util/Helper";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
@@ -22,6 +19,7 @@ import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFaca
 import moment from "moment";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -109,14 +107,9 @@ router.put("/", [
         if (affectedRows <= 0) { // check amount of affected rows
             logEndpoint(controllerName, `Statistic with id ${statistic.id} couldn't be updated!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik konnte nicht aktualisiert werden!`)
-                    ]
-                )
-            );
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik konnte nicht aktualisiert werden!`)
+            ], 400);
         }
 
         logEndpoint(controllerName, `Statistic with id ${statistic.id} was successfully updated!`, req);

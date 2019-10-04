@@ -11,21 +11,20 @@ import { Therapist } from "../lib/models/Therapist";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { Status } from "../lib/enums/Status";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
-import logger from "../util/log/logger";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
-import { loggerString } from "../util/Helper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
-import {logEndpoint} from "../util/log/endpointLogger";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { http4xxResponse } from "../util/http/httpResponses";
 
 const router = express.Router();
 
@@ -243,14 +242,9 @@ router.delete("/:id", [
         if (!therapist) {
             logEndpoint(controllerName, `Therapist with id ${id} was not found!`, req);
 
-            return res.status(404).json(
-                new HttpResponse(HttpResponseStatus.FAIL,
-                    undefined,
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
-                    ]
-                )
-            );
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
+            ]);
         }
 
         await therapistCompositeFacade.deleteTherapistComposite();
