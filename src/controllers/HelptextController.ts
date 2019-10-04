@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
 
 const router = express.Router();
+
+const controllerName = "HelptextController";
 
 /**
  * GET

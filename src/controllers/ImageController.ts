@@ -19,6 +19,9 @@ import { checkRouteValidation, sendDefault400Response } from "../util/validation
 
 const router = express.Router();
 
+const controllerName = "ImageController";
+
+
 /**
  * GET /:id
  * returns image by id

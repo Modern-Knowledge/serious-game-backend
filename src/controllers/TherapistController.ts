@@ -25,7 +25,11 @@ import { passwordValidator } from "../util/validation/validators/passwordValidat
 import { loggerString } from "../util/Helper";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+
 const router = express.Router();
+
+const controllerName = "TherapistController";
+
 
 /**
  * GET /

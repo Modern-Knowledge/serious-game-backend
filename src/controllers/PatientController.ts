@@ -23,7 +23,10 @@ import { passwordValidator } from "../util/validation/validators/passwordValidat
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, sendDefault400Response } from "../util/validation/validationHelper";
+
 const router = express.Router();
+
+const controllerName = "PatientController";
 
 /**
  * GET /

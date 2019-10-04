@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { WordFacade } from "../db/entity/word/WordFacade";
 import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 
 const router = express.Router();
+
+const controllerName = "WordController";
 
 /**
  * GET

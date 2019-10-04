@@ -22,6 +22,9 @@ import { loggerString } from "../util/Helper";
 
 const router = express.Router();
 
+const controllerName = "UserController";
+
+
 /**
  * GET /
  * Get the user belonging to the sent JWT.

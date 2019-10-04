@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { LogFacade } from "../db/entity/log/LogFacade";
@@ -13,6 +18,8 @@ import logger from "../util/log/logger";
 import { loggerString } from "../util/Helper";
 
 const router = express.Router();
+
+const controllerName = "LoggingController";
 
 /**
  * GET /

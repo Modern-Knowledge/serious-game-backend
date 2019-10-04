@@ -24,6 +24,8 @@ import { checkRouteValidation, sendDefault400Response } from "../util/validation
 
 const router = express.Router();
 
+const controllerName = "LoginController";
+
 /**
  * POST /login
  *
