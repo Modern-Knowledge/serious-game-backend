@@ -4,9 +4,11 @@
  */
 
 import { validationResult } from "express-validator";
-import { logValidatorErrors, toHttpResponseMessage } from "./validationMessages";
+import { toHttpResponseMessage } from "./validationMessages";
 import { HttpResponse, HttpResponseStatus } from "../../lib/utils/http/HttpResponse";
 import { Request, Response } from "express";
+import logger from "../log/logger";
+import { loggerString } from "../Helper";
 
 /**
  * checks if a validation in express-validator was not successful
@@ -41,4 +43,15 @@ export function sendDefault400Response(req: Request, res: Response): Response {
             ...toHttpResponseMessage(validationResult(req).array())
         ]
     ));
+}
+
+/**
+ * logs errors to console that are produced by express-validator
+ * @param endpoint endpoint that reports the errors
+ * @param errors error array that is returned by express validator
+ */
+export function logValidatorErrors(endpoint: string, errors: any[]): void {
+    for (const error of errors) {
+        logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, Ort: ${error.location}, Text: ${error.msg.message}, Wert: ${!error.param.includes("password") ? error.value : ""}`);
+    }
 }

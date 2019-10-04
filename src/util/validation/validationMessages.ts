@@ -108,15 +108,3 @@ export function toHttpResponseMessage(errors: any[]): HttpResponseMessage[] {
 
     return httpErrors;
 }
-
-/**
- * todo: move to validationHelper.ts
- * logs errors to console that are produced by express-validator
- * @param endpoint endpoint that reports the errors
- * @param errors error array that is returned by express validator
- */
-export function logValidatorErrors(endpoint: string, errors: any[]): void {
-    for (const error of errors) {
-        logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, Ort: ${error.location}, Text: ${error.msg.message}, Wert: ${!error.param.includes("password") ? error.value : ""}`);
-    }
-}

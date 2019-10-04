@@ -13,7 +13,9 @@ import { getRequestUrl, loggerString } from "./Helper";
  */
 
 /**
- * Middleware that measures the response time
+ * Middleware that measures the response time and prints it to the console.
+ * The response time is analyzed and warnings/errors are printed to the console
+ *
  * @param req
  * @param res
  * @param next
@@ -32,7 +34,9 @@ export function measureRequestTime(req: Request, res: Response, next: any) {
 }
 
 /**
- * log information about the request
+ * logs information about the request and the passed parameters
+ * e.g.: [DATETIME] (GET|PUT|POST|DELETE) http://localhost/images/
+ *
  * @param req
  * @param res
  * @param next
