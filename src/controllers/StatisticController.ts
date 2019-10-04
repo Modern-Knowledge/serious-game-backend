@@ -41,7 +41,7 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("StatisticController/:id", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -82,6 +82,7 @@ router.get("/:id", [
  */
 router.put("/", [
     check("_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+
     check("_startTime")
         .isISO8601().withMessage(retrieveValidationMessage("date", "invalid"))
         .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(retrieveValidationMessage("date", "wrong_order")),
@@ -91,7 +92,7 @@ router.put("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("StatisticController/:id", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 

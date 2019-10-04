@@ -44,7 +44,7 @@ router.post("/login", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("LoginController/login", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 

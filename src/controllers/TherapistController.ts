@@ -112,7 +112,7 @@ router.post("/", [
 
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("TherapistController/", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -142,8 +142,6 @@ router.post("/", [
 });
 
 /**
- * todo: maybe new name for route
- *
  * PUT /:id
  *
  * Update a therapist by id.
@@ -164,7 +162,7 @@ router.put("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("TherapistController/:id", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -224,7 +222,7 @@ router.delete("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("TherapistController/:id", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 

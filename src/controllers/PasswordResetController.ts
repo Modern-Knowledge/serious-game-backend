@@ -42,7 +42,7 @@ router.post("/reset", [
     check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("PasswordResetController/reset", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 
@@ -127,7 +127,7 @@ router.post("/reset-password",  [
         .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(retrieveValidationMessage("token", "length"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("PasswordResetController/reset-password", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 

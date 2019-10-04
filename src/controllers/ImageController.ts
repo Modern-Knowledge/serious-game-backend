@@ -33,7 +33,7 @@ router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation("ImageController/:id", req, res)) {
+    if (!checkRouteValidation(controllerName, req, res)) {
         return sendDefault400Response(req, res);
     }
 

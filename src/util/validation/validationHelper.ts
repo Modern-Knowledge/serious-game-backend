@@ -21,7 +21,7 @@ import { Request, Response } from "express";
 export function checkRouteValidation(endpoint: string, req: Request, res: Response): boolean {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        logValidatorErrors(req.method + " " + endpoint, errors.array());
+        logValidatorErrors(req.method + " " + endpoint + req.path, errors.array());
 
         return false;
     }
