@@ -3,10 +3,10 @@
  * All rights reserved.
  */
 import { Request, Response } from "express";
-import { Stopwatch } from "./analysis/Stopwatch";
-import logger from "./log/logger";
-import { ExecutionTimeAnalyser } from "./analysis/ExecutionTimeAnalyser";
-import { getRequestUrl, loggerString } from "./Helper";
+import { Stopwatch } from "../analysis/Stopwatch";
+import logger from "../log/logger";
+import { ExecutionTimeAnalyser } from "../analysis/ExecutionTimeAnalyser";
+import { getRequestUrl, loggerString } from "../Helper";
 
 /**
  * This file provides request middleware for express

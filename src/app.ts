@@ -36,7 +36,7 @@ if (config.error) { // .env not found
     throw new Error(message);
 }
 
-import { logRequest, measureRequestTime } from "./util/middleware";
+import { logRequest, measureRequestTime } from "./util/middleware/middleware";
 import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
