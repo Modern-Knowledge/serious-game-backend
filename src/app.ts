@@ -88,6 +88,8 @@ import WordController from "./controllers/WordController";
 import SessionController from "./controllers/SessionController";
 import StatisticController from "./controllers/StatisticController";
 import HelptextController from "./controllers/HelptextController";
+import ErrortextController from "./controllers/HelptextController";
+
 
 /**
  * measure response time
@@ -115,6 +117,7 @@ app.use("/sessions", SessionController);
 app.use("/statistics", StatisticController);
 app.use("/games", GameController);
 app.use("/helptexts", HelptextController);
+app.use("/errortexts", ErrortextController);
 
 // take care of 404 errors
 // matches all routes
