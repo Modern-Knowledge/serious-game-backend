@@ -122,7 +122,7 @@ router.get(
 );
 
 /**
- * GET /:category
+ * GET /category/:category_id
  *
  * Get ingredients by category_id.
  *
@@ -132,7 +132,7 @@ router.get(
  * response:
  * - ingredients: ingredients that were loaded
  */
-router.get("/:category_id", [
+router.get("/category/:category_id", [
      check("category_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
     ], async (req: Request, res: Response, next: any) => {
 
@@ -178,7 +178,7 @@ router.get("/:category_id", [
                     ingredients,
                     [new HttpResponseMessage(
                       HttpResponseMessageSeverity.SUCCESS,
-                      `Die Zutaten der Kategorie ${foodCategory.name} wurden erfolgreich geladen!`
+                      `Die Zutaten der Kategorie "${foodCategory.name}" wurden erfolgreich geladen!`
                   )
                 ])
             );
