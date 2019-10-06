@@ -19,6 +19,7 @@ import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import { inProduction, loggerString } from "./util/Helper";
 import cors from "cors";
+import methodOverride from "method-override";
 import helmet from "helmet";
 import {
     HttpResponse,
@@ -63,6 +64,8 @@ app.use(cors(options));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(methodOverride());
 
 app.use(passport.initialize());
 app.use(passport.session());
