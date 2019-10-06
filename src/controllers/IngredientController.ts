@@ -1,6 +1,10 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
-import { RecipeCompositeFacade } from "../db/composite/RecipeCompositeFacade";
 import {
   HttpResponse,
   HttpResponseStatus,
@@ -16,6 +20,7 @@ import {
 } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
 import { IngredientFacade } from "../db/entity/kitchen/IngredientFacade";
+import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
 
 const router = express.Router();
 
@@ -114,6 +119,73 @@ router.get(
       return next(e);
     }
   }
+);
+
+/**
+ * GET /:category
+ *
+ * Get ingredients by category_id.
+ *
+ * params:
+ * - category_id: category-id of the ingredients
+ *
+ * response:
+ * - ingredients: ingredients that were loaded
+ */
+router.get("/:category_id", [
+     check("category_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    ], async (req: Request, res: Response, next: any) => {
+
+      if (!checkRouteValidation(controllerName, req, res)) {
+        return failedValidation400Response(req, res);
+      }
+
+      const categoryId = Number(req.params.category_id);
+
+      const ingredientFacade = new IngredientFacade();
+      ingredientFacade.foodCategoryFacadeFilter.addFilterCondition("id", categoryId);
+
+      const foodCategoryFacade = new FoodCategoryFacade();
+
+      try {
+        const foodCategory = await foodCategoryFacade.getById(categoryId);
+
+        if (!foodCategory) {
+          logEndpoint(
+              controllerName,
+              `Food-category with id ${categoryId} was not found!`,
+              req
+          );
+
+          return http4xxResponse(res, [
+            new HttpResponseMessage(
+                HttpResponseMessageSeverity.DANGER,
+                `Die Lebensmittelkategorie konnte nicht gefunden werden.`
+            )
+          ]);
+        }
+
+        const ingredients = await ingredientFacade.get();
+
+        logEndpoint(
+            controllerName,
+            `Ingredients with category-id ${categoryId} were successfully loaded!`,
+            req
+        );
+
+        return res.status(200).json(
+                new HttpResponse(HttpResponseStatus.SUCCESS,
+                    ingredients,
+                    [new HttpResponseMessage(
+                      HttpResponseMessageSeverity.SUCCESS,
+                      `Die Zutaten der Kategorie ${foodCategory.name} wurden erfolgreich geladen!`
+                  )
+                ])
+            );
+      } catch (e) {
+        return next(e);
+      }
+    }
 );
 
 export default router;
