@@ -1,6 +1,9 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { PatientSetting } from "../../../lib/models/PatientSetting";
+import { Session } from "../../../lib/models/Session";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with patient-settings-entity
@@ -50,6 +53,41 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
         }
 
         return patientSetting;
+    }
+
+
+    /**
+     * inserts a new session and returns the created session
+     * @param patientSetting
+     */
+    public async insertPatientSetting(patientSetting: PatientSetting): Promise<PatientSetting> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patientSetting);
+
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            patientSetting.id = result[0].insertedId;
+        }
+
+        return patientSetting;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param patientSetting entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, patientSetting: PatientSetting): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const neglectAttribute: SQLValueAttribute = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
+        attributes.addAttribute(neglectAttribute);
+
+        const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", prefix, patientSetting.patientId);
+        attributes.addAttribute(patientIdAttribute);
+
+
+        return attributes;
     }
 
 }
