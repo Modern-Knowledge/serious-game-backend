@@ -88,7 +88,7 @@ import WordController from "./controllers/WordController";
 import SessionController from "./controllers/SessionController";
 import StatisticController from "./controllers/StatisticController";
 import HelptextController from "./controllers/HelptextController";
-import ErrortextController from "./controllers/HelptextController";
+import ErrortextController from "./controllers/ErrortextController";
 
 
 /**
