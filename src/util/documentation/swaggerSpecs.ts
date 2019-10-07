@@ -1,17 +1,17 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
+// http://www.acuriousanimal.com/2018/10/20/express-swagger-doc.html
+
 const options = {
     swaggerDefinition: {
-        // Like the one described here: https://swagger.io/specification/#infoObject
+        // https://swagger.io/specification/#infoObject
         info: {
-            swagger: "2.0",
             title: "Plan your Day",
             version: "1.0.0",
-            description: "",
         },
     },
-    // List of files to be processes. You can also set globs './routes/*.js'
-    apis: ["../../controllers/*.js"],
+    apis: ["src/controllers/*.ts"],
+    base: "/"
 };
 
 export const specs = swaggerJsdoc(options);
