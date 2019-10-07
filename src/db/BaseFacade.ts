@@ -89,7 +89,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param filter filter for selected (can be different from facade filter
      */
     public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} called`);
         this.joinAnalyzer();
 
         const npq: Query = this.getSelectQuery(attributes, filter);
@@ -124,6 +123,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     returnEntities = this._postProcessFilter(returnEntities);
 
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} result(s) returned!`);
+
+                    if (returnEntities.length > 100) {
+                        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} More than ${returnEntities.length} rows returned! Consider using WHERE-clause to shrink result set size`);
+                    }
 
                     const elapsedTime = s.timeElapsed;
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
