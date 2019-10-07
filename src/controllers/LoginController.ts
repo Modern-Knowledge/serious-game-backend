@@ -22,6 +22,7 @@ import { checkRouteValidation, failedValidation400Response } from "../util/valid
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
 import passport from "passport";
+import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 
 const router = express.Router();
 
@@ -67,6 +68,17 @@ router.post("/login", [
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ein Konto mit der E-Mail Adresse "${email}" wurde nicht gefunden!`)
             ]);
+        }
+
+        // check if user is a therapist -> therapist is allowed to login (accepted == true)
+        const therapistFacade = new TherapistFacade();
+        therapistFacade.withUserJoin = false;
+        const therapist = await therapistFacade.getById(user.id);
+
+        if (therapist && !therapist.accepted) {
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
+            ], 400);
         }
 
         // check if user is allowed to login (loginCoolDown)
