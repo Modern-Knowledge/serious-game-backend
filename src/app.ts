@@ -27,6 +27,8 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "./lib/utils/http/HttpResponse";
+import swaggerUi from "swagger-ui-express";
+import { specs } from "./util/documentation/swaggerSpecs";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -90,7 +92,6 @@ import StatisticController from "./controllers/StatisticController";
 import HelptextController from "./controllers/HelptextController";
 import ErrortextController from "./controllers/ErrortextController";
 
-
 /**
  * measure response time
  */
@@ -118,6 +119,11 @@ app.use("/statistics", StatisticController);
 app.use("/games", GameController);
 app.use("/helptexts", HelptextController);
 app.use("/errortexts", ErrortextController);
+
+/**
+ * swagger api routes
+ */
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // take care of 404 errors
 // matches all routes
