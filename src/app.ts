@@ -92,6 +92,8 @@ import StatisticController from "./controllers/StatisticController";
 import HelptextController from "./controllers/HelptextController";
 import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
+import GameSettingController from "./controllers/GameSettingController";
+
 /**
  * measure response time
  */
@@ -120,6 +122,7 @@ app.use("/games", GameController);
 app.use("/helptexts", HelptextController);
 app.use("/errortexts", ErrortextController);
 app.use("/food-categories", FoodCategoryController);
+app.use("/game-settings", GameSettingController);
 
 
 /**
