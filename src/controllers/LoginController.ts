@@ -21,6 +21,7 @@ import { formatDateTime } from "../lib/utils/dateFormatter";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import passport from "passport";
 
 const router = express.Router();
 
@@ -50,6 +51,7 @@ router.post("/login", [
     }
 
     const userFacade = new UserFacade();
+    const jwtHelper = new JWTHelper();
 
     const {email, password} = req.body;
 
@@ -67,7 +69,7 @@ router.post("/login", [
             ]);
         }
 
-        // check if user is allowed to login
+        // check if user is allowed to login (loginCoolDown)
         if (user.loginCoolDown && moment().isBefore(user.loginCoolDown)) {
             logEndpoint(controllerName, `The account of the user with the id ${user.id} is locked until ${formatDateTime(user.loginCoolDown)}!`, req);
 
@@ -76,54 +78,36 @@ router.post("/login", [
             ], 400);
         }
 
-        const valid = bcrypt.compareSync(password, user.password);
-
-        if (!valid) {
-            logEndpoint(controllerName, `The user with the id ${user.id} has entered an invalid password!`, req);
-
-            const additionalMessages: HttpResponseMessage[] = [];
-            user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
-
-            const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
-
-            // lock user if failed login attempts higher > process.env.MAX_FAILED_LOGIN_ATTEMPTS
-            if (user.failedLoginAttempts > maxFailedLoginAttempts) {
-                user.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
-
-                logEndpoint(controllerName, `The user with the id ${user.id} has more failed login attempts than allowed and is now locked until ${formatDateTime(user.loginCoolDown)}`, req);
-
-                additionalMessages.push(
-                    new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
-                    `Sie haben zu viele fehlgeschlagene Login-Versuche (${user.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(user.loginCoolDown)} gesperrt!`)
-                );
+        passport.authenticate("local", {session: false}, (err, user, info) => {
+            if (err) {
+                return next(err);
             }
 
-            userFacade.updateUser(user);
+            if (user) { // user was found
+                logEndpoint(controllerName, `The user with the id ${user.id} has logged in successfully!`, req);
 
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
-                ...additionalMessages
-            ], 401);
-        }
+                user.lastLogin = new Date();
+                user.failedLoginAttempts = 0;
+                user.loginCoolDown = undefined;
 
-        const jwtHelper: JWTHelper = new JWTHelper();
-        const token = await jwtHelper.signToken(user);
+                // async update user
+                userFacade.updateUser(user);
 
-        user.lastLogin = new Date();
-        user.failedLoginAttempts = 0;
-        user.loginCoolDown = undefined;
+                return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+                    {auth: true, user: jwtHelper.userToAuthJSON(user)},
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                    ]
+                ));
+            } else { // user wasn't found or too many failed Login Attempts
+                logEndpoint(controllerName, `The user with the id ${user.id} has entered invalid credentials!`, req);
 
-        // async update user
-        userFacade.updateUser(user);
-
-        logEndpoint(controllerName, `The user with the id ${user.id} has logged in successfully!`, req);
-
-        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {auth: true, token: token},
-            [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
-            ]
-        ));
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
+                    // ...additionalMessages
+                ], 400);
+            }
+        })(req, res, next);
     } catch (error) {
         return next(error);
     }

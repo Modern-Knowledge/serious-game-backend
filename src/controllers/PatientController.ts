@@ -131,13 +131,13 @@ router.post("/", [
         const createdPatientSetting = await patientSettingFacade.insertPatientSetting(patientSetting);
 
         const jwtHelper: JWTHelper = new JWTHelper();
-        const token = await jwtHelper.signToken(createdPatient);
+        const authUser = await jwtHelper.userToAuthJSON(createdPatient);
 
         logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, token: token, user: createdPatient, patient_setting: createdPatientSetting },
+                { auth: true, user: authUser, patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
