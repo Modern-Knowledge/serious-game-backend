@@ -3,19 +3,19 @@
  * All rights reserved.
  */
 
-import express, {Request, Response} from "express";
-import {LogFacade} from "../db/entity/log/LogFacade";
-import {Log} from "../lib/models/Log";
-import {SQLOrder} from "../db/sql/SQLOrder";
+import express, { Request, Response } from "express";
+import { LogFacade } from "../db/entity/log/LogFacade";
+import { Log } from "../lib/models/Log";
+import { SQLOrder } from "../db/sql/SQLOrder";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import {logEndpoint} from "../util/log/endpointLogger";
+import { logEndpoint } from "../util/log/endpointLogger";
 import moment from "moment";
-import {SQLComparisonOperator} from "../db/sql/SQLComparisonOperator";
+import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 
 const router = express.Router();
 

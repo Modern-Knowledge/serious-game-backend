@@ -81,6 +81,7 @@ import GameController from "./controllers/GameController";
 import VersionController from "./controllers/VersionController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
+import SmtpLoggingController from "./controllers/SmtpLoggingController";
 import ImageController from "./controllers/ImageController";
 import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
@@ -123,7 +124,7 @@ app.use("/helptexts", HelptextController);
 app.use("/errortexts", ErrortextController);
 app.use("/food-categories", FoodCategoryController);
 app.use("/game-settings", GameSettingController);
-
+app.use("/smtp-logs", SmtpLoggingController);
 
 /**
  * swagger api routes

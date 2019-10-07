@@ -40,7 +40,7 @@ export class LogFacade extends EntityFacade<Log> {
     }
 
     /**
-     * deletes the specified user in the database and returns the number of affected rows
+     * deletes the specified logs and returns the number of affected rows
      */
     public deleteLogs(): Promise<number> {
         return this.delete();
