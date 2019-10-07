@@ -45,7 +45,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["therapist_id", "role"];
+        const sqlAttributes: string[] = ["therapist_id", "role", "accepted"];
         let excludedDefaultAttributes: string[] = ["id"];
 
         if (excludedSQLAttributes) {
@@ -138,6 +138,10 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
             t.role = result[this.name("role")];
         }
 
+        if (result[this.name("accepted")] !== undefined) {
+            t.accepted = result[this.name("accepted")];
+        }
+
         return t;
     }
 
@@ -151,6 +155,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
         const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, Roles.USER);
         attributes.addAttribute(roleAttribute);
+
+        const acceptedAttribute: SQLValueAttribute = new SQLValueAttribute("accepted", prefix, therapist.accepted);
+        attributes.addAttribute(acceptedAttribute);
 
         return attributes;
     }

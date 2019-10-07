@@ -155,7 +155,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
     const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, [message]);
     logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
 
-    res.status(res.locals.status || 500).send(httpResponse);
+    return res.status(res.locals.status || 500).send(httpResponse);
 });
 
 
