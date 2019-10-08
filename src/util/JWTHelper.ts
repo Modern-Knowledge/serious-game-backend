@@ -3,11 +3,8 @@
  * All rights reserved.
  */
 
-
-
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import logger from "./log/logger";
 import { User } from "../lib/models/User";
 
 /**
@@ -36,6 +33,7 @@ export class JWTHelper {
     }
 
     /**
+     * @deprecated
      * validates token}
      * @param token token to verify
      * @param cb callback to get the decoded token on

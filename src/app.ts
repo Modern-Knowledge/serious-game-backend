@@ -29,7 +29,6 @@ import {
 } from "./lib/utils/http/HttpResponse";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
-import { passportLocalStrategy } from "./util/authentication/passportLocalStrategy";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
