@@ -29,6 +29,7 @@ import {
 } from "./lib/utils/http/HttpResponse";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
+import { passportLocalStrategy } from "./util/authentication/passportLocalStrategy";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -70,8 +71,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride());
 
 app.use(passport.initialize());
-app.use(passport.session());
-require("./util/authentication/passport");
+passport.use(passportLocalStrategy);
 
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));

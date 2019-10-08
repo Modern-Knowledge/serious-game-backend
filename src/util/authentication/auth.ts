@@ -7,7 +7,7 @@ import { Request } from "express";
 import jwt from "express-jwt";
 
 /**
- * retriebes jwt token from header
+ * retrieves jwt token from header
  * @param req
  */
 function getTokenFromHeader(req: Request) {
