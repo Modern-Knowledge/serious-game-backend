@@ -54,7 +54,7 @@ router.post("/login", [
     const userFacade = new UserFacade();
     const jwtHelper = new JWTHelper();
 
-    const {email} = req.body;
+    const {email, password} = req.body;
 
     const filter = userFacade.filter;
     filter.addFilterCondition("email", email);
@@ -92,59 +92,58 @@ router.post("/login", [
             ], 400);
         }
 
-        passport.authenticate("local", {session: false}, (err, user, info) => {
-            if (err) {
-                return next(err);
+        // compare passwords
+        const valid = bcrypt.compareSync(password, reqUser.password);
+
+        if (!valid) { // invalid password
+            logEndpoint(controllerName, `The user with id ${reqUser.id} has entered invalid credentials!`, req);
+
+            // check failed login attempts
+            const additionalMessages: HttpResponseMessage[] = [];
+            reqUser.failedLoginAttempts = reqUser.failedLoginAttempts + 1; // increase failed login attempts
+
+            const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
+
+            if (reqUser.failedLoginAttempts > maxFailedLoginAttempts) { // lock user
+                reqUser.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
+
+                additionalMessages.push(
+                    new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
+                        `Sie haben zu viele fehlgeschlagene Login-Versuche (${reqUser.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(reqUser.loginCoolDown)} gesperrt!`)
+                );
             }
 
-            if (user) { // user was found
-                logEndpoint(controllerName, `The user with the id ${user.id} has logged in successfully!`, req);
+            userFacade.updateUser(reqUser); // increase failed login attempts
 
-                user.lastLogin = new Date();
-                user.failedLoginAttempts = 0;
-                user.loginCoolDown = undefined;
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
+                ...additionalMessages
+            ], 401);
+        }
 
-                // async update user
-                userFacade.updateUser(user);
+        logEndpoint(controllerName, `The user with the id ${reqUser.id} has logged in successfully!`, req);
 
-                jwtHelper.userToAuthJSON(user).then(authUser => {
-                    return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-                        {user: authUser},
-                        [
-                            new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
-                        ]
-                    ));
-                });
+        reqUser.lastLogin = new Date();
+        reqUser.failedLoginAttempts = 0;
+        reqUser.loginCoolDown = undefined;
 
-            } else { // user wasn't found or too many failed Login Attempts
-                logEndpoint(controllerName, `The user with id ${reqUser.id} has entered invalid credentials!`, req);
+        // async update user
+        userFacade.updateUser(reqUser);
 
-                // check failed login attempts
-                const additionalMessages: HttpResponseMessage[] = [];
-                reqUser.failedLoginAttempts = reqUser.failedLoginAttempts + 1; // increase failed login attempts
+        jwtHelper.userToAuthJSON(reqUser).then(authUser => {
+            return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+                {user: authUser},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                ]
+            ));
+        });
 
-                const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
-
-                if (reqUser.failedLoginAttempts > maxFailedLoginAttempts) { // lock user
-                    reqUser.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
-
-                    additionalMessages.push(
-                        new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
-                            `Sie haben zu viele fehlgeschlagene Login-Versuche (${reqUser.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(reqUser.loginCoolDown)} gesperrt!`)
-                    );
-                }
-
-                userFacade.updateUser(reqUser);
-
-                return http4xxResponse(res, [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
-                    ...additionalMessages
-                ], 401);
-            }
-        })(req, res, next);
-    } catch (error) {
+    } catch
+        (error) {
         return next(error);
     }
 });
+
 
 export default router;

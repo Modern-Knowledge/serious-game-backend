@@ -94,6 +94,7 @@
     "@types/nodemailer": "^6.2.0",
     "@types/passport": "^1.0.0",
     "@types/passport-facebook": "^2.1.9",
+    "@types/passport-jwt": "^3.0.2",
     "@types/passport-local": "^1.0.33",
     "@types/request": "^2.48.1",
     "@types/shelljs": "^0.8.5",

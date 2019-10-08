@@ -36,7 +36,7 @@ export class JWTHelper {
     }
 
     /**
-     * validates token
+     * validates token}
      * @param token token to verify
      * @param cb callback to get the decoded token on
      */

@@ -44,6 +44,7 @@ import { logRequest, measureRequestTime } from "./util/middleware/middleware";
 import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
+import { jwtStrategy } from "./util/authentication/jwtStrategy";
 
 logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 checkEnvFunction();
@@ -71,7 +72,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride());
 
 app.use(passport.initialize());
-passport.use(passportLocalStrategy);
+passport.use(jwtStrategy);
 
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
