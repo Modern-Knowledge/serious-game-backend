@@ -139,7 +139,7 @@ router.post("/login", [
                 return http4xxResponse(res, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
                     ...additionalMessages
-                ], 400);
+                ], 401);
             }
         })(req, res, next);
     } catch (error) {
