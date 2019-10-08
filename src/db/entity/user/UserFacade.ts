@@ -142,7 +142,7 @@ export class UserFacade extends EntityFacade<User> {
         const emailAttribute: SQLValueAttribute = new SQLValueAttribute("email", prefix, user.email);
         attributes.addAttribute(emailAttribute);
 
-        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", prefix, bcrypt.hashSync(user.password, 12));
+        const passwordAttribute: SQLValueAttribute = new SQLValueAttribute("password", prefix, user.password);
         attributes.addAttribute(passwordAttribute);
 
         const forenameAttribute: SQLValueAttribute = new SQLValueAttribute("forename", prefix, user.forename);

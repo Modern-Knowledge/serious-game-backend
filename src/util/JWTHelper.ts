@@ -70,6 +70,7 @@ export class JWTHelper {
      */
     public async userToAuthJSON(user: User): Promise<User> {
         user.token = await this.generateJWT(user);
+        user.password = undefined;
         return user;
     }
 }

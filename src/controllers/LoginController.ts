@@ -54,15 +54,15 @@ router.post("/login", [
     const userFacade = new UserFacade();
     const jwtHelper = new JWTHelper();
 
-    const {email, password} = req.body;
+    const {email} = req.body;
 
     const filter = userFacade.filter;
     filter.addFilterCondition("email", email);
 
     try {
-        const user: User = await userFacade.getOne();
+        const reqUser: User = await userFacade.getOne();
 
-        if (!user) {
+        if (!reqUser) { // user not found
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
             return http4xxResponse(res, [
@@ -73,20 +73,22 @@ router.post("/login", [
         // check if user is a therapist -> therapist is allowed to login (accepted == true)
         const therapistFacade = new TherapistFacade();
         therapistFacade.withUserJoin = false;
-        const therapist = await therapistFacade.getById(user.id);
+        therapistFacade.filter.addFilterCondition("therapist_id", reqUser.id);
 
-        if (therapist && !therapist.accepted) {
+        const therapist = await therapistFacade.getOne();
+
+        if (!therapist) {
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
             ], 400);
         }
 
         // check if user is allowed to login (loginCoolDown)
-        if (user.loginCoolDown && moment().isBefore(user.loginCoolDown)) {
-            logEndpoint(controllerName, `The account of the user with the id ${user.id} is locked until ${formatDateTime(user.loginCoolDown)}!`, req);
+        if (reqUser.loginCoolDown && moment().isBefore(reqUser.loginCoolDown)) {
+            logEndpoint(controllerName, `The account of the user with the id ${reqUser.id} is locked until ${formatDateTime(reqUser.loginCoolDown)}!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler fehlgeschlagener Loginversuche gesperrt ist. Ihr Account ist ab ${formatDateTime(user.loginCoolDown)} wieder freigeschalten.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler fehlgeschlagener Loginversuche gesperrt ist. Ihr Account ist ab ${formatDateTime(reqUser.loginCoolDown)} wieder freigeschalten.`)
             ], 400);
         }
 
@@ -105,18 +107,38 @@ router.post("/login", [
                 // async update user
                 userFacade.updateUser(user);
 
-                return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-                    {auth: true, user: jwtHelper.userToAuthJSON(user)},
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
-                    ]
-                ));
+                jwtHelper.userToAuthJSON(user).then(authUser => {
+                    return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+                        {user: authUser},
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                        ]
+                    ));
+                });
+
             } else { // user wasn't found or too many failed Login Attempts
-                logEndpoint(controllerName, `The user with the id ${user.id} has entered invalid credentials!`, req);
+                logEndpoint(controllerName, `The user with id ${reqUser.id} has entered invalid credentials!`, req);
+
+                // check failed login attempts
+                const additionalMessages: HttpResponseMessage[] = [];
+                reqUser.failedLoginAttempts = reqUser.failedLoginAttempts + 1; // increase failed login attempts
+
+                const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
+
+                if (reqUser.failedLoginAttempts > maxFailedLoginAttempts) { // lock user
+                    reqUser.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
+
+                    additionalMessages.push(
+                        new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
+                            `Sie haben zu viele fehlgeschlagene Login-Versuche (${reqUser.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(reqUser.loginCoolDown)} gesperrt!`)
+                    );
+                }
+
+                userFacade.updateUser(reqUser);
 
                 return http4xxResponse(res, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
-                    // ...additionalMessages
+                    ...additionalMessages
                 ], 400);
             }
         })(req, res, next);

@@ -25,6 +25,7 @@ import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFaca
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import * as bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -120,9 +121,11 @@ router.post("/", [
     const therapist = new Therapist().deserialize(req.body);
     therapist.status = Status.ACTIVE;
     therapist.failedLoginAttempts = 0;
+    therapist.password = bcrypt.hashSync(therapist.password, 12);
 
     try {
         const response = await therapistFacade.insertTherapist(therapist);
+
         const jwtHelper: JWTHelper = new JWTHelper();
         const authUser = await jwtHelper.userToAuthJSON(response);
 
@@ -130,7 +133,7 @@ router.post("/", [
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, user: authUser },
+                { user: authUser },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]

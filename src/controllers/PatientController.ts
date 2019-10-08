@@ -23,8 +23,9 @@ import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
-import { PatientSettingFacade } from '../db/entity/settings/PatientSettingFacade'
-import { PatientSetting } from '../lib/models/PatientSetting'
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
+import { PatientSetting } from "../lib/models/PatientSetting";
+import * as bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -118,6 +119,8 @@ router.post("/", [
     const patient = new Patient().deserialize(req.body);
     patient.status = Status.ACTIVE;
     patient.failedLoginAttempts = 0;
+    patient.password = bcrypt.hashSync(patient.password, 12);
+
 
     const patientSettingFacade = new PatientSettingFacade();
     const patientSetting = new PatientSetting();

@@ -23,31 +23,10 @@ passport.use(new Strategy({
     // find user
     userFacade.getOne().then(user => {
         if (!user || !bcrypt.compareSync(password, user.password)) {
-            return done(undefined, false);
+            return done(undefined, false, Error("dkfslkdjf"));
         }
 
         // user was found
-
-        // check failed login attempts
-        const additionalMessages: HttpResponseMessage[] = [];
-        user.failedLoginAttempts = user.failedLoginAttempts + 1; // increase failed login attempts
-
-        const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
-
-        // lock user if failed login attempts higher > process.env.MAX_FAILED_LOGIN_ATTEMPTS
-        if (user.failedLoginAttempts > maxFailedLoginAttempts) {
-            user.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
-
-            additionalMessages.push(
-                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
-                    `Sie haben zu viele fehlgeschlagene Login-Versuche (${user.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(user.loginCoolDown)} gesperrt!`)
-            );
-
-            userFacade.updateUser(user);
-
-            return done(undefined, false);
-        }
-
         return done(undefined, user);
     }).catch(done);
 }));

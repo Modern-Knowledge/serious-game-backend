@@ -69,8 +69,11 @@ app.use(methodOverride());
 
 app.use(passport.initialize());
 app.use(passport.session());
+require("./util/authentication/passport");
+
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
+
 
 // Controllers (route handlers)
 import HomeController from "./controllers/HomeController";
