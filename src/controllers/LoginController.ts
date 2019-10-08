@@ -81,7 +81,7 @@ router.post("/login", [
 
         const therapist = await therapistFacade.getOne();
 
-        if (!therapist || !therapist.accepted) {
+        if (therapist && !therapist.accepted) {
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
             ], 400);

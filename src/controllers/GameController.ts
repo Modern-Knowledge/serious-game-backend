@@ -12,15 +12,11 @@ import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
-import passport from "passport";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "GameController";
-
-router.use(checkAuthenticationToken);
-router.use(checkAuthentication); // disable
 
 /**
  * GET /
@@ -32,16 +28,13 @@ router.use(checkAuthentication); // disable
 router.get("/", async (req: Request, res: Response, next: any) => {
     const gameFacade = new GameCompositeFacade();
 
-    console.log(res.locals.authorizationToken);
-    console.log(res.locals.user);
-
     try {
         const games = await gameFacade.get();
 
         logEndpoint(controllerName, `Return all games!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            games,
+            {game: games, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele erfolgreich geladen!")
             ]
