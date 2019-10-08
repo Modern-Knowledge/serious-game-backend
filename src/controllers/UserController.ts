@@ -11,13 +11,15 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkTherapistPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
 const controllerName = "UserController";
 
 router.use(checkAuthenticationToken);
-router.use(checkAuthentication); // disable
+router.use(checkAuthentication);
+router.use(checkTherapistPermission);
 
 /**
  * GET /
@@ -28,9 +30,6 @@ router.use(checkAuthentication); // disable
  * - user: therapist or patient
  */
 router.get("/related", async (req: Request, res: Response, next: any) => {
-    console.log(res.locals.authorizationToken);
-    console.log(res.locals.user);
-
     try {
         logEndpoint(controllerName, `Retrieved related user with id ${res.locals.user.id}`, req);
 

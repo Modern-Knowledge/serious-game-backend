@@ -1,56 +1,47 @@
 import { User } from "../../lib/models/User";
-import { TherapistFacade } from "../../db/entity/user/TherapistFacade";
 import { Therapist } from "../../lib/models/Therapist";
+import { Request, Response } from "express";
+import { http4xxResponse } from "../http/httpResponses";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
+
 
 /**
- * Middleware that checks if the user is allowed to view the requested endpoint
+ * Middleware that checks if a user is allowed to view the requested endpoint
  * user can only view/edit his personal endpoints
  *
  * @param req
  * @param res
  * @param next
  */
-export function checkUserPermission(req: Request, res: Response, next: any) {
+export function checkUserPermission(req: Request, res: Response, next: any): void {
+    const authUser = res.locals.user;
 
     // todo replace with real values
     const requestingUser = new User();
     requestingUser.id = 1;
-    const authenicatedUser = new User();
-    authenicatedUser.id = 1;
 
-    if (requestingUser.id == authenicatedUser.id) {
-        return next();
-    }
 
     const error = new Error("Operation is not permitted!");
     return next(error);
 }
 
 /**
- * Middleware that checks if the therapist is allowed to request the endpoint
- * therapists can access patients endpoints
+ * Middleware that checks if a therapist is allowed to request the endpoint
+ *
+ * therapists can access specific patients endpoints
  *
  * @param req
  * @param res
  * @param next
  */
 export function checkTherapistPermission(req: Request, res: Response, next: any) {
+    const authUser = res.locals.user;
 
-    // todo replace with real values
-    const requestingUser = new Therapist();
-    requestingUser.id = 1;
-    const authenicatedUser = new Therapist();
-    authenicatedUser.id = 1;
+    if (authUser instanceof Therapist) { // user is therapist
+        return next();
+    }
 
-    const therapistFacade = new TherapistFacade();
-
-    therapistFacade.isTherapist(requestingUser.id).then(value => {
-        if (value) {
-            return next();
-        }
-
-        const error = new Error("Operation is not permitted!");
-        return next(error);
-
-    }).catch(next);
+    return http4xxResponse(res, [
+        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
+    ], 400);
 }

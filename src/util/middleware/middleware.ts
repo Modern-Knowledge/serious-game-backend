@@ -20,7 +20,7 @@ import { getRequestUrl, loggerString } from "../Helper";
  * @param res
  * @param next
  */
-export function measureRequestTime(req: Request, res: Response, next: any) {
+export function measureRequestTime(req: Request, res: Response, next: any): void {
     const stopwatch = new Stopwatch("Request Time"); // start stopwatch
 
     const url: string = getRequestUrl(req);
@@ -30,7 +30,7 @@ export function measureRequestTime(req: Request, res: Response, next: any) {
         new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, url);
     });
 
-    next();
+    return next();
 }
 
 /**
@@ -41,7 +41,7 @@ export function measureRequestTime(req: Request, res: Response, next: any) {
  * @param res
  * @param next
  */
-export function logRequest(req: Request, res: Response, next: any) {
+export function logRequest(req: Request, res: Response, next: any): void {
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
-    next();
+    return next();
 }

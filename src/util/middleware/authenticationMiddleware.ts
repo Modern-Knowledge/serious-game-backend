@@ -8,10 +8,8 @@ import { Request, Response } from "express";
 import { formatDateTime } from "../../lib/utils/dateFormatter";
 import passport from "passport";
 import {
-    HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
-    HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
 import { http4xxResponse } from "../http/httpResponses";
 
@@ -24,7 +22,7 @@ import { http4xxResponse } from "../http/httpResponses";
  * @param res
  * @param next
  */
-export async function checkAuthentication(req: Request, res: Response, next: any) {
+export async function checkAuthentication(req: Request, res: Response, next: any): Promise<void> {
     passport.authenticate("jwt", { session: false}, (err, user, info) => {
         if (err) {
             return next(err);
@@ -52,7 +50,7 @@ export async function checkAuthentication(req: Request, res: Response, next: any
  * @param res
  * @param next
  */
-export async function checkAuthenticationToken(req: Request, res: Response, next: any) {
+export async function checkAuthenticationToken(req: Request, res: Response, next: any): Promise<void> {
     const orgToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req); // retrieve token
 
     if (orgToken) { // check if token exists
@@ -62,7 +60,7 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
             req.headers["authorization"] = "Bearer " + refreshedToken;
         }
 
-        res.locals.authorizationToken = req.headers["authorization"].split(" ")[1];
+        res.locals.authorizationToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     }
 
     return next();
