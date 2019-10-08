@@ -8,6 +8,7 @@
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import logger from "./log/logger";
+import { User } from "../lib/models/User";
 
 /**
  * Helper for using jwt functions
@@ -18,6 +19,7 @@ export class JWTHelper {
     private _expiresIn: number = 3600; // expires in 1 hour
 
     /**
+     * @deprecated
      * signs the jwt token
      * @param data data to sing
      */
@@ -42,5 +44,33 @@ export class JWTHelper {
         return jwt.verify(token, this._secretKey, async function(err, decoded) {
             return cb(err, decoded);
         });
+    }
+
+    /**
+     * creates jwt token for user
+     * @param user
+     */
+    private async generateJWT(user: User): Promise<string> {
+        const therapistFacade = new TherapistFacade();
+        const isTherapist = await therapistFacade.isTherapist(user.id);
+
+        return jwt.sign(
+            { id: user.id, email: user.email, therapist: isTherapist},
+            this._secretKey,
+            {
+                expiresIn: this._expiresIn
+            }
+        );
+    }
+
+    /**
+     * adds auth token to user object
+     *
+     * @param user
+     */
+    public async userToAuthJSON(user: User): Promise<User> {
+        user.token = await this.generateJWT(user);
+        user.password = undefined;
+        return user;
     }
 }

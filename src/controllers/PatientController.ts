@@ -23,8 +23,9 @@ import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
-import { PatientSettingFacade } from '../db/entity/settings/PatientSettingFacade'
-import { PatientSetting } from '../lib/models/PatientSetting'
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
+import { PatientSetting } from "../lib/models/PatientSetting";
+import * as bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -118,6 +119,8 @@ router.post("/", [
     const patient = new Patient().deserialize(req.body);
     patient.status = Status.ACTIVE;
     patient.failedLoginAttempts = 0;
+    patient.password = bcrypt.hashSync(patient.password, 12);
+
 
     const patientSettingFacade = new PatientSettingFacade();
     const patientSetting = new PatientSetting();
@@ -131,13 +134,13 @@ router.post("/", [
         const createdPatientSetting = await patientSettingFacade.insertPatientSetting(patientSetting);
 
         const jwtHelper: JWTHelper = new JWTHelper();
-        const token = await jwtHelper.signToken(createdPatient);
+        const authUser = await jwtHelper.userToAuthJSON(createdPatient);
 
         logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, token: token, user: createdPatient, patient_setting: createdPatientSetting },
+                { auth: true, user: authUser, patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
