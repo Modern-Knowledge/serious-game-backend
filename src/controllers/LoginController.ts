@@ -36,6 +36,10 @@ const controllerName = "LoginController";
  * body:
  * - email: email of the user
  * - password: password of the user
+ *
+ * response:
+ * - user: authenticated user
+ * - token: jwt token
  */
 router.post("/login", [
 
@@ -130,14 +134,14 @@ router.post("/login", [
         // async update user
         userFacade.updateUser(reqUser);
 
-        jwtHelper.userToAuthJSON(reqUser).then(authUser => {
-            return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user: authUser},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
-                ]
-            ));
-        });
+        const token = await jwtHelper.generateJWT(reqUser);
+
+        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+            {user: reqUser, token: token},
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+            ]
+        ));
 
     } catch
         (error) {

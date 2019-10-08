@@ -48,9 +48,10 @@ export class JWTHelper {
 
     /**
      * creates jwt token for user
+     *
      * @param user
      */
-    private async generateJWT(user: User): Promise<string> {
+    public async generateJWT(user: User): Promise<string> {
         const therapistFacade = new TherapistFacade();
         const isTherapist = await therapistFacade.isTherapist(user.id);
 
@@ -61,16 +62,5 @@ export class JWTHelper {
                 expiresIn: this._expiresIn
             }
         );
-    }
-
-    /**
-     * adds auth token to user object
-     *
-     * @param user
-     */
-    public async userToAuthJSON(user: User): Promise<User> {
-        user.token = await this.generateJWT(user);
-        user.password = undefined;
-        return user;
     }
 }

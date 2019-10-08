@@ -82,9 +82,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - therapist: false
  *
  * response:
- * - auth: is the user authenticated
  * - token: generated jwt token
  * - user: generated therapist
+ * - patient_setting: patient settings
  */
 router.post("/", [
     check("_email").normalizeEmail()
@@ -134,13 +134,13 @@ router.post("/", [
         const createdPatientSetting = await patientSettingFacade.insertPatientSetting(patientSetting);
 
         const jwtHelper: JWTHelper = new JWTHelper();
-        const authUser = await jwtHelper.userToAuthJSON(createdPatient);
+        const token = await jwtHelper.generateJWT(createdPatient);
 
         logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, user: authUser, patient_setting: createdPatientSetting },
+                { token: token, user: createdPatient, patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
