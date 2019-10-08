@@ -24,6 +24,8 @@ const controllerName = "UserController";
 
 
 /**
+ *
+ * todo: refactor
  * GET /
  * Get the user belonging to the sent JWT.
  *
