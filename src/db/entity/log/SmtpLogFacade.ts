@@ -30,7 +30,7 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["subject", "body", "rcpt_email", "simulated", "smtp_category_id"];
+        const sqlAttributes: string[] = ["subject", "body", "rcpt_email", "simulated", "sent"];
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
@@ -40,10 +40,15 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      */
     public insertLog(smtpLog: SmtpLog): SmtpLog {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(smtpLog);
-
         this.insert(attributes);
-
         return smtpLog;
+    }
+
+    /**
+     * deletes the specified smtp-logs and returns the number of affected rows
+     */
+    public deleteSmtpLogs(): Promise<number> {
+        return this.delete();
     }
 
     /**

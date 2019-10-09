@@ -5,38 +5,38 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
+import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
 
 const router = express.Router();
 
-const controllerName = "GameController";
+const controllerName = "ErrortextController";
 
 /**
  * GET /
- * Get all games.
+ *
+ * Get all errortexts.
  *
  * response:
- * - games: all games of the application
+ * - errortexts: all errortexts of the application
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
-    const gameFacade = new GameCompositeFacade();
+    const errorTextFacade = new ErrortextFacade();
 
     try {
-        const games = await gameFacade.get();
+        const errortexts = await errorTextFacade.get();
 
-        logEndpoint(controllerName, `Return all games!`, req);
+        logEndpoint(controllerName, `Return all errortexts!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {game: games, token: res.locals.authorizationToken},
+            errortexts,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Fehlertexte erfolgreich geladen!`)
             ]
         ));
     } catch (e) {
@@ -47,13 +47,13 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 /**
  * GET /:id
  *
- * Get a game by id.
+ * Get a errortext by id.
  *
  * params:
- * - id: id of the game
+ * - id: id of the errortext
  *
  * response:
- * - game: game that was loaded
+ * - errortext: loaded errortext
  */
 router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
@@ -64,25 +64,25 @@ router.get("/:id", [
     }
 
     const id = Number(req.params.id);
-    const gameFacade = new GameCompositeFacade();
+    const errortextFacade = new ErrortextFacade();
 
     try {
-        const game = await gameFacade.getById(id);
+        const errortext = await errortextFacade.getById(id);
 
-        if (!game) {
-            logEndpoint(controllerName, `Game with id ${id} was not found!`, req);
+        if (!errortext) {
+            logEndpoint(controllerName, `Errortext with id ${id} not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Spiel konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Fehlertext wurde nicht gefunden!`)
             ]);
         }
 
-        logEndpoint(controllerName, `Game with id ${id} was successfully loaded!`, req);
+        logEndpoint(controllerName, `Errortext with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            game,
+            errortext,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Spiel wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Fehlertext wurde erfolgreich gefunden!`)
             ]
         ));
     } catch (e) {

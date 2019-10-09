@@ -57,14 +57,12 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
      * inserts a new errortext-statistic and returns the created errortext-statistic
      * @param errortextStatistic
      */
-    public insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
+    public async insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
         const attributes: SQLValueAttributes = this.getSQLValueAttributes(this.tableAlias, errortextStatistic);
 
-        return new Promise<ErrortextStatistic>((resolve, reject) => {
-            this.insert(attributes).then(id => {
-                resolve(errortextStatistic);
-            });
-        });
+        await this.insert(attributes);
+
+        return errortextStatistic;
     }
 
     /**

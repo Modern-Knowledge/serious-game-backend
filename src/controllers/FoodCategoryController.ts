@@ -5,38 +5,37 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
 import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
 
 const router = express.Router();
 
-const controllerName = "GameController";
+const controllerName = "FoodCategoryController";
 
 /**
  * GET /
- * Get all games.
+ * Get all food categories.
  *
  * response:
- * - games: all games of the application
+ * - food-categories: all food-categories of the application
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
-    const gameFacade = new GameCompositeFacade();
+    const foodCategoryFacade = new FoodCategoryFacade();
 
     try {
-        const games = await gameFacade.get();
+        const foodCategories = await foodCategoryFacade.get();
 
-        logEndpoint(controllerName, `Return all games!`, req);
+        logEndpoint(controllerName, `Return all food-categories!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {game: games, token: res.locals.authorizationToken},
+            foodCategories,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Lebensmittelkategorien erfolgreich geladen!")
             ]
         ));
     } catch (e) {
@@ -47,13 +46,13 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 /**
  * GET /:id
  *
- * Get a game by id.
+ * Get a food-category by id.
  *
  * params:
- * - id: id of the game
+ * - id: id of the food-category
  *
  * response:
- * - game: game that was loaded
+ * - food-category: food-category that was loaded
  */
 router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
@@ -64,25 +63,25 @@ router.get("/:id", [
     }
 
     const id = Number(req.params.id);
-    const gameFacade = new GameCompositeFacade();
+    const foodCategoryFacade = new FoodCategoryFacade();
 
     try {
-        const game = await gameFacade.getById(id);
+        const foodCategory = await foodCategoryFacade.getById(id);
 
-        if (!game) {
-            logEndpoint(controllerName, `Game with id ${id} was not found!`, req);
+        if (!foodCategory) {
+            logEndpoint(controllerName, `Food category with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Spiel konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Lebensmittelkategorie konnte nicht gefunden werden.`)
             ]);
         }
 
-        logEndpoint(controllerName, `Game with id ${id} was successfully loaded!`, req);
+        logEndpoint(controllerName, `Food category with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            game,
+            foodCategory,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Spiel wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Lebensmittelkategorie wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

@@ -3,8 +3,7 @@
  * All rights reserved.
  */
 
-import express from "express";
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { LogFacade } from "../db/entity/log/LogFacade";
 import { Log } from "../lib/models/Log";
 import { SQLOrder } from "../db/sql/SQLOrder";
@@ -15,6 +14,8 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
+import moment from "moment";
+import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
 
 const router = express.Router();
 
@@ -22,7 +23,11 @@ const controllerName = "LoggingController";
 
 /**
  * GET /
+ *
  * Get all logs.
+ *
+ * response:
+ * - logs: all logs of the application
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
@@ -45,11 +50,12 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 });
 
 /**
- * POST /
+ * POST /create
+ *
  * Insert a log message.
  *
  * body:
- *
+ * - todo
  */
 router.post("/create", async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
@@ -77,6 +83,40 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
                 undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log erfolgreich angelegt!`)
+                ]
+            )
+        );
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+
+/**
+ * DELETE /
+ *
+ * deletes logs older than 3 months
+ *
+ * response:
+ * - amount of deleted logs
+ */
+router.delete("/", [], async (req: Request, res: Response, next: any) => {
+    const facade: LogFacade = new LogFacade();
+
+    // date 3 months in the past
+    const date = moment().subtract(3, "months").toDate();
+    facade.filter.addFilterCondition("created_at", date, SQLComparisonOperator.LESS_THAN);
+
+    try {
+        const affectedRows = await facade.deleteLogs();
+
+        logEndpoint(controllerName, `${affectedRows} logs were deleted!`, req);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                affectedRows,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} Logs wurden erfolgreich gelöscht!`)
                 ]
             )
         );

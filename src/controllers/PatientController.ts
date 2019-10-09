@@ -23,6 +23,9 @@ import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
+import { PatientSetting } from "../lib/models/PatientSetting";
+import * as bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -67,7 +70,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 
 /**
  * POST /
- * Inserts a patient.
+ * Inserts a patient and inserts patient settings
  *
  * body:
  * - email
@@ -79,9 +82,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - therapist: false
  *
  * response:
- * - auth: is the user authenticated
  * - token: generated jwt token
  * - user: generated therapist
+ * - patient_setting: patient settings
  */
 router.post("/", [
     check("_email").normalizeEmail()
@@ -116,17 +119,28 @@ router.post("/", [
     const patient = new Patient().deserialize(req.body);
     patient.status = Status.ACTIVE;
     patient.failedLoginAttempts = 0;
+    patient.password = bcrypt.hashSync(patient.password, 12);
+
+
+    const patientSettingFacade = new PatientSettingFacade();
+    const patientSetting = new PatientSetting();
 
     try {
-        const response = await patientFacade.insertPatient(patient);
-        const jwtHelper: JWTHelper = new JWTHelper();
-        const token = await jwtHelper.signToken(response);
+        const createdPatient = await patientFacade.insertPatient(patient);
 
-        logEndpoint(controllerName, `Patient with id ${response.id} was successfully created!`, req);
+        patientSetting.patientId = createdPatient.id;
+
+        // insert patient settings
+        const createdPatientSetting = await patientSettingFacade.insertPatientSetting(patientSetting);
+
+        const jwtHelper: JWTHelper = new JWTHelper();
+        const token = await jwtHelper.generateJWT(createdPatient);
+
+        logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, token: token, user: response },
+                { token: token, user: createdPatient, patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]

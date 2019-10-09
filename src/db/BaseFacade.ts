@@ -30,7 +30,7 @@ import { Ordering } from "./order/Ordering";
 import { loggerString } from "../util/Helper";
 import { databaseConnection, TransactionQuery } from "../util/db/databaseConnection";
 import { SQLValueAttribute } from "./sql/SQLValueAttribute";
-import {JoinType} from "./sql/enums/JoinType";
+import { JoinType } from "./sql/enums/JoinType";
 
 /**
  * base class for crud operations with the database
@@ -89,7 +89,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param filter filter for selected (can be different from facade filter
      */
     public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} called`);
         this.joinAnalyzer();
 
         const npq: Query = this.getSelectQuery(attributes, filter);
@@ -124,6 +123,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     returnEntities = this._postProcessFilter(returnEntities);
 
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ${returnEntities.length} result(s) returned!`);
+
+                    if (returnEntities.length > 100) {
+                        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} More than ${returnEntities.length} rows returned! Consider using WHERE-clause to shrink result set size`);
+                    }
 
                     const elapsedTime = s.timeElapsed;
                     logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} results computed in ${elapsedTime}!`);
@@ -341,7 +344,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         npq.sqlOrderBy = this._ordering.orderBys;
 
         const selectQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = selectQuery.fillParameters();
+        const params: (string | number | Date | boolean)[] = selectQuery.fillParameters();
 
         return {query: selectQuery.getBakedSQL(), params: params};
     }
@@ -358,7 +361,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         npq.insert = insert;
 
         const insertQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = insertQuery.fillParameters();
+        const params: (string | number | Date | boolean)[] = insertQuery.fillParameters();
 
         return {query: insertQuery.getBakedSQL(), params: params};
     }
@@ -376,7 +379,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         npq.where = BaseFacade.getSQLFilter(this._filter);
 
         const updateQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = updateQuery.fillParameters();
+        const params: (string | number | Date | boolean)[] = updateQuery.fillParameters();
 
         return {query: updateQuery.getBakedSQL(), params: params};
     }
@@ -391,7 +394,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         npq.where = BaseFacade.getSQLFilter(this._filter);
 
         const deleteQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date)[] = deleteQuery.fillParameters();
+        const params: (string | number | Date | boolean)[] = deleteQuery.fillParameters();
 
         let queryStr: string = deleteQuery.getBakedSQL();
         const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
@@ -586,5 +589,5 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
 interface Query {
     query: string;
-    params: (string | number | Date)[];
+    params: (string | number | Date | boolean)[];
 }

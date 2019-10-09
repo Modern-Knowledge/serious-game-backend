@@ -19,6 +19,7 @@ import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
 import { inProduction, loggerString } from "./util/Helper";
 import cors from "cors";
+import methodOverride from "method-override";
 import helmet from "helmet";
 import {
   HttpResponse,
@@ -26,6 +27,11 @@ import {
   HttpResponseMessageSeverity,
   HttpResponseStatus
 } from "./lib/utils/http/HttpResponse";
+import swaggerUi from "swagger-ui-express";
+import { specs } from "./util/documentation/swaggerSpecs";
+import rateLimit from "express-rate-limit";
+import slowDown from "express-slow-down";
+
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -42,10 +48,11 @@ if (config.error) {
   throw new Error(message);
 }
 
-import { logRequest, measureRequestTime } from "./util/middleware/middleware";
+import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middleware/middleware";
 import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
+import { jwtStrategy } from "./util/authentication/jwtStrategy";
 
 logger.info(
   `${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`
@@ -72,10 +79,36 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(methodOverride());
+
 app.use(passport.initialize());
-app.use(passport.session());
+passport.use(jwtStrategy);
+
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
+
+/**
+ * max 500 requests per ip in 10 minutes
+ */
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 500,
+    // @ts-ignore
+    message:  (new HttpResponse(HttpResponseStatus.FAIL,
+        undefined, [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Zu viele Anfragen, probieren Sie es später nochmal")
+        ]))
+});
+
+/**
+ * allow 200 requests in 5 minutes, before adding a 500ms delay per request above 200 requests
+ */
+const speedLimiter = slowDown({
+    windowMs: 5 * 60 * 1000,
+    delayAfter: 200,
+    delayMs: 500,
+});
+
 
 // Controllers (route handlers)
 import HomeController from "./controllers/HomeController";
@@ -84,6 +117,7 @@ import GameController from "./controllers/GameController";
 import VersionController from "./controllers/VersionController";
 import UserController from "./controllers/UserController";
 import LoggingController from "./controllers/LoggingController";
+import SmtpLoggingController from "./controllers/SmtpLoggingController";
 import ImageController from "./controllers/ImageController";
 import TherapistController from "./controllers/TherapistController";
 import PatientController from "./controllers/PatientController";
@@ -93,15 +127,35 @@ import WordController from "./controllers/WordController";
 import SessionController from "./controllers/SessionController";
 import StatisticController from "./controllers/StatisticController";
 import HelptextController from "./controllers/HelptextController";
+import ErrortextController from "./controllers/ErrortextController";
+import FoodCategoryController from "./controllers/FoodCategoryController";
+import GameSettingController from "./controllers/GameSettingController";
 import IngredientController from "./controllers/IngredientController";
+
+/**
+ * limit requests
+ */
+app.use(limiter);
+
+/**
+ * delay requests
+ */
+app.use(speedLimiter);
 
 /**
  * measure response time
  */
 app.use(measureRequestTime);
 
-// log request with winston
+/**
+ * logs request with winston
+ */
 app.use(logRequest);
+
+/**
+ * logs information about slow-down and rate-limiter
+ */
+app.use(logLimitSlowDown);
 
 /**
  * Primary app routes.
@@ -122,6 +176,15 @@ app.use("/statistics", StatisticController);
 app.use("/games", GameController);
 app.use("/helptexts", HelptextController);
 app.use("/ingredients", IngredientController);
+app.use("/errortexts", ErrortextController);
+app.use("/food-categories", FoodCategoryController);
+app.use("/game-settings", GameSettingController);
+app.use("/smtp-logs", SmtpLoggingController);
+
+/**
+ * swagger api routes
+ */
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // take care of 404 errors
 // matches all routes
@@ -156,7 +219,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   ]);
   logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
 
-  res.status(res.locals.status || 500).send(httpResponse);
+    return res.status(res.locals.status || 500).send(httpResponse);
 });
 
 export default app;

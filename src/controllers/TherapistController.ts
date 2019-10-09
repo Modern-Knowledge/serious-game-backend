@@ -25,6 +25,7 @@ import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFaca
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import * as bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -83,7 +84,6 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - therapist: true
  *
  * response:
- * - auth: is the user authenticated
  * - token: generated jwt token
  * - user: generated therapist
  */
@@ -120,17 +120,20 @@ router.post("/", [
     const therapist = new Therapist().deserialize(req.body);
     therapist.status = Status.ACTIVE;
     therapist.failedLoginAttempts = 0;
+    therapist.password = bcrypt.hashSync(therapist.password, 12);
+    therapist.accepted = false;
 
     try {
         const response = await therapistFacade.insertTherapist(therapist);
+
         const jwtHelper: JWTHelper = new JWTHelper();
-        const token = await jwtHelper.signToken(response);
+        const token = await jwtHelper.generateJWT(response);
 
         logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { auth: true, token: token, user: response },
+                { user: response, token: token},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
@@ -262,6 +265,67 @@ router.delete("/:id", [
     } catch (error) {
         return next(error);
     }
+});
+
+/**
+ * PUT /toggle-accepted/:id
+ *
+ * accepts / disallows therapist
+ * therapist needs to be accepted before the login is allowed
+ *
+ * params:
+ * - id: id of the therapist
+ *
+ * response:
+ *
+ */
+router.put("/toggle-accepted/:id", [
+    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    if (!checkRouteValidation(controllerName, req, res)) {
+        return failedValidation400Response(req, res);
+    }
+
+    const id = Number(req.params.id);
+
+    const therapistFacade = new TherapistFacade();
+    therapistFacade.filter.addFilterCondition("therapist_id", id);
+
+    try {
+        const therapist = await therapistFacade.getById(id);
+
+        if (!therapist) {
+            logEndpoint(controllerName, `Therapist with id ${id} was not found!`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
+            ]);
+        }
+
+        // toggle therapist accepted
+        therapist.accepted = !therapist.accepted;
+
+        const affectedRows = await therapistFacade.updateTherapist(therapist);
+        // no rows were updated
+        if (affectedRows <= 0) {
+           return next(new Error("TherapeutIn konnte nicht aktualisiert werden"));
+        }
+
+        logEndpoint(controllerName, `Therapist with id ${id} was ${therapist.accepted ? "accepted" : "not accepted"}`, req);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                undefined,
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde ${therapist.accepted ? "akzeptiert" : "abgelehnt"}!`)
+                ]
+            )
+        );
+    } catch (e) {
+        return next(e);
+    }
+
 });
 
 export default router;

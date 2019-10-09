@@ -20,17 +20,17 @@ import { getRequestUrl, loggerString } from "../Helper";
  * @param res
  * @param next
  */
-export function measureRequestTime(req: Request, res: Response, next: any) {
+export function measureRequestTime(req: Request, res: Response, next: any): void {
     const stopwatch = new Stopwatch("Request Time"); // start stopwatch
 
     const url: string = getRequestUrl(req);
 
     res.on("finish", () => {
         logger.info(`${loggerString()} ${req.method} "${url}" ${stopwatch.timeElapsed}`);
-        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, getRequestUrl(req));
+        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, url);
     });
 
-    next();
+    return next();
 }
 
 /**
@@ -41,7 +41,21 @@ export function measureRequestTime(req: Request, res: Response, next: any) {
  * @param res
  * @param next
  */
-export function logRequest(req: Request, res: Response, next: any) {
+export function logRequest(req: Request, res: Response, next: any): void {
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
-    next();
+    return next();
+}
+
+/**
+ * logs rateLimit {limit, current, remaining number of requests} property that is added to the request by req.rateLimit
+ * logs slowDown {limit, current, remaining, resetTime, delay} property that is added to the request by req.slowDown
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+export function logLimitSlowDown(req: Request, res: Response, next: any): void {
+    logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Rate-Limit: ${JSON.stringify(req.rateLimit)}`);
+    logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Slow-Down: ${JSON.stringify(req.slowDown)}`);
+    return next();
 }

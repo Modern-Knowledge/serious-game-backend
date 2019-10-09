@@ -12,31 +12,32 @@ import { check } from "express-validator";
 import { retrieveValidationMessage } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 
 const router = express.Router();
 
-const controllerName = "GameController";
+const controllerName = "GameSettingController";
 
 /**
  * GET /
- * Get all games.
+ *
+ * Get all game-settings.
  *
  * response:
- * - games: all games of the application
+ * - game-settings: all game-settings of the application
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
-    const gameFacade = new GameCompositeFacade();
+    const gameSettingFacade = new GameSettingFacade();
 
     try {
-        const games = await gameFacade.get();
+        const gameSettings = await gameSettingFacade.get();
 
-        logEndpoint(controllerName, `Return all games!`, req);
+        logEndpoint(controllerName, `Return all gameSettings!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {game: games, token: res.locals.authorizationToken},
+            gameSettings,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spiele erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spieleinstellungen erfolgreich geladen!")
             ]
         ));
     } catch (e) {
@@ -47,13 +48,13 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 /**
  * GET /:id
  *
- * Get a game by id.
+ * Get a game-setting by id.
  *
  * params:
- * - id: id of the game
+ * - id: id of the game-setting
  *
  * response:
- * - game: game that was loaded
+ * - game-setting: game-setting that was loaded
  */
 router.get("/:id", [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
@@ -64,25 +65,25 @@ router.get("/:id", [
     }
 
     const id = Number(req.params.id);
-    const gameFacade = new GameCompositeFacade();
+    const gameSettingFacade = new GameSettingFacade();
 
     try {
-        const game = await gameFacade.getById(id);
+        const gameSetting = await gameSettingFacade.getById(id);
 
-        if (!game) {
-            logEndpoint(controllerName, `Game with id ${id} was not found!`, req);
+        if (!gameSetting) {
+            logEndpoint(controllerName, `Game-Setting with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Spiel konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spieleinstellung konnte nicht gefunden werden.`)
             ]);
         }
 
-        logEndpoint(controllerName, `Game with id ${id} was successfully loaded!`, req);
+        logEndpoint(controllerName, `Game-Setting with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            game,
+            gameSetting,
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Spiel wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spieleinstellung wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

@@ -29,14 +29,21 @@ const router = express.Router();
 const controllerName = "PasswordResetController";
 
 /**
- * POST /reset
+ * @swagger
  *
- * checks if the passed email exists
- * generates reset token
- * send mail with token to user
- *
- * body:
- * - email: email of the user that wants to change his/her password
+ * /password/reset:
+ *      post:
+ *          description: Checks if the requesting email exists. Generates a new reset token if none is set or the current one has expired. Sends an email with the token to the user
+ *          produces:
+ *              - application/json
+ *          parameters:
+ *              - name: email
+ *                description: E-Mail of the user, that wants to reset his/her password
+ *                in: formData
+ *                type: string
+ *          responses:
+ *              200:
+ *                  description: user
  */
 router.post("/reset", [
     check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
