@@ -30,6 +30,8 @@ import {
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
 import rateLimit from "express-rate-limit";
+import slowDown from "express-slow-down";
+
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -78,16 +80,25 @@ app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 
 /**
- * max 100 requests per ip in 5 minutes
+ * max 500 requests per ip in 10 minutes
  */
 const limiter = rateLimit({
-    windowMs: 5 * 60 * 1000,
-    max: 100,
+    windowMs: 10 * 60 * 1000,
+    max: 500,
     // @ts-ignore
     message:  (new HttpResponse(HttpResponseStatus.FAIL,
         undefined, [
             new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Zu viele Anfragen, probieren Sie es später nochmal")
         ]))
+});
+
+/**
+ * allow 200 requests in 5 minutes, before adding a 500ms delay per request above 200 requests
+ */
+const speedLimiter = slowDown({
+    windowMs: 5 * 60 * 1000,
+    delayAfter: 200,
+    delayMs: 500,
 });
 
 
@@ -116,6 +127,11 @@ import GameSettingController from "./controllers/GameSettingController";
  * limit requests
  */
 app.use(limiter);
+
+/**
+ * delay requests
+ */
+app.use(speedLimiter);
 
 /**
  * measure response time
