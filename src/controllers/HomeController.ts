@@ -35,6 +35,8 @@ const router = express.Router();
  * Home page.
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
+    console.log(req.rateLimit);
+
     const facade: UserFacade = new UserFacade("u");
     // const user = await facade.getById(1);
     // console.log(user.fullNameWithSirOrMadam);

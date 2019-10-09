@@ -29,6 +29,7 @@ import {
 } from "./lib/utils/http/HttpResponse";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
+import rateLimit from "express-rate-limit";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -76,6 +77,19 @@ passport.use(jwtStrategy);
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 
+/**
+ * max 100 requests per ip in 5 minutes
+ */
+const limiter = rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 100,
+    // @ts-ignore
+    message:  (new HttpResponse(HttpResponseStatus.FAIL,
+        undefined, [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Zu viele Anfragen, probieren Sie es später nochmal")
+        ]))
+});
+
 
 // Controllers (route handlers)
 import HomeController from "./controllers/HomeController";
@@ -97,6 +111,11 @@ import HelptextController from "./controllers/HelptextController";
 import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
 import GameSettingController from "./controllers/GameSettingController";
+
+/**
+ * limit requests
+ */
+app.use(limiter);
 
 /**
  * measure response time
