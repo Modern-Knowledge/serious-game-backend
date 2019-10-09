@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import { http4xxResponse } from "../http/httpResponses";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 import { Patient } from "../../lib/models/Patient";
+import logger from "../log/logger";
+import { getRequestUrl, loggerString } from "../Helper";
+import { formatDateTime } from "../../lib/utils/dateFormatter";
 
 /**
  * This file provides permission middleware for express
@@ -34,13 +37,15 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
     if (!req.params.id) {
         return next();
     }
-    if (req.params.id === authUser.id) {
+    if (Number(req.params.id) === authUser.id) {
         return next();
     }
 
+    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}" of user with id ${authUser.id}!`);
+
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 400);
+    ], 403);
 }
 
 /**
@@ -59,9 +64,11 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
         return next();
     }
 
+    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist!`);
+
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 400);
+    ], 403);
 }
 
 /**
@@ -78,7 +85,9 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
+    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
+
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 400);
+    ], 403);
 }

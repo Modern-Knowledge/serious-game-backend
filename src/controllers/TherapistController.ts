@@ -26,10 +26,17 @@ import { checkRouteValidation, failedValidation400Response } from "../util/valid
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
 import * as bcrypt from "bcryptjs";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkTherapistPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { forbidden403Response, validatePermission } from "../util/permission/permissionGuard";
 
 const router = express.Router();
 
 const controllerName = "TherapistController";
+
+router.use(checkAuthenticationToken);
+router.use(checkAuthentication);
+router.use(checkTherapistPermission);
 
 
 /**
@@ -145,6 +152,8 @@ router.post("/", [
 });
 
 /**
+ * todo: validation
+ *
  * PUT /:id
  *
  * Update a therapist by id.
@@ -161,7 +170,7 @@ router.post("/", [
  * response:
  * - therapist: updated therapist
  */
-router.put("/:id", [
+router.put("/:id", checkUserPermission, [
     check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
