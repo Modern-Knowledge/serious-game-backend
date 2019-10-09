@@ -1,29 +1,46 @@
-import { User } from "../../lib/models/User";
 import { Therapist } from "../../lib/models/Therapist";
 import { Request, Response } from "express";
 import { http4xxResponse } from "../http/httpResponses";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 import { Patient } from "../../lib/models/Patient";
 
+/**
+ * This file provides permission middleware for express
+ *
+ * - checkUserPermission: check if user is allowed to view the endpoint
+ * - checkTherapistPermission: check if authUser is a therapist
+ * - checkPatientPermission: check if authUser is a patient
+ */
 
 /**
  * Middleware that checks if a user is allowed to view the requested endpoint
- * user can only view/edit his personal endpoints
+ * Some endpoints can only be viewed by the user who owns the endpoint
+ *
+ * middleware is skipped if no user id is present as path variable
+ *
+ * Unexpected behavior may occur if the middleware is applied to endpoints where
+ * there is no user id as a path variable, but an id for another resource
+ *
+ * params:
+ * - id: id of the user
  *
  * @param req
  * @param res
  * @param next
  */
-export function checkUserPermission(req: Request, res: Response, next: any): void {
+export function checkUserPermission(req: Request, res: Response, next: any) {
     const authUser = res.locals.user;
 
-    // todo replace with real values
-    const requestingUser = new User();
-    requestingUser.id = 1;
+    if (!req.params.id) {
+        return next();
+    }
+    if (req.params.id === authUser.id) {
+        return next();
+    }
 
-
-    const error = new Error("Operation is not permitted!");
-    return next(error);
+    return http4xxResponse(res, [
+        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
+    ], 400);
 }
 
 /**

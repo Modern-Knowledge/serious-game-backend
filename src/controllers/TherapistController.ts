@@ -152,10 +152,10 @@ router.post("/", [
  * add all new patients to therapist
  *
  * params:
- * - id:
+ * - id: therapist id
  *
  * body:
- * - id:
+ * - id: therapist id
  * - patients: array of patients
  *
  * response:

@@ -14,6 +14,13 @@ import {
 import { http4xxResponse } from "../http/httpResponses";
 
 /**
+ * This file provides authentication middleware for express
+ * - checkAuthentication: validates jwt token
+ * - checkAuthenticationToken: checks token and refreshes it, if needed
+ */
+
+
+/**
  * Middleware that validates the authorization (checks if user is logged in)
  * returns 401 if authentication is erroneous
  * continues request handling if request is valid
