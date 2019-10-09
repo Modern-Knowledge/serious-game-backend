@@ -45,3 +45,17 @@ export function logRequest(req: Request, res: Response, next: any): void {
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
     return next();
 }
+
+/**
+ * logs rateLimit {limit, current, remaining number of requests} property that is added to the request by req.rateLimit
+ * logs slowDown {limit, current, remaining, resetTime, delay} property that is added to the request by req.slowDown
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+export function logLimitSlowDown(req: Request, res: Response, next: any): void {
+    logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Rate-Limit: ${JSON.stringify(req.rateLimit)}`);
+    logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Slow-Down: ${JSON.stringify(req.slowDown)}`);
+    return next();
+}

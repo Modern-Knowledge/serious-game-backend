@@ -42,7 +42,7 @@ if (config.error) { // .env not found
     throw new Error(message);
 }
 
-import { logRequest, measureRequestTime } from "./util/middleware/middleware";
+import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middleware/middleware";
 import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
@@ -138,8 +138,15 @@ app.use(speedLimiter);
  */
 app.use(measureRequestTime);
 
-// log request with winston
+/**
+ * logs request with winston
+ */
 app.use(logRequest);
+
+/**
+ * logs information about slow-down and rate-limiter
+ */
+app.use(logLimitSlowDown);
 
 /**
  * Primary app routes.
