@@ -18,14 +18,17 @@ const router = express.Router();
 
 const controllerName = "GameController";
 
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+
 /**
  * GET /
  * Get all games.
  *
  * response:
  * - games: all games of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const gameFacade = new GameCompositeFacade();
 
     try {
@@ -54,8 +57,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  *
  * response:
  * - game: game that was loaded
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -80,7 +84,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Game with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            game,
+            {game: game, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Spiel wurde erfolgreich gefunden.`)
             ]
