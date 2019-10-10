@@ -17,10 +17,13 @@ import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "RecipeController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -28,9 +31,10 @@ const controllerName = "RecipeController";
  * Get all recipes.
  *
  * response:
- * - helptexts: all recipes of the application
+ * - recipes: all recipes of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const recipeFacade = new RecipeCompositeFacade();
     try {
         const recipes = await recipeFacade.get();
@@ -38,7 +42,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         logEndpoint(controllerName, `Return all recipes!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            recipes,
+            {recipes: recipes, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Rezepte erfolgreich geladen!`)
             ]
@@ -58,8 +62,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  *
  * response:
  * - recipe: recipe that was loaded
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -69,6 +74,7 @@ router.get("/:id", [
 
     const id = Number(req.params.id);
     const recipeFacade = new RecipeCompositeFacade();
+
     try {
         const recipe = await recipeFacade.getById(id);
 
@@ -83,8 +89,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Recipe with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            recipe,
-            [
+            {recipe: recipe, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Rezept wurde erfolgreich geladen!`)
             ]
         ));
