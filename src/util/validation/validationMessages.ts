@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
-import logger from "../log/logger";
-import { loggerString } from "../Helper";
 
 /**
  * contains validation messages

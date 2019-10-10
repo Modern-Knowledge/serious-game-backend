@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-import mysql, { FieldInfo, MysqlError, Pool, PoolConnection, Query, queryCallback } from "mysql";
+import mysql, { FieldInfo, MysqlError, Pool, PoolConnection } from "mysql";
 import logger from "../log/logger";
 import { loggerString } from "../Helper";
 import { SQLValueAttributes } from "../../db/sql/SQLValueAttributes";
@@ -55,7 +55,7 @@ class DatabaseConnection {
             logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
         });
 
-        this._pool.on("connection", (connection) => {
+        this._pool.on("connection", () => {
             logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
         });
 
@@ -169,7 +169,7 @@ class DatabaseConnection {
                     reject(error);
                 }
 
-                const query = connection.query(sql, params, (error: MysqlError, results, fields: FieldInfo[]) => {
+                const query = connection.query(sql, params, (error: MysqlError, results) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${query.sql} [${query.values}]`);

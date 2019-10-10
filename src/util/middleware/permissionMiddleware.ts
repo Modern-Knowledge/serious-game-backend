@@ -5,7 +5,6 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
 import { Patient } from "../../lib/models/Patient";
 import logger from "../log/logger";
 import { getRequestUrl, loggerString } from "../Helper";
-import { formatDateTime } from "../../lib/utils/dateFormatter";
 
 /**
  * This file provides permission middleware for express

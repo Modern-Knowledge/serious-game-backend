@@ -1,5 +1,4 @@
-import { Strategy, ExtractJwt, StrategyOptions, JwtFromRequestFunction } from "passport-jwt";
-import { UserFacade } from "../../db/entity/user/UserFacade";
+import { Strategy, ExtractJwt, StrategyOptions } from "passport-jwt";
 import logger from "../log/logger";
 import { loggerString } from "../Helper";
 import { TherapistCompositeFacade } from "../../db/composite/TherapistCompositeFacade";
