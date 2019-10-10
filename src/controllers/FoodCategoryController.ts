@@ -12,10 +12,13 @@ import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
 import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "FoodCategoryController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -23,8 +26,9 @@ const controllerName = "FoodCategoryController";
  *
  * response:
  * - food-categories: all food-categories of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const foodCategoryFacade = new FoodCategoryFacade();
 
     try {
@@ -33,8 +37,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         logEndpoint(controllerName, `Return all food-categories!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            foodCategories,
-            [
+            {foodCategories: foodCategories, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Lebensmittelkategorien erfolgreich geladen!")
             ]
         ));
@@ -53,8 +56,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  *
  * response:
  * - food-category: food-category that was loaded
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -79,7 +83,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Food category with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            foodCategory,
+            {foodCategory: foodCategory, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Lebensmittelkategorie wurde erfolgreich gefunden.`)
             ]
