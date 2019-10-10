@@ -28,7 +28,6 @@ import { http4xxResponse } from "../util/http/httpResponses";
 import * as bcrypt from "bcryptjs";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
-import { forbidden403Response, validatePermission } from "../util/permission/permissionGuard";
 
 const router = express.Router();
 
@@ -53,7 +52,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                therapists,
+                {therapists: therapists, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle TherapeutInnen wurden erfolgreich geladen!`)
                 ]
@@ -195,8 +194,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                therapist,
-                [
+                {therapist: therapist, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn wurde erfolgreich aktualisiert!`)
                 ]
             )
@@ -252,7 +250,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                undefined,
+                {token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde erfolgreich gelöscht!`)
                 ]
@@ -312,7 +310,7 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                undefined,
+                {token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde ${therapist.accepted ? "akzeptiert" : "abgelehnt"}!`)
                 ]
