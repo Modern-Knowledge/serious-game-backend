@@ -55,7 +55,9 @@ export function logRequest(req: Request, res: Response, next: any): void {
  * @param next
  */
 export function logLimitSlowDown(req: Request, res: Response, next: any): void {
+    // @ts-ignore
     logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Rate-Limit: ${JSON.stringify(req.rateLimit)}`);
+    // @ts-ignore
     logger.debug(`${loggerString()} ${req.method} "${getRequestUrl(req)}" Slow-Down: ${JSON.stringify(req.slowDown)}`);
     return next();
 }
