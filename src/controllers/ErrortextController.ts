@@ -12,10 +12,13 @@ import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
 import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "ErrortextController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -24,8 +27,9 @@ const controllerName = "ErrortextController";
  *
  * response:
  * - errortexts: all errortexts of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const errorTextFacade = new ErrortextFacade();
 
     try {
@@ -34,8 +38,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         logEndpoint(controllerName, `Return all errortexts!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            errortexts,
-            [
+            {errortexts: errortexts, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Fehlertexte erfolgreich geladen!`)
             ]
         ));
@@ -54,8 +57,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  *
  * response:
  * - errortext: loaded errortext
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -80,8 +84,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Errortext with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            errortext,
-            [
+            {errortext: errortext, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Fehlertext wurde erfolgreich gefunden!`)
             ]
         ));
