@@ -86,6 +86,8 @@ export function retrieveValidationMessage(category: string, messageName: string)
 
 /**
  * shortcut method for retrieveValidationMessage
+ * retrieves the validationMessage by category and messageName
+
  * @param category
  * @param messageName
  */
