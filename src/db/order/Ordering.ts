@@ -4,7 +4,7 @@
  */
 
 import { SQLOrderBy } from "../sql/SQLOrderBy";
-import { SQLOrder } from "../sql/SQLOrder";
+import { SQLOrder } from "../sql/enums/SQLOrder";
 
 export class Ordering {
     protected _tableAlias: string;

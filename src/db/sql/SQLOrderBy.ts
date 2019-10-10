@@ -1,6 +1,6 @@
 import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./enums/SQLElementType";
-import { SQLOrder } from "./SQLOrder";
+import { SQLOrder } from "./enums/SQLOrder";
 
 /**
  * represents the order by part of the sql query

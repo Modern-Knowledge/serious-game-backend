@@ -21,7 +21,7 @@ import { AbstractModel } from "../lib/models/AbstractModel";
 import { FieldInfo, MysqlError, PoolConnection } from "mysql";
 import logger from "../util/log/logger";
 import { Filter } from "./filter/Filter";
-import { SQLOrder } from "./sql/SQLOrder";
+import { SQLOrder } from "./sql/enums/SQLOrder";
 import { Error } from "tslint/lib/error";
 import { Stopwatch } from "../util/analysis/Stopwatch";
 import { JoinCardinality } from "./sql/enums/JoinCardinality";
