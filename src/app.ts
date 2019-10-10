@@ -131,6 +131,8 @@ import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
 import GameSettingController from "./controllers/GameSettingController";
 import IngredientController from "./controllers/IngredientController";
+import PatientSettingController from "./controllers/PatientSettingController";
+
 
 /**
  * limit requests
@@ -180,6 +182,8 @@ app.use("/errortexts", ErrortextController);
 app.use("/food-categories", FoodCategoryController);
 app.use("/game-settings", GameSettingController);
 app.use("/smtp-logs", SmtpLoggingController);
+app.use("/patient-settings", PatientSettingController);
+
 
 /**
  * swagger api routes

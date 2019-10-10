@@ -1,11 +1,4 @@
 import { User } from "../../lib/models/User";
-import { Response } from "express";
-import {
-    HttpResponse,
-    HttpResponseMessage,
-    HttpResponseMessageSeverity,
-    HttpResponseStatus
-} from "../../lib/utils/http/HttpResponse";
 import { UserInterface } from "../../lib/interfaces/UserInterface";
 import logger from "../log/logger";
 import { loggerString, skipPermissionCheck } from "../Helper";
@@ -21,7 +14,7 @@ import { loggerString, skipPermissionCheck } from "../Helper";
  * @param authUser
  * @param resources
  */
-export function validatePermission(authUser: User, ...resources: UserInterface[]): boolean {
+export function validatePermission(authUser: User, resources: UserInterface[]): boolean {
     logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")}`);
 
     if (skipPermissionCheck()) {
