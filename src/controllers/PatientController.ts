@@ -27,7 +27,7 @@ import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade
 import { PatientSetting } from "../lib/models/PatientSetting";
 import * as bcrypt from "bcryptjs";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { checkPatientPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
@@ -210,5 +210,80 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
         return next(error);
     }
 });
+
+/**
+ * todo: validation
+ *
+ * PUT :/id
+ *
+ * Update a patient by id
+ *
+ * params:
+ * - id: id of the patient
+ *
+ * body:
+ * - _id: patient id
+ * - _email:
+ * - _forename:
+ * - _lastname:
+ * - _gender:
+ * - _birthday: birthday of patient
+ * - _info: info about the patient
+ *
+ * response:
+ * - patient: updated patient
+ * - token: authentication token
+ */
+router.put("/:id", authenticationMiddleware, checkPatientPermission, checkUserPermission, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    if (!checkRouteValidation(controllerName, req, res)) {
+        return failedValidation400Response(req, res);
+    }
+
+    const id = Number(req.params.id);
+
+    const patientFacade = new PatientFacade();
+    patientFacade.filter.addFilterCondition("id", id);
+
+    const patient = new Patient().deserialize(req.body);
+    try {
+        const dbPatient = await patientFacade.isPatient(id);
+
+        if (!dbPatient) {
+            logEndpoint(controllerName, `Patient with id ${id} was not found!`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} wurde nicht gefunden!`)
+            ]);
+        }
+
+        const affectedRows = await patientFacade.updateUserPatient(patient);
+
+        if (affectedRows <= 0) { // no rows were updated
+            logEndpoint(controllerName, `Patient with id ${id} couldn't be updated`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} konnte nicht aktualisiert werden!`)
+            ], 400);
+        }
+
+        logEndpoint(controllerName, `Patient with id ${id} was successfully updated!`, req);
+
+        return res.status(200).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {patient: patient, token: res.locals.authorizationToken},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`)
+                ]
+            )
+        );
+    } catch (e) {
+        return next(e);
+    }
+});
+
+
 
 export default router;

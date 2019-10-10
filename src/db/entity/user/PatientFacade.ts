@@ -87,6 +87,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
     /**
      * updates the patient and the associated user in a transaction
+     * returns the number of affected rows in the database
      * @param patient patient to update
      */
     public updateUserPatient(patient: Patient): Promise<number> {
