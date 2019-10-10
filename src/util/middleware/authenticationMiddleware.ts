@@ -30,7 +30,7 @@ import { http4xxResponse } from "../http/httpResponses";
  * @param next
  */
 export async function checkAuthentication(req: Request, res: Response, next: any): Promise<void> {
-    logger.debug(`${loggerString("", "", "checkAuthentication")}`);
+    logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthentication")}`);
 
     passport.authenticate("jwt", { session: false}, (err, user, info) => {
         if (err) {
@@ -60,7 +60,7 @@ export async function checkAuthentication(req: Request, res: Response, next: any
  * @param next
  */
 export async function checkAuthenticationToken(req: Request, res: Response, next: any): Promise<void> {
-    logger.debug(`${loggerString("", "", "checkAuthenticationToken")}`);
+    logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")}`);
 
     const orgToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req); // retrieve token
 

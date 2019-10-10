@@ -32,7 +32,7 @@ import { getRequestUrl, loggerString } from "../Helper";
  * @param next
  */
 export function checkUserPermission(req: Request, res: Response, next: any) {
-    logger.debug(`${loggerString("", "", "checkUserPermission")}`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")}`);
 
     const authUser = res.locals.user;
 
@@ -43,6 +43,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
     if (!req.params.id) {
         return next();
     }
+    
     if (Number(req.params.id) === authUser.id) {
         return next();
     }
@@ -65,7 +66,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
  * @param next
  */
 export function checkTherapistPermission(req: Request, res: Response, next: any) {
-    logger.debug(`${loggerString("", "", "checkTherapistPermission")}`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")}`);
 
     const authUser = res.locals.user;
 
@@ -77,7 +78,7 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
         return next();
     }
 
-    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
@@ -94,7 +95,7 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
  * @param next
  */
 export function checkPatientPermission(req: Request, res: Response, next: any) {
-    logger.debug(`${loggerString("", "", "checkPatientPermission")}`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")}`);
 
     const authUser = res.locals.user;
 
@@ -106,7 +107,7 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
-    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
