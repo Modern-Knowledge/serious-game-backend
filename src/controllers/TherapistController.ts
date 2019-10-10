@@ -34,18 +34,16 @@ const router = express.Router();
 
 const controllerName = "TherapistController";
 
-router.use(checkAuthenticationToken);
-router.use(checkAuthentication);
-router.use(checkTherapistPermission);
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication, checkTherapistPermission];
 
 /**
  * GET /
  * Get all therapists.
  *
  * response:
- * - patients: returns all patients
+ * - therapists: returns all therapists
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const therapistFacade = new TherapistFacade();
 
     try {
@@ -159,7 +157,7 @@ router.post("/", [
  * response:
  * - therapist: updated therapist
  */
-router.put("/:id", checkUserPermission, [
+router.put("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -219,7 +217,7 @@ router.put("/:id", checkUserPermission, [
  *
  * response:
  */
-router.delete("/:id", [
+router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -277,7 +275,7 @@ router.delete("/:id", [
  * response:
  *
  */
-router.put("/toggle-accepted/:id", [
+router.put("/toggle-accepted/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 

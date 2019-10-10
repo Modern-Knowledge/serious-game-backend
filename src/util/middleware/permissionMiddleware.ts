@@ -43,7 +43,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
     if (!req.params.id) {
         return next();
     }
-    
+
     if (Number(req.params.id) === authUser.id) {
         return next();
     }
