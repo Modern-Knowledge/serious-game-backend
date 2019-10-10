@@ -16,7 +16,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { passwordValidator } from "../util/validation/validators/passwordValidator";
 import { emailValidator } from "../util/validation/validators/emailValidator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
@@ -88,26 +88,26 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  */
 router.post("/", [
     check("_email").normalizeEmail()
-        .not().isEmpty().withMessage(retrieveValidationMessage("email", "empty"))
-        .isEmail().withMessage(retrieveValidationMessage("email", "invalid"))
+        .not().isEmpty().withMessage(rVM("email", "empty"))
+        .isEmail().withMessage(rVM("email", "invalid"))
         .custom(emailValidator),
 
     check("_forename").escape().trim()
-        .not().isEmpty().withMessage(retrieveValidationMessage("forename", "empty"))
-        .isAlpha().withMessage(retrieveValidationMessage("forename", "non_alpha")),
+        .not().isEmpty().withMessage(rVM("forename", "empty"))
+        .isAlpha().withMessage(rVM("forename", "non_alpha")),
 
     check("_lastname").escape().trim()
-        .not().isEmpty().withMessage(retrieveValidationMessage("lastname", "empty"))
-        .isAlpha().withMessage(retrieveValidationMessage("lastname", "non_alpha")),
+        .not().isEmpty().withMessage(rVM("lastname", "empty"))
+        .isAlpha().withMessage(rVM("lastname", "non_alpha")),
 
     check("_password").trim()
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length"))
-        .custom(passwordValidator).withMessage(retrieveValidationMessage("password", "not_matching")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length"))
+        .custom(passwordValidator).withMessage(rVM("password", "not_matching")),
 
     check("password_confirmation").trim()
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
 
-    check("therapist").equals("false").withMessage(retrieveValidationMessage("therapist", "value_false"))
+    check("therapist").equals("false").withMessage(rVM("therapist", "value_false"))
 
 ], async (req: Request, res: Response, next: any) => {
 
@@ -164,7 +164,7 @@ router.post("/", [
  * response:
  */
 router.delete("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {

@@ -9,7 +9,7 @@ import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
 import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
@@ -57,7 +57,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - game-setting: game-setting that was loaded
  */
 router.get("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {

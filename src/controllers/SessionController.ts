@@ -13,7 +13,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { Session } from "../lib/models/Session";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
@@ -37,7 +37,7 @@ const controllerName = "SessionController";
  * - session: loaded session
  */
 router.get("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -86,7 +86,7 @@ router.get("/:id", [
  * - sessions[]: array of sessions by the patient
  */
 router.get("/patient/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -127,7 +127,7 @@ router.get("/patient/:id", [
  * response:
  */
 router.delete("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -188,11 +188,11 @@ router.delete("/:id", [
  * - session: created session
  */
 router.post("/", [
-    check("_gameId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_gameId").isNumeric().withMessage(rVM("id", "numeric")),
 
-    check("_patientId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_patientId").isNumeric().withMessage(rVM("id", "numeric")),
 
-    check("_gameSettingId").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_gameSettingId").isNumeric().withMessage(rVM("id", "numeric")),
 
 ], async (req: Request, res: Response, next: any) => {
 

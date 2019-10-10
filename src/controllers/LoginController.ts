@@ -8,7 +8,7 @@ import * as bcrypt from "bcryptjs";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { JWTHelper } from "../util/JWTHelper";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -44,10 +44,10 @@ const controllerName = "LoginController";
 router.post("/login", [
 
     check("password")
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
 
     check("email").normalizeEmail()
-        .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+        .isEmail().withMessage(rVM("email", "invalid")),
 
 ], async (req: Request, res: Response, next: any) => {
 

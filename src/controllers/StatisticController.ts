@@ -12,7 +12,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
@@ -37,7 +37,7 @@ const controllerName = "StatisticController";
  * - statistic: loaded statistic
  */
 router.get("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -80,14 +80,14 @@ router.get("/:id", [
  * - statistic: updated statistic
  */
 router.put("/", [
-    check("_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric")),
+    check("_id").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("_startTime")
-        .isISO8601().withMessage(retrieveValidationMessage("date", "invalid"))
-        .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(retrieveValidationMessage("date", "wrong_order")),
+        .isISO8601().withMessage(rVM("date", "invalid"))
+        .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(rVM("date", "wrong_order")),
 
     check("_endTime")
-        .isISO8601().withMessage(retrieveValidationMessage("date", "invalid"))
+        .isISO8601().withMessage(rVM("date", "invalid"))
 
 ], async (req: Request, res: Response, next: any) => {
 

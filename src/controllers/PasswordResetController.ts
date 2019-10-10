@@ -19,7 +19,7 @@ import moment from "moment";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
@@ -46,7 +46,7 @@ const controllerName = "PasswordResetController";
  *                  description: user
  */
 router.post("/reset", [
-    check("email").normalizeEmail().isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+    check("email").normalizeEmail().isEmail().withMessage(rVM("email", "invalid")),
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -120,14 +120,14 @@ router.post("/reset", [
  */
 router.post("/reset-password",  [
     check("password")
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(retrieveValidationMessage("password", "length")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
 
     check("email").normalizeEmail()
-        .isEmail().withMessage(retrieveValidationMessage("email", "invalid")),
+        .isEmail().withMessage(rVM("email", "invalid")),
 
     check("token")
-        .isNumeric().withMessage(retrieveValidationMessage("token", "format"))
-        .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(retrieveValidationMessage("token", "length"))
+        .isNumeric().withMessage(rVM("token", "format"))
+        .isLength({min: Number(process.env.PASSWORD_TOKEN_LENGTH)}).withMessage(rVM("token", "length"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {

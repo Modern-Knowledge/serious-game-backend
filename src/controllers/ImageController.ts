@@ -6,7 +6,7 @@
 import express, { Request, Response } from "express";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
@@ -25,7 +25,7 @@ const controllerName = "ImageController";
  * - id: id of the image
  */
 router.get("/:id", [
-    check("id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+    check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {

@@ -13,7 +13,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { retrieveValidationMessage } from "../util/validation/validationMessages";
+import { rVM } from "../util/validation/validationMessages";
 import {
   checkRouteValidation,
   failedValidation400Response
@@ -72,7 +72,7 @@ router.get(
   [
     check("id")
       .isNumeric()
-      .withMessage(retrieveValidationMessage("id", "numeric"))
+      .withMessage(rVM("id", "numeric"))
   ],
   async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -133,7 +133,7 @@ router.get(
  * - ingredients: ingredients that were loaded
  */
 router.get("/category/:category_id", [
-     check("category_id").isNumeric().withMessage(retrieveValidationMessage("id", "numeric"))
+     check("category_id").isNumeric().withMessage(rVM("id", "numeric"))
     ], async (req: Request, res: Response, next: any) => {
 
       if (!checkRouteValidation(controllerName, req, res)) {
