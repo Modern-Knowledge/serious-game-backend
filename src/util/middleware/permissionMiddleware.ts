@@ -32,6 +32,8 @@ import { getRequestUrl, loggerString } from "../Helper";
  * @param next
  */
 export function checkUserPermission(req: Request, res: Response, next: any) {
+    logger.debug(`${loggerString("", "", "checkUserPermission")}`);
+
     const authUser = res.locals.user;
 
     if (!authUser) {
@@ -63,6 +65,8 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
  * @param next
  */
 export function checkTherapistPermission(req: Request, res: Response, next: any) {
+    logger.debug(`${loggerString("", "", "checkTherapistPermission")}`);
+
     const authUser = res.locals.user;
 
     if (!authUser) {
@@ -90,6 +94,8 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
  * @param next
  */
 export function checkPatientPermission(req: Request, res: Response, next: any) {
+    logger.debug(`${loggerString("", "", "checkPatientPermission")}`);
+
     const authUser = res.locals.user;
 
     if (!authUser) {
