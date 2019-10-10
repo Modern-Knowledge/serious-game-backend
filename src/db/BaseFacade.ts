@@ -44,7 +44,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     private _ordering: Ordering;
     private _filter: Filter;
 
-
     private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {
         return entities;
     };
@@ -88,7 +87,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param attributes attributes that should be retrieved
      * @param filter filter for selected (can be different from facade filter
      */
-    public select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
+    protected select(attributes: SQLAttributes, filter: Filter): Promise<EntityType[]> {
         this.joinAnalyzer();
 
         const npq: Query = this.getSelectQuery(attributes, filter);
@@ -146,12 +145,14 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param additionalInserts queries to execute in the transaction
      * watch the order of the array
      * statements are executed in this order
-     * facade: facade to execute insert in
-     * entity: entity to insert
-     * callBackOnInsert: callback that is executed after the insert, last callback in array will not be executed
+     *
+     * - facade: facade to execute insert in
+     * - entity: entity to insert
+     * - callBackOnInsert: callback that is executed after the insert, last callback in array will not be executed
+     *
      * returns all inserted ids as array
      */
-    public async insert(attributes: SQLValueAttributes, additionalInserts?: {facade: any, entity: EntityType, callBackOnInsert?: any}[]): Promise<any[]> {
+    protected async insert(attributes: SQLValueAttributes, additionalInserts?: {facade: any, entity: EntityType, callBackOnInsert?: any}[]): Promise<any[]> {
         // array of queries
         const funcArray: TransactionQuery[] = [];
         if (additionalInserts) {
@@ -171,7 +172,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param connection
      * @param attributes
      */
-    public getInsertQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
+    protected getInsertQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
         const npq: Query = this.getInsertQuery(attributes);
 
         return new Promise<any>((resolve, reject) => {
@@ -214,7 +215,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * facade: facade to execute update in
      * entity: entity to insert
      */
-    public async update(attributes: SQLValueAttributes, additionalUpdates?: {facade: any, entity: EntityType}[]): Promise<number> {
+    protected async update(attributes: SQLValueAttributes, additionalUpdates?: {facade: any, entity: EntityType}[]): Promise<number> {
         // array of queries
         const funcArray: TransactionQuery[] = [];
         if (additionalUpdates) {
@@ -234,7 +235,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param connection
      * @param attributes
      */
-    public getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
+    protected getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
         if (this._filter.isEmpty) {
             const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update-query specified!`;
             logger.error(error);
@@ -280,7 +281,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * watch the order of the array
      * statements are executed in this order
      */
-    public async delete(additionalFacades?: any[]): Promise<number> {
+    protected async delete(additionalFacades?: any[]): Promise<number> {
         // array of queries
         const funcArray: TransactionQuery[] = [];
         if (additionalFacades) {
@@ -300,7 +301,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * returns the function for executing delete queries
      * @param connection
      */
-    public getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> = (connection: PoolConnection) => {
+    protected getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> = (connection: PoolConnection) => {
         if (this._filter.isEmpty) {
             const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
             logger.error(error);
