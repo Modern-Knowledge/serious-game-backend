@@ -6,7 +6,6 @@ import { Game } from "../../../lib/models/Game";
  * handles CRUD operations with the game-entity
  */
 export class GameFacade extends EntityFacade<Game> {
-
   /**
    * @param tableAlias
    */
@@ -23,7 +22,7 @@ export class GameFacade extends EntityFacade<Game> {
    * @param excludedSQLAttributes attributes that should not be selected
    */
   public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] =  ["name", "description"];
+    const sqlAttributes: string[] = ["name", "description", "component"];
     return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
   }
 
@@ -48,7 +47,10 @@ export class GameFacade extends EntityFacade<Game> {
       game.description = result[this.name("description")];
     }
 
+    if (result[this.name("component")]) {
+      game.component = result[this.name("component")];
+    }
+
     return game;
   }
-
 }
