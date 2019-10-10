@@ -12,10 +12,13 @@ import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "WordController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -24,8 +27,9 @@ const controllerName = "WordController";
  *
  * response:
  * - words: all words of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const wordFacade = new WordFacade();
 
     try {
@@ -34,7 +38,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         logEndpoint(controllerName, `Return all words!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            words,
+            {words: words, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
             ]
@@ -53,9 +57,10 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - id: id of the word
  *
  * response:
- * - game: word that was loaded
+ * - word: word that was loaded
+ * - token: authentication token 🥺
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 
 ], async (req: Request, res: Response, next: any) => {
@@ -81,8 +86,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Word with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            word,
-            [
+            {word: word, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Wort wurde erfolgreich gefunden.`)
             ]
         ));
