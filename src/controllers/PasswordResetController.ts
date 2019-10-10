@@ -23,6 +23,8 @@ import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import * as bcrypt from "bcryptjs";
+
 
 const router = express.Router();
 
@@ -176,13 +178,13 @@ router.post("/reset-password",  [
             ], 400);
         }
 
-        user.password = password;
+        user.password = bcrypt.hashSync(password, 12);
         user.resetcode = undefined;
         user.resetcodeValidUntil = undefined;
 
         await userFacade.updateUser(user);
 
-        logEndpoint(controllerName, `The new Password for user with id ${user.id} has been set!`, req);
+        logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 
         const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
         mailTransport.sendMail(m);
