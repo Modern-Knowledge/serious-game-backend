@@ -1,5 +1,5 @@
 import { SQLElement } from "./SQLElement";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 import { SQLOrder } from "./SQLOrder";
 
 /**

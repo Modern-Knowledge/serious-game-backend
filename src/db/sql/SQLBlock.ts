@@ -1,5 +1,5 @@
 import { SQLElement } from "./SQLElement";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 import { SQLParam } from "./SQLParam";
 import { SQLKeyword } from "./SQLKeyword";
 import { SQLText } from "./SQLText";

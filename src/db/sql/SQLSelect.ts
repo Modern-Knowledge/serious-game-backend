@@ -1,6 +1,6 @@
 import { SQLElement } from "./SQLElement";
 import { SQLAttributes } from "./SQLAttributes";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 
 /**
  * represents the select part of a sql query

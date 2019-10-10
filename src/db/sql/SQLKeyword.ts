@@ -1,5 +1,5 @@
 import { SQLElement } from "./SQLElement";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 
 /**
  * represents a simple sql keyword like AND, OR

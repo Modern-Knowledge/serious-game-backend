@@ -1,6 +1,6 @@
 import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 
 /**
  * represents the where part of a sql query

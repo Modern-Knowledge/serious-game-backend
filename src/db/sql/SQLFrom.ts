@@ -1,5 +1,5 @@
 import { SQLElement } from "./SQLElement";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 
 /**
  * represents the from part of an sql query

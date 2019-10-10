@@ -1,7 +1,7 @@
 import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 import { SQLValueAttributes } from "./SQLValueAttributes";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 import { SQLValueAttribute } from "./SQLValueAttribute";
 import { SQLBlock } from "./SQLBlock";
 

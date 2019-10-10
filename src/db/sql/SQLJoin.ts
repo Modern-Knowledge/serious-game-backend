@@ -2,7 +2,7 @@ import { SQLElement } from "./SQLElement";
 import { JoinType } from "./enums/JoinType";
 import { SQLBlock } from "./SQLBlock";
 import { SQLParam } from "./SQLParam";
-import { SQLElementType } from "./SQLElementType";
+import { SQLElementType } from "./enums/SQLElementType";
 import { JoinCardinality } from "./enums/JoinCardinality";
 
 /**
