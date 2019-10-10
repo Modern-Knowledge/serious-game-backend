@@ -16,10 +16,14 @@ import {
 import { logEndpoint } from "../util/log/endpointLogger";
 import moment from "moment";
 import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "LoggingController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+
 
 /**
  * GET /
@@ -29,7 +33,7 @@ const controllerName = "LoggingController";
  * response:
  * - logs: all logs of the application
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
     facade.addOrderBy("id", SQLOrder.ASC);
 
@@ -92,6 +96,7 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
     }
 });
 
+
 /**
  * DELETE /
  *
@@ -100,7 +105,7 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
  * response:
  * - amount of deleted logs
  */
-router.delete("/", [], async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
 
     // date 3 months in the past
