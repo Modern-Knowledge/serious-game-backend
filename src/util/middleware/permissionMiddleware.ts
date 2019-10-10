@@ -4,7 +4,7 @@ import { http4xxResponse } from "../http/httpResponses";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 import { Patient } from "../../lib/models/Patient";
 import logger from "../log/logger";
-import { getRequestUrl, loggerString } from "../Helper";
+import { getRequestUrl, loggerString, skipPermissionCheck } from "../Helper";
 
 /**
  * This file provides permission middleware for express
@@ -33,6 +33,11 @@ import { getRequestUrl, loggerString } from "../Helper";
  */
 export function checkUserPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")}`);
+
+    if (skipPermissionCheck()) {
+        logger.warn(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")} Checking user permission is skipped!`);
+        return next();
+    }
 
     const authUser = res.locals.user;
 
@@ -68,6 +73,11 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
 export function checkTherapistPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")}`);
 
+    if (skipPermissionCheck()) {
+        logger.warn(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")} Checking therapist permission is skipped!`);
+        return next();
+    }
+
     const authUser = res.locals.user;
 
     if (!authUser) {
@@ -87,6 +97,7 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
 
 /**
  * Middleware that checks if a patient is allowed to request an endpoint
+ * Execution of middleware is skipped, if res.locals.user is undefined
  *
  * therapists can access specific patients endpoints
  *
@@ -96,6 +107,11 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
  */
 export function checkPatientPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")}`);
+
+    if (skipPermissionCheck()) {
+        logger.warn(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")} Checking patient permission is skipped!`);
+        return next();
+    }
 
     const authUser = res.locals.user;
 

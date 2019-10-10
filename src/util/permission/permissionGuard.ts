@@ -7,6 +7,8 @@ import {
     HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
 import { UserInterface } from "../../lib/interfaces/UserInterface";
+import logger from "../log/logger";
+import { loggerString, skipPermissionCheck } from "../Helper";
 
 /**
  * functions to check permissions in routes
@@ -20,6 +22,13 @@ import { UserInterface } from "../../lib/interfaces/UserInterface";
  * @param resources
  */
 export function validatePermission(authUser: User, ...resources: UserInterface[]): boolean {
+    logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")}`);
+
+    if (skipPermissionCheck()) {
+        logger.warn(`${loggerString(__dirname, "permissionGuard", "validatePermission")} Checking the permission to view resources is skipped`);
+        return true;
+    }
+
     for (const item of resources) { // checks every resource
         if (item.getUserId && authUser.id !== item.getUserId()) { // check if user id is the same as the resources user id
             return false;

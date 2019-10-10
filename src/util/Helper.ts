@@ -56,6 +56,20 @@ export function inProduction(): boolean {
     return process.env.NODE_ENV === "production";
 }
 
+/**
+ * checks if the authentication token is checked or skipped
+ */
+export function skipAuthentication(): boolean {
+    return process.env.SKIP_AUTHENTICATION === "1";
+}
+
+/**
+ * checks if permissions are checked or skipped
+ */
+export function skipPermissionCheck(): boolean {
+    return process.env.SKIP_PERMISSION_CHECK === "1";
+}
+
 
 /**
  * returns the current request url + parameters formatted as string

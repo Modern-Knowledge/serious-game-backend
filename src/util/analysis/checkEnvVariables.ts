@@ -45,7 +45,7 @@ export function checkEnvFunction(): void {
      */
     const unsetOptionalVars: string[] = checkEnvVariables([
         "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME",
-        "SEND_MAILS", "MAX_FAILED_LOGIN_ATTEMPTS", "LOGIN_COOLDOWN_TIME_HOURS"
+        "SEND_MAILS", "MAX_FAILED_LOGIN_ATTEMPTS", "LOGIN_COOLDOWN_TIME_HOURS", "SKIP_AUTHENTICATION", "SKIP_PERMISSION_CHECK"
     ]);
 
     if (unsetOptionalVars.length > 0) {
