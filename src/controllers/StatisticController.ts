@@ -20,10 +20,13 @@ import moment from "moment";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "StatisticController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /:id
@@ -35,8 +38,9 @@ const controllerName = "StatisticController";
  *
  * response:
  * - statistic: loaded statistic
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -54,7 +58,7 @@ router.get("/:id", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                statistic,
+                {statistic: statistic, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Statistik wurde erolgreich geladen!`)
                 ]
@@ -78,6 +82,7 @@ router.get("/:id", [
  *
  * response:
  * - statistic: updated statistic
+ * - token: authentication token
  */
 router.put("/", [
     check("_id").isNumeric().withMessage(rVM("id", "numeric")),
@@ -116,7 +121,7 @@ router.put("/", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                statistic,
+                {statistic: statistic, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Statistik wurde erfolgreich aktualisiert!`)
                 ]
