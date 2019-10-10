@@ -8,7 +8,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { TherapistPatient } from "../../../lib/models/TherapistPatient";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLComparisonOperator } from "../../sql/SQLComparisonOperator";
+import { SQLComparisonOperator } from "../../sql/enums/SQLComparisonOperator";
 
 
 /**

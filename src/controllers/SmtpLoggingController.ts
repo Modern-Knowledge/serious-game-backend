@@ -15,7 +15,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import moment from "moment";
-import { SQLComparisonOperator } from "../db/sql/SQLComparisonOperator";
+import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { SmtpLogFacade } from "../db/entity/log/SmtpLogFacade";
 import { SQLOperator } from "../db/sql/enums/SQLOperator";
 

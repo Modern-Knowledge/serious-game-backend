@@ -1,6 +1,6 @@
 import { Filterable } from "./Filterable";
 import { SQLBlock } from "../sql/SQLBlock";
-import { SQLComparisonOperator } from "../sql/SQLComparisonOperator";
+import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
 import { SQLParam } from "../sql/SQLParam";
 
 /**
