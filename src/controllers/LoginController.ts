@@ -70,7 +70,7 @@ router.post("/login", [
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ein Konto mit der E-Mail Adresse "${email}" wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `E-Mail Adresse oder Passwort falsch!`)
             ]);
         }
 
