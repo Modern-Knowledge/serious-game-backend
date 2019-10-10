@@ -10,8 +10,8 @@ import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();

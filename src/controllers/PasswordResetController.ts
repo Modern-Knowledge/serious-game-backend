@@ -20,9 +20,9 @@ import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import * as bcrypt from "bcryptjs";
 
 

@@ -18,9 +18,9 @@ import { Session } from "../lib/models/Session";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();

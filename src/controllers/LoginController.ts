@@ -18,9 +18,9 @@ import {
 import { User } from "../lib/models/User";
 import moment from "moment";
 import { formatDateTime } from "../lib/utils/dateFormatter";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 
 const router = express.Router();

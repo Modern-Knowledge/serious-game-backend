@@ -14,9 +14,9 @@ import { checkAuthentication, checkAuthenticationToken } from "../util/middlewar
 import { checkTherapistPermission } from "../util/middleware/permissionMiddleware";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
 import { UserFacade } from "../db/entity/user/UserFacade";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import * as bcrypt from "bcryptjs";
 import { Mail } from "../util/mail/Mail";
 import { passwordResettet } from "../mail-texts/passwordResettet";

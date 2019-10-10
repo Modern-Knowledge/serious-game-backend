@@ -5,10 +5,13 @@
 
 import {
     HttpResponse,
-    HttpResponseMessage,
+    HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
 import { Response } from "express";
+import { Request } from "express";
+import { toHttpResponseMessage } from "../validation/validationMessages";
+import { validationResult } from "express-validator";
 
 /**
  * stores predefined http responses
@@ -29,4 +32,32 @@ export function http4xxResponse(res: Response, messages?: HttpResponseMessage[],
             data,
             messages
         ));
+}
+
+/**
+ * sends default 400 response if an error occurred in express-validator
+ * @param req request object
+ * @param res response object
+ */
+export function failedValidation400Response(req: Request, res: Response): Response {
+    return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+        undefined,
+        [
+            ...toHttpResponseMessage(validationResult(req).array())
+        ]
+    ));
+}
+
+
+/**
+ * sends 403 response if permission to view/edit endpoint is rejected
+ *
+ * @param res response object
+ */
+export function forbidden403Response(res: Response): Response {
+    return res.status(403).json(new HttpResponse(HttpResponseStatus.FAIL,
+        undefined, [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Sie dürfen diese Aktion nicht durchführen!")
+        ]
+    ));
 }

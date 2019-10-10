@@ -37,17 +37,3 @@ export function validatePermission(authUser: User, ...resources: UserInterface[]
 
     return true;
 }
-
-/**
- * todo: move httpresponses.ts
- * sends 403 response if permission to view/edit endpoint is rejected
- *
- * @param res response object
- */
-export function forbidden403Response(res: Response): Response {
-    return res.status(403).json(new HttpResponse(HttpResponseStatus.FAIL,
-        undefined, [
-            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Sie dürfen diese Aktion nicht durchführen!")
-        ]
-    ));
-}

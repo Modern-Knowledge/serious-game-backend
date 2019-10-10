@@ -8,9 +8,9 @@ import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { http4xxResponse } from "../util/http/httpResponses";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
