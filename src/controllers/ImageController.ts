@@ -11,11 +11,13 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/h
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "ImageController";
 
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /:id
@@ -24,7 +26,7 @@ const controllerName = "ImageController";
  * params:
  * - id: id of the image
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
