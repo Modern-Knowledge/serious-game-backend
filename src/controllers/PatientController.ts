@@ -26,26 +26,24 @@ import { http4xxResponse } from "../util/http/httpResponses";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import { PatientSetting } from "../lib/models/PatientSetting";
 import * as bcrypt from "bcryptjs";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkUserPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
 const controllerName = "PatientController";
 
-/**
- * GET /
- * Get patient by id.
- *
- * todo
- */
-router.get("/:id", async (req: Request, res: Response) => {
-    res.jsonp("UserController");
-});
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
  * Get all patients.
+ *
+ * response:
+ * - patients: all patients of the application
+ * - token: authentication token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const patientFacade = new PatientFacade();
 
     try {
@@ -55,7 +53,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                patients,
+                {patients: patients, token: res.locals.authorizationToken} ,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle PatientInnen wurden erfolgreich geladen!`)
                 ]
@@ -70,6 +68,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
 
 /**
  * POST /
+ *
  * Inserts a patient and inserts patient settings
  *
  * body:
@@ -82,7 +81,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  * - therapist: false
  *
  * response:
- * - token: generated jwt token
+ * - token: generated authentication token
  * - user: generated therapist
  * - patient_setting: patient settings
  */
@@ -162,8 +161,9 @@ router.post("/", [
  * - id: id of the patient
  *
  * response:
+ * - token: authentication token
  */
-router.delete("/:id", [
+router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -200,7 +200,7 @@ router.delete("/:id", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                undefined,
+                {token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich gelöscht!`)
                 ]

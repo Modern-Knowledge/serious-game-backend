@@ -18,7 +18,6 @@ const controllerName = "VersionController";
 router.get("/", (req: Request, res: Response) => {
     logEndpoint(controllerName, `Version requested!`, req);
 
-
     return res.status(200).json(
         new HttpResponse(HttpResponseStatus.SUCCESS,
             {

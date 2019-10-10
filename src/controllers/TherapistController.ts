@@ -41,6 +41,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication,
  *
  * response:
  * - therapists: returns all therapists
+ * - token: authentication token
  */
 router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const therapistFacade = new TherapistFacade();
@@ -77,7 +78,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
  * - therapist: true
  *
  * response:
- * - token: generated jwt token
+ * - token: generated authentication token
  * - user: generated therapist
  */
 router.post("/", [
@@ -155,6 +156,7 @@ router.post("/", [
  *
  * response:
  * - therapist: updated therapist
+ * - token: authentication token
  */
 router.put("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
@@ -214,6 +216,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
  * - id: id of the therapist
  *
  * response:
+ * - token: authentication token
  */
 router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
@@ -271,7 +274,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
  * - id: id of the therapist
  *
  * response:
- *
+ * - token: authentication token
  */
 router.put("/toggle-accepted/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
