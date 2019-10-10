@@ -21,7 +21,6 @@ import { formatDateTime } from "../lib/utils/dateFormatter";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
-import passport from "passport";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 
 const router = express.Router();
