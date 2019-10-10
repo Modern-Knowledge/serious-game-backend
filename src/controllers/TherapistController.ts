@@ -38,17 +38,6 @@ router.use(checkAuthenticationToken);
 router.use(checkAuthentication);
 router.use(checkTherapistPermission);
 
-
-/**
- * GET /
- * Get a therapist by id.
- *
- * todo: needed?
- */
-router.get("/:id", async (req: Request, res: Response) => {
-    res.jsonp("UserController");
-});
-
 /**
  * GET /
  * Get all therapists.
