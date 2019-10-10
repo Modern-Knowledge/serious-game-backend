@@ -60,14 +60,16 @@ export function inProduction(): boolean {
  * checks if the authentication token is checked or skipped
  */
 export function skipAuthentication(): boolean {
-    return process.env.SKIP_AUTHENTICATION === "1";
+    const value = Number(process.env.SKIP_AUTHENTICATION) || 0;
+    return value === 1;
 }
 
 /**
  * checks if permissions are checked or skipped
  */
 export function skipPermissionCheck(): boolean {
-    return process.env.SKIP_PERMISSION_CHECK === "1";
+    const value = Number(process.env.SKIP_PERMISSION_CHECK) || 0;
+    return value === 1;
 }
 
 
