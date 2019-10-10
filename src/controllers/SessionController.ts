@@ -21,10 +21,13 @@ import { Statistic } from "../lib/models/Statistic";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { http4xxResponse } from "../util/http/httpResponses";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "SessionController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /:id
@@ -35,8 +38,9 @@ const controllerName = "SessionController";
  *
  * response:
  * - session: loaded session
+ * - token: authentication token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -62,7 +66,7 @@ router.get("/:id", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                session,
+                {session: session, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich geladen!`)
                 ]
@@ -84,8 +88,9 @@ router.get("/:id", [
  *
  * response:
  * - sessions[]: array of sessions by the patient
+ * - token: authentication token
  */
-router.get("/patient/:id", [
+router.get("/patient/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -104,7 +109,7 @@ router.get("/patient/:id", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                sessions,
+                {sessions: sessions, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihre Spielsitzungen wurden erfolgreich geladen!`)
                 ]
@@ -125,8 +130,9 @@ router.get("/patient/:id", [
  * - id: id of the session
  *
  * response:
+ * - token: authentication token
  */
-router.delete("/:id", [
+router.delete("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -159,7 +165,7 @@ router.delete("/:id", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                undefined,
+                {token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich gelöscht!`)
                 ]
@@ -186,8 +192,9 @@ router.delete("/:id", [
  *
  * response:
  * - session: created session
+ * - token: authentication token
  */
-router.post("/", [
+router.post("/", authenticationMiddleware, [
     check("_gameId").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("_patientId").isNumeric().withMessage(rVM("id", "numeric")),
@@ -224,7 +231,7 @@ router.post("/", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                insertedSession,
+                {session: insertedSession, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich erstellt`)
                 ]
