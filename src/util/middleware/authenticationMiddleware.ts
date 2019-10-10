@@ -68,7 +68,7 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")}`);
 
     if (skipAuthentication()) {
-        logger.warn(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")} Validating the authentication token is skipped!`);
+        logger.warn(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")} Validating and refreshing the authentication token is skipped!`);
         return next();
     }
 
