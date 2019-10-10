@@ -55,7 +55,7 @@ export class SQLBlock extends SQLElement {
   /**
    *
    */
-  public invalidate(): void {
+  private invalidate(): void {
     for (let i = 0; i < this._elements.length; i++) {
       if (i < 0) {
         continue;

@@ -31,13 +31,6 @@ export class SQLValueAttribute extends SQLAttribute {
     return new SQLParam(this.getParamName(), this._value, false);
   }
 
-  /**
-   * performs a deep copy of the object and returns it
-   */
-  public copy(): SQLValueAttribute {
-    return new SQLValueAttribute(this.name, this.tableAlias, this.value);
-  }
-
   get value(): string | number | Date | boolean {
     return this._value;
   }

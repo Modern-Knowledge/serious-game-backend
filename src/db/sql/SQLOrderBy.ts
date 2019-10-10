@@ -15,7 +15,7 @@ export class SQLOrderBy extends SQLElement {
    * @param order
    * @param tableAlias
    */
-  constructor(attribute: string, order: SQLOrder, tableAlias: string) {
+  public constructor(attribute: string, order: SQLOrder, tableAlias: string) {
     super();
     this._attribute = attribute;
     this._order = order;

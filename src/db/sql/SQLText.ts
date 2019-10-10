@@ -18,14 +18,14 @@ export class SQLText extends SQLElement {
   /**
    * returns the element type for sql text
    */
-  getElementType(): number {
+  public getElementType(): number {
     return SQLElementType.SQLText;
   }
 
   /**
    * returns the sql type
    */
-  getSQL(): string {
+  public getSQL(): string {
     return " " + this._text + " ";
   }
 }

@@ -13,7 +13,7 @@ export class SQLDelete extends SQLElement {
    * @param tableName
    * @param tableAlias
    */
-  constructor(tableName: string, tableAlias: string) {
+  public constructor(tableName: string, tableAlias: string) {
     super();
     this._tableName = tableName;
     this._tableAlias = tableAlias;
