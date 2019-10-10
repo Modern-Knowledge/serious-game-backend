@@ -18,10 +18,13 @@ import moment from "moment";
 import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { SmtpLogFacade } from "../db/entity/log/SmtpLogFacade";
 import { SQLOperator } from "../db/sql/enums/SQLOperator";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
-const controllerName = "LoggingController";
+const controllerName = "SmtpLoggingController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -33,9 +36,10 @@ const controllerName = "LoggingController";
  * - sent: load only sent mails (optional)
  *
  * response:
- * - smtp-logs: all smtp-logs of the application
+ * - logs: all smtp-logs of the application
+ * - token: authentication token
  */
-router.get("/", [
+router.get("/", authenticationMiddleware, [
     // todo: validation if needed
 ], async (req: Request, res: Response, next: any) => {
     const facade: SmtpLogFacade = new SmtpLogFacade();
@@ -61,7 +65,7 @@ router.get("/", [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                logs,
+                {logs: logs, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `SMTP-Logs erfolgreich geladen!`)
                 ]
@@ -79,9 +83,10 @@ router.get("/", [
  * deletes smtp-logs older than 3 months
  *
  * response:
- * - amount of deleted smtp-logs
+ * - affectedRows: amount of deleted smtp-logs
+ * - token: authentication token
  */
-router.delete("/", [], async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const facade: SmtpLogFacade = new SmtpLogFacade();
 
     // date 3 months in the past
@@ -95,7 +100,7 @@ router.delete("/", [], async (req: Request, res: Response, next: any) => {
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                affectedRows,
+                {affectedRows: affectedRows, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} SMTP-Logs wurden erfolgreich gelöscht!`)
                 ]
