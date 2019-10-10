@@ -6,6 +6,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
+import { UserInterface } from "../../lib/interfaces/UserInterface";
 
 /**
  * functions to check permissions in routes
@@ -18,7 +19,7 @@ import {
  * @param authUser
  * @param resources
  */
-export function validatePermission(authUser: User, ...resources: any): boolean {
+export function validatePermission(authUser: User, ...resources: UserInterface[]): boolean {
     for (const item of resources) { // checks every resource
         if (item.getUserId && authUser.id !== item.getUserId()) { // check if user id is the same as the resources user id
             return false;
