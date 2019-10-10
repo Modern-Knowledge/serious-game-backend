@@ -73,23 +73,6 @@ export class SQLJoin extends SQLElement {
     return returnSQL;
   }
 
-  get condition(): SQLBlock {
-    return this._condition;
-  }
-
-  set condition(value: SQLBlock) {
-    this._condition = value;
-  }
-
-  /**
-   * creates a new condition
-   * @param condition
-   */
-  public setCondition(condition: string): void {
-    this._condition = new SQLBlock();
-    this._condition.addText(condition);
-  }
-
   get joinType(): JoinType {
     return this._joinType;
   }

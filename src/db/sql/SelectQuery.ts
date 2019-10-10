@@ -48,16 +48,6 @@ export class SelectQuery extends NamedParameterizedQuery {
   }
 
   /**
-   * adds a new join to the list
-   * @param join
-   */
-  public addJoin(join: SQLJoin): void {
-    if (join !== undefined) {
-      this._sqlJoins.push(join);
-    }
-  }
-
-  /**
    * adds a list of new joins to the list
    * @param joins
    */
@@ -101,40 +91,16 @@ export class SelectQuery extends NamedParameterizedQuery {
     return returnSQL;
   }
 
-  get sqlSelect(): SQLSelect {
-    return this._sqlSelect;
-  }
-
   set sqlSelect(value: SQLSelect) {
     this._sqlSelect = value;
-  }
-
-  get sqlFrom(): SQLFrom {
-    return this._sqlFrom;
   }
 
   set sqlFrom(value: SQLFrom) {
     this._sqlFrom = value;
   }
 
-  get sqlJoins(): SQLJoin[] {
-    return this._sqlJoins;
-  }
-
-  set sqlJoins(value: SQLJoin[]) {
-    this._sqlJoins = value;
-  }
-
-  get sqlWhere(): SQLWhere {
-    return this._sqlWhere;
-  }
-
   set sqlWhere(value: SQLWhere) {
     this._sqlWhere = value;
-  }
-
-  get sqlOrderBy(): SQLOrderBy[] {
-    return this._sqlOrderBy;
   }
 
   set sqlOrderBy(value: SQLOrderBy[]) {

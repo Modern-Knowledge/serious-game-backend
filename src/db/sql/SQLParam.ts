@@ -34,11 +34,4 @@ export class SQLParam {
     this._value = value;
   }
 
-  get percQuotes(): boolean {
-    return this._percQuotes;
-  }
-
-  set percQuotes(value: boolean) {
-    this._percQuotes = value;
-  }
 }

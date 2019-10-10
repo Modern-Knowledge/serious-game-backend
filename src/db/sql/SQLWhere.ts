@@ -48,11 +48,4 @@ export class SQLWhere extends SQLElement {
     return "";
   }
 
-  get condition(): SQLElement {
-    return this._condition;
-  }
-
-  set condition(value: SQLElement) {
-    this._condition = value;
-  }
 }

@@ -21,15 +21,6 @@ export class SQLAttributes extends SQLAttributeCollection<SQLAttribute> {
   }
 
   /**
-   * adds an attribute to the collection
-   * @param tableAlias
-   * @param attribute
-   */
-  public addAnotherAttribute(tableAlias: string, attribute: string): void {
-    this._attributes.push(new SQLAttribute(tableAlias, attribute));
-  }
-
-  /**
    * adds a collection of sql attributes
    * @param sqlAttributes
    */
