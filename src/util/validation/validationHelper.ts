@@ -32,6 +32,7 @@ export function checkRouteValidation(endpoint: string, req: Request, res: Respon
 }
 
 /**
+ * todo: move httpresponses.ts
  * sends default 400 response if an error occurred in express-validator
  * @param req request object
  * @param res response object
@@ -50,7 +51,7 @@ export function failedValidation400Response(req: Request, res: Response): Respon
  * @param endpoint endpoint that reports the errors
  * @param errors error array that is returned by express validator
  */
-export function logValidatorErrors(endpoint: string, errors: any[]): void {
+function logValidatorErrors(endpoint: string, errors: any[]): void {
     for (const error of errors) {
         logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, Ort: ${error.location}, Text: ${error.msg.message}, Wert: ${!error.param.includes("password") ? error.value : ""}`);
     }

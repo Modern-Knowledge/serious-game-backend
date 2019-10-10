@@ -93,7 +93,10 @@ class DatabaseConnection {
     /**
      * executes the passed queries in a transaction
      * queries can be of type insert, update, delete
+     *
      * @param queryCallbacks array of queries that are executed in the transaction
+     *
+     * returns the responses of the queries as an array
      */
     public transaction(queryCallbacks: TransactionQuery[]): Promise<any[]> {
         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} going to be executed in a transaction!`);
