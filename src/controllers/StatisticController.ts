@@ -84,7 +84,7 @@ router.get("/:id", authenticationMiddleware, [
  * - statistic: updated statistic
  * - token: authentication token
  */
-router.put("/", [
+router.put("/", authenticationMiddleware, [
     check("_id").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("_startTime")

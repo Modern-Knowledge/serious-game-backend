@@ -13,10 +13,13 @@ import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation, failedValidation400Response } from "../util/validation/validationHelper";
 import { http4xxResponse } from "../util/http/httpResponses";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();
 
 const controllerName = "GameSettingController";
+
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
  * GET /
@@ -25,8 +28,9 @@ const controllerName = "GameSettingController";
  *
  * response:
  * - game-settings: all game-settings of the application
+ * - token: authenticated token
  */
-router.get("/", async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const gameSettingFacade = new GameSettingFacade();
 
     try {
@@ -35,7 +39,7 @@ router.get("/", async (req: Request, res: Response, next: any) => {
         logEndpoint(controllerName, `Return all gameSettings!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            gameSettings,
+            {gameSettings: gameSettings, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spieleinstellungen erfolgreich geladen!")
             ]
@@ -55,8 +59,9 @@ router.get("/", async (req: Request, res: Response, next: any) => {
  *
  * response:
  * - game-setting: game-setting that was loaded
+ * - token: authenticated token
  */
-router.get("/:id", [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -81,7 +86,7 @@ router.get("/:id", [
         logEndpoint(controllerName, `Game-Setting with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            gameSetting,
+            {gameSetting: gameSetting, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spieleinstellung wurde erfolgreich gefunden.`)
             ]
