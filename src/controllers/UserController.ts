@@ -21,6 +21,8 @@ router.use(checkAuthenticationToken);
 router.use(checkAuthentication);
 router.use(checkTherapistPermission);
 
+const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+
 /**
  * GET /
  *
@@ -29,13 +31,13 @@ router.use(checkTherapistPermission);
  * response:
  * - user: therapist or patient
  */
-router.get("/related", async (req: Request, res: Response, next: any) => {
+router.get("/related", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     try {
         logEndpoint(controllerName, `Retrieved related user with id ${res.locals.user.id}`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                res.locals.user, [
+                {user: res.locals.user, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Benutzer/in erfolgreich geladen!")
                 ]
             )
