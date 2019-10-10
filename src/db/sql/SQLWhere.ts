@@ -6,7 +6,7 @@ import { SQLElementType } from "./enums/SQLElementType";
  * represents the where part of a sql query
  */
 export class SQLWhere extends SQLElement {
-  private _condition: SQLElement;
+  private readonly _condition: SQLElement;
 
   /**
    * @param condition

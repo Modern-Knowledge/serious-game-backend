@@ -12,7 +12,7 @@ export class SQLJoin extends SQLElement {
   private readonly _joinTableName: string;
   private readonly _joinTableAlias: string;
 
-  private _condition: SQLBlock;
+  private readonly _condition: SQLBlock;
   private readonly _joinType: JoinType = JoinType.JOIN;
   private readonly _joinCardinality: JoinCardinality = JoinCardinality.ONE_TO_ONE;
 
