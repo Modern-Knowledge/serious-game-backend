@@ -53,6 +53,8 @@ import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
+import { u } from "./marv1";
+u.failedLoginAttempts = 0;
 
 logger.info(
   `${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`
