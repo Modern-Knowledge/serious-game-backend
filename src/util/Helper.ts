@@ -57,6 +57,13 @@ export function inProduction(): boolean {
 }
 
 /**
+ * returns if app runs in test mode
+ */
+export function inTestMode(): boolean {
+    return process.env.NODE_ENV === "test";
+}
+
+/**
  * checks if the authentication token is checked or skipped
  */
 export function skipAuthentication(): boolean {
@@ -71,7 +78,6 @@ export function skipPermissionCheck(): boolean {
     const value = Number(process.env.SKIP_PERMISSION_CHECK) || 0;
     return value === 1;
 }
-
 
 /**
  * returns the current request url + parameters formatted as string

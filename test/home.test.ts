@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../src/app";
 
-describe("GET /", () => {
+describe("GET /home", () => {
   it("should return 200 OK", (done) => {
-    request(app).get("/")
+    request(app).get("/home")
       .expect(200, done);
   });
 });

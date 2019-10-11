@@ -5,13 +5,14 @@
 
 import mysql, { FieldInfo, MysqlError, Pool, PoolConnection } from "mysql";
 import logger from "../log/logger";
-import { loggerString } from "../Helper";
+import { inTestMode, loggerString } from "../Helper";
 import { SQLValueAttributes } from "../../db/sql/SQLValueAttributes";
 
 /**
  * interface that defines queries that can used in a transaction
+ *
  * function: executes insert, update or delete query (getInsertQueryFn, getUpdateQueryFn, getDeleteQueryFn in BaseFacade are examples for functions that can be passed)
- * attributes: sqlvalueAttributes that are injected into the insert or update query
+ * attributes: sqlValueAttributes that are injected into the insert or update query
  * callBackOnInsert: callback that is called, if the query returns a insertId. The function is called with the returned inserted id. Used to set id
  */
 export interface TransactionQuery {
@@ -36,15 +37,31 @@ class DatabaseConnection {
      * establish pool connection to database
      */
     private connect(): void {
-        this._pool = mysql.createPool({
-            connectionLimit: 10,
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            database: process.env.DB_DATABASE,
-            debug: false,
-            waitForConnections: true
-        });
+        if (inTestMode()) {
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Test-Database`);
+
+            this._pool = mysql.createPool({
+                connectionLimit: 10,
+                host: process.env.TEST_DB_HOST,
+                user: process.env.TEST_DB_USER,
+                password: process.env.TEST_DB_PASS,
+                database: process.env.TEST_DB_DATABASE,
+                debug: false,
+                waitForConnections: true
+            });
+        } else {
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
+
+            this._pool = mysql.createPool({
+                connectionLimit: 10,
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_DATABASE,
+                debug: false,
+                waitForConnections: true
+            });
+        }
     }
 
     /**
