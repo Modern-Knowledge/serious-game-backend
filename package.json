@@ -50,6 +50,7 @@
     "lodash": "^4.17.15",
     "lusca": "^1.6.1",
     "marv": "^3.0.1",
+    "marv-mysql-driver": "^2.0.2",
     "method-override": "^3.0.0",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
