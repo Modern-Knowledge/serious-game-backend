@@ -14,8 +14,6 @@
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "test": "jest --forceExit --coverage --verbose",
-    "watch-test": "npm run test -- --watchAll",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
@@ -24,7 +22,10 @@
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "build-docs": "npm run delete-docs && typedoc",
     "pre-build": "rm -rf dist/ && rm -rf src/lib && cp -r ../serious-game-library/src/. ./src/lib",
-    "delete-docs": "rm -rf docs/"
+    "delete-docs": "rm -rf docs/",
+    "pretest": "cross-env NODE_ENV=test npm run migrate:reset",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --forceExit --coverage --verbose",
+    "watch-test": "npm run test -- --watchAll"
   },
   "dependencies": {
     "async": "^3.0.1",
@@ -110,6 +111,7 @@
     "@types/winston": "^2.3.9",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
+    "cross-env": "^6.0.3",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "shelljs": "^0.8.3",
