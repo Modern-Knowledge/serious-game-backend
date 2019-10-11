@@ -31,7 +31,7 @@ export function checkEnvFunction(): void {
      * throw an error if these env variables are not present
      */
     const unsetRequiredVars: string[] = checkEnvVariables([
-        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION", "PASSWORD_TOKEN_LENGTH", "PASSWORD_LENGTH"
+        "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION", "PASSWORD_TOKEN_LENGTH", "PASSWORD_LENGTH", "TEST_DB_HOST", "TEST_DB_USER", "TEST_DB_PASS", "TEST_DB_DATABASE"
     ]);
 
     if (unsetRequiredVars.length > 0) {
