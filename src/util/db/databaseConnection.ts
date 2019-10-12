@@ -176,12 +176,11 @@ class DatabaseConnection {
     }
 
     /**
-     * execute a sql query
+     * execute a sql query and returns the results as array
      * @param sql sql query to be executed
      * @param params parameters for prepared query that are later replaced
      */
     public query(sql: string, params: string[] = []): Promise<any[]> {
-        const returnArr: any[] = [];
         return new Promise<any[]>((resolve, reject) => {
             databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) {
@@ -199,11 +198,7 @@ class DatabaseConnection {
                         reject(error);
                     }
 
-                    for (const item of results) {
-                        returnArr.push(item);
-                    }
-
-                    resolve(returnArr);
+                    resolve(results);
                 });
             });
         });

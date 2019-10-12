@@ -53,8 +53,9 @@ import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
-import { u } from "./marv1";
-u.failedLoginAttempts = 0;
+import { runMigrations } from "./MigrationHelper";
+
+runMigrations().then(() => {});
 
 logger.info(
   `${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`
@@ -76,13 +77,14 @@ app.set("env", inProduction() ? "production" : "development");
 // options for cors middleware
 const options: cors.CorsOptions = {}; // TODO: set cors options correct
 
+// init middleware
 app.use(cors(options));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(methodOverride());
 
+// set passport authentication
 app.use(passport.initialize());
 passport.use(jwtStrategy);
 
