@@ -71,19 +71,19 @@ class DatabaseConnection {
      */
     private createPoolEvents(): void {
         this._pool.on("acquire", (connection) => {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
         });
 
         this._pool.on("connection", () => {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
         });
 
         this._pool.on("enqueue", () => {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Waiting for available connection slot!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Waiting for available connection slot!`);
         });
 
         this._pool.on("release", (connection) => {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} released!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} released!`);
         });
     }
 
