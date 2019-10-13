@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { GameSetting } from "../../../lib/models/GameSetting";
 import { SQLJoin } from "../../sql/SQLJoin";
@@ -8,6 +13,7 @@ import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with game-settings-entity
@@ -52,6 +58,21 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
         }
 
         return returnAttributes;
+    }
+
+    /**
+     * inserts a new gameSetting and returns the created gameSetting
+     * @param gameSetting gameSetting to insert
+     */
+    public async insertGameSetting(gameSetting: GameSetting): Promise<GameSetting> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(gameSetting);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            gameSetting.id = result[0].insertedId;
+        }
+
+        return gameSetting;
     }
 
     /**

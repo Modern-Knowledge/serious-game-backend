@@ -13,6 +13,7 @@ import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { Filter } from "../../filter/Filter";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the recipe-entity
@@ -58,6 +59,21 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
         }
 
         return recipeAttributes;
+    }
+
+    /**
+     * inserts a new recipe and returns the created recipe
+     * @param recipe recipe to insert
+     */
+    public async insertRecipe(recipe: Recipe): Promise<Recipe> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(recipe);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            recipe.id = result[0].insertedId;
+        }
+
+        return recipe;
     }
 
     /**

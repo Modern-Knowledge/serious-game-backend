@@ -13,6 +13,7 @@ import { JoinType } from "../../sql/enums/JoinType";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the ingredient-entity
@@ -58,6 +59,21 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         }
 
         return ingredientAttributes;
+    }
+
+    /**
+     * inserts a new ingredient and returns the created ingredient
+     * @param ingredient ingredient to insert
+     */
+    public async insertIngredient(ingredient: Ingredient): Promise<Ingredient> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(ingredient);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            ingredient.id = result[0].insertedId;
+        }
+
+        return ingredient;
     }
 
     /**

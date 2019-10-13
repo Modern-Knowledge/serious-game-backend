@@ -6,6 +6,7 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { RecipeIngredient } from "../../../lib/models/RecipeIngredient";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the recipes-ingredients-entity
@@ -36,6 +37,21 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
         }
 
         return super.getSQLAttributes(excludedDefaultAttributes, sqlAttributes);
+    }
+
+    /**
+     * inserts a new recipeIngredient and returns the created recipeIngredient
+     * @param recipeIngredient recipeIngredient to insert
+     */
+    public async insertRecipeIngredient(recipeIngredient: RecipeIngredient): Promise<RecipeIngredient> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(recipeIngredient);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            recipeIngredient.id = result[0].insertedId;
+        }
+
+        return recipeIngredient;
     }
 
     /**

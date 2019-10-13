@@ -6,6 +6,7 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { FoodCategory } from "../../../lib/models/FoodCategory";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the food-category-entity
@@ -31,6 +32,21 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
         const sqlAttributes: string[] = ["name"];
 
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    }
+
+    /**
+     * inserts a new food-category and returns the created food-category
+     * @param foodCategory
+     */
+    public async insertFoodCategory(foodCategory: FoodCategory): Promise<FoodCategory> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(foodCategory);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            foodCategory.id = result[0].insertedId;
+        }
+
+        return foodCategory;
     }
 
     /**

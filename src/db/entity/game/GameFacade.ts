@@ -1,56 +1,77 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Game } from "../../../lib/models/Game";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the game-entity
  */
 export class GameFacade extends EntityFacade<Game> {
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("games", tableAlias);
-    } else {
-      super("games", "g");
-    }
-  }
-
-  /**
-   * returns sql attributes that should be retrieved from the database
-   * @param excludedSQLAttributes attributes that should not be selected
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = ["name", "description", "component"];
-    return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
-  }
-
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  public fillEntity(result: any): Game {
-    if (!result[this.name("id")]) {
-      return undefined;
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("games", tableAlias);
+        } else {
+            super("games", "g");
+        }
     }
 
-    const game: Game = new Game();
-
-    this.fillDefaultAttributes(result, game);
-
-    if (result[this.name("name")]) {
-      game.name = result[this.name("name")];
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const sqlAttributes: string[] = ["name", "description", "component"];
+        return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
-    if (result[this.name("description")]) {
-      game.description = result[this.name("description")];
+    /**
+     * inserts a new game and returns the created game
+     * @param game
+     */
+    public async insertGame(game: Game): Promise<Game> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(game);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            game.id = result[0].insertedId;
+        }
+
+        return game;
     }
 
-    if (result[this.name("component")]) {
-      game.component = result[this.name("component")];
-    }
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    public fillEntity(result: any): Game {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
 
-    return game;
-  }
+        const game: Game = new Game();
+
+        this.fillDefaultAttributes(result, game);
+
+        if (result[this.name("name")]) {
+            game.name = result[this.name("name")];
+        }
+
+        if (result[this.name("description")]) {
+            game.description = result[this.name("description")];
+        }
+
+        if (result[this.name("component")]) {
+            game.component = result[this.name("component")];
+        }
+
+        return game;
+    }
 }

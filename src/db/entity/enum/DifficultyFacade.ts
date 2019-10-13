@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Difficulty } from "../../../lib/models/Difficulty";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the difficulty-entity
@@ -26,6 +32,21 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
         const sqlAttributes: string[] = ["difficulty"];
 
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    }
+
+    /**
+     * inserts a new difficulty and returns the created difficulty
+     * @param difficulty difficulty to insert
+     */
+    public async insertDifficulty(difficulty: Difficulty): Promise<Difficulty> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(difficulty);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            difficulty.id = result[0].insertedId;
+        }
+
+        return difficulty;
     }
 
     /**

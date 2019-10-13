@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Severity } from "../../../lib/models/Severity";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the severity-entity
@@ -26,6 +32,21 @@ export class SeverityFacade extends EntityFacade<Severity> {
         const sqlAttributes: string[] = ["severity"];
 
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
+    }
+
+    /**
+     * inserts a new severity and returns the created severity
+     * @param severity
+     */
+    public async insertSeverity(severity: Severity): Promise<Severity> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(severity);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            severity.id = result[0].insertedId;
+        }
+
+        return severity;
     }
 
     /**

@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { HelptextGame } from "../../../lib/models/HelptextGame";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with helptexts-games-entity
@@ -31,6 +37,21 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
         }
 
         return super.getSQLAttributes(exclDefaultAttr, sqlAttributes);
+    }
+
+    /**
+     * inserts a new helptextsGames and returns the created helptextsGames
+     * @param helptextGames helptextGames to insert
+     */
+    public async insertHelptextGames(helptextGames: HelptextGame): Promise<HelptextGame> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptextGames);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            helptextGames.id = result[0].insertedId;
+        }
+
+        return helptextGames;
     }
 
     /**

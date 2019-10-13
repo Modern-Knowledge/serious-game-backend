@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { JoinType } from "../../sql/enums/JoinType";
@@ -8,6 +13,7 @@ import { Helptext } from "../../../lib/models/Helptext";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 
 /**
  * handles CRUD operations with the helptext-entity
@@ -53,6 +59,21 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
         }
 
         return helptextAttributes;
+    }
+
+    /**
+     * inserts a new user and returns the created user
+     * @param helptext helptext to insert
+     */
+    public async insertHelptext(helptext: Helptext): Promise<Helptext> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptext);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            helptext.id = result[0].insertedId;
+        }
+
+        return helptext;
     }
 
     /**
