@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`patients`
+CREATE TABLE IF NOT EXISTS `patients`
 (
     `patient_id`  INT(11)      NOT NULL,
     `birthday`    DATE         NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`patients`
     PRIMARY KEY (`patient_id`),
     CONSTRAINT `fk_patients_users1`
         FOREIGN KEY (`patient_id`)
-            REFERENCES `serious-game`.`users` (`id`)
+            REFERENCES `users` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

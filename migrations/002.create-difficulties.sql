@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`difficulties`
+CREATE TABLE IF NOT EXISTS `difficulties`
 (
     `id`          INT(11)     NOT NULL AUTO_INCREMENT,
     `difficulty`  TINYINT(4)  NOT NULL,

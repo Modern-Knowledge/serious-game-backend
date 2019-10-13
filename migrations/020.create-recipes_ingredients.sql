@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`recipes_ingredients`
+CREATE TABLE IF NOT EXISTS `recipes_ingredients`
 (
     `recipe_id`     INT(11)   NOT NULL,
     `ingredient_id` INT(11)   NOT NULL,
@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`recipes_ingredients`
     INDEX `fk_recipes_has_ingredients_recipes1_idx` (`recipe_id` ASC),
     CONSTRAINT `fk_recipes_has_ingredients_ingredients1`
         FOREIGN KEY (`ingredient_id`)
-            REFERENCES `serious-game`.`ingredients` (`id`)
+            REFERENCES `ingredients` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_recipes_has_ingredients_recipes1`
         FOREIGN KEY (`recipe_id`)
-            REFERENCES `serious-game`.`recipes` (`id`)
+            REFERENCES `recipes` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`helptexts`
+CREATE TABLE IF NOT EXISTS `helptexts`
 (
     `helptext_id` INT(11)   NOT NULL,
     `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`helptexts`
     INDEX `fk_helptexts_texts1_idx` (`helptext_id` ASC),
     CONSTRAINT `fk_helptexts_texts1`
         FOREIGN KEY (`helptext_id`)
-            REFERENCES `serious-game`.`texts` (`id`)
+            REFERENCES `texts` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

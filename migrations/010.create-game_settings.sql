@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`game_settings`
+CREATE TABLE IF NOT EXISTS `game_settings`
 (
     `id`            INT(11)   NOT NULL AUTO_INCREMENT,
     `game_id`       INT(11)   NOT NULL,
@@ -10,12 +10,12 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`game_settings`
     INDEX `fk_game_settings_difficulties1_idx` (`difficulty_id` ASC),
     CONSTRAINT `fk_game_settings_difficulties1`
         FOREIGN KEY (`difficulty_id`)
-            REFERENCES `serious-game`.`difficulties` (`id`)
+            REFERENCES `difficulties` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_game_settings_games1`
         FOREIGN KEY (`game_id`)
-            REFERENCES `serious-game`.`games` (`id`)
+            REFERENCES `games` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

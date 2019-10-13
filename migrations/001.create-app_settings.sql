@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`app_settings`
+CREATE TABLE IF NOT EXISTS `app_settings`
 (
     `id`          INT(11)   NOT NULL AUTO_INCREMENT,
     `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

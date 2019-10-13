@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`logs`
+CREATE TABLE IF NOT EXISTS `logs`
 (
     `id`          INT(11)      NOT NULL AUTO_INCREMENT,
     `logger`      VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`logs`
     INDEX `fk_logs_users1_idx` (`user_id` ASC),
     CONSTRAINT `fk_logs_users1`
         FOREIGN KEY (`user_id`)
-            REFERENCES `serious-game`.`users` (`id`)
+            REFERENCES `users` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

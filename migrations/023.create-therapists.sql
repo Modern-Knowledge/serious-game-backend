@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`therapists`
+CREATE TABLE IF NOT EXISTS `therapists`
 (
     `therapist_id` INT(11)   NOT NULL,
     `role`         TINYINT   NOT NULL COMMENT '0 ... user\n1 ... admin',
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`therapists`
     PRIMARY KEY (`therapist_id`),
     CONSTRAINT `fk_therapists_users`
         FOREIGN KEY (`therapist_id`)
-            REFERENCES `serious-game`.`users` (`id`)
+            REFERENCES `users` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

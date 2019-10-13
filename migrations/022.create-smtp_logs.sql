@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`smtp_logs`
+CREATE TABLE IF NOT EXISTS `smtp_logs`
 (
     `id`          INT(11)      NOT NULL AUTO_INCREMENT,
     `subject`     VARCHAR(255) NOT NULL,

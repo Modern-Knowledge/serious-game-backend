@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`statistics`
+CREATE TABLE IF NOT EXISTS `statistics`
 (
     `id`          INT(11)   NOT NULL AUTO_INCREMENT,
     `starttime`   TIMESTAMP NULL     DEFAULT NULL,

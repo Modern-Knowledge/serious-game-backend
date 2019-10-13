@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`patient_settings`
+CREATE TABLE IF NOT EXISTS `patient_settings`
 (
     `id`          INT(11)    NOT NULL AUTO_INCREMENT,
     `neglect`     TINYINT(4) NULL     DEFAULT '0',
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`patient_settings`
     INDEX `fk_patient_settings_patients1_idx` (`patient_id` ASC),
     CONSTRAINT `fk_patient_settings_patients1`
         FOREIGN KEY (`patient_id`)
-            REFERENCES `serious-game`.`patients` (`patient_id`)
+            REFERENCES `patients` (`patient_id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

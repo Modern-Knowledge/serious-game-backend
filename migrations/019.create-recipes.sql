@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`recipes`
+CREATE TABLE IF NOT EXISTS `recipes`
 (
     `id`            INT(11)                                         NOT NULL AUTO_INCREMENT,
     `name`          VARCHAR(255)                                    NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`recipes`
     UNIQUE INDEX `name_UNIQUE` (`name` ASC),
     CONSTRAINT `fk_recipes_difficulties1`
         FOREIGN KEY (`difficulty_id`)
-            REFERENCES `serious-game`.`difficulties` (`id`)
+            REFERENCES `difficulties` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
