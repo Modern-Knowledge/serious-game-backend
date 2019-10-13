@@ -19,6 +19,7 @@ import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { SmtpLogFacade } from "../db/entity/log/SmtpLogFacade";
 import { SQLOperator } from "../db/sql/enums/SQLOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * - logs: all smtp-logs of the application
  * - token: authentication token
  */
-router.get("/", authenticationMiddleware, [
+router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
     // todo: validation if needed
 ], async (req: Request, res: Response, next: any) => {
     const facade: SmtpLogFacade = new SmtpLogFacade();
@@ -86,7 +87,7 @@ router.get("/", authenticationMiddleware, [
  * - affectedRows: amount of deleted smtp-logs
  * - token: authentication token
  */
-router.delete("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
     const facade: SmtpLogFacade = new SmtpLogFacade();
 
     // date 3 months in the past

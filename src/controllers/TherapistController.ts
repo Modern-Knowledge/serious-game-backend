@@ -27,7 +27,11 @@ import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import * as bcrypt from "bcryptjs";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkTherapistPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
+import {
+    checkTherapistAdminPermission,
+    checkTherapistPermission,
+    checkUserPermission
+} from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
@@ -276,7 +280,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
  * response:
  * - token: authentication token
  */
-router.put("/toggle-accepted/:id", authenticationMiddleware, [
+router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdminPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 

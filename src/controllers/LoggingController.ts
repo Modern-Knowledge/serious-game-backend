@@ -17,6 +17,7 @@ import { logEndpoint } from "../util/log/endpointLogger";
 import moment from "moment";
 import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * response:
  * - logs: all logs of the application
  */
-router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
     facade.addOrderBy("id", SQLOrder.ASC);
 
@@ -105,7 +106,7 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
  * response:
  * - amount of deleted logs
  */
-router.delete("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
 
     // date 3 months in the past
