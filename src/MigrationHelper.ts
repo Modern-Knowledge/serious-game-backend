@@ -47,7 +47,10 @@ import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade"
  * successful migrations are stored in migrations table
  */
 export async function runMigrations(): Promise<void> {
-    if (!(process.env.RUN_MIGRATIONS === "1")) {
+    const runMigration =  Number(process.env.RUN_MIGRATIONS) || 0;
+    const runSeed = Number(process.env.RUN_SEED) || 0;
+
+    if (!(runMigration === 1)) {
         logger.warn(`Running migrations is skipped!`);
         return;
     }
@@ -74,7 +77,7 @@ export async function runMigrations(): Promise<void> {
     const migrations = await marv.scan(directory);
     await marv.migrate(migrations, driver(options));
 
-    if (process.env.RUN_SEED === "1") {
+    if (runSeed === 1) {
         await seedTables();
     } else {
         logger.warn(`Seeding is skipped!`);
