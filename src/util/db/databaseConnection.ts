@@ -47,7 +47,8 @@ class DatabaseConnection {
                 password: process.env.TEST_DB_PASS,
                 database: process.env.TEST_DB_DATABASE,
                 debug: false,
-                waitForConnections: true
+                waitForConnections: true,
+                multipleStatements: true
             });
         } else {
             logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
@@ -59,7 +60,8 @@ class DatabaseConnection {
                 password: process.env.DB_PASS,
                 database: process.env.DB_DATABASE,
                 debug: false,
-                waitForConnections: true
+                waitForConnections: true,
+                multipleStatements: true
             });
         }
     }

@@ -14,6 +14,7 @@ import { Filter } from "../../filter/Filter";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the recipe-entity
@@ -109,6 +110,26 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
         }
 
         return recipe;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param recipe entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, recipe: Recipe): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, recipe.name);
+        attributes.addAttribute(nameAttribute);
+
+        const descriptionAttribute: SQLValueAttribute = new SQLValueAttribute("description", prefix, recipe.description);
+        attributes.addAttribute(descriptionAttribute);
+
+        const difficultyIdAttribute: SQLValueAttribute = new SQLValueAttribute("difficulty_id", prefix, recipe.difficultyId);
+        attributes.addAttribute(difficultyIdAttribute);
+
+        return attributes;
     }
 
     /**

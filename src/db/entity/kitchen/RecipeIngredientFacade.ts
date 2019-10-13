@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { RecipeIngredient } from "../../../lib/models/RecipeIngredient";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the recipes-ingredients-entity
@@ -76,6 +77,23 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
         }
 
         return recipeIngredient;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param recipeIngredient entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, recipeIngredient: RecipeIngredient): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const recipeIdAttribute: SQLValueAttribute = new SQLValueAttribute("recipe_id", prefix, recipeIngredient.recipeId);
+        attributes.addAttribute(recipeIdAttribute);
+
+        const ingredientIdAttribute: SQLValueAttribute = new SQLValueAttribute("ingredient_id", prefix, recipeIngredient.ingredientId);
+        attributes.addAttribute(ingredientIdAttribute);
+
+        return attributes;
     }
 
 }

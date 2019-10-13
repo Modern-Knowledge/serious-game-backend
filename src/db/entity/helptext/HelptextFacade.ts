@@ -14,6 +14,7 @@ import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the helptext-entity
@@ -67,11 +68,19 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
      */
     public async insertHelptext(helptext: Helptext): Promise<Helptext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptext);
-        const result = await this.insert(attributes);
 
-        if (result.length > 0) {
-            helptext.id = result[0].insertedId;
-        }
+        /**
+         * callback that is called after a text was inserted
+         * @param insertId text id that was inserted before
+         * @param attributes attributes to append to
+         */
+        const onInsertText = (insertId: number, attributes: SQLValueAttributes) => {
+            helptext.id = insertId;
+            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("helptext_id", this.tableName, helptext.id);
+            attributes.addAttribute(patientIdAttribute);
+        };
+
+        await this.insert(attributes, [{facade: this._textFacade, entity: helptext, callBackOnInsert: onInsertText}, {facade: this, entity: helptext}]);
 
         return helptext;
     }
@@ -92,6 +101,15 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
         }
 
         return helptext;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param helptext entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, helptext: Helptext): SQLValueAttributes {
+        return new SQLValueAttributes();
     }
 
     /**

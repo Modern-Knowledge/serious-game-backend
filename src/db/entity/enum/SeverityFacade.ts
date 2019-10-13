@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Severity } from "../../../lib/models/Severity";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the severity-entity
@@ -67,6 +68,20 @@ export class SeverityFacade extends EntityFacade<Severity> {
         }
 
         return severity;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param severity entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, severity: Severity): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const severityAttribute: SQLValueAttribute = new SQLValueAttribute("severity", prefix, severity.severity);
+        attributes.addAttribute(severityAttribute);
+
+        return attributes;
     }
 
 }

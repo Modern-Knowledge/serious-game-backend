@@ -14,6 +14,7 @@ import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the ingredient-entity
@@ -109,6 +110,26 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         }
 
         return ingredient;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param ingredient entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, ingredient: Ingredient): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, ingredient.name);
+        attributes.addAttribute(nameAttribute);
+
+        const imageIdAttribute: SQLValueAttribute = new SQLValueAttribute("image_id", prefix, ingredient.imageId);
+        attributes.addAttribute(imageIdAttribute);
+
+        const foodCategoryId: SQLValueAttribute = new SQLValueAttribute("food_category_id", prefix, ingredient.foodCategoryId);
+        attributes.addAttribute(foodCategoryId);
+
+        return attributes;
     }
 
     /**

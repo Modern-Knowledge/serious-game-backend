@@ -14,6 +14,7 @@ import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with game-settings-entity
@@ -104,6 +105,23 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
         }
 
         return gameSetting;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param gameSetting entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, gameSetting: GameSetting): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const gameIdAttribute: SQLValueAttribute = new SQLValueAttribute("game_id", prefix, gameSetting.gameId);
+        attributes.addAttribute(gameIdAttribute);
+
+        const difficultyId: SQLValueAttribute = new SQLValueAttribute("difficulty_id", prefix, gameSetting.difficultyId);
+        attributes.addAttribute(difficultyId);
+
+        return attributes;
     }
 
     /**

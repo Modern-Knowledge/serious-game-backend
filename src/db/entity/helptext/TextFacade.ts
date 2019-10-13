@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { Text } from "../../../lib/models/Text";
 import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the text-entity
@@ -59,6 +66,23 @@ export class TextFacade extends EntityFacade<Text> {
         }
 
         return text;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param text entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, text: Text): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, text.name);
+        attributes.addAttribute(nameAttribute);
+
+        const textAttribute: SQLValueAttribute = new SQLValueAttribute("text", prefix, text.text);
+        attributes.addAttribute(textAttribute);
+
+        return attributes;
     }
 
 }

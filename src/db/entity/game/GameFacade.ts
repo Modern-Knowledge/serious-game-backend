@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Game } from "../../../lib/models/Game";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the game-entity
@@ -73,5 +74,25 @@ export class GameFacade extends EntityFacade<Game> {
         }
 
         return game;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param game entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, game: Game): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, game.name);
+        attributes.addAttribute(nameAttribute);
+
+        const descriptionAttribute: SQLValueAttribute = new SQLValueAttribute("description", prefix, game.description);
+        attributes.addAttribute(descriptionAttribute);
+
+        const componentAttribute: SQLValueAttribute = new SQLValueAttribute("component", prefix, game.component);
+        attributes.addAttribute(componentAttribute);
+
+        return attributes;
     }
 }

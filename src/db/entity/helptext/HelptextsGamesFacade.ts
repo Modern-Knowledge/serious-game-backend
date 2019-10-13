@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { HelptextGame } from "../../../lib/models/HelptextGame";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with helptexts-games-entity
@@ -70,6 +71,23 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
         }
 
         return helptextGames;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param helptextGame entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, helptextGame: HelptextGame): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const gameIdAttribute: SQLValueAttribute = new SQLValueAttribute("game_id", prefix, helptextGame.gameId);
+        attributes.addAttribute(gameIdAttribute);
+
+        const helptextId: SQLValueAttribute = new SQLValueAttribute("helptext_id", prefix, helptextGame.helptextId);
+        attributes.addAttribute(helptextId);
+
+        return attributes;
     }
 
 }

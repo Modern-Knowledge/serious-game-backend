@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { UserFacade } from "./UserFacade";
 import { Therapist } from "../../../lib/models/Therapist";
 import { SQLAttributes } from "../../sql/SQLAttributes";
@@ -72,7 +77,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
         /**
          * callback that is called after a user was inserted
          * @param insertId user id that was inserted before
-         * @param attributes to append to
+         * @param attributes attributes to append to
          */
         const onInsertUser = (insertId: number, attributes: SQLValueAttributes) => {
             therapist.id = insertId;

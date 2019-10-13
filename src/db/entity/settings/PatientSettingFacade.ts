@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { PatientSetting } from "../../../lib/models/PatientSetting";
@@ -80,12 +85,11 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     protected getSQLValueAttributes(prefix: string, patientSetting: PatientSetting): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const neglectAttribute: SQLValueAttribute = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
-        attributes.addAttribute(neglectAttribute);
-
         const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", prefix, patientSetting.patientId);
         attributes.addAttribute(patientIdAttribute);
 
+        const neglectAttribute: SQLValueAttribute = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
+        attributes.addAttribute(neglectAttribute);
 
         return attributes;
     }

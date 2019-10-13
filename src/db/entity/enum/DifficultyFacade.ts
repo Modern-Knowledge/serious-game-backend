@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Difficulty } from "../../../lib/models/Difficulty";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the difficulty-entity
@@ -67,6 +68,20 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
         }
 
         return difficulty;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param difficulty entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, difficulty: Difficulty): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const difficultyAttribute: SQLValueAttribute = new SQLValueAttribute("difficulty", prefix, difficulty.difficulty);
+        attributes.addAttribute(difficultyAttribute);
+
+        return attributes;
     }
 
 }

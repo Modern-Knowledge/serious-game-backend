@@ -7,6 +7,7 @@ import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { FoodCategory } from "../../../lib/models/FoodCategory";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the food-category-entity
@@ -67,6 +68,20 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
         }
 
         return foodCategory;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param foodCategory entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, foodCategory: FoodCategory): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, foodCategory.name);
+        attributes.addAttribute(nameAttribute);
+
+        return attributes;
     }
 
 }
