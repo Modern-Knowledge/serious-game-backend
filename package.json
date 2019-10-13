@@ -23,7 +23,6 @@
     "build-docs": "npm run delete-docs && typedoc",
     "pre-build": "rm -rf dist/ && rm -rf src/lib && cp -r ../serious-game-library/src/. ./src/lib",
     "delete-docs": "rm -rf docs/",
-    "pretest": "cross-env NODE_ENV=test npm run migrate:reset",
     "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --forceExit --coverage --verbose",
     "watch-test": "npm run test -- --watchAll"
   },

@@ -8,7 +8,7 @@ import { Therapist } from "./lib/models/Therapist";
 const marv = require("marv/api/promise"); // <-- Promise API
 const driver = require("marv-mysql-driver");
 import * as path from "path";
-import { inTestMode } from "./util/Helper";
+import { inTestMode, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 import { databaseConnection } from "./util/db/databaseConnection";
 import { Roles } from "./lib/enums/Roles";
@@ -51,7 +51,7 @@ export async function runMigrations(): Promise<void> {
     const runSeed = Number(process.env.RUN_SEED) || 0;
 
     if (!(runMigration === 1)) {
-        logger.warn(`Running migrations is skipped!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`);
         return;
     }
 
@@ -59,7 +59,7 @@ export async function runMigrations(): Promise<void> {
 
     const directory = path.resolve("migrations");
 
-    logger.info(`Running migrations from ${directory}!`);
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`);
 
     const options = {
 
@@ -80,10 +80,10 @@ export async function runMigrations(): Promise<void> {
     if (runSeed === 1) {
         await seedTables();
     } else {
-        logger.warn(`Seeding is skipped!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`);
     }
 
-    logger.info("Completed running migrations!");
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Completed running migrations!`);
     return;
 }
 
@@ -91,7 +91,7 @@ export async function runMigrations(): Promise<void> {
  * drop every table in the application
  */
 async function dropTables(): Promise<void> {
-    logger.info(`Drop every table!`);
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Drop every table!`);
 
     const results = await databaseConnection.query("SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'serious-game'");
     let stmt = "";
