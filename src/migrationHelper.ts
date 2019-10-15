@@ -61,24 +61,28 @@ export async function migrate(): Promise<void> {
     const runSeed          = Number(process.env.RUN_SEED) || 0;
 
     if (runTruncateTable === 1) {
-       await truncateTables();
+        logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate tables!`);
+        await truncateTables();
     } else {
         logger.warn(`${loggerString(__dirname, "", "", __filename)} Running truncate tables is skipped!`);
     }
 
     if (runDropTable === 1) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} Drop tables!`);
         await dropTables();
     } else {
         logger.warn(`${loggerString(__dirname, "", "", __filename)} Running drop tables is skipped!`);
     }
 
     if (runMigration === 1) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} Running Migrations!`);
         await runMigrations();
     } else {
         logger.warn(`${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`);
     }
 
     if (runSeed === 1) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} Seeding tables!`);
         await seedTables();
     } else {
         logger.warn(`${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`);
@@ -119,6 +123,11 @@ async function runMigrations(): Promise<void> {
 export async function truncateTables(): Promise<void> {
     const results = await getTables();
 
+    if (results.length == 0) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to truncate!`);
+        return;
+    }
+
     logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`);
 
     let stmt = "";
@@ -134,7 +143,12 @@ export async function truncateTables(): Promise<void> {
 async function dropTables(): Promise<void> {
     const results = await getTables();
 
-    logger.info(`${loggerString(__dirname, "", "", __filename)} Drop every table!`);
+    if (results.length == 0) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to drop!`);
+        return;
+    }
+
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Drop ${results.length} tables!`);
 
     let stmt = "";
     for (const item of results) {
@@ -358,14 +372,14 @@ export async function seedTables(): Promise<void> {
 }
 
 /**
- * retrieves every table from the specified database
+ * retrieves every table from the specified database except migrations and migration_lock
  * testMode -> choose tables from test_db
- * prodMode -> chosse tables from prod_db
+ * prodMode -> choose tables from prod_db
  */
 async function getTables(): Promise<string[]> {
     logger.debug(`${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`);
 
-    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}"`);
+    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}" AND table_name != "migrations" AND table_name != "migrations_lock"`);
 
     return results.map(value => value["table_name"]);
 }
