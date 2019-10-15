@@ -51,7 +51,7 @@ import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade"
  * - seedTables: seed tables with test data
  */
 export async function migrate(): Promise<void> {
-    if (inProduction()) {
+    if (inProduction() || inTestMode()) {
         return;
     }
 
@@ -93,7 +93,7 @@ export async function migrate(): Promise<void> {
  * run migration in Database
  * successful migrations are stored in migrations table
  */
-async function runMigrations(): Promise<void> {
+export async function runMigrations(): Promise<void> {
     const directory = path.resolve("migrations");
 
     logger.info(`${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`);
@@ -140,7 +140,7 @@ export async function truncateTables(): Promise<void> {
 /**
  * drop every table in the application
  */
-async function dropTables(): Promise<void> {
+export async function dropTables(): Promise<void> {
     const results = await getTables();
 
     if (results.length == 0) {
@@ -163,6 +163,12 @@ async function dropTables(): Promise<void> {
  * todo split in multiple files
  */
 export async function seedTables(): Promise<void> {
+    const results = await getTables();
+    if (results.length == 0) {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to seed!`);
+        return;
+    }
+
     const t1 = new Therapist();
     t1.email = "therapist@example.org";
     t1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
@@ -379,7 +385,7 @@ export async function seedTables(): Promise<void> {
 async function getTables(): Promise<string[]> {
     logger.debug(`${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`);
 
-    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}" AND table_name != "migrations" AND table_name != "migrations_lock"`);
+    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}"`);
 
     return results.map(value => value["table_name"]);
 }
