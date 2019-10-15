@@ -53,7 +53,7 @@ import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
-import { migrate } from "./MigrationHelper";
+import { migrate } from "./migrationHelper";
 
 migrate().then(() => {});
 
