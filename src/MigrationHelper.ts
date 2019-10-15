@@ -42,27 +42,47 @@ import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
 import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
 
+export async function migrate(): Promise<void> {
+    const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
+    const runDropTable     = Number(process.env.RUN_DROP_TABLE) || 0;
+    const runMigration     = Number(process.env.RUN_MIGRATIONS) || 0;
+    const runSeed          = Number(process.env.RUN_SEED) || 0;
+
+    if (runTruncateTable === 1) {
+       await truncateTables();
+    } else {
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running truncate tables is skipped!`);
+    }
+
+    if (runDropTable === 1) {
+        await dropTables();
+    } else {
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running drop tables is skipped!`);
+    }
+
+    if (runMigration === 1) {
+        await runMigrations();
+    } else {
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`);
+    }
+
+    if (runSeed === 1) {
+        await seedTables();
+    } else {
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`);
+    }
+}
+
 /**
  * run migration in Database
  * successful migrations are stored in migrations table
  */
-export async function runMigrations(): Promise<void> {
-    const runMigration =  Number(process.env.RUN_MIGRATIONS) || 0;
-    const runSeed = Number(process.env.RUN_SEED) || 0;
-
-    if (!(runMigration === 1)) {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`);
-        return;
-    }
-
-    await dropTables();
-
+async function runMigrations(): Promise<void> {
     const directory = path.resolve("migrations");
 
     logger.info(`${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`);
 
     const options = {
-
         table: "migrations",
 
         connection: {
@@ -77,27 +97,36 @@ export async function runMigrations(): Promise<void> {
     const migrations = await marv.scan(directory);
     await marv.migrate(migrations, driver(options));
 
-    if (runSeed === 1) {
-        await seedTables();
-    } else {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`);
-    }
-
     logger.info(`${loggerString(__dirname, "", "", __filename)} Completed running migrations!`);
     return;
+}
+
+/**
+ * truncate every table in the application
+ */
+async function truncateTables(): Promise<void> {
+    const results = await getTables();
+
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`);
+
+    let stmt = "";
+    for (const item of results) {
+        stmt += `TRUNCATE TABLE ${item}; `;
+    }
+    await databaseConnection.query(`SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`);
 }
 
 /**
  * drop every table in the application
  */
 async function dropTables(): Promise<void> {
+    const results = await getTables();
+
     logger.info(`${loggerString(__dirname, "", "", __filename)} Drop every table!`);
 
-    const results = await databaseConnection.query("SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'serious-game'");
     let stmt = "";
     for (const item of results) {
-        const tableName = item["table_name"];
-        stmt += `DROP TABLE ${tableName}; `;
+        stmt += `DROP TABLE ${item}; `;
     }
     await databaseConnection.query(`SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`);
 }
@@ -107,7 +136,7 @@ async function dropTables(): Promise<void> {
  *
  * todo split in multiple files
  */
-async function seedTables() {
+async function seedTables(): Promise<void> {
     const t1 = new Therapist();
     t1.email = "therapist@example.org";
     t1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
@@ -314,4 +343,17 @@ async function seedTables() {
     const helptextGameFacade = new HelptextsGamesFacade();
     await helptextGameFacade.insertHelptextGames(helptextGames);
 
+}
+
+/**
+ * retrieves every table from the specified database
+ * testMode -> choose tables from test_db
+ * prodMode -> chosse tables from prod_db
+ */
+async function getTables(): Promise<string[]> {
+    logger.debug(`${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`);
+
+    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}"`);
+
+    return results.map(value => value["table_name"]);
 }
