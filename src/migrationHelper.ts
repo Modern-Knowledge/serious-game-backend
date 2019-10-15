@@ -8,7 +8,7 @@ import { Therapist } from "./lib/models/Therapist";
 const marv = require("marv/api/promise"); // <-- Promise API
 const driver = require("marv-mysql-driver");
 import * as path from "path";
-import { inTestMode, loggerString } from "./util/Helper";
+import { inProduction, inTestMode, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 import { databaseConnection } from "./util/db/databaseConnection";
 import { Roles } from "./lib/enums/Roles";
@@ -43,6 +43,10 @@ import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
 
 export async function migrate(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
     const runDropTable     = Number(process.env.RUN_DROP_TABLE) || 0;
     const runMigration     = Number(process.env.RUN_MIGRATIONS) || 0;
