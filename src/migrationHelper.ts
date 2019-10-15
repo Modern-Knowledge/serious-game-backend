@@ -42,6 +42,14 @@ import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
 import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
 
+/**
+ * runs multiple migrations based on .env variables
+ *
+ * - truncateTables: truncate every table in the application
+ * - dropTables: drop every table in the application
+ * - runMigrations: run migrations from migrations folder
+ * - seedTables: seed tables with test data
+ */
 export async function migrate(): Promise<void> {
     if (inProduction()) {
         return;
@@ -108,7 +116,7 @@ async function runMigrations(): Promise<void> {
 /**
  * truncate every table in the application
  */
-async function truncateTables(): Promise<void> {
+export async function truncateTables(): Promise<void> {
     const results = await getTables();
 
     logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`);
@@ -140,7 +148,7 @@ async function dropTables(): Promise<void> {
  *
  * todo split in multiple files
  */
-async function seedTables(): Promise<void> {
+export async function seedTables(): Promise<void> {
     const t1 = new Therapist();
     t1.email = "therapist@example.org";
     t1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
