@@ -81,6 +81,8 @@ router.post("/login", [
         const therapist = await therapistFacade.getOne();
 
         if (therapist && !therapist.accepted) {
+            logEndpoint(controllerName, `Therapist with id ${reqUser.id} tried to login, but is not accepted!`, req);
+
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
             ], 400);

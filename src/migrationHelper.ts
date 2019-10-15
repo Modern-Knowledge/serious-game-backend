@@ -180,8 +180,21 @@ export async function seedTables(): Promise<void> {
     t1.role = Roles.ADMIN;
     t1.accepted = true;
 
+    // unaccepted therapist
+    const t2 = new Therapist();
+    t2.email = "therapist1@example.org";
+    t2.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
+    t2.forename = "Therapeut11";
+    t2.lastname = "Therapeut1";
+    t2.gender = Gender.FEMALE;
+    t2.failedLoginAttempts = 0;
+    t2.status = Status.ACTIVE;
+    t2.role = Roles.ADMIN;
+    t2.accepted = false;
+
     const therapistFacade = new TherapistFacade();
     await therapistFacade.insertTherapist(t1);
+    await therapistFacade.insertTherapist(t2);
 
     const p2 = new Patient();
     p2.email = "patient@example.org";

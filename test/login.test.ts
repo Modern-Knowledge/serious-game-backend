@@ -42,8 +42,21 @@ describe("POST /login", () => {
         expect(res.body._data).toHaveProperty("user");
         expect(res.body._data.user._email).toEqual("therapist@example.org");
         containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1);
-
     }, timeout);
+
+    it("login with correct therapist credentials, but therapist was not accepted", async () => {
+        const res = await request(app).post("/login")
+            .send({email: "therapist1@example.org", password: "123456"})
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(400);
+
+        console.log(res.body);
+
+        expect(res.body._status).toEqual("fail");
+        containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1);
+    }, timeout);
+
 
     it("login with correct patient credentials", async () => {
         const res = await request(app).post("/login")
