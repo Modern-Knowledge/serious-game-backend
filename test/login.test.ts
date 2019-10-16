@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../src/app";
 import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
 import { containsMessage } from "../src/util/testhelper";
-import {HttpResponseMessage, HttpResponseMessageSeverity} from "../src/lib/utils/http/HttpResponse";
+import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import {
     lockedTherapist,
     tooManyFailedLoginAttemptsTherapist,
