@@ -110,6 +110,15 @@ describe("POST /login", () => {
 
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        const res1 = await request(app).post("/login")
+            .send({email: "", password: "123456"})
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(400);
+
+        expect(res1.body._status).toEqual("fail");
+        expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
     // SGB006
