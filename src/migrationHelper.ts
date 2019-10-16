@@ -41,6 +41,13 @@ import { GameFacade } from "./db/entity/game/GameFacade";
 import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
 import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
+import {
+    lockedTherapist,
+    tooManyFailedLoginAttemptsTherapist,
+    unacceptedTherapist,
+    validAdminTherapist, validPatient,
+    validTherapist
+} from "./seeds/users";
 
 /**
  * runs multiple migrations based on .env variables
@@ -169,50 +176,19 @@ export async function seedTables(): Promise<void> {
         return;
     }
 
-    const t1 = new Therapist();
-    t1.email = "therapist@example.org";
-    t1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
-    t1.forename = "Therapeut";
-    t1.lastname = "Therapeut";
-    t1.gender = Gender.MALE;
-    t1.failedLoginAttempts = 0;
-    t1.status = Status.ACTIVE;
-    t1.role = Roles.ADMIN;
-    t1.accepted = true;
-
-    // unaccepted therapist
-    const t2 = new Therapist();
-    t2.email = "therapist1@example.org";
-    t2.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
-    t2.forename = "Therapeut11";
-    t2.lastname = "Therapeut1";
-    t2.gender = Gender.FEMALE;
-    t2.failedLoginAttempts = 0;
-    t2.status = Status.ACTIVE;
-    t2.role = Roles.ADMIN;
-    t2.accepted = false;
-
     const therapistFacade = new TherapistFacade();
-    await therapistFacade.insertTherapist(t1);
-    await therapistFacade.insertTherapist(t2);
-
-    const p2 = new Patient();
-    p2.email = "patient@example.org";
-    p2.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
-    p2.forename = "Patient";
-    p2.lastname = "Patient";
-    p2.gender = Gender.MALE;
-    p2.failedLoginAttempts = 0;
-    p2.status = Status.ACTIVE;
-    p2.birthday = new Date();
-    p2.info = "Testinfo";
+    await therapistFacade.insertTherapist(validAdminTherapist);
+    await therapistFacade.insertTherapist(validTherapist);
+    await therapistFacade.insertTherapist(unacceptedTherapist);
+    await therapistFacade.insertTherapist(lockedTherapist);
+    await therapistFacade.insertTherapist(tooManyFailedLoginAttemptsTherapist);
 
     const patientFacade = new PatientFacade();
-    await patientFacade.insertPatient(p2);
+    await patientFacade.insertPatient(validPatient);
 
     const pSettings = new PatientSetting();
     pSettings.neglect = true;
-    pSettings.patientId = p2.id;
+    pSettings.patientId = validPatient.id;
 
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insertPatientSetting(pSettings);

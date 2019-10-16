@@ -51,7 +51,7 @@ lockedTherapist.gender = Gender.MALE;
 lockedTherapist.failedLoginAttempts = 0;
 lockedTherapist.status = Status.ACTIVE;
 lockedTherapist.role = Roles.ADMIN;
-lockedTherapist.accepted = false;
+lockedTherapist.accepted = true;
 lockedTherapist.loginCoolDown = moment().add(1, "day").toDate();
 
 // therapist with too much failed login attempts
@@ -61,10 +61,10 @@ tooManyFailedLoginAttemptsTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEd
 tooManyFailedLoginAttemptsTherapist.forename = "Mario";
 tooManyFailedLoginAttemptsTherapist.lastname = "Müller";
 tooManyFailedLoginAttemptsTherapist.gender = Gender.MALE;
-tooManyFailedLoginAttemptsTherapist.failedLoginAttempts = 0;
+tooManyFailedLoginAttemptsTherapist.failedLoginAttempts = 10;
 tooManyFailedLoginAttemptsTherapist.status = Status.ACTIVE;
 tooManyFailedLoginAttemptsTherapist.role = Roles.ADMIN;
-tooManyFailedLoginAttemptsTherapist.accepted = false;
+tooManyFailedLoginAttemptsTherapist.accepted = true;
 
 // valid patient
 const validPatient = new Patient();

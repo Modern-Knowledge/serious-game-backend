@@ -111,6 +111,7 @@ router.post("/login", [
 
             if (reqUser.failedLoginAttempts > maxFailedLoginAttempts) { // lock user
                 reqUser.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
+                logEndpoint(controllerName, `The account of the user with the id ${reqUser.id} has too many failed login attempts and gets locked until ${formatDateTime(reqUser.loginCoolDown)}`, req);
 
                 additionalMessages.push(
                     new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
@@ -144,8 +145,7 @@ router.post("/login", [
             ]
         ));
 
-    } catch
-        (error) {
+    } catch (error) {
         return next(error);
     }
 });
