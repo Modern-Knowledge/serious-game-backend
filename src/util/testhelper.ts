@@ -11,14 +11,14 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/h
  * @param messageType messageType to find
  * @param amount amount of messages that should have the type messageType
  */
-export function containsMessage(messages: HttpResponseMessage[], messageType: HttpResponseMessageSeverity, amount: number): boolean {
+export function containsMessage(messages: any, messageType: HttpResponseMessageSeverity, amount: number): boolean {
     let i: number = 0;
 
     for (const message of messages) {
-        if (message.severity === messageType) {
+        if (message._severity === messageType) {
             i++;
         }
     }
 
-    return i == amount;
+    return i === amount;
 }

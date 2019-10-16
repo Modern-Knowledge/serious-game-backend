@@ -70,7 +70,7 @@ router.post("/login", [
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `E-Mail Adresse oder Passwort falsch!`)
-            ]);
+            ], 401);
         }
 
         // check if user is a therapist -> therapist is allowed to login (accepted == true)

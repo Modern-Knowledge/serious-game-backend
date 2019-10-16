@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../src/app";
 import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
 import { containsMessage } from "../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
+import {HttpResponseMessage, HttpResponseMessageSeverity} from "../src/lib/utils/http/HttpResponse";
 import {
     lockedTherapist,
     tooManyFailedLoginAttemptsTherapist,
@@ -38,6 +38,7 @@ describe("POST /login", () => {
         return seedTables();
     });
 
+    // SGB001
     it("login with correct therapist credentials", async () => {
         const res = await request(app).post("/login")
             .send({email: validTherapist.email, password: "123456"})
@@ -49,7 +50,7 @@ describe("POST /login", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("user");
         expect(res.body._data.user._email).toEqual(validTherapist.email);
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
         const userFacade = new UserFacade();
         const user = await userFacade.getById(validTherapist.id);
@@ -60,6 +61,7 @@ describe("POST /login", () => {
         }
     }, timeout);
 
+    // SGB002
     it("login with correct therapist credentials, but therapist was not accepted", async () => {
         const res = await request(app).post("/login")
             .send({email: unacceptedTherapist.email, password: "123456"})
@@ -68,9 +70,10 @@ describe("POST /login", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1)).toBeTruthy();
     }, timeout);
 
+    // SGB003
     it("login with correct patient credentials", async () => {
         const res = await request(app).post("/login")
             .send({email: validPatient.email, password: "123456"})
@@ -82,10 +85,10 @@ describe("POST /login", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("user");
         expect(res.body._data.user._email).toEqual(validPatient.email);
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1);
-
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
     }, timeout);
 
+    // SGB004
     it("try to login with no password passed", async () => {
         const res = await request(app).post("/login")
             .send({email: validPatient.email})
@@ -94,9 +97,10 @@ describe("POST /login", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
+    // SGB005
     it("try to login with no email passed", async () => {
         const res = await request(app).post("/login")
             .send({password: "123456"})
@@ -105,9 +109,21 @@ describe("POST /login", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
+    // SGB006
+    it("try to login with no body passed", async () => {
+        const res = await request(app).post("/login")
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(400);
+
+        expect(res.body._status).toEqual("fail");
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+    }, timeout);
+
+    // SGB007
     it("try to login with invalid email passed", async () => {
         const res = await request(app).post("/login")
             .send({email: "invalidEmail", password: "123456"})
@@ -116,9 +132,10 @@ describe("POST /login", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
     }, timeout);
 
+    // SGB008
     it("try to login with too short password", async () => {
         const res = await request(app).post("/login")
             .send({email: validPatient.email, password: "12345"})
@@ -127,20 +144,22 @@ describe("POST /login", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
     }, timeout);
 
+    // SGB009
     it("try to login with not existing user", async () => {
         const res = await request(app).post("/login")
             .send({email: "notExistingEmail@mail.com", password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
-            .expect(404);
+            .expect(401);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
     }, timeout);
 
+    // SGB010
     it("try to login with wrong credentials", async () => {
         const res = await request(app).post("/login")
             .send({email: validPatient.email, password: "1234562"})
@@ -149,7 +168,7 @@ describe("POST /login", () => {
             .expect(401);
 
         expect(res.body._status).toEqual("fail");
-        containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
 
         const userFacade = new UserFacade();
         const user = await userFacade.getById(validPatient.id);
@@ -158,6 +177,7 @@ describe("POST /login", () => {
         }
     }, timeout);
 
+    // SGB011
     it("try to login with user that has still active login cooldown", async () => {
         const res = await request(app).post("/login")
             .send({email: lockedTherapist.email, password: "123456"})
@@ -169,6 +189,7 @@ describe("POST /login", () => {
         containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
     }, timeout);
 
+    // SGB012
     it("try to login with user that has too many failed login attempts and gets locked", async () => {
         const res = await request(app).post("/login")
             .send({email: tooManyFailedLoginAttemptsTherapist.email, password: "1234562"})
