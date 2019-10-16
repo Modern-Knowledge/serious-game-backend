@@ -12,12 +12,14 @@ import {
 } from "../src/seeds/users";
 import { UserFacade } from "../src/db/entity/user/UserFacade";
 
-const timeout = 100000;
 
 /**
  * Tests for the login-controller
  */
 describe("POST /login", () => {
+    const timeout = 100000;
+    const endpoint = "/login";
+
     // drop tables
     beforeAll(async () => {
         return dropTables();
@@ -40,7 +42,7 @@ describe("POST /login", () => {
 
     // SGB001
     it("login with correct therapist credentials", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: validTherapist.email, password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -63,7 +65,7 @@ describe("POST /login", () => {
 
     // SGB002
     it("login with correct therapist credentials, but therapist was not accepted", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: unacceptedTherapist.email, password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -75,7 +77,7 @@ describe("POST /login", () => {
 
     // SGB003
     it("login with correct patient credentials", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: validPatient.email, password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -90,7 +92,7 @@ describe("POST /login", () => {
 
     // SGB004
     it("try to login with no password passed", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: validPatient.email})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -102,7 +104,7 @@ describe("POST /login", () => {
 
     // SGB005
     it("try to login with no email passed", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -111,7 +113,7 @@ describe("POST /login", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/login")
+        const res1 = await request(app).post(endpoint)
             .send({email: "", password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -123,7 +125,7 @@ describe("POST /login", () => {
 
     // SGB006
     it("try to login with no body passed", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(400);
@@ -134,50 +136,50 @@ describe("POST /login", () => {
 
     // SGB007
     it("try to login with invalid email passed", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: "invalidEmail", password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
     // SGB008
     it("try to login with too short password", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: validPatient.email, password: "12345"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
     // SGB009
     it("try to login with not existing user", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: "notExistingEmail@mail.com", password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(401);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
     // SGB010
     it("try to login with wrong credentials", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: validPatient.email, password: "1234562"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(401);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
         const userFacade = new UserFacade();
         const user = await userFacade.getById(validPatient.id);
@@ -188,7 +190,7 @@ describe("POST /login", () => {
 
     // SGB011
     it("try to login with user that has still active login cooldown", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: lockedTherapist.email, password: "123456"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -200,7 +202,7 @@ describe("POST /login", () => {
 
     // SGB012
     it("try to login with user that has too many failed login attempts and gets locked", async () => {
-        const res = await request(app).post("/login")
+        const res = await request(app).post(endpoint)
             .send({email: tooManyFailedLoginAttemptsTherapist.email, password: "1234562"})
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
