@@ -182,7 +182,7 @@ class DatabaseConnection {
      * @param sql sql query to be executed
      * @param params parameters for prepared query that are later replaced
      */
-    public query(sql: string, params: string[] = []): Promise<any[]> {
+    public query(sql: string, params: any[] = []): Promise<any[]> {
         return new Promise<any[]>((resolve, reject) => {
             databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) {

@@ -10,6 +10,7 @@ import {
     validPatient,
     validTherapist
 } from "../src/seeds/users";
+import { UserFacade } from "../src/db/entity/user/UserFacade";
 
 const timeout = 100000;
 
@@ -49,6 +50,14 @@ describe("POST /login", () => {
         expect(res.body._data).toHaveProperty("user");
         expect(res.body._data.user._email).toEqual(validTherapist.email);
         containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1);
+
+        const userFacade = new UserFacade();
+        const user = await userFacade.getById(validTherapist.id);
+        if (user) {
+            expect(user.failedLoginAttempts).toEqual(0);
+            expect(user.loginCoolDown).toBeUndefined();
+            expect(user.lastLogin).not.toBeUndefined();
+        }
     }, timeout);
 
     it("login with correct therapist credentials, but therapist was not accepted", async () => {
@@ -57,8 +66,6 @@ describe("POST /login", () => {
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(400);
-
-        console.log(res.body);
 
         expect(res.body._status).toEqual("fail");
         containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1);
@@ -143,9 +150,15 @@ describe("POST /login", () => {
 
         expect(res.body._status).toEqual("fail");
         containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+
+        const userFacade = new UserFacade();
+        const user = await userFacade.getById(validPatient.id);
+        if (user) {
+            expect(user.failedLoginAttempts).toEqual(validPatient.failedLoginAttempts + 1); // failed login attempts
+        }
     }, timeout);
 
-    it("try to login with user that has login cooldown", async () => {
+    it("try to login with user that has still active login cooldown", async () => {
         const res = await request(app).post("/login")
             .send({email: lockedTherapist.email, password: "123456"})
             .set("Accept", "application/json")
@@ -165,6 +178,13 @@ describe("POST /login", () => {
 
         expect(res.body._status).toEqual("fail");
         containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
+
+        const userFacade = new UserFacade();
+        const user = await userFacade.getById(tooManyFailedLoginAttemptsTherapist.id);
+        if (user) {
+            expect(user.failedLoginAttempts).toEqual(tooManyFailedLoginAttemptsTherapist.failedLoginAttempts + 1); // failed login attempts
+            expect(user.loginCoolDown).not.toBeUndefined();
+        }
     }, timeout);
 
 });

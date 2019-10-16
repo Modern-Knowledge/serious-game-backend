@@ -119,7 +119,7 @@ router.post("/login", [
                 );
             }
 
-            userFacade.updateUser(reqUser); // increase failed login attempts
+            await userFacade.updateUser(reqUser); // increase failed login attempts
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
@@ -133,8 +133,7 @@ router.post("/login", [
         reqUser.failedLoginAttempts = 0;
         reqUser.loginCoolDown = undefined;
 
-        // async update user
-        userFacade.updateUser(reqUser);
+        await userFacade.updateUser(reqUser);
 
         const token = await jwtHelper.generateJWT(reqUser);
 
