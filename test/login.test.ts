@@ -56,6 +56,8 @@ describe("POST /login", () => {
 
         const userFacade = new UserFacade();
         const user = await userFacade.getById(validTherapist.id);
+        expect(user).not.toBeUndefined();
+
         if (user) {
             expect(user.failedLoginAttempts).toEqual(0);
             expect(user.loginCoolDown).toBeUndefined();
