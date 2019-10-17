@@ -92,12 +92,10 @@ router.post("/", [
         .custom(emailValidator),
 
     check("_forename").escape().trim()
-        .not().isEmpty().withMessage(rVM("forename", "empty"))
-        .isAlpha().withMessage(rVM("forename", "non_alpha")),
+        .not().isEmpty().withMessage(rVM("forename", "empty")),
 
     check("_lastname").escape().trim()
-        .not().isEmpty().withMessage(rVM("lastname", "empty"))
-        .isAlpha().withMessage(rVM("lastname", "non_alpha")),
+        .not().isEmpty().withMessage(rVM("lastname", "empty")),
 
     check("_password").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length"))
