@@ -54,7 +54,7 @@ class DatabaseConnection {
             logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
 
             this._pool = mysql.createPool({
-                connectionLimit: 10,
+                connectionLimit: 100,
                 host: process.env.DB_HOST,
                 user: process.env.DB_USER,
                 password: process.env.DB_PASS,
