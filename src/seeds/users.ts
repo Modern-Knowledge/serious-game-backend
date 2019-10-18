@@ -4,6 +4,7 @@ import { Status } from "../lib/enums/Status";
 import { Roles } from "../lib/enums/Roles";
 import moment from "moment";
 import { Patient } from "../lib/models/Patient";
+import { generatePasswordResetToken } from '../util/password/passwordHelper'
 
 // valid admin therapist
 const validAdminTherapist = new Therapist();
@@ -66,7 +67,7 @@ tooManyFailedLoginAttemptsTherapist.status = Status.ACTIVE;
 tooManyFailedLoginAttemptsTherapist.role = Roles.ADMIN;
 tooManyFailedLoginAttemptsTherapist.accepted = true;
 
-// valid patient
+// valid patient with valid password reset token
 const validPatient = new Patient();
 validPatient.email = "patient@example.org";
 validPatient.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
@@ -77,6 +78,8 @@ validPatient.failedLoginAttempts = 0;
 validPatient.status = Status.ACTIVE;
 validPatient.birthday = new Date();
 validPatient.info = "Testinfo";
+validPatient.resetcode = generatePasswordResetToken(8);
+validPatient.resetcodeValidUntil = moment().add(1, "day").toDate();
 
 export {
     validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist,

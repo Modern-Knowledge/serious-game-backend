@@ -78,8 +78,7 @@ router.post("/reset", [
             // generate token for reset
             setPasswordResetToken(user);
 
-            // async update user with new token
-            userFacade.updateUser(user);
+            await userFacade.updateUser(user);
 
             logEndpoint(controllerName, `Password reset token for user with id ${user.id} was generated!`, req);
         }
