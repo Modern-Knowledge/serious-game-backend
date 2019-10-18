@@ -34,7 +34,7 @@ describe("POST /therapists", () => {
 
     // SGB013
     it("register new therapist with correct data", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                         _email: "newTherapist@mail.com",
@@ -73,7 +73,7 @@ describe("POST /therapists", () => {
 
     // SGB014
     it("try to register with invalid email", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "invalidEmail",
@@ -94,7 +94,7 @@ describe("POST /therapists", () => {
 
     // SGB015
     it("try to register with already existing email", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: validTherapist.email,
@@ -115,7 +115,7 @@ describe("POST /therapists", () => {
 
     // SGB016
     it("try to register where password and password_confirmation do not match", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -135,9 +135,8 @@ describe("POST /therapists", () => {
     }, timeout);
 
     // SGB017
-    // todo danger messages are returne twice
     it("try to register with password that is too short", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -152,13 +151,15 @@ describe("POST /therapists", () => {
             .expect("Content-Type", /json/)
             .expect(400);
 
+        console.log(res.body._messages);
+
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
     }, timeout);
 
     // SGB018
     it("try to register a new therapist flag set to false", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -179,7 +180,7 @@ describe("POST /therapists", () => {
 
     // SGB019
     it("try to register a new therapist without the therapist flag", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -196,7 +197,7 @@ describe("POST /therapists", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -217,7 +218,7 @@ describe("POST /therapists", () => {
 
     // SGB020
     it("try to register a new therapist without an email", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _forename: "Vorname",
@@ -234,7 +235,7 @@ describe("POST /therapists", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "",
@@ -256,7 +257,7 @@ describe("POST /therapists", () => {
 
     // SGB021
     it("try to register a new therapist without a forename", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -273,7 +274,7 @@ describe("POST /therapists", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -295,7 +296,7 @@ describe("POST /therapists", () => {
 
     // SGB022
     it("try to register a new therapist without a lastname", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -312,7 +313,7 @@ describe("POST /therapists", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -333,9 +334,8 @@ describe("POST /therapists", () => {
     }, timeout);
 
     // SGB023
-    // todo two messages
     it("try to register a new therapist without a password", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -350,9 +350,9 @@ describe("POST /therapists", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -368,14 +368,13 @@ describe("POST /therapists", () => {
             .expect(400);
 
         expect(res1.body._status).toEqual("fail");
-        expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
     }, timeout);
 
     // SGB024
-    // todo two messages
     it("try to register a new therapist without a password_confirmation", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -390,9 +389,9 @@ describe("POST /therapists", () => {
             .expect(400);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "newTherapist@mail.com",
@@ -408,13 +407,13 @@ describe("POST /therapists", () => {
             .expect(400);
 
         expect(res1.body._status).toEqual("fail");
-        expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
     }, timeout);
 
     // SGB024
     it("try to register a new therapist without any data", async () => {
-        const res = await request(app).post("/therapists")
+        const res = await request(app).post(endpoint)
             .send()
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -423,9 +422,9 @@ describe("POST /therapists", () => {
         console.log(res.body._messages.length);
 
         expect(res.body._status).toEqual("fail");
-        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 7)).toBeTruthy();
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 6)).toBeTruthy();
 
-        const res1 = await request(app).post("/therapists")
+        const res1 = await request(app).post(endpoint)
             .send(
                 {
                     _email: "",

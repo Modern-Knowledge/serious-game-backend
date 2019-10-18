@@ -102,7 +102,7 @@ router.post("/", [
         .custom(passwordValidator).withMessage(rVM("password", "not_matching")),
 
     check("password_confirmation").trim()
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "confirmation")),
 
     check("therapist").equals("true").withMessage(rVM("therapist", "value_true"))
 

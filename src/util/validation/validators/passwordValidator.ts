@@ -13,6 +13,10 @@ import { retrieveValidationMessage } from "../validationMessages";
  * @param req request to check against
  */
 export const passwordValidator: CustomValidator = (password: any, { req }) => {
+    if (!password || !req.body.password_confirmation) {
+        return Promise.resolve(true);
+    }
+
     if (password !== req.body.password_confirmation) {
         return Promise.reject(retrieveValidationMessage("password", "not_matching"));
     }

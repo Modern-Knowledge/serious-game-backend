@@ -51,6 +51,7 @@ validationMessages.get("lastname").set("non_alpha", new HttpResponseMessage(Http
  */
 validationMessages.get("password").set("length", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`));
 validationMessages.get("password").set("not_matching", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die beiden Passwörter stimmen nicht überein!`));
+validationMessages.get("password").set("confirmation", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Passwort Bestätigung ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen!`));
 
 /**
  * validation messages for token
