@@ -11,7 +11,7 @@ import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse"
 import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 import * as bcrypt from "bcryptjs";
 import { Status } from "../src/lib/enums/Status";
-import {unacceptedTherapist, validPatient, validTherapist} from "../src/seeds/users";
+import { unacceptedTherapist, validAdminTherapist, validPatient, validTherapist } from "../src/seeds/users";
 
 describe("POST /therapists", () => {
     const timeout = 100000;
@@ -614,6 +614,61 @@ describe("DELETE /therapists/:id", () => {
 
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+    }, timeout);
+
+});
+
+describe("PUT /therapists/toggle-accepted/:id", () => {
+    const endpoint = "/therapists/toggle-accepted";
+    const timeout = 10000;
+    let authenticationToken: string;
+
+    // drop tables
+    beforeAll(async () => {
+        return dropTables();
+    });
+
+    // run migrations
+    beforeAll(async () => {
+        return runMigrations();
+    });
+
+    // truncate tables
+    beforeEach(async () => {
+        return truncateTables();
+    });
+
+    // seed tables
+    beforeEach(async () => {
+        return seedTables();
+    });
+
+    it("successfully accept therapist", async () => {
+        authenticationToken = await authenticate(validAdminTherapist);
+
+        const res = await request(app).put(endpoint + "/" + unacceptedTherapist.id)
+            .set("Authorization", "Bearer " + authenticationToken)
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(200);
+
+        expect(res.body._status).toEqual("success");
+        expect(res.body._data).toHaveProperty("token");
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+    }, timeout);
+
+    it("successfully unaccept therapist", async () => {
+        authenticationToken = await authenticate(validAdminTherapist);
+
+        const res = await request(app).put(endpoint + "/" + validTherapist.id)
+            .set("Authorization", "Bearer " + authenticationToken)
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(200);
+
+        expect(res.body._status).toEqual("success");
+        expect(res.body._data).toHaveProperty("token");
+        expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
     }, timeout);
 
 });
