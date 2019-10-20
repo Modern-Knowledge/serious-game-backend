@@ -58,7 +58,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
-    logger.debug(`${loggerString("", "", "", __filename)} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}" of user with id ${authUser.id}!`);
+    logger.debug(`${loggerString("", "", "", __filename)} User with ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}" of user with id ${req.params.id}!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
