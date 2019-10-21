@@ -45,6 +45,7 @@ import { helptext } from "./seeds/helptexts";
 import { errortext } from "./seeds/errortexts";
 import { word } from "./seeds/words";
 import { helptextGames } from "./seeds/helptextGames";
+import {pSettings} from "./seeds/patientSettings";
 
 /**
  * runs multiple migrations based on .env variables
@@ -181,10 +182,6 @@ export async function seedTables(): Promise<void> {
 
     const patientFacade = new PatientFacade();
     await patientFacade.insertPatient(validPatient);
-
-    const pSettings = new PatientSetting();
-    pSettings.neglect = true;
-    pSettings.patientId = validPatient.id;
 
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insertPatientSetting(pSettings);
