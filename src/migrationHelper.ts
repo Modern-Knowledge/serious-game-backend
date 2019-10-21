@@ -45,7 +45,7 @@ import { helptext } from "./seeds/helptexts";
 import { errortext } from "./seeds/errortexts";
 import { word } from "./seeds/words";
 import { helptextGames } from "./seeds/helptextGames";
-import {pSettings} from "./seeds/patientSettings";
+import { pSettings } from "./seeds/patientSettings";
 
 /**
  * runs multiple migrations based on .env variables
