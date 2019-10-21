@@ -9,6 +9,9 @@ import { SeverityFacade } from "../enum/SeverityFacade";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
+import { Helptext } from "../../../lib/models/Helptext";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the errortext-entity
@@ -68,6 +71,29 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
+     * inserts a new user and returns the created user
+     * @param errortext errortext to insert
+     */
+    public async insertErrortext(errortext: Errortext): Promise<Helptext> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortext);
+
+        /**
+         * callback that is called after a text was inserted
+         * @param insertId text id that was inserted before
+         * @param attributes attributes to append to
+         */
+        const onInsertText = (insertId: number, attributes: SQLValueAttributes) => {
+            errortext.id = insertId;
+            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("error_id", this.tableName, errortext.id);
+            attributes.addAttribute(patientIdAttribute);
+        };
+
+        await this.insert(attributes, [{facade: this._textFacade, entity: errortext, callBackOnInsert: onInsertText}, {facade: this, entity: errortext}]);
+
+        return errortext;
+    }
+
+    /**
      * fills the entity
      * @param result result for filling
      */
@@ -94,6 +120,20 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         }
 
         return errortext;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param errortext entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, errortext: Errortext): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("severity_id", prefix, errortext.severityId);
+        attributes.addAttribute(roleAttribute);
+
+        return attributes;
     }
 
     /**

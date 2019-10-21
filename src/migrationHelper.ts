@@ -48,6 +48,9 @@ import {
     validAdminTherapist, validPatient,
     validTherapist
 } from "./seeds/users";
+import { Errortext } from "./lib/models/Errortext";
+import { Text } from "./lib/models/Text";
+import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
 
 /**
  * runs multiple migrations based on .env variables
@@ -353,6 +356,14 @@ export async function seedTables(): Promise<void> {
     const helptext = new Helptext();
     helptext.name = "recipe";
     helptext.text = `Bitte prägen Sie sich das obrige Rezept gut ein! Sie werden es in den nächsten Schritten benötigen. Klicken Sie auf "Weiter", wenn Sie bereit sind`;
+
+    const errortext = new Errortext();
+    errortext.name = "Fehlertext";
+    errortext.text = "Dies ist ein Fehlertext";
+    errortext.severityId = Severities.HIGH;
+
+    const errorTextFacade = new ErrortextFacade();
+    await errorTextFacade.insertErrortext(errortext);
 
     const helptextFacade = new HelptextFacade();
     await helptextFacade.insertHelptext(helptext);
