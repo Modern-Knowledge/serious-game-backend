@@ -4,6 +4,7 @@ import { dropTables, runMigrations, seedTables, truncateTables } from "../src/mi
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
+import { proteinShake } from "../src/seeds/recipes";
 
 describe("GET /recipes", () => {
     const endpoint = "/recipes";
@@ -79,9 +80,6 @@ describe("GET /recipes", () => {
     }, timeout);
 });
 
-/**
- * todo: get recipes from id
- */
 describe("GET /recipes/:id", () => {
     const endpoint = "/recipes";
     const timeout = 10000;
@@ -110,7 +108,7 @@ describe("GET /recipes/:id", () => {
     it("fetch recipe with specific id", async () => {
         authenticationToken = await authenticate(validTherapist);
 
-        const res = await request(app).get(endpoint + "/1")
+        const res = await request(app).get(endpoint + "/" + proteinShake.id)
             .set("Authorization", "Bearer " + authenticationToken)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -123,7 +121,7 @@ describe("GET /recipes/:id", () => {
     }, timeout);
 
     it("try to fetch recipe with id without authentication", async () => {
-        const res = await request(app).get(endpoint + "/1")
+        const res = await request(app).get(endpoint + "/" + proteinShake.id)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(401);
@@ -131,7 +129,7 @@ describe("GET /recipes/:id", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).get(endpoint + "/1")
+        const res1 = await request(app).get(endpoint + "/" + proteinShake.id)
             .set("Authorization", "")
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -145,7 +143,7 @@ describe("GET /recipes/:id", () => {
     it("try to fetch recipe with an expired token", async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
-        const res = await request(app).get(endpoint + "/1")
+        const res = await request(app).get(endpoint + "/" + proteinShake.id)
             .set("Authorization", "Bearer " + token)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)

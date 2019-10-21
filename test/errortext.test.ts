@@ -4,7 +4,7 @@ import { dropTables, runMigrations, seedTables, truncateTables } from "../src/mi
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import {errortext} from "../src/seeds/errortexts";
+import { errortext } from "../src/seeds/errortexts";
 
 describe("GET /errortexts", () => {
     const endpoint = "/errortexts";

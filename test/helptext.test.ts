@@ -4,6 +4,7 @@ import { dropTables, runMigrations, seedTables, truncateTables } from "../src/mi
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
+import {helptext} from "../src/seeds/helptexts";
 
 describe("GET /helptexts", () => {
     const endpoint = "/helptexts";
@@ -81,9 +82,6 @@ describe("GET /helptexts", () => {
     }, timeout);
 });
 
-/**
- * todo: get helptexts from id
- */
 describe("GET /helptexts/:id", () => {
     const endpoint = "/helptexts";
     const timeout = 10000;
@@ -112,7 +110,7 @@ describe("GET /helptexts/:id", () => {
     it("fetch helptext with specific id", async () => {
         authenticationToken = await authenticate(validTherapist);
 
-        const res = await request(app).get(endpoint + "/2")
+        const res = await request(app).get(endpoint + "/" + helptext.id)
             .set("Authorization", "Bearer " + authenticationToken)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -125,7 +123,7 @@ describe("GET /helptexts/:id", () => {
     }, timeout);
 
     it("try to fetch helptext with id without authentication", async () => {
-        const res = await request(app).get(endpoint + "/2")
+        const res = await request(app).get(endpoint + "/" + helptext.id)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(401);
@@ -133,7 +131,7 @@ describe("GET /helptexts/:id", () => {
         expect(res.body._status).toEqual("fail");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-        const res1 = await request(app).get(endpoint + "/2")
+        const res1 = await request(app).get(endpoint + "/" + helptext.id)
             .set("Authorization", "")
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -147,7 +145,7 @@ describe("GET /helptexts/:id", () => {
     it("try to fetch helptext with id and an expired token", async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
-        const res = await request(app).get(endpoint + "/2")
+        const res = await request(app).get(endpoint + "/" + helptext.id)
             .set("Authorization", "Bearer " + token)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
