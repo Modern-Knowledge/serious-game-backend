@@ -11,23 +11,6 @@ import * as path from "path";
 import { inProduction, inTestMode, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 import { databaseConnection } from "./util/db/databaseConnection";
-import { Roles } from "./lib/enums/Roles";
-import { Gender } from "./lib/enums/Gender";
-import { Status } from "./lib/enums/Status";
-import { Patient } from "./lib/models/Patient";
-import { PatientSetting } from "./lib/models/PatientSetting";
-import { Difficulties } from "./lib/enums/Difficulties";
-import { Difficulty } from "./lib/models/Difficulty";
-import { Severity } from "./lib/models/Severity";
-import { Severities } from "./lib/enums/Severities";
-import { FoodCategory } from "./lib/models/FoodCategory";
-import { Recipe } from "./lib/models/Recipe";
-import { Ingredient } from "./lib/models/Ingredient";
-import { RecipeIngredient } from "./lib/models/RecipeIngredient";
-import { Game } from "./lib/models/Game";
-import { GameSetting } from "./lib/models/GameSetting";
-import { Helptext } from "./lib/models/Helptext";
-import { HelptextGame } from "./lib/models/HelptextGame";
 import { TherapistFacade } from "./db/entity/user/TherapistFacade";
 import { PatientFacade } from "./db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "./db/entity/settings/PatientSettingFacade";
@@ -48,11 +31,20 @@ import {
     validAdminTherapist, validPatient,
     validTherapist
 } from "./seeds/users";
-import { Errortext } from "./lib/models/Errortext";
-import { Text } from "./lib/models/Text";
 import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
-import { Word } from "./lib/models/Word";
 import { WordFacade } from "./db/entity/word/WordFacade";
+import { difficultyEasy, difficultyHard, difficultyMedium } from "./seeds/difficulties";
+import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
+import { bread, care, chilledGoods, deepFrozen, drinks, household, sweets, vegetables } from "./seeds/foodCategories";
+import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
+import { egg, oil } from "./seeds/ingredients";
+import { game, game2, game3, game4 } from "./seeds/games";
+import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
+import { recipeIngredient1, recipeIngredient2 } from "./seeds/recipeIngredients";
+import { helptext } from "./seeds/helptexts";
+import { errortext } from "./seeds/errortexts";
+import { word } from "./seeds/words";
+import { helptextGames } from "./seeds/helptextGames";
 
 /**
  * runs multiple migrations based on .env variables
@@ -182,11 +174,10 @@ export async function seedTables(): Promise<void> {
     }
 
     const therapistFacade = new TherapistFacade();
-    await therapistFacade.insertTherapist(validAdminTherapist);
-    await therapistFacade.insertTherapist(validTherapist);
-    await therapistFacade.insertTherapist(unacceptedTherapist);
-    await therapistFacade.insertTherapist(lockedTherapist);
-    await therapistFacade.insertTherapist(tooManyFailedLoginAttemptsTherapist);
+    const therapists = [validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist];
+    for (const item of therapists) {
+        await therapistFacade.insertTherapist(item);
+    }
 
     const patientFacade = new PatientFacade();
     await patientFacade.insertPatient(validPatient);
@@ -198,29 +189,11 @@ export async function seedTables(): Promise<void> {
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insertPatientSetting(pSettings);
 
-    const difficultyEasy = new Difficulty();
-    difficultyEasy.difficulty = Difficulties.EASY;
-
-    const difficultyMedium = new Difficulty();
-    difficultyMedium.difficulty = Difficulties.MEDIUM;
-
-    const difficultyHard = new Difficulty();
-    difficultyHard.difficulty = Difficulties.HARD;
-
     const difficultyFacade = new DifficultyFacade();
     const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
     for (const item of difficulties) {
         await difficultyFacade.insertDifficulty(item);
     }
-
-    const severityEasy = new Severity();
-    severityEasy.severity = Severities.LOW;
-
-    const severityMedium = new Severity();
-    severityMedium.severity = Severities.MEDIUM;
-
-    const severityHard = new Severity();
-    severityHard.severity = Severities.HIGH;
 
     const severityFacade = new SeverityFacade();
     const severities = [severityEasy, severityMedium, severityHard];
@@ -228,50 +201,11 @@ export async function seedTables(): Promise<void> {
         await severityFacade.insertSeverity(item);
     }
 
-    const vegetables = new FoodCategory();
-    vegetables.name = "Obst & Gemüse";
-
-    const bread = new FoodCategory();
-    bread.name = "Brot & Gebäck";
-
-    const drinks = new FoodCategory();
-    drinks.name = "Getränke";
-
-    const chilledGoods = new FoodCategory();
-    chilledGoods.name = "Kühlwaren";
-
-    const deepFrozen = new FoodCategory();
-    deepFrozen.name = "Tiefkühl";
-
-    const sweets = new FoodCategory();
-    sweets.name = "Süßes & Salziges";
-
-    const care = new FoodCategory();
-    care.name = "Pflege";
-
-    const household = new FoodCategory();
-    household.name = "Haushalt";
-
     const foodCategoryFacade = new FoodCategoryFacade();
     const foodCategories = [vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household];
     for (const item of foodCategories) {
         await foodCategoryFacade.insertFoodCategory(item);
     }
-
-    const scrambledEgg = new Recipe();
-    scrambledEgg.name = "Rührei";
-    scrambledEgg.description = "Die Eier zerschlagen und in der Pfanne ca. 10 Minuten braten lassen.";
-    scrambledEgg.difficultyId = difficultyEasy.id;
-
-    const roastPork = new Recipe();
-    roastPork.name = "Schweinsbraten";
-    roastPork.description = "";
-    roastPork.difficultyId = difficultyEasy.id;
-
-    const proteinShake = new Recipe();
-    proteinShake.name = "Thunfisch-Proteinshake";
-    proteinShake.description = "Thunfisch und Whey Isolat in den Mixer und 5 Sekunden mixen. Danach kühl genießen.";
-    proteinShake.difficultyId = difficultyEasy.id;
 
     const recipeFacade = new RecipeFacade();
     const recipes = [scrambledEgg, roastPork, proteinShake];
@@ -279,27 +213,11 @@ export async function seedTables(): Promise<void> {
         await recipeFacade.insertRecipe(item);
     }
 
-    const egg = new Ingredient();
-    egg.name = "Ei";
-    egg.foodCategoryId = vegetables.id;
-
-    const oil = new Ingredient();
-    oil.name = "Öl";
-    oil.foodCategoryId = vegetables.id;
-
     const ingredientFacade = new IngredientFacade();
     const ingredients = [egg, oil];
     for (const item of ingredients) {
         await ingredientFacade.insertIngredient(item);
     }
-
-    const recipeIngredient1 = new RecipeIngredient();
-    recipeIngredient1.recipeId = scrambledEgg.id;
-    recipeIngredient1.ingredientId = egg.id;
-
-    const recipeIngredient2 = new RecipeIngredient();
-    recipeIngredient2.recipeId = scrambledEgg.id;
-    recipeIngredient2.ingredientId = oil.id;
 
     const recipeIngredientFacade = new RecipeIngredientFacade();
     const recipeIngredients = [recipeIngredient1, recipeIngredient2];
@@ -307,47 +225,11 @@ export async function seedTables(): Promise<void> {
         await recipeIngredientFacade.insertRecipeIngredient(item);
     }
 
-    const game = new Game();
-    game.name = "Tagesplanung";
-    game.description = "Planen Sie ihren Tag";
-    game.component = "day-planning";
-
-    const game2 = new Game();
-    game2.name = "Rezept";
-    game2.description = "Merken Sie sich das Rezept.";
-    game2.component = "recipe";
-
-    const game3 = new Game();
-    game3.name = "Einkaufsliste";
-    game3.description = "Erstellen Sie die Einkaufsliste.";
-    game3.component = "shopping-list";
-
-    const game4 = new Game();
-    game4.name = "Einkaufszentrum";
-    game4.description = "Kaufen Sie ein.";
-    game4.component = "shopping-center";
-
     const gameFacade = new GameFacade();
     const games = [game, game2, game3, game4];
     for (const item of games) {
         await gameFacade.insertGame(item);
     }
-
-    const gameSettings = new GameSetting();
-    gameSettings.gameId = game.id;
-    gameSettings.difficultyId = difficultyEasy.id;
-
-    const gameSettings1 = new GameSetting();
-    gameSettings1.gameId = game2.id;
-    gameSettings1.difficultyId = difficultyEasy.id;
-
-    const gameSettings2 = new GameSetting();
-    gameSettings2.gameId = game3.id;
-    gameSettings2.difficultyId = difficultyEasy.id;
-
-    const gameSettings3 = new GameSetting();
-    gameSettings3.gameId = game4.id;
-    gameSettings3.difficultyId = difficultyEasy.id;
 
     const gameSettingFacade = new GameSettingFacade();
     const gameSettingsArr = [gameSettings, gameSettings1, gameSettings2, gameSettings3];
@@ -355,30 +237,14 @@ export async function seedTables(): Promise<void> {
         await gameSettingFacade.insertGameSetting(item);
     }
 
-    const helptext = new Helptext();
-    helptext.name = "recipe";
-    helptext.text = `Bitte prägen Sie sich das obrige Rezept gut ein! Sie werden es in den nächsten Schritten benötigen. Klicken Sie auf "Weiter", wenn Sie bereit sind`;
-
-    const errortext = new Errortext();
-    errortext.name = "Fehlertext";
-    errortext.text = "Dies ist ein Fehlertext";
-    errortext.severityId = Severities.HIGH;
+    const helptextFacade = new HelptextFacade();
+    await helptextFacade.insertHelptext(helptext);
 
     const errorTextFacade = new ErrortextFacade();
     await errorTextFacade.insertErrortext(errortext);
 
-    const helptextFacade = new HelptextFacade();
-    await helptextFacade.insertHelptext(helptext);
-
-    const helptextGames = new HelptextGame();
-    helptextGames.gameId = game.id;
-    helptextGames.helptextId = helptext.id;
-
     const helptextGameFacade = new HelptextsGamesFacade();
     await helptextGameFacade.insertHelptextGames(helptextGames);
-
-    const word = new Word();
-    word.name = "Zubereitung";
 
     const wordFacade = new WordFacade();
     await wordFacade.insertWord(word);
