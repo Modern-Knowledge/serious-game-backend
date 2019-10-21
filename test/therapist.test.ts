@@ -631,7 +631,7 @@ describe("DELETE /therapists/:id", () => {
     }, timeout);
 
     it("try to delete therapist without an id", async () => {
-        authenticationToken = await authenticate(validPatient);
+        authenticationToken = await authenticate(validTherapist);
 
         const res = await request(app).delete(endpoint + "/")
             .set("Authorization", "Bearer " + authenticationToken)
@@ -644,7 +644,7 @@ describe("DELETE /therapists/:id", () => {
     }, timeout);
 
     it("try to delete therapist without an invalid id", async () => {
-        authenticationToken = await authenticate(validPatient);
+        authenticationToken = await authenticate(validTherapist);
 
         const res = await request(app).delete(endpoint + "/invalid")
             .set("Authorization", "Bearer " + authenticationToken)
