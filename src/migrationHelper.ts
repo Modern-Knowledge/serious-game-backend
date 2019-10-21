@@ -51,6 +51,8 @@ import {
 import { Errortext } from "./lib/models/Errortext";
 import { Text } from "./lib/models/Text";
 import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
+import { Word } from "./lib/models/Word";
+import { WordFacade } from "./db/entity/word/WordFacade";
 
 /**
  * runs multiple migrations based on .env variables
@@ -375,6 +377,11 @@ export async function seedTables(): Promise<void> {
     const helptextGameFacade = new HelptextsGamesFacade();
     await helptextGameFacade.insertHelptextGames(helptextGames);
 
+    const word = new Word();
+    word.name = "Zubereitung";
+
+    const wordFacade = new WordFacade();
+    await wordFacade.insertWord(word);
 }
 
 /**

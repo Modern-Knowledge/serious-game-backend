@@ -1,6 +1,9 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Word } from "../../../lib/models/Word";
+import { Game } from "../../../lib/models/Game";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the word-entity
@@ -29,6 +32,21 @@ export class WordFacade extends EntityFacade<Word> {
     }
 
     /**
+     * inserts a new word and returns the created word
+     * @param word
+     */
+    public async insertWord(word: Word): Promise<Word> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(word);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            word.id = result[0].insertedId;
+        }
+
+        return word;
+    }
+
+    /**
      * fills the entity
      * @param result result for filling
      */
@@ -46,6 +64,20 @@ export class WordFacade extends EntityFacade<Word> {
         }
 
         return word;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param word entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, word: Word): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("name", prefix, word.name);
+        attributes.addAttribute(nameAttribute);
+
+        return attributes;
     }
 
 }
