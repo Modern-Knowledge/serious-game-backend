@@ -10,6 +10,7 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
 import { Patient } from "../../lib/models/Patient";
 import logger from "../log/logger";
 import { getRequestUrl, loggerString, skipPermissionCheck } from "../Helper";
+import { Roles } from '../../lib/enums/Roles'
 
 /**
  * This file provides permission middleware for express
@@ -159,11 +160,13 @@ export function checkTherapistAdminPermission(req: Request, res: Response, next:
         return next();
     }
 
-    if (authUser instanceof Therapist && authUser.accepted) { // user is therapist & admin
+    console.log(authUser);
+
+    if (authUser instanceof Therapist && authUser.role === Roles.ADMIN) { // user is therapist & admin
         return next();
     }
 
-    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistAdminPermission")} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist or admin!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistAdminPermission")} User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist or admin!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)

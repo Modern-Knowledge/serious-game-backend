@@ -158,7 +158,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     protected getSQLValueAttributes(prefix: string, therapist: Therapist): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, Roles.USER);
+        const roleAttribute: SQLValueAttribute = new SQLValueAttribute("role", prefix, therapist.role);
         attributes.addAttribute(roleAttribute);
 
         const acceptedAttribute: SQLValueAttribute = new SQLValueAttribute("accepted", prefix, therapist.accepted);

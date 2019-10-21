@@ -4,7 +4,7 @@ import { Status } from "../lib/enums/Status";
 import { Roles } from "../lib/enums/Roles";
 import moment from "moment";
 import { Patient } from "../lib/models/Patient";
-import { generatePasswordResetToken } from '../util/password/passwordHelper'
+import { generatePasswordResetToken } from "../util/password/passwordHelper";
 
 // valid admin therapist
 const validAdminTherapist = new Therapist();
