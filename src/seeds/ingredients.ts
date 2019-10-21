@@ -7,7 +7,7 @@ egg.name = "Ei";
 egg.foodCategoryId = vegetables.id;
 
 const oil = new Ingredient();
-egg.id = 2;
+oil.id = 2;
 oil.name = "Öl";
 oil.foodCategoryId = vegetables.id;
 
