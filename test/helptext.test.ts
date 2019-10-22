@@ -4,31 +4,18 @@ import { dropTables, runMigrations, seedTables, truncateTables } from "../src/mi
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import {helptext} from "../src/seeds/helptexts";
+import { helptext } from "../src/seeds/helptexts";
 
 describe("GET /helptexts", () => {
     const endpoint = "/helptexts";
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch all helptexts", async () => {
@@ -39,8 +26,6 @@ describe("GET /helptexts", () => {
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(200);
-
-        console.log(res.body._data.helptexts);
 
         expect(res.body._status).toEqual("success");
         expect(res.body._data).toHaveProperty("token");
@@ -87,24 +72,11 @@ describe("GET /helptexts/:id", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch helptext with specific id", async () => {
@@ -120,6 +92,8 @@ describe("GET /helptexts/:id", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("helptext");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.helptext._id).toEqual(helptext.id);
     }, timeout);
 
     it("try to fetch helptext with id without authentication", async () => {
