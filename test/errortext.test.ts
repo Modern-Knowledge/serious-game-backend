@@ -11,24 +11,11 @@ describe("GET /errortexts", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch all errortexts", async () => {
@@ -87,22 +74,10 @@ describe("GET /errortexts/:id", () => {
 
     // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch errortext with specific id", async () => {
@@ -118,6 +93,8 @@ describe("GET /errortexts/:id", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("errortext");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.errortext._id).toEqual(errortext.id);
     }, timeout);
 
     it("try to fetch errortext with id without authentication", async () => {
