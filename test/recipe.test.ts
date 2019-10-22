@@ -11,24 +11,11 @@ describe("GET /recipes", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch all recipes", async () => {
@@ -85,24 +72,11 @@ describe("GET /recipes/:id", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch recipe with specific id", async () => {
@@ -118,6 +92,8 @@ describe("GET /recipes/:id", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("recipe");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.recipe._id).toEqual(proteinShake.id);
     }, timeout);
 
     it("try to fetch recipe with id without authentication", async () => {
