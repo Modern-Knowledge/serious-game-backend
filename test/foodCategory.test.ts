@@ -4,31 +4,18 @@ import { dropTables, runMigrations, seedTables, truncateTables } from "../src/mi
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import {vegetables} from "../src/seeds/foodCategories";
+import { vegetables } from "../src/seeds/foodCategories";
 
 describe("GET /food-categories", () => {
     const endpoint = "/food-categories";
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch all food-categories", async () => {
@@ -39,8 +26,6 @@ describe("GET /food-categories", () => {
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
             .expect(200);
-
-        console.log(res.body);
 
         expect(res.body._status).toEqual("success");
         expect(res.body._data).toHaveProperty("token");
@@ -87,24 +72,11 @@ describe("GET /food-categories/:id", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch food-category with specific id", async () => {
@@ -116,12 +88,12 @@ describe("GET /food-categories/:id", () => {
             .expect("Content-Type", /json/)
             .expect(200);
 
-        console.log(res.body);
-
         expect(res.body._status).toEqual("success");
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("foodCategory");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.foodCategory._id).toEqual(vegetables.id);
     }, timeout);
 
     it("try to fetch food-category with id without authentication", async () => {
