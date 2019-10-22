@@ -11,24 +11,11 @@ describe("GET /games", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch all games", async () => {
@@ -85,24 +72,11 @@ describe("GET /games/:id", () => {
     const timeout = 10000;
     let authenticationToken: string;
 
-    // drop tables
     beforeAll(async () => {
-        return dropTables();
-    });
-
-    // run migrations
-    beforeAll(async () => {
-        return runMigrations();
-    });
-
-    // truncate tables
-    beforeEach(async () => {
-        return truncateTables();
-    });
-
-    // seed tables
-    beforeEach(async () => {
-        return seedTables();
+        await dropTables();
+        await runMigrations();
+        await truncateTables();
+        await seedTables();
     });
 
     it("fetch game with specific id", async () => {
@@ -114,12 +88,12 @@ describe("GET /games/:id", () => {
             .expect("Content-Type", /json/)
             .expect(200);
 
-        console.log(res.body);
-
         expect(res.body._status).toEqual("success");
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("game");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.game._id).toEqual(game.id);
     }, timeout);
 
     it("try to fetch game with id without authentication", async () => {
