@@ -34,7 +34,7 @@ describe("GET /game-settings", () => {
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
     }, timeout);
 
-    it("try to fetch all games without authentication", async () => {
+    it("try to fetch all game-settings without authentication", async () => {
         const res = await request(app).get(endpoint)
             .set("Accept", "application/json")
             .expect("Content-Type", /json/)
@@ -54,7 +54,7 @@ describe("GET /game-settings", () => {
 
     }, timeout);
 
-    it("try to fetch all games with an expired token", async () => {
+    it("try to fetch all game-settings with an expired token", async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
         const res = await request(app).get(endpoint)
@@ -80,7 +80,7 @@ describe("GET /game-settings/:id", () => {
         await seedTables();
     });
 
-    it("fetch game-settings with specific id", async () => {
+    it("fetch game-setting with specific id", async () => {
         authenticationToken = await authenticate(validTherapist);
 
         const res = await request(app).get(endpoint + "/" + gameSettings.id)

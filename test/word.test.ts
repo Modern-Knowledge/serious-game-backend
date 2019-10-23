@@ -117,7 +117,7 @@ describe("GET /words/:id", () => {
 
     }, timeout);
 
-    it("try to fetch all errortext with an expired token", async () => {
+    it("try to fetch word with an expired token", async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
         const res = await request(app).get(endpoint + "/" + word.id)
@@ -130,7 +130,7 @@ describe("GET /words/:id", () => {
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
-    it("try to fetch errortext with an invalid id", async () => {
+    it("try to fetch word with an invalid id", async () => {
         authenticationToken = await authenticate(validTherapist);
 
         const res = await request(app).get(endpoint + "/invalid")
@@ -143,7 +143,7 @@ describe("GET /words/:id", () => {
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
     }, timeout);
 
-    it("try to fetch errortext with a not existing id", async () => {
+    it("try to fetch word with a not existing id", async () => {
         authenticationToken = await authenticate(validTherapist);
 
         const res = await request(app).get(endpoint + "/" + 9999)

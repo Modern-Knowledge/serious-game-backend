@@ -6,7 +6,6 @@ import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { proteinShake } from "../src/seeds/recipes";
 
-// todo move to test pacakge
 describe("GET /session/:id", () => {
     const endpoint = "/recipes";
     const timeout = 10000;
