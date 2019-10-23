@@ -105,6 +105,9 @@ describe("GET /patient-settings/:id", () => {
         expect(res.body._data).toHaveProperty("token");
         expect(res.body._data).toHaveProperty("patientSetting");
         expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+        expect(res.body._data.patientSetting._id).toEqual(pSettings.id);
+
     }, timeout);
 
     it("try to fetch patient-setting with ID without authentication", async () => {

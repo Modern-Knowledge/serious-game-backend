@@ -7,7 +7,7 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
 import { Patient } from "../../lib/models/Patient";
 import logger from "../log/logger";
 import { getRequestUrl, loggerString, skipPermissionCheck } from "../Helper";
-import { Roles } from '../../lib/enums/Roles'
+import { Roles } from "../../lib/enums/Roles";
 
 /**
  * This file provides permission middleware for express
@@ -64,10 +64,8 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
 }
 
 /**
- * Middleware that checks if a therapist is allowed to request an endpoint.
+ * Middleware that guarantees that only therapists can access the requested endpoint
  * Execution of middleware is skipped, if res.locals.user is undefined
- *
- * therapists can access specific patients endpoints
  *
  * @param req
  * @param res
@@ -99,10 +97,8 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
 }
 
 /**
- * Middleware that checks if a patient is allowed to request an endpoint
+ * Middleware that guarantees that only patients can access the requested endpoint
  * Execution of middleware is skipped, if res.locals.user is undefined
- *
- * therapists can access specific patients endpoints
  *
  * @param req
  * @param res
@@ -134,7 +130,7 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
 }
 
 /**
- * Middleware that checks if a therapist is allowed to request an endpoint and if the therapist is an admin.
+ * Middleware that guarantees that only admin therapists can access the requested endpoint
  * Execution of middleware is skipped, if res.locals.user is undefined
  *
  * admins can access special endpoints

@@ -19,6 +19,7 @@ import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkPatientPermission } from "../util/middleware/permissionMiddleware";
 
 const router = express.Router();
 
