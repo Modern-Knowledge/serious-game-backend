@@ -28,7 +28,7 @@ import {
     lockedTherapist,
     tooManyFailedLoginAttemptsTherapist,
     unacceptedTherapist,
-    validAdminTherapist, validPatient,
+    validAdminTherapist, validPatient, validPatient1,
     validTherapist
 } from "./seeds/users";
 import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
@@ -182,6 +182,7 @@ export async function seedTables(): Promise<void> {
 
     const patientFacade = new PatientFacade();
     await patientFacade.insertPatient(validPatient);
+    await patientFacade.insertPatient(validPatient1);
 
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insertPatientSetting(pSettings);

@@ -87,7 +87,20 @@ validPatient.info = "Testinfo";
 validPatient.resetcode = generatePasswordResetToken(8);
 validPatient.resetcodeValidUntil = moment().add(1, "day").toDate();
 
+// valid patient
+const validPatient1 = new Patient();
+validPatient1.id = 7;
+validPatient1.email = "patient.name@example.org";
+validPatient1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
+validPatient1.forename = "Patient";
+validPatient1.lastname = "Patient";
+validPatient1.gender = Gender.FEMALE;
+validPatient1.failedLoginAttempts = 0;
+validPatient1.status = Status.ACTIVE;
+validPatient1.birthday = new Date();
+validPatient1.info = "Testinfo";
+
 export {
     validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist,
-    validPatient
+    validPatient, validPatient1
 };

@@ -129,7 +129,7 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
-    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")} User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)

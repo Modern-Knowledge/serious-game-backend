@@ -23,6 +23,7 @@ const controllerName = "PatientSettingController";
 const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication, checkPatientPermission];
 
 /**
+ * todo: do we need this endpoint
  * GET /
  *
  * Get all patient-settings.
@@ -38,10 +39,6 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         const patientSettings = await patientSettingFacade.get();
 
         logEndpoint(controllerName, `Return all patient-settings!`, req);
-
-        if (!validatePermission(res.locals.authorizationToken, patientSettings)) {
-            return forbidden403Response(res);
-        }
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {patientSettings: patientSettings, token: res.locals.authorizationToken},
@@ -66,7 +63,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
  * - patientSetting: patient-setting that was loaded
  * - token: authentication token
  */
-router.get("/:id", authenticationMiddleware, checkUserPermission, [
+router.get("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -80,7 +77,7 @@ router.get("/:id", authenticationMiddleware, checkUserPermission, [
     try {
         const patientSetting = await patientSettingFacade.getById(id);
 
-        if (!validatePermission(res.locals.authorizationToken, [patientSetting])) {
+        if (!validatePermission(res.locals.user, [patientSetting])) {
             return forbidden403Response(res);
         }
 
