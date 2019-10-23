@@ -127,8 +127,8 @@ router.get("/:id", authenticationMiddleware, [
  * - ingredients: ingredients that were loaded
  * - token: authentication token
  */
-router.get("/category/:category_id", authenticationMiddleware, [
-        check("category_id").isNumeric().withMessage(rVM("id", "numeric"))
+router.get("/category/:id", authenticationMiddleware, [
+        check("id").isNumeric().withMessage(rVM("id", "numeric"))
     ], async (req: Request, res: Response, next: any) => {
 
         if (!checkRouteValidation(controllerName, req, res)) {
@@ -140,26 +140,7 @@ router.get("/category/:category_id", authenticationMiddleware, [
         const ingredientFacade = new IngredientFacade();
         ingredientFacade.foodCategoryFacadeFilter.addFilterCondition("id", categoryId);
 
-        const foodCategoryFacade = new FoodCategoryFacade();
-
         try {
-            const foodCategory = await foodCategoryFacade.getById(categoryId);
-
-            if (!foodCategory) {
-                logEndpoint(
-                    controllerName,
-                    `Food-category with id ${categoryId} was not found!`,
-                    req
-                );
-
-                return http4xxResponse(res, [
-                    new HttpResponseMessage(
-                        HttpResponseMessageSeverity.DANGER,
-                        `Die Lebensmittelkategorie konnte nicht gefunden werden.`
-                    )
-                ]);
-            }
-
             const ingredients = await ingredientFacade.get();
 
             logEndpoint(
@@ -168,12 +149,17 @@ router.get("/category/:category_id", authenticationMiddleware, [
                 req
             );
 
+            let categoryName = "";
+            if (ingredients.length > 0) {
+                categoryName = ingredients[0].foodCategory.name;
+            }
+
             return res.status(200).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,
                     {ingredients: ingredients, token: res.locals.authorizationToken},
                     [new HttpResponseMessage(
                         HttpResponseMessageSeverity.SUCCESS,
-                        `Die Zutaten der Kategorie "${foodCategory.name}" wurden erfolgreich geladen!`
+                        `Die Zutaten der Kategorie "${categoryName}" wurden erfolgreich geladen!`
                     )
                     ])
             );
