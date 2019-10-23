@@ -116,12 +116,12 @@ router.get("/:id", authenticationMiddleware, [
 );
 
 /**
- * GET /category/:category_id
+ * GET /category/:id
  *
  * Get ingredients by category_id.
  *
  * params:
- * - category_id: category-id of the ingredients
+ * - id: category-id of the ingredients
  *
  * response:
  * - ingredients: ingredients that were loaded
@@ -135,7 +135,7 @@ router.get("/category/:id", authenticationMiddleware, [
             return failedValidation400Response(req, res);
         }
 
-        const categoryId = Number(req.params.category_id);
+        const categoryId = Number(req.params.id);
 
         const ingredientFacade = new IngredientFacade();
         ingredientFacade.foodCategoryFacadeFilter.addFilterCondition("id", categoryId);
