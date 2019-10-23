@@ -74,7 +74,7 @@ tooManyFailedLoginAttemptsTherapist.accepted = true;
 
 // valid patient with valid password reset token
 const validPatient = new Patient();
-validPatient.id = 6;
+validPatient.id = 1006;
 validPatient.email = "patient@example.org";
 validPatient.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validPatient.forename = "Patient";
@@ -89,7 +89,7 @@ validPatient.resetcodeValidUntil = moment().add(1, "day").toDate();
 
 // valid patient
 const validPatient1 = new Patient();
-validPatient1.id = 7;
+validPatient1.id = 1007;
 validPatient1.email = "patient.name@example.org";
 validPatient1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validPatient1.forename = "Patient";
