@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";

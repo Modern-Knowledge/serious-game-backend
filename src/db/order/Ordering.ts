@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { SQLOrderBy } from "../sql/SQLOrderBy";
 import { SQLOrder } from "../sql/enums/SQLOrder";

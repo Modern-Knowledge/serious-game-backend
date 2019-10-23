@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import express, { Request, Response } from "express";
 import * as bcrypt from "bcryptjs";

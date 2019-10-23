@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import mysql, { FieldInfo, MysqlError, Pool, PoolConnection } from "mysql";
 import logger from "../log/logger";

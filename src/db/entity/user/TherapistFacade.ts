@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { UserFacade } from "./UserFacade";
 import { Therapist } from "../../../lib/models/Therapist";

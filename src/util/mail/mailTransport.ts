@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { Mail } from "./Mail";
 import logger from "../log/logger";

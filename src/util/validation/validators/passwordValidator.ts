@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { CustomValidator } from "express-validator";
 import { retrieveValidationMessage } from "../validationMessages";

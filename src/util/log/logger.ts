@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { Logger, LoggerOptions, transports } from "winston";
 import "winston-daily-rotate-file";

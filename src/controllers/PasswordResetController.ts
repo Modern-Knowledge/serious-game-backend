@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import express, { Request, Response } from "express";
 import { UserFacade } from "../db/entity/user/UserFacade";

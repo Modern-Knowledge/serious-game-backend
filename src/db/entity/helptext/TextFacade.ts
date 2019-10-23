@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { EntityFacade } from "../EntityFacade";
 import { Text } from "../../../lib/models/Text";

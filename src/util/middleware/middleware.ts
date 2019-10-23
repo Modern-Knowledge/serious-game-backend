@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 import { Request, Response } from "express";
 import { Stopwatch } from "../analysis/Stopwatch";
 import logger from "../log/logger";

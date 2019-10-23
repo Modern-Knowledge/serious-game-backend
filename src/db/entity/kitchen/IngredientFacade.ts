@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { Ingredient } from "../../../lib/models/Ingredient";
 import { SQLAttributes } from "../../sql/SQLAttributes";

@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
+
 
 import { BaseFacade } from "../BaseFacade";
 import { AbstractModel } from "../../lib/models/AbstractModel";
