@@ -43,8 +43,10 @@ import { errortext } from "./seeds/errortexts";
 import { word } from "./seeds/words";
 import { helptextGames } from "./seeds/helptextGames";
 import { pSettings } from "./seeds/patientSettings";
-import {StatisticFacade} from "./db/entity/game/StatisticFacade";
-import {statistic, statistic1} from "./seeds/statistics";
+import { StatisticFacade } from "./db/entity/game/StatisticFacade";
+import { statistic, statistic1 } from "./seeds/statistics";
+import { SessionFacade } from "./db/entity/game/SessionFacade";
+import { session } from "./seeds/sessions";
 
 /**
  * runs multiple migrations based on .env variables
@@ -250,6 +252,12 @@ export async function seedTables(): Promise<void> {
     const statisticsArr = [statistic, statistic1];
     for (const item of statisticsArr) {
         await statisticFacade.insertStatistic(item);
+    }
+
+    const sessionFacade = new SessionFacade();
+    const sessionsArr = [session];
+    for (const item of sessionsArr) {
+        await sessionFacade.insertSession(item);
     }
 }
 
