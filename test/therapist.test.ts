@@ -450,25 +450,12 @@ describe("TherapistController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
         beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
-        // truncate tables
-        beforeEach(async () => {
-            return truncateTables();
-        });
-
-        // seed tables
-        beforeEach(async () => {
-            return seedTables();
-        });
+            await dropTables();
+            await runMigrations();
+            await truncateTables();
+            await seedTables();
+        }, timeout);
 
         it("fetch all therapists", async () => {
             authenticationToken = await authenticate(validTherapist);
