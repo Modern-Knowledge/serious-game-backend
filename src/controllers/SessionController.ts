@@ -109,7 +109,7 @@ router.get("/patient/:id", authenticationMiddleware, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {sessions: sessions, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihre Spielsitzungen wurden erfolgreich geladen!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spielsitzungen wurden erfolgreich geladen!`)
                 ]
             )
         );
