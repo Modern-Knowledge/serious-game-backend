@@ -51,6 +51,17 @@ router.get("/:id", authenticationMiddleware, [
     try {
         const statistic = await statisticFacade.getById(id);
 
+        if (!statistic) {
+            logEndpoint(controllerName, `Statistic with id ${id} was not found!`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(
+                    HttpResponseMessageSeverity.DANGER,
+                    `Die Statistik konnte nicht gefunden werden.`
+                )
+            ]);
+        }
+
         logEndpoint(controllerName, `Statistic with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(
