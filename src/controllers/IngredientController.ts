@@ -151,7 +151,7 @@ router.get("/category/:id", authenticationMiddleware, [
 
             let categoryName = "";
             if (ingredients.length > 0) {
-                categoryName = ingredients[0].foodCategory.name;
+                categoryName = "\"" + ingredients[0].foodCategory.name + "\"";
             }
 
             return res.status(200).json(
@@ -159,7 +159,7 @@ router.get("/category/:id", authenticationMiddleware, [
                     {ingredients: ingredients, token: res.locals.authorizationToken},
                     [new HttpResponseMessage(
                         HttpResponseMessageSeverity.SUCCESS,
-                        `Die Zutaten der Kategorie "${categoryName}" wurden erfolgreich geladen!`
+                        `Die Zutaten der Kategorie ${categoryName} wurden erfolgreich geladen!`
                     )
                     ])
             );
