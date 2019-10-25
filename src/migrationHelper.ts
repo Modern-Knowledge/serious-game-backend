@@ -47,6 +47,8 @@ import { StatisticFacade } from "./db/entity/game/StatisticFacade";
 import { statistic, statistic1 } from "./seeds/statistics";
 import { SessionFacade } from "./db/entity/game/SessionFacade";
 import { session } from "./seeds/sessions";
+import { ImageFacade } from './db/entity/image/ImageFacade'
+import { image } from './seeds/images'
 
 /**
  * runs multiple migrations based on .env variables
@@ -258,6 +260,12 @@ export async function seedTables(): Promise<void> {
     const sessionsArr = [session];
     for (const item of sessionsArr) {
         await sessionFacade.insertSession(item);
+    }
+
+    const imageFacade = new ImageFacade();
+    const imageArr = [image];
+    for (const item of imageArr) {
+        await imageFacade.insertImage(item);
     }
 }
 
