@@ -556,6 +556,12 @@ describe("TherapistController Tests", () => {
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            // check if therapist was deleted
+            const therapistFacade = new TherapistFacade();
+            const therapist = await therapistFacade.getById(validTherapist.id);
+            expect(therapist).toBeUndefined();
+
         }, timeout);
 
         it("try to delete therapist without authentication", async () => {
