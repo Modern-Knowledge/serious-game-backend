@@ -5,9 +5,10 @@ import { authenticate, containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import * as bcrypt from "bcryptjs";
 import { Status } from "../src/lib/enums/Status";
-import { validPatient, validTherapist } from "../src/seeds/users";
+import { unacceptedTherapist, validPatient, validPatient1, validTherapist } from '../src/seeds/users'
 import { PatientFacade } from "../src/db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "../src/db/entity/settings/PatientSettingFacade";
+import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 
 describe("PatientController Tests", () => {
 
@@ -513,6 +514,136 @@ describe("PatientController Tests", () => {
             expect(res1.body._status).toEqual("fail");
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 6)).toBeTruthy();
 
+        }, timeout);
+    });
+
+    describe("DELETE /patients/:id", () => {
+        const endpoint = "/patients";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        // drop tables
+        beforeAll(async () => {
+            return dropTables();
+        });
+
+        // run migrations
+        beforeAll(async () => {
+            return runMigrations();
+        });
+
+        // truncate tables
+        beforeEach(async () => {
+            return truncateTables();
+        });
+
+        // seed tables
+        beforeEach(async () => {
+            return seedTables();
+        });
+
+        it("successfully delete patient", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).delete(endpoint + "/" + validPatient.id)
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            // check if patient was deleted
+            const patientFacade = new PatientFacade();
+            const patient = await patientFacade.getById(validPatient.id);
+            expect(patient).toBeUndefined();
+
+        }, timeout);
+
+        it("try to delete patient without authentication", async () => {
+            const res = await request(app).delete(endpoint + "/" + validPatient.id)
+                .set("Authorization", "")
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+            const res1 = await request(app).delete(endpoint + "/" + validPatient.id)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res1.body._status).toEqual("fail");
+            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to delete patient with an expired token", async () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
+
+            const res = await request(app).delete(endpoint + "/" + validPatient.id)
+                .set("Authorization", "Bearer " + token)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to delete other patient", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).delete(endpoint + "/" + validPatient1.id)
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(403);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to delete patient authenticated as therapist", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).delete(endpoint + "/" + validPatient.id)
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(403);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to delete patient without an id", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).delete(endpoint + "/")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("error");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to delete patient without an invalid id", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).delete(endpoint + "/invalid")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(403);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
     });
 });
