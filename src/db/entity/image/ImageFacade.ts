@@ -1,6 +1,9 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Image } from "../../../lib/models/Image";
+import { Word } from "../../../lib/models/Word";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 
 /**
  * handles CRUD operations with the image-entity
@@ -28,6 +31,21 @@ export class ImageFacade extends EntityFacade<Image> {
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
+    /**
+     * inserts a new word and returns the created word
+     * @param image image to insert
+     */
+    public async insertImage(image: Image): Promise<Image> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(image);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            image.id = result[0].insertedId;
+        }
+
+        return image;
+    }
+
 
     /**
      * fills the entity
@@ -48,6 +66,20 @@ export class ImageFacade extends EntityFacade<Image> {
 
 
         return i;
+    }
+
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param image entity to take values from
+     */
+    protected getSQLValueAttributes(prefix: string, image: Image): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
+
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute("image", prefix, image.image);
+        attributes.addAttribute(nameAttribute);
+
+        return attributes;
     }
 
 }
