@@ -2,11 +2,13 @@ import request from "supertest";
 import app from "../src/app";
 import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
-import { unacceptedTherapist, validPatient, validTherapist } from '../src/seeds/users'
+import { unacceptedTherapist, validPatient, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { session } from "../src/seeds/sessions";
 import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 import { SessionFacade } from "../src/db/entity/game/SessionFacade";
+import { game } from "../src/seeds/games";
+import { gameSettings } from "../src/seeds/gameSettings";
 
 describe("SessionController Tests", () => {
 
@@ -274,8 +276,6 @@ describe("SessionController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(403);
 
-            console.log(res.body);
-
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
@@ -344,5 +344,98 @@ describe("SessionController Tests", () => {
         beforeEach(async () => {
             return seedTables();
         });
+
+        it("successfully create new session", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("session");
+
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            // check if session was inserted
+            const sessionId = res.body._data.session._id;
+
+            const sessionFacade = new SessionFacade();
+            const session = await sessionFacade.getById(sessionId);
+
+            expect(session).not.toBeUndefined();
+
+            if (session) {
+                expect(session.gameId).toEqual(game.id);
+                expect(session.patientId).toEqual(validPatient.id);
+                expect(session.gameSettingId).toEqual(gameSettings.id);
+            }
+
+        }, timeout);
+
+        it("try to create session without authentication", async () => {
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "")
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+            const res1 = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res1.body._status).toEqual("fail");
+            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create session with an expired token", async () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + token)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
     });
 });
