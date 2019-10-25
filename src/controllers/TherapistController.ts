@@ -250,7 +250,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 
         logEndpoint(controllerName, `Therapist with id ${id} was successfully deleted!`, req);
 
-        return res.status(200).json(
+        return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [

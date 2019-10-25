@@ -116,12 +116,12 @@ router.get("/:id", authenticationMiddleware, [
 );
 
 /**
- * GET /category/:category_id
+ * GET /category/:id
  *
  * Get ingredients by category_id.
  *
  * params:
- * - category_id: category-id of the ingredients
+ * - id: category-id of the ingredients
  *
  * response:
  * - ingredients: ingredients that were loaded
@@ -135,7 +135,7 @@ router.get("/category/:id", authenticationMiddleware, [
             return failedValidation400Response(req, res);
         }
 
-        const categoryId = Number(req.params.category_id);
+        const categoryId = Number(req.params.id);
 
         const ingredientFacade = new IngredientFacade();
         ingredientFacade.foodCategoryFacadeFilter.addFilterCondition("id", categoryId);
@@ -151,7 +151,7 @@ router.get("/category/:id", authenticationMiddleware, [
 
             let categoryName = "";
             if (ingredients.length > 0) {
-                categoryName = ingredients[0].foodCategory.name;
+                categoryName = "\"" + ingredients[0].foodCategory.name + "\"";
             }
 
             return res.status(200).json(
@@ -159,7 +159,7 @@ router.get("/category/:id", authenticationMiddleware, [
                     {ingredients: ingredients, token: res.locals.authorizationToken},
                     [new HttpResponseMessage(
                         HttpResponseMessageSeverity.SUCCESS,
-                        `Die Zutaten der Kategorie "${categoryName}" wurden erfolgreich geladen!`
+                        `Die Zutaten der Kategorie ${categoryName} wurden erfolgreich geladen!`
                     )
                     ])
             );

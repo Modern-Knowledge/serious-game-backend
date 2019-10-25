@@ -19,7 +19,7 @@ import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkPatientPermission } from "../util/middleware/permissionMiddleware";
+import { checkPatientPermission, checkTherapistPermission } from '../util/middleware/permissionMiddleware'
 
 const router = express.Router();
 
@@ -109,7 +109,7 @@ router.get("/patient/:id", authenticationMiddleware, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {sessions: sessions, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihre Spielsitzungen wurden erfolgreich geladen!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spielsitzungen wurden erfolgreich geladen!`)
                 ]
             )
         );
@@ -130,7 +130,7 @@ router.get("/patient/:id", authenticationMiddleware, [
  * response:
  * - token: authentication token
  */
-router.delete("/:id", authenticationMiddleware, [
+router.delete("/:id", authenticationMiddleware, checkTherapistPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
