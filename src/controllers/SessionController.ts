@@ -1,12 +1,10 @@
-
-
 import express from "express";
 import { Request, Response } from "express";
 import {
-    HttpResponse,
-    HttpResponseMessage,
-    HttpResponseMessageSeverity,
-    HttpResponseStatus
+  HttpResponse,
+  HttpResponseMessage,
+  HttpResponseMessageSeverity,
+  HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 import { check } from "express-validator";
@@ -17,15 +15,27 @@ import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { Statistic } from "../lib/models/Statistic";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkPatientPermission, checkTherapistPermission } from '../util/middleware/permissionMiddleware'
-
+import {
+  failedValidation400Response,
+  http4xxResponse
+} from "../util/http/httpResponses";
+import {
+  checkAuthentication,
+  checkAuthenticationToken
+} from "../util/middleware/authenticationMiddleware";
+import {
+  checkPatientPermission,
+  checkTherapistPermission
+} from "../util/middleware/permissionMiddleware";
+import moment from "moment";
 const router = express.Router();
 
 const controllerName = "SessionController";
 
-const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+const authenticationMiddleware = [
+  checkAuthenticationToken,
+  checkAuthentication
+];
 
 /**
  * GET /:id
@@ -38,43 +48,61 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * - session: loaded session
  * - token: authentication token
  */
-router.get("/:id", authenticationMiddleware, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
-], async (req: Request, res: Response, next: any) => {
-
+router.get(
+  "/:id",
+  authenticationMiddleware,
+  [
+    check("id")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric"))
+  ],
+  async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
+      return failedValidation400Response(req, res);
     }
 
     const id = Number(req.params.id);
     const sessionCompositeFacade = new SessionCompositeFacade();
 
     try {
-        const session = await sessionCompositeFacade.getById(id);
+      const session = await sessionCompositeFacade.getById(id);
 
-        if (!session) {
-            logEndpoint(controllerName, `Session with id ${id} not found!`, req);
+      if (!session) {
+        logEndpoint(controllerName, `Session with id ${id} not found!`, req);
 
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
-            ]);
-        }
+        return http4xxResponse(res, [
+          new HttpResponseMessage(
+            HttpResponseMessageSeverity.DANGER,
+            `Die Spielsitzung wurde nicht gefunden!`
+          )
+        ]);
+      }
 
-        logEndpoint(controllerName, `Session with id ${id} was successfully loaded!`, req);
+      logEndpoint(
+        controllerName,
+        `Session with id ${id} was successfully loaded!`,
+        req
+      );
 
-        return res.status(200).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS,
-                {session: session, token: res.locals.authorizationToken},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich geladen!`)
-                ]
-            )
+      return res
+        .status(200)
+        .json(
+          new HttpResponse(
+            HttpResponseStatus.SUCCESS,
+            { session: session, token: res.locals.authorizationToken },
+            [
+              new HttpResponseMessage(
+                HttpResponseMessageSeverity.SUCCESS,
+                `Spielsitzung wurde erfolgreich geladen!`
+              )
+            ]
+          )
         );
+    } catch (error) {
+      return next(error);
     }
-    catch (error) {
-        return next(error);
-    }
-});
+  }
+);
 
 /**
  * GET /patient/:id
@@ -88,12 +116,17 @@ router.get("/:id", authenticationMiddleware, [
  * - sessions[]: array of sessions by the patient
  * - token: authentication token
  */
-router.get("/patient/:id", authenticationMiddleware, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
-], async (req: Request, res: Response, next: any) => {
-
+router.get(
+  "/patient/:id",
+  authenticationMiddleware,
+  [
+    check("id")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric"))
+  ],
+  async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
+      return failedValidation400Response(req, res);
     }
 
     const id = Number(req.params.id);
@@ -101,23 +134,33 @@ router.get("/patient/:id", authenticationMiddleware, [
     sessionCompositeFacade.filter.addFilterCondition("patient_id", id);
 
     try {
-        const sessions: Session[] = await sessionCompositeFacade.get();
+      const sessions: Session[] = await sessionCompositeFacade.get();
 
-        logEndpoint(controllerName, `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`, req);
+      logEndpoint(
+        controllerName,
+        `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`,
+        req
+      );
 
-        return res.status(200).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS,
-                {sessions: sessions, token: res.locals.authorizationToken},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spielsitzungen wurden erfolgreich geladen!`)
-                ]
-            )
+      return res
+        .status(200)
+        .json(
+          new HttpResponse(
+            HttpResponseStatus.SUCCESS,
+            { sessions: sessions, token: res.locals.authorizationToken },
+            [
+              new HttpResponseMessage(
+                HttpResponseMessageSeverity.SUCCESS,
+                `Die Spielsitzungen wurden erfolgreich geladen!`
+              )
+            ]
+          )
         );
+    } catch (error) {
+      return next(error);
     }
-    catch (error) {
-        return next(error);
-    }
-});
+  }
+);
 
 /**
  * DELETE /:id
@@ -130,50 +173,79 @@ router.get("/patient/:id", authenticationMiddleware, [
  * response:
  * - token: authentication token
  */
-router.delete("/:id", authenticationMiddleware, checkTherapistPermission, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
-], async (req: Request, res: Response, next: any) => {
-
+router.delete(
+  "/:id",
+  authenticationMiddleware,
+  checkTherapistPermission,
+  [
+    check("id")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric"))
+  ],
+  async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
+      return failedValidation400Response(req, res);
     }
 
     const id = Number(req.params.id);
     const sessionCompositeFacade = new SessionCompositeFacade();
 
     try {
-        // check if session exists
-        const session: Session = await sessionCompositeFacade.getById(id);
+      // check if session exists
+      const session: Session = await sessionCompositeFacade.getById(id);
 
-        if (!session) {
-            logEndpoint(controllerName, `Session with id ${id} was not found!`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spielsitzung wurde nicht gefunden!`)
-            ]);
-        }
-
-        sessionCompositeFacade.filter.addFilterCondition("id", session.id);
-        sessionCompositeFacade.statisticFacadeFilter.addFilterCondition("id", session.statisticId);
-        sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition("statistic_id", session.statisticId);
-
-        await sessionCompositeFacade.deleteSessionComposite();
-
-        logEndpoint(controllerName, `Session with id ${id} was successfully deleted!`, req);
-
-        return res.status(200).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS,
-                {token: res.locals.authorizationToken},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich gelöscht!`)
-                ]
-            )
+      if (!session) {
+        logEndpoint(
+          controllerName,
+          `Session with id ${id} was not found!`,
+          req
         );
+
+        return http4xxResponse(res, [
+          new HttpResponseMessage(
+            HttpResponseMessageSeverity.DANGER,
+            `Die Spielsitzung wurde nicht gefunden!`
+          )
+        ]);
+      }
+
+      sessionCompositeFacade.filter.addFilterCondition("id", session.id);
+      sessionCompositeFacade.statisticFacadeFilter.addFilterCondition(
+        "id",
+        session.statisticId
+      );
+      sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition(
+        "statistic_id",
+        session.statisticId
+      );
+
+      await sessionCompositeFacade.deleteSessionComposite();
+
+      logEndpoint(
+        controllerName,
+        `Session with id ${id} was successfully deleted!`,
+        req
+      );
+
+      return res
+        .status(200)
+        .json(
+          new HttpResponse(
+            HttpResponseStatus.SUCCESS,
+            { token: res.locals.authorizationToken },
+            [
+              new HttpResponseMessage(
+                HttpResponseMessageSeverity.SUCCESS,
+                `Spielsitzung wurde erfolgreich gelöscht!`
+              )
+            ]
+          )
+        );
+    } catch (error) {
+      return next(error);
     }
-    catch (error) {
-        return next(error);
-    }
-});
+  }
+);
 
 /**
  * POST /
@@ -187,22 +259,31 @@ router.delete("/:id", authenticationMiddleware, checkTherapistPermission, [
  * - _gameId: id of the patient
  * - _patientId: id of the patient
  * - _gameSettingId: id of the game_setting
+ * - _elapsedTime: the time it took to complete the session (in ms)
  *
  * response:
  * - session: created session
  * - token: authentication token
  */
-router.post("/", authenticationMiddleware, [
-    check("_gameId").isNumeric().withMessage(rVM("id", "numeric")),
+router.post(
+  "/",
+  authenticationMiddleware,
+  [
+    check("_gameId")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric")),
 
-    check("_patientId").isNumeric().withMessage(rVM("id", "numeric")),
+    check("_patientId")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric")),
 
-    check("_gameSettingId").isNumeric().withMessage(rVM("id", "numeric")),
-
-], async (req: Request, res: Response, next: any) => {
-
+    check("_gameSettingId")
+      .isNumeric()
+      .withMessage(rVM("id", "numeric"))
+  ],
+  async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
+      return failedValidation400Response(req, res);
     }
 
     const sessionFacade = new SessionFacade();
@@ -212,33 +293,52 @@ router.post("/", authenticationMiddleware, [
     const statisticFacade = new StatisticFacade();
     const statistic = new Statistic();
     statistic.startTime = new Date();
+    statistic.endTime = moment(statistic.startTime)
+      .add("ms", req.body._elapsedTime)
+      .toDate();
 
     try {
-        // insert statistic
-        const insertedStatistic = await statisticFacade.insertStatistic(statistic);
+      // insert statistic
+      const insertedStatistic = await statisticFacade.insertStatistic(
+        statistic
+      );
 
-        logEndpoint(controllerName, `Statistic with id ${insertedStatistic.id} for new session was successfully created!`, req);
+      logEndpoint(
+        controllerName,
+        `Statistic with id ${insertedStatistic.id} for new session was successfully created!`,
+        req
+      );
 
-        session.statisticId = insertedStatistic.id;
-        session.statistic = insertedStatistic;
+      session.statisticId = insertedStatistic.id;
+      session.statistic = insertedStatistic;
 
-        // insert statistic
-        const insertedSession = await sessionFacade.insertSession(session);
+      // insert statistic
+      const insertedSession = await sessionFacade.insertSession(session);
 
-        logEndpoint(controllerName, `Session with id ${insertedSession.id} was successfully created!`, req);
+      logEndpoint(
+        controllerName,
+        `Session with id ${insertedSession.id} was successfully created!`,
+        req
+      );
 
-        return res.status(200).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS,
-                {session: insertedSession, token: res.locals.authorizationToken},
-                [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Spielsitzung wurde erfolgreich erstellt`)
-                ]
-            )
+      return res
+        .status(200)
+        .json(
+          new HttpResponse(
+            HttpResponseStatus.SUCCESS,
+            { session: insertedSession, token: res.locals.authorizationToken },
+            [
+              new HttpResponseMessage(
+                HttpResponseMessageSeverity.SUCCESS,
+                `Spielsitzung wurde erfolgreich erstellt`
+              )
+            ]
+          )
         );
+    } catch (error) {
+      return next(error);
     }
-    catch (error) {
-        return next(error);
-    }
-});
+  }
+);
 
 export default router;
