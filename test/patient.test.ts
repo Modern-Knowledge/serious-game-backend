@@ -5,10 +5,9 @@ import { authenticate, containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import * as bcrypt from "bcryptjs";
 import { Status } from "../src/lib/enums/Status";
-import { unacceptedTherapist, validPatient, validPatient1, validTherapist } from '../src/seeds/users'
+import { validPatient, validPatient1, validTherapist } from "../src/seeds/users";
 import { PatientFacade } from "../src/db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "../src/db/entity/settings/PatientSettingFacade";
-import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 
 describe("PatientController Tests", () => {
 
