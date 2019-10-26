@@ -151,6 +151,12 @@ router.post("/", [
  *
  * body:
  * - id: therapist id
+ * - email: email of therapist
+ * - password: password of therapist
+ * - forename: forename of therapist
+ * - lastname: lastname of therapists
+ * - gender: gender of therapist
+ * - status: status of therapist
  * - patients: array of patients
  *
  * response:
