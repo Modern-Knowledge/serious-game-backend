@@ -437,5 +437,167 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
         }, timeout);
+
+        it("try to create new session without a game id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session without a patient id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session without a game-setting id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session without data", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send({})
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 3)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with an invalid game id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: "invalid",
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with an invalid patient id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: "invalid",
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with an invalid game setting id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: "invalid"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with a not existing game id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: 9999,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(500);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+
+
     });
 });
