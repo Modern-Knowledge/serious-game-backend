@@ -92,7 +92,9 @@ router.get("/:id", authenticationMiddleware, [
  * - statistic: updated statistic
  * - token: authentication token
  */
-router.put("/", authenticationMiddleware, [
+router.put("/:id", authenticationMiddleware, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric")),
+
     check("_id").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("_startTime")
@@ -111,7 +113,7 @@ router.put("/", authenticationMiddleware, [
     const statistic = new Statistic().deserialize(req.body);
 
     const statisticFacade = new StatisticFacade();
-    statisticFacade.filter.addFilterCondition("id", statistic.id);
+    statisticFacade.filter.addFilterCondition("id", req.params.id);
 
     try {
         // update statistics
