@@ -217,13 +217,14 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
  * - id: id of the patient
  *
  * body:
- * - _id: patient id
- * - _email:
- * - _forename:
- * - _lastname:
- * - _gender:
- * - _birthday: birthday of patient
- * - _info: info about the patient
+ * - id: patient id
+ * - email: email of the patient
+ * - forename: forename of the patient
+ * - lastname: lastname of the patient
+ * - gender: gender of the patient
+ * - status: status of patient
+ * - birthday: birthday of patient
+ * - info: info about the patient
  *
  * response:
  * - patient: updated patient
