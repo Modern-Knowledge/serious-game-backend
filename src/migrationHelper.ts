@@ -47,8 +47,10 @@ import { StatisticFacade } from "./db/entity/game/StatisticFacade";
 import { statistic, statistic1 } from "./seeds/statistics";
 import { SessionFacade } from "./db/entity/game/SessionFacade";
 import { session } from "./seeds/sessions";
-import { ImageFacade } from './db/entity/image/ImageFacade'
-import { image } from './seeds/images'
+import { ImageFacade } from "./db/entity/image/ImageFacade";
+import { image } from "./seeds/images";
+import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
+import { notSentSmtpLog, sentSmtpLog, simulatedSmtpLog } from "./seeds/smtpLogs";
 
 /**
  * runs multiple migrations based on .env variables
@@ -266,6 +268,28 @@ export async function seedTables(): Promise<void> {
     const imageArr = [image];
     for (const item of imageArr) {
         await imageFacade.insertImage(item);
+    }
+}
+
+export async function seedUsers(): Promise<void> {
+    const therapistFacade = new TherapistFacade();
+    const therapists = [validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist];
+    for (const item of therapists) {
+        await therapistFacade.insertTherapist(item);
+    }
+
+    const patientFacade = new PatientFacade();
+    const patients = [validPatient, validPatient1];
+    for (const item of patients) {
+        await patientFacade.insertPatient(item);
+    }
+}
+
+export async function seedSmtpLogs(): Promise<void>  {
+    const smtpLogFacade = new SmtpLogFacade();
+    const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
+    for (const item of smtpLogsArr) {
+        await smtpLogFacade.insertLog(item);
     }
 }
 
