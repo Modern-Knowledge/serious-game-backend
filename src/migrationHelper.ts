@@ -179,95 +179,126 @@ export async function seedTables(): Promise<void> {
         return;
     }
 
-    const therapistFacade = new TherapistFacade();
-    const therapists = [validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist];
-    for (const item of therapists) {
-        await therapistFacade.insertTherapist(item);
-    }
+    await seedUsers();
+    await seedPatientSettings();
+    await seedDifficulties();
+    await seedSeverities();
+    await seedRecipes();
+    await seedIngredients();
+    await seedRecipeIngredientFacade();
+    await seedGames();
+    await seedGameSettings();
+    await seedHelptexts();
+    await seedErrortexts();
+    await seedHelptextGames();
+    await seedWords();
+    await seedStatistics();
+    await seedSessions();
+    await seedImages();
+}
 
-    const patientFacade = new PatientFacade();
-    await patientFacade.insertPatient(validPatient);
-    await patientFacade.insertPatient(validPatient1);
-
+export async function seedPatientSettings() {
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insertPatientSetting(pSettings);
+}
 
-    const difficultyFacade = new DifficultyFacade();
-    const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
-    for (const item of difficulties) {
-        await difficultyFacade.insertDifficulty(item);
+export async function seedImages() {
+    const imageFacade = new ImageFacade();
+    const imageArr = [image];
+    for (const item of imageArr) {
+        await imageFacade.insertImage(item);
     }
+}
 
-    const severityFacade = new SeverityFacade();
-    const severities = [severityEasy, severityMedium, severityHard];
-    for (const item of severities) {
-        await severityFacade.insertSeverity(item);
-    }
-
-    const foodCategoryFacade = new FoodCategoryFacade();
-    const foodCategories = [vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household];
-    for (const item of foodCategories) {
-        await foodCategoryFacade.insertFoodCategory(item);
-    }
-
-    const recipeFacade = new RecipeFacade();
-    const recipes = [scrambledEgg, roastPork, proteinShake];
-    for (const item of recipes) {
-        await recipeFacade.insertRecipe(item);
-    }
-
-    const ingredientFacade = new IngredientFacade();
-    const ingredients = [egg, oil];
-    for (const item of ingredients) {
-        await ingredientFacade.insertIngredient(item);
-    }
-
-    const recipeIngredientFacade = new RecipeIngredientFacade();
-    const recipeIngredients = [recipeIngredient1, recipeIngredient2];
-    for (const item of recipeIngredients) {
-        await recipeIngredientFacade.insertRecipeIngredient(item);
-    }
-
-    const gameFacade = new GameFacade();
-    const games = [game, game2, game3, game4];
-    for (const item of games) {
-        await gameFacade.insertGame(item);
-    }
-
-    const gameSettingFacade = new GameSettingFacade();
-    const gameSettingsArr = [gameSettings, gameSettings1, gameSettings2, gameSettings3];
-    for (const item of gameSettingsArr) {
-        await gameSettingFacade.insertGameSetting(item);
-    }
-
-    const helptextFacade = new HelptextFacade();
-    await helptextFacade.insertHelptext(helptext);
-
-    const errorTextFacade = new ErrortextFacade();
-    await errorTextFacade.insertErrortext(errortext);
-
-    const helptextGameFacade = new HelptextsGamesFacade();
-    await helptextGameFacade.insertHelptextGames(helptextGames);
-
-    const wordFacade = new WordFacade();
-    await wordFacade.insertWord(word);
-
-    const statisticFacade = new StatisticFacade();
-    const statisticsArr = [statistic, statistic1];
-    for (const item of statisticsArr) {
-        await statisticFacade.insertStatistic(item);
-    }
-
+export async function seedSessions() {
     const sessionFacade = new SessionFacade();
     const sessionsArr = [session];
     for (const item of sessionsArr) {
         await sessionFacade.insertSession(item);
     }
+}
 
-    const imageFacade = new ImageFacade();
-    const imageArr = [image];
-    for (const item of imageArr) {
-        await imageFacade.insertImage(item);
+export async function seedStatistics() {
+    const statisticFacade = new StatisticFacade();
+    const statisticsArr = [statistic, statistic1];
+    for (const item of statisticsArr) {
+        await statisticFacade.insertStatistic(item);
+    }
+}
+
+export async function seedWords() {
+    const wordFacade = new WordFacade();
+    await wordFacade.insertWord(word);
+}
+
+export async function seedErrortexts() {
+    const errorTextFacade = new ErrortextFacade();
+    await errorTextFacade.insertErrortext(errortext);
+}
+
+export async function seedHelptextGames() {
+    const helptextGameFacade = new HelptextsGamesFacade();
+    await helptextGameFacade.insertHelptextGames(helptextGames);
+}
+
+export async function seedHelptexts() {
+    const helptextFacade = new HelptextFacade();
+    await helptextFacade.insertHelptext(helptext);
+}
+
+export async function seedGameSettings() {
+    const gameSettingFacade = new GameSettingFacade();
+    const gameSettingsArr = [gameSettings, gameSettings1, gameSettings2, gameSettings3];
+    for (const item of gameSettingsArr) {
+        await gameSettingFacade.insertGameSetting(item);
+    }
+}
+
+export async function seedGames() {
+    const gameFacade = new GameFacade();
+    const games = [game, game2, game3, game4];
+    for (const item of games) {
+        await gameFacade.insertGame(item);
+    }
+}
+
+export async function seedIngredients() {
+    const ingredientFacade = new IngredientFacade();
+    const ingredients = [egg, oil];
+    for (const item of ingredients) {
+        await ingredientFacade.insertIngredient(item);
+    }
+}
+
+export async function seedRecipeIngredientFacade() {
+    const recipeIngredientFacade = new RecipeIngredientFacade();
+    const recipeIngredients = [recipeIngredient1, recipeIngredient2];
+    for (const item of recipeIngredients) {
+        await recipeIngredientFacade.insertRecipeIngredient(item);
+    }
+}
+
+export async function seedRecipes() {
+    const recipeFacade = new RecipeFacade();
+    const recipes = [scrambledEgg, roastPork, proteinShake];
+    for (const item of recipes) {
+        await recipeFacade.insertRecipe(item);
+    }
+}
+
+export async function seedSeverities() {
+    const foodCategoryFacade = new FoodCategoryFacade();
+    const foodCategories = [vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household];
+    for (const item of foodCategories) {
+        await foodCategoryFacade.insertFoodCategory(item);
+    }
+}
+
+export async function seedDifficulties() {
+    const difficultyFacade = new DifficultyFacade();
+    const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
+    for (const item of difficulties) {
+        await difficultyFacade.insertDifficulty(item);
     }
 }
 
