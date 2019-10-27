@@ -28,6 +28,11 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  *
  * Get all logs.
  *
+ * body:
+ * - level: level of the logs
+ * - method: request method of the log
+ * - userId: user id that owns the log
+ *
  * response:
  * - logs: all logs of the application
  */
@@ -52,14 +57,20 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (
 });
 
 /**
+ *
  * POST /create
  *
  * Insert a log message.
  *
  * body:
- * - todo
+ * [
+ *  - logger
+ *  - level
+ *  - message = method message ...params
+ * ]
+ *
  */
-router.post("/create", async (req: Request, res: Response, next: any) => {
+router.post("/", async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
     try {
         for (const item of req.body) {
@@ -80,7 +91,7 @@ router.post("/create", async (req: Request, res: Response, next: any) => {
 
         logEndpoint(controllerName, `${req.body.length} logs successfully created!`, req);
 
-        return res.status(200).json(
+        return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 undefined,
                 [

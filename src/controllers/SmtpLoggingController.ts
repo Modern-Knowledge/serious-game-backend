@@ -38,7 +38,6 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * - token: authentication token
  */
 router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
-    // todo: validation if needed
 ], async (req: Request, res: Response, next: any) => {
     const facade: SmtpLogFacade = new SmtpLogFacade();
 
