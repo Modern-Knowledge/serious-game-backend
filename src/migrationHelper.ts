@@ -170,7 +170,6 @@ export async function dropTables(): Promise<void> {
 /**
  * seed tables with default data
  *
- * todo split in multiple files
  */
 export async function seedTables(): Promise<void> {
     const results = await getTables();
