@@ -51,6 +51,8 @@ import { ImageFacade } from "./db/entity/image/ImageFacade";
 import { image } from "./seeds/images";
 import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
 import { notSentSmtpLog, sentSmtpLog, simulatedSmtpLog } from "./seeds/smtpLogs";
+import { LogFacade } from './db/entity/log/LogFacade'
+import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from './seeds/logs'
 
 /**
  * runs multiple migrations based on .env variables
@@ -194,6 +196,8 @@ export async function seedTables(): Promise<void> {
     await seedStatistics();
     await seedSessions();
     await seedImages();
+    await seedSmtpLogs();
+    await seedLogs();
 }
 
 export async function seedPatientSettings() {
@@ -320,6 +324,14 @@ export async function seedSmtpLogs(): Promise<void>  {
     const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
     for (const item of smtpLogsArr) {
         await smtpLogFacade.insertLog(item);
+    }
+}
+
+export async function seedLogs(): Promise<void>  {
+    const logFacade = new LogFacade();
+    const logArr = [debugLog, infoLogWithUser, errorLogWithUser, verboseLogWithUser];
+    for (const item of logArr) {
+        await logFacade.insertLog(item);
     }
 }
 

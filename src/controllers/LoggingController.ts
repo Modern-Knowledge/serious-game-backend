@@ -15,6 +15,7 @@ import moment from "moment";
 import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
+import { SQLOperator } from "../db/sql/enums/SQLOperator";
 
 const router = express.Router();
 
@@ -40,14 +41,38 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (
     const facade: LogFacade = new LogFacade();
     facade.addOrderBy("id", SQLOrder.ASC);
 
+    if (req.body.level) {
+        facade.filter.addFilterCondition("level", req.body.level);
+    }
+
+    if (req.body.method) {
+        if (!facade.filter.isEmpty) {
+            facade.filter.addOperator(SQLOperator.AND);
+        }
+
+        facade.filter.addFilterCondition("method", req.body.method);
+    }
+
+    if (req.body.userId) {
+        if (!facade.filter.isEmpty) {
+            facade.filter.addOperator(SQLOperator.AND);
+        }
+
+        facade.filter.addFilterCondition("user_id", Number(req.body.userId));
+    }
+
     try {
+
         const logs = await facade.get();
 
         logEndpoint(controllerName, `All logs loaded successfully!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                logs
+                {
+                    logs: logs,
+                    token: res.locals.authorizationToken
+                }
             )
         );
     }
