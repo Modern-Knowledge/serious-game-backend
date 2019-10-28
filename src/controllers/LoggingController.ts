@@ -153,7 +153,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                affectedRows,
+                {affectedRows: affectedRows, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} Logs wurden erfolgreich gelöscht!`)
                 ]
