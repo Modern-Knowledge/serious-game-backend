@@ -24,10 +24,6 @@ const router = express.Router();
 
 const controllerName = "UserController";
 
-router.use(checkAuthenticationToken);
-router.use(checkAuthentication);
-router.use(checkTherapistPermission);
-
 const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
 /**
