@@ -88,7 +88,6 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
-        // todo: add to test map
         it("fetch all simulated and sent smtp-logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 

@@ -33,9 +33,9 @@ export class LogFacade extends EntityFacade<Log> {
      * inserts a new log and returns the id of the created log
      * @param log
      */
-    public insertLog(log: Log): Log {
+    public async insertLog(log: Log): Promise<Log> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(log);
-        this.insert(attributes);
+        await this.insert(attributes);
         return log;
     }
 

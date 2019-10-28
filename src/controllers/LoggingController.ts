@@ -16,6 +16,8 @@ import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
 import { SQLOperator } from "../db/sql/enums/SQLOperator";
+import { check } from "express-validator";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -91,36 +93,48 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (
  * [
  *  - logger
  *  - level
- *  - message = method message ...params
+ *  - message = [method, message, ...params]
  * ]
  *
  */
 router.post("/", async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
+    const insertedLogs = [];
+
     try {
         for (const item of req.body) {
             const log: Log = new Log();
 
             const messages: string[] = item.message;
-            const method = messages.shift();
-            const message = messages.shift();
 
-            log.logger = item.logger;
-            log.level = item.level;
-            log.method = method;
-            log.message = message;
-            log.params = item.message.length === 0 ? [] : item.message;
+            if (messages && messages.length >= 2) {
+                const method = messages.shift();
+                const message = messages.shift();
 
-            facade.insertLog(log);
+                log.logger = item.logger;
+                log.level = item.level;
+                log.method = method;
+                log.message = message;
+                log.params = item.message.length === 0 ? [] : item.message;
+
+                if (item.logger && item.level) {
+                    await facade.insertLog(log);
+                    insertedLogs.push(log);
+                }
+            } else {
+                logEndpoint(controllerName, `Message was too short for insertion!`, req);
+            }
         }
 
-        logEndpoint(controllerName, `${req.body.length} logs successfully created!`, req);
+        logEndpoint(controllerName, `${insertedLogs.length} logs successfully created!`, req);
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                undefined,
+                {
+                    insertedLogs: insertedLogs.length
+                },
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log erfolgreich angelegt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${insertedLogs.length} Log(s) erfolgreich angelegt!`)
                 ]
             )
         );
