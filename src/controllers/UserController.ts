@@ -8,7 +8,7 @@ import {
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkTherapistPermission } from "../util/middleware/permissionMiddleware";
+import { checkUserPermission } from "../util/middleware/permissionMiddleware";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation } from "../util/validation/validationHelper";
@@ -19,6 +19,7 @@ import { Mail } from "../util/mail/Mail";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 import { mailTransport } from "../util/mail/mailTransport";
+import { passwordValidator } from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
@@ -67,8 +68,18 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
  * response:
  * - token: authentication token
  */
-router.put("/change-password/:id", authenticationMiddleware, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
+router.put("/change-password/:id", authenticationMiddleware, checkUserPermission, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric")),
+
+    check("oldPassword").trim()
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
+
+    check("newPassword").trim()
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
+
+    check("newPasswordConfirmation").trim()
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length"))
+
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -76,10 +87,17 @@ router.put("/change-password/:id", authenticationMiddleware, [
     }
 
     const id = Number(req.params.id);
-    const { oldPassword, newPassword } = req.body;
+    const { oldPassword, newPassword, newPasswordConfirmation } = req.body;
+
+    if (newPasswordConfirmation !== newPassword) { // compares passwords
+        logEndpoint(controllerName, `New Password and Password confirmation do not match!`, req);
+
+        return http4xxResponse(res, [
+            rVM("password", "not_matching")
+        ], 400);
+    }
 
     const userFacade = new UserFacade();
-    userFacade.filter.addFilterCondition("id", id);
 
     try {
         const user = await userFacade.getById(id);
@@ -106,7 +124,8 @@ router.put("/change-password/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `The user with the id ${id} provided the correct password for changing the password!`, req);
 
         user.password = bcrypt.hashSync(newPassword, 12); // set new password
-        userFacade.updateUser(user);
+        userFacade.filter.addFilterCondition("id", user.id);
+        await userFacade.updateUser(user);
 
         logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 
