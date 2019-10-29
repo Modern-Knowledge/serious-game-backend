@@ -251,7 +251,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     return reject(error);
                 }
 
-                resolve(results.affectedRows);
+                resolve(results.changedRows);
             });
         });
     };

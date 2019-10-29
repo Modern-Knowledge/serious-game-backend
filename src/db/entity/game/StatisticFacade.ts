@@ -74,9 +74,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * updates the given statistic in the database and returns the number of affected rows
      * @param statistic user that should be updated
      */
-    public updateStatistic(statistic: Statistic): Promise<number> {
+    public async updateStatistic(statistic: Statistic): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(statistic);
-        return this.update(attributes);
+        return await this.update(attributes);
     }
 
     /**

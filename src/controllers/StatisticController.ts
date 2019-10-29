@@ -95,8 +95,6 @@ router.get("/:id", authenticationMiddleware, [
 router.put("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric")),
 
-    check("_id").isNumeric().withMessage(rVM("id", "numeric")),
-
     check("_startTime")
         .isISO8601().withMessage(rVM("date", "invalid"))
         .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(rVM("date", "wrong_order")),
@@ -120,14 +118,14 @@ router.put("/:id", authenticationMiddleware, [
         const affectedRows = await statisticFacade.updateStatistic(statistic);
 
         if (affectedRows <= 0) { // check amount of affected rows
-            logEndpoint(controllerName, `Statistic with id ${statistic.id} couldn't be updated!`, req);
+            logEndpoint(controllerName, `Statistic with id ${req.params.id} couldn't be updated!`, req);
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik konnte nicht aktualisiert werden!`)
-            ], 400);
+            ]);
         }
 
-        logEndpoint(controllerName, `Statistic with id ${statistic.id} was successfully updated!`, req);
+        logEndpoint(controllerName, `Statistic with id ${req.params.id} was successfully updated!`, req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

@@ -1,10 +1,15 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { dropTables, runMigrations, seedStatistics, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { statistic } from "../src/seeds/statistics";
+import { UserFacade } from "../src/db/entity/user/UserFacade";
+import * as bcrypt from "bcryptjs";
+import { SmtpLogFacade } from "../src/db/entity/log/SmtpLogFacade";
+import moment = require("moment");
+import { StatisticFacade } from "../src/db/entity/game/StatisticFacade";
 
 describe("StatisticController Tests", () => {
     describe("GET /statistics/:id", () => {
@@ -96,6 +101,244 @@ describe("StatisticController Tests", () => {
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+    });
+
+    describe("PUT /statistics/:id", () => {
+        const endpoint = "/statistics";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        beforeAll(async () => {
+            await dropTables();
+            await runMigrations();
+        }, timeout);
+
+        beforeEach(async () => {
+            return truncateTables();
+        });
+
+        beforeEach(async () => {
+            await seedUsers();
+            return seedStatistics();
+        });
+
+        it("successfully update statistic", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const startTime = new Date();
+            const endTime = moment().add(1, "hour").toDate();
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: startTime,
+                    _endTime: endTime
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("statistic");
+            expect(res.body._data).toHaveProperty("token");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            // check if statistic was updated
+            const statisticFacade = new StatisticFacade();
+            const dbStatistic = await statisticFacade.getById(statistic.id);
+
+            expect(dbStatistic).not.toBeUndefined();
+
+        }, timeout);
+
+        it("try to update statistic without authentication", async () => {
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: new Date(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with an expired token", async () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: new Date(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + token)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with no id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/")
+                .send({
+                    _startTime: new Date(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("error");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with no start time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _endTime: new Date()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with no end time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: new Date(),
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with an invalid id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/invalid")
+                .send({
+                    _startTime: new Date(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with an invalid start time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: "invalid",
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with an invalid end time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: new Date(),
+                    _endTime: "invalid"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic without any data", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 3)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic but startTime is after endTime", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + statistic.id)
+                .send({
+                    _startTime: moment().add(2, "hour").toDate(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to update statistic with a not existing id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + 9999)
+                .send({
+                    _startTime: new Date(),
+                    _endTime: moment().add(1, "hour").toDate()
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
         }, timeout);
     });
 
