@@ -175,6 +175,15 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
     const therapist = new Therapist().deserialize(req.body);
     try {
+        // check if therapist exists
+        if (!therapist) {
+            logEndpoint(controllerName, `Therapist with id ${req.params.id} was not found!`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${req.params.id} wurde nicht gefunden!`)
+            ]);
+        }
+
         const therapistPatient = new TherapistPatient();
         therapistPatient.therapistId = therapist.id;
 
