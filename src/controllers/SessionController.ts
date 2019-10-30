@@ -28,6 +28,9 @@ import {
   checkTherapistPermission
 } from "../util/middleware/permissionMiddleware";
 import moment from "moment";
+import { GameFacade } from "../db/entity/game/GameFacade";
+import { PatientFacade } from "../db/entity/user/PatientFacade";
+import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 const router = express.Router();
 
 const controllerName = "SessionController";
@@ -286,6 +289,10 @@ router.post(
       return failedValidation400Response(req, res);
     }
 
+    const gameFacade = new GameFacade();
+    const patientFacade = new PatientFacade();
+    const gameSettingFacade = new GameSettingFacade();
+
     const sessionFacade = new SessionFacade();
     const session = new Session().deserialize(req.body);
     session.date = new Date();
@@ -298,10 +305,38 @@ router.post(
       .toDate();
 
     try {
+      // check if game exists
+      const game = await gameFacade.getById(req.body._gameId);
+      if (!game) { // game does not exist
+          logEndpoint(controllerName, `Game with id ${req.body._gameId} was not found!`, req);
+
+          return http4xxResponse(res, [
+            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Spiel mit ID ${req.body._gameId} wurde nicht gefunden!`)
+          ]);
+      }
+
+      // check if patient exists
+      const patient = await patientFacade.getById(req.body._patientId);
+      if (!patient) { // game does not exist
+        logEndpoint(controllerName, `Patient with id ${req.body._patientId} was not found!`, req);
+
+        return http4xxResponse(res, [
+          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIm mit ID ${req.body._patientId} wurde nicht gefunden!`)
+        ]);
+      }
+
+      // check if game setting exists
+      const gameSetting = await gameSettingFacade.getById(req.body._gameSettingId);
+      if (!gameSetting) { // game does not exist
+        logEndpoint(controllerName, `GameSetting with id ${req.body._gameSettingId} was not found!`, req);
+
+        return http4xxResponse(res, [
+          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Spieleinstelung mit ID ${req.body._gameSettingId} wurde nicht gefunden!`)
+        ]);
+      }
+
       // insert statistic
-      const insertedStatistic = await statisticFacade.insertStatistic(
-        statistic
-      );
+      const insertedStatistic = await statisticFacade.insertStatistic(statistic);
 
       logEndpoint(
         controllerName,

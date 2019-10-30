@@ -1,11 +1,18 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import {
+    dropTables,
+    runMigrations, seedDifficulties, seedGames,
+    seedGameSettings,
+    seedSessions, seedStatistics,
+    seedTables,
+    seedUsers,
+    truncateTables
+} from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { unacceptedTherapist, validPatient, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { session } from "../src/seeds/sessions";
-import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 import { SessionFacade } from "../src/db/entity/game/SessionFacade";
 import { game } from "../src/seeds/games";
 import { gameSettings } from "../src/seeds/gameSettings";
@@ -14,14 +21,24 @@ describe("SessionController Tests", () => {
 
     describe("GET /sessions/:id", () => {
         const endpoint = "/sessions";
-        const timeout = 10000;
+        const timeout = 20000;
         let authenticationToken: string;
 
+        // clear database
         beforeAll(async () => {
             await dropTables();
             await runMigrations();
             await truncateTables();
-            await seedTables();
+        }, timeout);
+
+        // seed tables
+        beforeAll(async () => {
+            await seedDifficulties();
+            await seedGames();
+            await seedGameSettings();
+            await seedUsers();
+            await seedStatistics();
+            await seedSessions();
         }, timeout);
 
         it("fetch session with id", async () => {
@@ -197,23 +214,24 @@ describe("SessionController Tests", () => {
 
         // drop tables
         beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
+            await dropTables();
             return runMigrations();
-        });
+        }, timeout);
 
         // truncate tables
         beforeEach(async () => {
             return truncateTables();
-        });
+        }, timeout);
 
         // seed tables
         beforeEach(async () => {
-            return seedTables();
-        });
+            await seedDifficulties();
+            await seedGames();
+            await seedGameSettings();
+            await seedUsers();
+            await seedStatistics();
+            await seedSessions();
+        }, timeout);
 
         it("successfully delete session", async () => {
             authenticationToken = await authenticate(validTherapist);
@@ -327,11 +345,7 @@ describe("SessionController Tests", () => {
 
         // drop tables
         beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
+            await dropTables();
             return runMigrations();
         });
 
@@ -342,7 +356,12 @@ describe("SessionController Tests", () => {
 
         // seed tables
         beforeEach(async () => {
-            return seedTables();
+            await seedDifficulties();
+            await seedGames();
+            await seedGameSettings();
+            await seedUsers();
+            await seedStatistics();
+            await seedSessions();
         });
 
         it("successfully create new session", async () => {
@@ -590,14 +609,54 @@ describe("SessionController Tests", () => {
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(500);
+                .expect(404);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
         }, timeout);
 
+        it("try to create new session with a not existing patient id", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: 9999,
+                        _gameSettingId: gameSettings.id
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with a not existing gameSetting id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: 9999
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
 
     });
 });
