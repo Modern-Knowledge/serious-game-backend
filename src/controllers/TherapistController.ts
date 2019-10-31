@@ -160,6 +160,8 @@ router.post("/", [
  * - token: authentication token
  */
 router.put("/:id", authenticationMiddleware, checkUserPermission, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric")),
+
     check("_email").normalizeEmail()
         .not().isEmpty().withMessage(rVM("email", "empty"))
         .isEmail().withMessage(rVM("email", "invalid"))

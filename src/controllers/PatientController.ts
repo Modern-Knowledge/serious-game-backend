@@ -217,21 +217,32 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
  * - id: id of the patient
  *
  * body:
- * - id: patient id
  * - email: email of the patient
  * - forename: forename of the patient
  * - lastname: lastname of the patient
- * - gender: gender of the patient
- * - status: status of patient
- * - birthday: birthday of patient
  * - info: info about the patient
  *
  * response:
  * - patient: updated patient
  * - token: authentication token
  */
-router.put("/:id", authenticationMiddleware, checkPatientPermission, checkUserPermission, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
+router.put("/:id", authenticationMiddleware, checkPatientPermission, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric")),
+
+    check("_email").normalizeEmail()
+        .not().isEmpty().withMessage(rVM("email", "empty"))
+        .isEmail().withMessage(rVM("email", "invalid"))
+        .custom(emailValidator),
+
+    check("_forename").escape().trim()
+        .not().isEmpty().withMessage(rVM("forename", "empty")),
+
+    check("_lastname").escape().trim()
+        .not().isEmpty().withMessage(rVM("lastname", "empty")),
+
+    check("_info").escape().trim()
+        .not().isEmpty().withMessage(rVM("info", "empty")),
+
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
