@@ -1,4 +1,5 @@
 import { SQLAttribute } from "./SQLAttribute";
+import { SQLValueAttribute } from "./SQLValueAttribute";
 
 /**
  * represents a collection of sql attributes
@@ -12,11 +13,15 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
    * @param attribute
    */
   public addAttribute(attribute: AttributeType): void {
+    if (attribute instanceof SQLValueAttribute && attribute.value === undefined) {
+      return;
+    }
+
     this._attributes.push(attribute);
   }
 
   /**
-   * return all attriattributesbutes
+   * return all attributes
    */
   public getAttributes(): AttributeType[] {
     if (this._attributes !== undefined) {

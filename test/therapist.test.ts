@@ -6,7 +6,13 @@ import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse"
 import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 import * as bcrypt from "bcryptjs";
 import { Status } from "../src/lib/enums/Status";
-import { unacceptedTherapist, validAdminTherapist, validPatient, validTherapist } from "../src/seeds/users";
+import {
+    unacceptedTherapist,
+    validAdminTherapist,
+    validPatient,
+    validPatient1,
+    validTherapist
+} from "../src/seeds/users";
 import { Roles } from "../src/lib/enums/Roles";
 
 describe("TherapistController Tests", () => {
@@ -558,12 +564,13 @@ describe("TherapistController Tests", () => {
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _id: validTherapist.id,
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _role: Roles.USER,
-                        _status: Status.ACTIVE
+                        _email: "newtherapist@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -576,7 +583,7 @@ describe("TherapistController Tests", () => {
             expect(res.body._data).toHaveProperty("therapist");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
-            const therapistId = res.body._data.user._id;
+            const therapistId = res.body._data.therapist._id;
 
             const therapistFacade = new TherapistFacade();
             const therapist = await therapistFacade.getById(therapistId);
@@ -584,12 +591,9 @@ describe("TherapistController Tests", () => {
             expect(therapist).not.toBeUndefined();
 
             if (therapist) {
-                expect(therapist.failedLoginAttempts).toEqual(0);
-                expect(therapist.accepted).toBeFalsy();
-                expect(therapist.status).toEqual(Status.ACTIVE);
-
-                const compPasswords = bcrypt.compareSync("123456", therapist.password);
-                expect(compPasswords).toBeTruthy();
+                expect(therapist.email).toEqual("newtherapist@mail.com");
+                expect(therapist.forename).toEqual("Neuer Vorname");
+                expect(therapist.lastname).toEqual("Neuer Nachname");
             }
         }, timeout);
 
@@ -597,12 +601,13 @@ describe("TherapistController Tests", () => {
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _id: validTherapist.id,
-                        _email: "newTherapist@mail.com",
+                        _email: "newtherapist@mail.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _role: Roles.USER,
-                        _status: Status.ACTIVE
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
                 .set("Accept", "application/json")
@@ -619,12 +624,13 @@ describe("TherapistController Tests", () => {
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _id: validTherapist.id,
-                        _email: "newTherapist@mail.com",
+                        _email: "newtherapist@mail.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _role: Roles.USER,
-                        _status: Status.ACTIVE
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
                 .set("Authorization", "Bearer " + token)
@@ -642,12 +648,13 @@ describe("TherapistController Tests", () => {
             const res = await request(app).put(endpoint + "/" + validAdminTherapist.id)
                 .send(
                     {
-                        _id: validTherapist.id,
-                        _email: "newTherapist@mail.com",
+                        _email: "newtherapist@mail.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _role: Roles.USER,
-                        _status: Status.ACTIVE
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -659,20 +666,41 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB014
-        it("try to register therapist with invalid email", async () => {
-            const res = await request(app).post(endpoint)
+        it("try to update therapist without an id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/")
                 .send(
                     {
-                        _email: "invalidEmail",
+                        _email: "mail@example.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("error");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update therapist without an email", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
+                .send(
+                    {
+                        _forename: "Vorname",
+                        _lastname: "Nachname",
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(400);
@@ -681,20 +709,17 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB015
-        it("try to register therapist with already existing email", async () => {
-            const res = await request(app).post(endpoint)
+        it("try to update therapist without an forename", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _email: validTherapist.email,
-                        _forename: "Vorname",
+                        _email: "mail@example.com",
                         _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
                     }
                 )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(400);
@@ -703,20 +728,17 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB016
-        it("try to register therapist where password and password_confirmation do not match", async () => {
-            const res = await request(app).post(endpoint)
+        it("try to update therapist without an lastname", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _email: "newTherapist@mail.com",
+                        _email: "mail@example.com",
                         _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "1234567",
-                        _role: Roles.USER,
-                        therapist: "true"
                     }
                 )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(400);
@@ -725,42 +747,22 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB017
-        it("try to register therapist with password that is too short", async () => {
-            const res = await request(app).post(endpoint)
+        it("try to update therapist with an invalid email", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
-                        _email: "newTherapist@mail.com",
+                        _email: "invalid",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _password: "12345",
-                        password_confirmation: "12345",
-                        _role: Roles.USER,
-                        therapist: "true"
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
-        }, timeout);
-
-        // SGB018
-        it("try to register therapist where therapist flag set to false", async () => {
-            const res = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "false"
-                    }
-                )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(400);
@@ -769,282 +771,54 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB019
-        it("try to register a new therapist without the therapist flag", async () => {
-            const res = await request(app).post(endpoint)
+        it("try to update therapist with a not existing id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + 9999)
                 .send(
                     {
-                        _email: "newTherapist@mail.com",
+                        _email: "mail@example.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
                     }
                 )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(400);
+                .expect(403);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: ""
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB020
-        it("try to register a new therapist without an email", async () => {
-            const res = await request(app).post(endpoint)
+        /*it("try to update therapist with an invalid patient list", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
                     {
+                        _email: "mail@example.com",
                         _forename: "Vorname",
                         _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
+                        _patients: [
+                            "validPatient",
+                            "validPatient1"
+                        ]
                     }
                 )
+                .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(400);
+                .expect(500);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout); */
 
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-        }, timeout);
-
-        // SGB021
-        it("try to register a new therapist without a forename", async () => {
-            const res = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-        }, timeout);
-
-        // SGB022
-        it("try to register a new therapist without a lastname", async () => {
-            const res = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "",
-                        _password: "123456",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-        }, timeout);
-
-        // SGB023
-        it("try to register a new therapist without a password", async () => {
-            const res = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "",
-                        password_confirmation: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-        }, timeout);
-
-        // SGB024
-        it("try to register a new therapist without a password_confirmation", async () => {
-            const res = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "123456",
-                        password_confirmation: "",
-                        _role: Roles.USER,
-                        therapist: "true"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-        }, timeout);
-
-        // SGB024
-        it("try to register a new therapist without any data", async () => {
-            const res = await request(app).post(endpoint)
-                .send()
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 6)).toBeTruthy();
-
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "",
-                        _forename: "",
-                        _lastname: "",
-                        _password: "",
-                        password_confirmation: "",
-                        _role: Roles.USER,
-                        therapist: ""
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 6)).toBeTruthy();
-
-        }, timeout);
     });
 
     describe("DELETE /therapists/:id", () => {

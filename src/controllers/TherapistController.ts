@@ -138,7 +138,7 @@ router.post("/", [
 });
 
 /**
- * todo: validation
+ * todo: validation patients
  *
  * PUT /:id
  *
@@ -150,11 +150,9 @@ router.post("/", [
  * - id: therapist id
  *
  * body:
- * - id: therapist id
  * - email: email of therapist
  * - forename: forename of therapist
  * - lastname: lastname of therapists
- * - status: status of therapist
  * - patients: array of patients
  *
  * response:
@@ -162,7 +160,17 @@ router.post("/", [
  * - token: authentication token
  */
 router.put("/:id", authenticationMiddleware, checkUserPermission, [
-    check("id").isNumeric().withMessage(rVM("id", "numeric"))
+    check("_email").normalizeEmail()
+        .not().isEmpty().withMessage(rVM("email", "empty"))
+        .isEmail().withMessage(rVM("email", "invalid"))
+        .custom(emailValidator),
+
+    check("_forename").escape().trim()
+        .not().isEmpty().withMessage(rVM("forename", "empty")),
+
+    check("_lastname").escape().trim()
+        .not().isEmpty().withMessage(rVM("lastname", "empty")),
+
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -173,15 +181,18 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
     const therapist = new Therapist().deserialize(req.body);
+    const dbTherapist = therapistFacade.getById(req.params.id);
     try {
         // check if therapist exists
-        if (!therapist) {
+        if (!dbTherapist) {
             logEndpoint(controllerName, `Therapist with id ${req.params.id} was not found!`, req);
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${req.params.id} wurde nicht gefunden!`)
             ]);
         }
+
+        therapist.id = req.params.id;
 
         const therapistPatient = new TherapistPatient();
         therapistPatient.therapistId = therapist.id;
@@ -201,8 +212,9 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         const filter = therapistFacade.filter;
         filter.addFilterCondition("therapist_id", therapist.id);
+        therapistFacade.userFacadeFilter.addFilterCondition("id", therapist.id);
 
-        await therapistFacade.updateTherapist(therapist);
+        await therapistFacade.updateUserTherapist(therapist);
 
         logEndpoint(controllerName, `Updated therapist with id ${therapist.id}!`, req);
 
