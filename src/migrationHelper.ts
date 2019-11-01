@@ -1,5 +1,3 @@
-
-
 import { Therapist } from "./lib/models/Therapist";
 
 const marv = require("marv/api/promise"); // <-- Promise API
@@ -22,22 +20,45 @@ import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
 import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
 import {
-    lockedTherapist,
-    tooManyFailedLoginAttemptsTherapist,
-    unacceptedTherapist,
-    validAdminTherapist, validPatient, validPatient1,
-    validTherapist
+  lockedTherapist,
+  tooManyFailedLoginAttemptsTherapist,
+  unacceptedTherapist,
+  validAdminTherapist,
+  validPatient,
+  validPatient1,
+  validTherapist
 } from "./seeds/users";
 import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
 import { WordFacade } from "./db/entity/word/WordFacade";
-import { difficultyEasy, difficultyHard, difficultyMedium } from "./seeds/difficulties";
+import {
+  difficultyEasy,
+  difficultyHard,
+  difficultyMedium
+} from "./seeds/difficulties";
 import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
-import { bread, care, chilledGoods, deepFrozen, drinks, household, sweets, vegetables } from "./seeds/foodCategories";
+import {
+  bread,
+  care,
+  chilledGoods,
+  deepFrozen,
+  drinks,
+  household,
+  sweets,
+  vegetables
+} from "./seeds/foodCategories";
 import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
 import { egg, oil } from "./seeds/ingredients";
 import { game, game2, game3, game4 } from "./seeds/games";
-import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
-import { recipeIngredient1, recipeIngredient2 } from "./seeds/recipeIngredients";
+import {
+  gameSettings,
+  gameSettings1,
+  gameSettings2,
+  gameSettings3
+} from "./seeds/gameSettings";
+import {
+  recipeIngredient1,
+  recipeIngredient2
+} from "./seeds/recipeIngredients";
 import { helptext } from "./seeds/helptexts";
 import { errortext } from "./seeds/errortexts";
 import { word } from "./seeds/words";
@@ -50,9 +71,18 @@ import { session } from "./seeds/sessions";
 import { ImageFacade } from "./db/entity/image/ImageFacade";
 import { image } from "./seeds/images";
 import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
-import { notSentSmtpLog, sentSmtpLog, simulatedSmtpLog } from "./seeds/smtpLogs";
-import { LogFacade } from './db/entity/log/LogFacade'
-import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from './seeds/logs'
+import {
+  notSentSmtpLog,
+  sentSmtpLog,
+  simulatedSmtpLog
+} from "./seeds/smtpLogs";
+import { LogFacade } from "./db/entity/log/LogFacade";
+import {
+  debugLog,
+  errorLogWithUser,
+  infoLogWithUser,
+  verboseLogWithUser
+} from "./seeds/logs";
 
 /**
  * runs multiple migrations based on .env variables
@@ -63,42 +93,71 @@ import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from 
  * - seedTables: seed tables with test data
  */
 export async function migrate(): Promise<void> {
-    if (inProduction() || inTestMode()) {
-        return;
-    }
+  if (inProduction() || inTestMode()) {
+    return;
+  }
 
-    const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
-    const runDropTable     = Number(process.env.RUN_DROP_TABLE) || 0;
-    const runMigration     = Number(process.env.RUN_MIGRATIONS) || 0;
-    const runSeed          = Number(process.env.RUN_SEED) || 0;
+  const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
+  const runDropTable = Number(process.env.RUN_DROP_TABLE) || 0;
+  const runMigration = Number(process.env.RUN_MIGRATIONS) || 0;
+  const runSeed = Number(process.env.RUN_SEED) || 0;
 
-    if (runTruncateTable === 1) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate tables!`);
-        await truncateTables();
-    } else {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running truncate tables is skipped!`);
-    }
+  if (runTruncateTable === 1) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} Truncate tables!`
+    );
+    await truncateTables();
+  } else {
+    logger.warn(
+      `${loggerString(
+        __dirname,
+        "",
+        "",
+        __filename
+      )} Running truncate tables is skipped!`
+    );
+  }
 
-    if (runDropTable === 1) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} Drop tables!`);
-        await dropTables();
-    } else {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running drop tables is skipped!`);
-    }
+  if (runDropTable === 1) {
+    logger.info(`${loggerString(__dirname, "", "", __filename)} Drop tables!`);
+    await dropTables();
+  } else {
+    logger.warn(
+      `${loggerString(
+        __dirname,
+        "",
+        "",
+        __filename
+      )} Running drop tables is skipped!`
+    );
+  }
 
-    if (runMigration === 1) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} Running Migrations!`);
-        await runMigrations();
-    } else {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`);
-    }
+  if (runMigration === 1) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} Running Migrations!`
+    );
+    await runMigrations();
+  } else {
+    logger.warn(
+      `${loggerString(
+        __dirname,
+        "",
+        "",
+        __filename
+      )} Running migrations is skipped!`
+    );
+  }
 
-    if (runSeed === 1) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} Seeding tables!`);
-        await seedTables();
-    } else {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`);
-    }
+  if (runSeed === 1) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} Seeding tables!`
+    );
+    await seedTables();
+  } else {
+    logger.warn(
+      `${loggerString(__dirname, "", "", __filename)} Seeding is skipped!`
+    );
+  }
 }
 
 /**
@@ -106,67 +165,99 @@ export async function migrate(): Promise<void> {
  * successful migrations are stored in migrations table
  */
 export async function runMigrations(): Promise<void> {
-    const directory = path.resolve("migrations");
+  const directory = path.resolve("migrations");
 
-    logger.info(`${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`);
+  logger.info(
+    `${loggerString(
+      __dirname,
+      "",
+      "",
+      __filename
+    )} Running migrations from ${directory}!`
+  );
 
-    const options = {
-        table: "migrations",
+  const options = {
+    table: "migrations",
 
-        connection: {
-            host: !inTestMode() ? process.env.DB_HOST : process.env.TEST_DB_HOST,
-            port: 3306,
-            database: !inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE,
-            user: !inTestMode() ? process.env.DB_USER : process.env.TEST_DB_USER,
-            password: !inTestMode() ? process.env.DB_PASS : process.env.TEST_DB_PASS
-        }
-    };
+    connection: {
+      host: !inTestMode() ? process.env.DB_HOST : process.env.TEST_DB_HOST,
+      port: 3306,
+      database: !inTestMode()
+        ? process.env.DB_DATABASE
+        : process.env.TEST_DB_DATABASE,
+      user: !inTestMode() ? process.env.DB_USER : process.env.TEST_DB_USER,
+      password: !inTestMode() ? process.env.DB_PASS : process.env.TEST_DB_PASS
+    }
+  };
 
-    const migrations = await marv.scan(directory);
-    await marv.migrate(migrations, driver(options));
+  const migrations = await marv.scan(directory);
+  await marv.migrate(migrations, driver(options));
 
-    logger.info(`${loggerString(__dirname, "", "", __filename)} Completed running migrations!`);
-    return;
+  logger.info(
+    `${loggerString(
+      __dirname,
+      "",
+      "",
+      __filename
+    )} Completed running migrations!`
+  );
+  return;
 }
 
 /**
  * truncate every table in the application
  */
 export async function truncateTables(): Promise<void> {
-    const results = await getTables();
+  const results = await getTables();
 
-    if (results.length == 0) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to truncate!`);
-        return;
-    }
+  if (results.length == 0) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} No tables to truncate!`
+    );
+    return;
+  }
 
-    logger.info(`${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`);
+  logger.info(
+    `${loggerString(__dirname, "", "", __filename)} Truncate ${
+      results.length
+    } tables!`
+  );
 
-    let stmt = "";
-    for (const item of results) {
-        stmt += `TRUNCATE TABLE ${item}; `;
-    }
-    await databaseConnection.query(`SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`);
+  let stmt = "";
+  for (const item of results) {
+    stmt += `TRUNCATE TABLE ${item}; `;
+  }
+  await databaseConnection.query(
+    `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
+  );
 }
 
 /**
  * drop every table in the application
  */
 export async function dropTables(): Promise<void> {
-    const results = await getTables();
+  const results = await getTables();
 
-    if (results.length == 0) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to drop!`);
-        return;
-    }
+  if (results.length == 0) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} No tables to drop!`
+    );
+    return;
+  }
 
-    logger.info(`${loggerString(__dirname, "", "", __filename)} Drop ${results.length} tables!`);
+  logger.info(
+    `${loggerString(__dirname, "", "", __filename)} Drop ${
+      results.length
+    } tables!`
+  );
 
-    let stmt = "";
-    for (const item of results) {
-        stmt += `DROP TABLE ${item}; `;
-    }
-    await databaseConnection.query(`SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`);
+  let stmt = "";
+  for (const item of results) {
+    stmt += `DROP TABLE ${item}; `;
+  }
+  await databaseConnection.query(
+    `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
+  );
 }
 
 /**
@@ -174,165 +265,201 @@ export async function dropTables(): Promise<void> {
  *
  */
 export async function seedTables(): Promise<void> {
-    const results = await getTables();
-    if (results.length == 0) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} No tables to seed!`);
-        return;
-    }
+  const results = await getTables();
+  if (results.length == 0) {
+    logger.info(
+      `${loggerString(__dirname, "", "", __filename)} No tables to seed!`
+    );
+    return;
+  }
 
-    await seedUsers();
-    await seedPatientSettings();
-    await seedDifficulties();
-    await seedSeverities();
-    await seedRecipes();
-    await seedIngredients();
-    await seedRecipeIngredientFacade();
-    await seedGames();
-    await seedGameSettings();
-    await seedHelptexts();
-    await seedErrortexts();
-    await seedHelptextGames();
-    await seedWords();
-    await seedStatistics();
-    await seedSessions();
-    await seedImages();
-    await seedSmtpLogs();
-    await seedLogs();
+  await seedUsers();
+  await seedPatientSettings();
+  await seedDifficulties();
+  await seedRecipes();
+  await seedFoodCategories();
+  await seedSeverities();
+  await seedIngredients();
+  await seedRecipeIngredientFacade();
+  await seedGames();
+  await seedGameSettings();
+  await seedHelptexts();
+  await seedErrortexts();
+  await seedHelptextGames();
+  await seedWords();
+  await seedStatistics();
+  await seedSessions();
+  await seedImages();
+  await seedSmtpLogs();
+  await seedLogs();
 }
 
 export async function seedPatientSettings() {
-    const patientSettingFacade = new PatientSettingFacade();
-    await patientSettingFacade.insertPatientSetting(pSettings);
+  const patientSettingFacade = new PatientSettingFacade();
+  await patientSettingFacade.insertPatientSetting(pSettings);
 }
 
 export async function seedImages() {
-    const imageFacade = new ImageFacade();
-    const imageArr = [image];
-    for (const item of imageArr) {
-        await imageFacade.insertImage(item);
-    }
+  const imageFacade = new ImageFacade();
+  const imageArr = [image];
+  for (const item of imageArr) {
+    await imageFacade.insertImage(item);
+  }
 }
 
 export async function seedSessions() {
-    const sessionFacade = new SessionFacade();
-    const sessionsArr = [session];
-    for (const item of sessionsArr) {
-        await sessionFacade.insertSession(item);
-    }
+  const sessionFacade = new SessionFacade();
+  const sessionsArr = [session];
+  for (const item of sessionsArr) {
+    await sessionFacade.insertSession(item);
+  }
 }
 
 export async function seedStatistics() {
-    const statisticFacade = new StatisticFacade();
-    const statisticsArr = [statistic, statistic1];
-    for (const item of statisticsArr) {
-        await statisticFacade.insertStatistic(item);
-    }
+  const statisticFacade = new StatisticFacade();
+  const statisticsArr = [statistic, statistic1];
+  for (const item of statisticsArr) {
+    await statisticFacade.insertStatistic(item);
+  }
 }
 
 export async function seedWords() {
-    const wordFacade = new WordFacade();
-    await wordFacade.insertWord(word);
+  const wordFacade = new WordFacade();
+  await wordFacade.insertWord(word);
 }
 
 export async function seedErrortexts() {
-    const errorTextFacade = new ErrortextFacade();
-    await errorTextFacade.insertErrortext(errortext);
+  const errorTextFacade = new ErrortextFacade();
+  await errorTextFacade.insertErrortext(errortext);
 }
 
 export async function seedHelptextGames() {
-    const helptextGameFacade = new HelptextsGamesFacade();
-    await helptextGameFacade.insertHelptextGames(helptextGames);
+  const helptextGameFacade = new HelptextsGamesFacade();
+  await helptextGameFacade.insertHelptextGames(helptextGames);
 }
 
 export async function seedHelptexts() {
-    const helptextFacade = new HelptextFacade();
-    await helptextFacade.insertHelptext(helptext);
+  const helptextFacade = new HelptextFacade();
+  await helptextFacade.insertHelptext(helptext);
 }
 
 export async function seedGameSettings() {
-    const gameSettingFacade = new GameSettingFacade();
-    const gameSettingsArr = [gameSettings, gameSettings1, gameSettings2, gameSettings3];
-    for (const item of gameSettingsArr) {
-        await gameSettingFacade.insertGameSetting(item);
-    }
+  const gameSettingFacade = new GameSettingFacade();
+  const gameSettingsArr = [
+    gameSettings,
+    gameSettings1,
+    gameSettings2,
+    gameSettings3
+  ];
+  for (const item of gameSettingsArr) {
+    await gameSettingFacade.insertGameSetting(item);
+  }
 }
 
 export async function seedGames() {
-    const gameFacade = new GameFacade();
-    const games = [game, game2, game3, game4];
-    for (const item of games) {
-        await gameFacade.insertGame(item);
-    }
+  const gameFacade = new GameFacade();
+  const games = [game, game2, game3, game4];
+  for (const item of games) {
+    await gameFacade.insertGame(item);
+  }
 }
 
 export async function seedIngredients() {
-    const ingredientFacade = new IngredientFacade();
-    const ingredients = [egg, oil];
-    for (const item of ingredients) {
-        await ingredientFacade.insertIngredient(item);
-    }
+  const ingredientFacade = new IngredientFacade();
+  const ingredients = [egg, oil];
+  for (const item of ingredients) {
+    await ingredientFacade.insertIngredient(item);
+  }
 }
 
 export async function seedRecipeIngredientFacade() {
-    const recipeIngredientFacade = new RecipeIngredientFacade();
-    const recipeIngredients = [recipeIngredient1, recipeIngredient2];
-    for (const item of recipeIngredients) {
-        await recipeIngredientFacade.insertRecipeIngredient(item);
-    }
+  const recipeIngredientFacade = new RecipeIngredientFacade();
+  const recipeIngredients = [recipeIngredient1, recipeIngredient2];
+  for (const item of recipeIngredients) {
+    await recipeIngredientFacade.insertRecipeIngredient(item);
+  }
 }
 
 export async function seedRecipes() {
-    const recipeFacade = new RecipeFacade();
-    const recipes = [scrambledEgg, roastPork, proteinShake];
-    for (const item of recipes) {
-        await recipeFacade.insertRecipe(item);
-    }
+  const recipeFacade = new RecipeFacade();
+  const recipes = [scrambledEgg, roastPork, proteinShake];
+  for (const item of recipes) {
+    await recipeFacade.insertRecipe(item);
+  }
+}
+
+export async function seedFoodCategories() {
+  const foodCategoryFacade = new FoodCategoryFacade();
+  const foodCategories = [
+    vegetables,
+    bread,
+    drinks,
+    chilledGoods,
+    deepFrozen,
+    sweets,
+    care,
+    household
+  ];
+  for (const item of foodCategories) {
+    await foodCategoryFacade.insertFoodCategory(item);
+  }
 }
 
 export async function seedSeverities() {
-    const foodCategoryFacade = new FoodCategoryFacade();
-    const foodCategories = [vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household];
-    for (const item of foodCategories) {
-        await foodCategoryFacade.insertFoodCategory(item);
-    }
+  const severityFacade = new SeverityFacade();
+  const severities = [severityEasy, severityMedium, severityHard];
+  for (const item of severities) {
+    await severityFacade.insertSeverity(item);
+  }
 }
 
 export async function seedDifficulties() {
-    const difficultyFacade = new DifficultyFacade();
-    const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
-    for (const item of difficulties) {
-        await difficultyFacade.insertDifficulty(item);
-    }
+  const difficultyFacade = new DifficultyFacade();
+  const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
+  for (const item of difficulties) {
+    await difficultyFacade.insertDifficulty(item);
+  }
 }
 
 export async function seedUsers(): Promise<void> {
-    const therapistFacade = new TherapistFacade();
-    const therapists = [validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist];
-    for (const item of therapists) {
-        await therapistFacade.insertTherapist(item);
-    }
+  const therapistFacade = new TherapistFacade();
+  const therapists = [
+    validAdminTherapist,
+    validTherapist,
+    unacceptedTherapist,
+    lockedTherapist,
+    tooManyFailedLoginAttemptsTherapist
+  ];
+  for (const item of therapists) {
+    await therapistFacade.insertTherapist(item);
+  }
 
-    const patientFacade = new PatientFacade();
-    const patients = [validPatient, validPatient1];
-    for (const item of patients) {
-        await patientFacade.insertPatient(item);
-    }
+  const patientFacade = new PatientFacade();
+  const patients = [validPatient, validPatient1];
+  for (const item of patients) {
+    await patientFacade.insertPatient(item);
+  }
 }
 
-export async function seedSmtpLogs(): Promise<void>  {
-    const smtpLogFacade = new SmtpLogFacade();
-    const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
-    for (const item of smtpLogsArr) {
-        await smtpLogFacade.insertLog(item);
-    }
+export async function seedSmtpLogs(): Promise<void> {
+  const smtpLogFacade = new SmtpLogFacade();
+  const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
+  for (const item of smtpLogsArr) {
+    await smtpLogFacade.insertLog(item);
+  }
 }
 
-export async function seedLogs(): Promise<void>  {
-    const logFacade = new LogFacade();
-    const logArr = [debugLog, infoLogWithUser, errorLogWithUser, verboseLogWithUser];
-    for (const item of logArr) {
-        await logFacade.insertLog(item);
-    }
+export async function seedLogs(): Promise<void> {
+  const logFacade = new LogFacade();
+  const logArr = [
+    debugLog,
+    infoLogWithUser,
+    errorLogWithUser,
+    verboseLogWithUser
+  ];
+  for (const item of logArr) {
+    await logFacade.insertLog(item);
+  }
 }
 
 /**
@@ -341,9 +468,20 @@ export async function seedLogs(): Promise<void>  {
  * prodMode -> choose tables from prod_db
  */
 async function getTables(): Promise<string[]> {
-    logger.debug(`${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`);
+  logger.debug(
+    `${loggerString(
+      __dirname,
+      "",
+      "",
+      __filename
+    )} Retrieve all tables of the application!`
+  );
 
-    const results = await databaseConnection.query(`SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${!inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE}"`);
+  const results = await databaseConnection.query(
+    `SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${
+      !inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE
+    }"`
+  );
 
-    return results.map(value => value["table_name"]);
+  return results.map(value => value["table_name"]);
 }
