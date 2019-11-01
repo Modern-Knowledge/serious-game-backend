@@ -1,6 +1,14 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import {
+    dropTables,
+    runMigrations,
+    seedDifficulties,
+    seedRecipes,
+    seedTables,
+    seedUsers,
+    truncateTables
+} from '../src/migrationHelper'
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -14,10 +22,10 @@ describe("RecipeController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedDifficulties();
+            await seedRecipes();
         });
 
         it("fetch all recipes", async () => {
@@ -75,10 +83,10 @@ describe("RecipeController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedDifficulties();
+            await seedRecipes();
         });
 
         it("fetch recipe with specific id", async () => {

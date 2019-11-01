@@ -18,5 +18,4 @@ CREATE TABLE IF NOT EXISTS `users`
     UNIQUE INDEX `email_UNIQUE` (`email` ASC)
 )
     ENGINE = InnoDB
-    AUTO_INCREMENT = 1001
     DEFAULT CHARACTER SET = latin1;

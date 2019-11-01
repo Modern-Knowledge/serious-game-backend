@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { seedUsers, truncateTables } from "../src/migrationHelper";
 import { containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import {
@@ -18,16 +18,6 @@ describe("LoginController Tests", () => {
         const timeout = 100000;
         const endpoint = "/login";
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
         // truncate tables
         beforeEach(async () => {
             return truncateTables();
@@ -35,7 +25,7 @@ describe("LoginController Tests", () => {
 
         // seed tables
         beforeEach(async () => {
-            return seedTables();
+            return seedUsers();
         });
 
         // SGB001

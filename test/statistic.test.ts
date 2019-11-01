@@ -1,13 +1,10 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedStatistics, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedStatistics, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { statistic } from "../src/seeds/statistics";
-import { UserFacade } from "../src/db/entity/user/UserFacade";
-import * as bcrypt from "bcryptjs";
-import { SmtpLogFacade } from "../src/db/entity/log/SmtpLogFacade";
 import moment = require("moment");
 import { StatisticFacade } from "../src/db/entity/game/StatisticFacade";
 
@@ -18,10 +15,9 @@ describe("StatisticController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedStatistics();
         }, timeout);
 
         it("fetch statistic with specific id", async () => {
@@ -109,19 +105,11 @@ describe("StatisticController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
-        }, timeout);
-
         beforeEach(async () => {
-            return truncateTables();
-        });
-
-        beforeEach(async () => {
+            await truncateTables();
             await seedUsers();
-            return seedStatistics();
-        });
+            await seedStatistics();
+        }, timeout);
 
         it("successfully update statistic", async () => {
             authenticationToken = await authenticate(validTherapist);

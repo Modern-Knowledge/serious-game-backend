@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import * as bcrypt from "bcryptjs";
@@ -17,10 +17,8 @@ describe("PatientController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
         }, timeout);
 
         it("fetch all patients", async () => {
@@ -44,15 +42,6 @@ describe("PatientController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(401);
 
-            const res1 = await request(app).get(endpoint)
-                .set("Authorization", "")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
@@ -75,25 +64,11 @@ describe("PatientController Tests", () => {
         const timeout = 100000;
         const endpoint = "/patients";
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
-        // truncate tables
         beforeEach(async () => {
-            return truncateTables();
-        });
+            await truncateTables();
+            await seedUsers();
+        }, timeout);
 
-        // seed tables
-        beforeEach(async () => {
-            return seedTables();
-        });
 
         // SGB026
         it("register new patient with correct data", async () => {
@@ -423,24 +398,6 @@ describe("PatientController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-            const res1 = await request(app).post(endpoint)
-                .send(
-                    {
-                        _email: "newTherapist@mail.com",
-                        _forename: "Vorname",
-                        _lastname: "Nachname",
-                        _password: "",
-                        password_confirmation: "123456",
-                        therapist: "false"
-                    }
-                )
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(400);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
         }, timeout);
 
         // SGB037
@@ -519,25 +476,10 @@ describe("PatientController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
-        // truncate tables
         beforeEach(async () => {
-            return truncateTables();
-        });
-
-        // seed tables
-        beforeEach(async () => {
-            return seedTables();
-        });
+            await truncateTables();
+            await seedUsers();
+        }, timeout);
 
         it("successfully delete patient", async () => {
             authenticationToken = await authenticate(validPatient);
@@ -569,13 +511,6 @@ describe("PatientController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-            const res1 = await request(app).delete(endpoint + "/" + validPatient.id)
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
         it("try to delete patient with an expired token", async () => {
@@ -648,16 +583,6 @@ describe("PatientController Tests", () => {
         const timeout = 100000;
         const endpoint = "/patients";
         let authenticationToken;
-
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
 
         beforeEach(async () => {
             await truncateTables();

@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedUsers, truncateTables } from "../src/migrationHelper";
 import { containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import {
@@ -21,16 +21,6 @@ describe("PasswordResetController Tests", () => {
     describe("POST /password/reset", () => {
         const timeout = 100000;
         const endpoint = "/password/reset";
-
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
 
         beforeEach(async () => {
             await truncateTables();
@@ -164,14 +154,6 @@ describe("PasswordResetController Tests", () => {
     describe("POST /password/reset-password", () => {
         const timeout = 100000;
         const endpoint = "/password/reset-password";
-
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        beforeAll(async () => {
-            return runMigrations();
-        });
 
         beforeEach(async () => {
             await truncateTables();

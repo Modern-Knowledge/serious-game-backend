@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { seedPatientSettings, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validPatient, validPatient1, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -14,10 +14,9 @@ describe("PatientSettingController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedPatientSettings();
         });
 
         it("fetch all patient-settings", async () => {
@@ -88,10 +87,9 @@ describe("PatientSettingController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedPatientSettings();
         });
 
         it("fetch patient-setting with id", async () => {

@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedSmtpLogs, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedSmtpLogs, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validAdminTherapist, validPatient, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -9,18 +9,16 @@ describe("SMTPLoggingController Tests", () => {
 
     describe("GET /smtp-logs", () => {
         const endpoint = "/smtp-logs";
-        const timeout = 20000;
+        const timeout = 10000;
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
             await seedSmtpLogs();
         }, timeout);
 
-        it("fetch all smtp logs", async () => {
+        it("fetch all smtp logs", async () => {unacceptedTherapist
             authenticationToken = await authenticate(validAdminTherapist);
 
             const res = await request(app).get(endpoint)
@@ -183,12 +181,10 @@ describe("SMTPLoggingController Tests", () => {
 
     describe("DELETE /smtp-logs", () => {
         const endpoint = "/smtp-logs";
-        const timeout = 20000;
+        const timeout = 10000;
         let authenticationToken: string;
 
-        beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
+        beforeEach(async () => {
             await truncateTables();
             await seedUsers();
             await seedSmtpLogs();

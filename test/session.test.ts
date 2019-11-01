@@ -1,16 +1,14 @@
 import request from "supertest";
 import app from "../src/app";
 import {
-    dropTables,
-    runMigrations, seedDifficulties, seedGames,
+    seedDifficulties, seedGames,
     seedGameSettings,
     seedSessions, seedStatistics,
-    seedTables,
     seedUsers,
     truncateTables
 } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
-import { unacceptedTherapist, validPatient, validTherapist } from "../src/seeds/users";
+import { validPatient, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { session } from "../src/seeds/sessions";
 import { SessionFacade } from "../src/db/entity/game/SessionFacade";
@@ -26,8 +24,6 @@ describe("SessionController Tests", () => {
 
         // clear database
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
         }, timeout);
 
@@ -124,10 +120,13 @@ describe("SessionController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedDifficulties();
+            await seedGames();
+            await seedGameSettings();
+            await seedUsers();
+            await seedStatistics();
+            await seedSessions();
         }, timeout);
 
         it("fetch session by patient id", async () => {
@@ -212,18 +211,10 @@ describe("SessionController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
-        beforeAll(async () => {
-            await dropTables();
-            return runMigrations();
-        }, timeout);
-
-        // truncate tables
         beforeEach(async () => {
             return truncateTables();
         }, timeout);
 
-        // seed tables
         beforeEach(async () => {
             await seedDifficulties();
             await seedGames();
@@ -343,13 +334,6 @@ describe("SessionController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
-        beforeAll(async () => {
-            await dropTables();
-            return runMigrations();
-        });
-
-        // truncate tables
         beforeEach(async () => {
             return truncateTables();
         });

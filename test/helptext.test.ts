@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { seedHelptexts, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -14,10 +14,9 @@ describe("HelptextController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedHelptexts();
         });
 
         it("fetch all helptexts", async () => {
@@ -44,15 +43,6 @@ describe("HelptextController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-            const res1 = await request(app).get(endpoint)
-                .set("Authorization", "")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
         }, timeout);
 
         it("try to fetch all helptexts with an expired token", async () => {
@@ -75,10 +65,9 @@ describe("HelptextController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedHelptexts();
         });
 
         it("fetch helptext with specific id", async () => {
@@ -106,16 +95,6 @@ describe("HelptextController Tests", () => {
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
-            const res1 = await request(app).get(endpoint + "/" + helptext.id)
-                .set("Authorization", "")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
         }, timeout);
 
         it("try to fetch helptext with id and an expired token", async () => {

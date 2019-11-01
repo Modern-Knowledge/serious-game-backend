@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
@@ -23,8 +23,6 @@ describe("TherapistController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
         }, timeout);
@@ -49,15 +47,6 @@ describe("TherapistController Tests", () => {
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
-
-            const res1 = await request(app).get(endpoint)
-                .set("Authorization", "")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
@@ -94,16 +83,6 @@ describe("TherapistController Tests", () => {
     describe("POST /therapists", () => {
         const timeout = 100000;
         const endpoint = "/therapists";
-
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
 
         beforeEach(async () => {
             await truncateTables();
@@ -543,16 +522,6 @@ describe("TherapistController Tests", () => {
         const endpoint = "/therapists";
         let authenticationToken;
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
         beforeEach(async () => {
             await truncateTables();
             await seedUsers();
@@ -849,24 +818,12 @@ describe("TherapistController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
-        // truncate tables
         beforeEach(async () => {
             return truncateTables();
         });
 
-        // seed tables
         beforeEach(async () => {
-            return seedTables();
+            return seedUsers();
         });
 
         it("successfully delete therapist", async () => {
@@ -876,7 +833,7 @@ describe("TherapistController Tests", () => {
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(200);
+                .expect(201);
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
@@ -979,24 +936,12 @@ describe("TherapistController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        // drop tables
-        beforeAll(async () => {
-            return dropTables();
-        });
-
-        // run migrations
-        beforeAll(async () => {
-            return runMigrations();
-        });
-
-        // truncate tables
         beforeEach(async () => {
             return truncateTables();
         });
 
-        // seed tables
         beforeEach(async () => {
-            return seedTables();
+            return seedUsers();
         });
 
         it("successfully accept therapist", async () => {

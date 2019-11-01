@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validAdminTherapist, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -16,8 +16,6 @@ describe("UserController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
         }, timeout);
@@ -77,11 +75,6 @@ describe("UserController Tests", () => {
         const endpoint = "/users/change-password";
         const timeout = 30000;
         let authenticationToken: string;
-
-        beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
-        }, timeout);
 
         beforeEach(async () => {
             return truncateTables();

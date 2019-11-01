@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedLogs, seedSmtpLogs, seedUsers, truncateTables } from "../src/migrationHelper";
+import { seedLogs, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { validAdminTherapist, validTherapist } from "../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
@@ -13,8 +13,6 @@ describe("LoggingController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
             await seedLogs();
@@ -171,8 +169,6 @@ describe("LoggingController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
         }, timeout);
@@ -318,8 +314,6 @@ describe("LoggingController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
             await seedUsers();
             await seedLogs();
