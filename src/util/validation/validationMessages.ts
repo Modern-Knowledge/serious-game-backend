@@ -11,10 +11,15 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
  * - lastname
  * - password
  * - token
+ * - id
+ * - therapist
+ * - date
+ * - info
+ * - patients
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
-for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info"]) {
+for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info", "patient"]) {
     validationMessages.set(category, new Map());
 
 }
@@ -79,6 +84,12 @@ validationMessages.get("date").set("wrong_order", new HttpResponseMessage(HttpRe
 validationMessages.get("info").set("empty", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine Info übergeben!`));
 
 /**
+ * validation messages for patients
+ */
+validationMessages.get("patient").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Nicht alle übergebenen PatientInnen sind valide!`));
+
+
+/**
  * retrieves the validationMessage by category and messageName
  * @param category category of the message
  * @param messageName name of the massage
@@ -90,7 +101,6 @@ export function retrieveValidationMessage(category: string, messageName: string)
 /**
  * shortcut method for retrieveValidationMessage
  * retrieves the validationMessage by category and messageName
-
  * @param category
  * @param messageName
  */

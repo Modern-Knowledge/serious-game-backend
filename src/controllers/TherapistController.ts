@@ -138,8 +138,6 @@ router.post("/", [
 });
 
 /**
- * todo: validation patients
- *
  * PUT /:id
  *
  * Update a therapist by id.
@@ -170,8 +168,12 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     check("_forename").escape().trim()
         .not().isEmpty().withMessage(rVM("forename", "empty")),
 
+
     check("_lastname").escape().trim()
         .not().isEmpty().withMessage(rVM("lastname", "empty")),
+
+    check("_patients.*._id")
+        .not().isEmpty().withMessage(rVM("patient", "invalid")),
 
 ], async (req: Request, res: Response, next: any) => {
 
