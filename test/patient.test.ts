@@ -8,7 +8,6 @@ import { Status } from "../src/lib/enums/Status";
 import { validPatient, validPatient1, validTherapist } from "../src/seeds/users";
 import { PatientFacade } from "../src/db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "../src/db/entity/settings/PatientSettingFacade";
-import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 
 describe("PatientController Tests", () => {
 
@@ -112,8 +111,6 @@ describe("PatientController Tests", () => {
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(201);
-
-            console.log(res.body);
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
@@ -684,8 +681,6 @@ describe("PatientController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(200);
 
-            console.log(res.body);
-
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
             expect(res.body._data).toHaveProperty("patient");
@@ -705,6 +700,190 @@ describe("PatientController Tests", () => {
                 expect(patient.info).toEqual("Test info");
             }
         }, timeout);
+
+        it("try to update patient without authentication", async () => {
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient with an expired token", async () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + token)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient without an id", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/")
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("error");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient without an email", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient without an forename", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient without an lastname", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient with an invalid email", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "invalid",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient with an already existing email", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "patient.name@example.org",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to update patient with a not existing id", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + 9999)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
     });
 
 });
