@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
 import { containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import { validPatient, validTherapist } from "../src/seeds/users";
@@ -25,14 +25,9 @@ describe("PasswordResetController Tests", () => {
             return runMigrations();
         });
 
-        // truncate tables
         beforeEach(async () => {
-            return truncateTables();
-        });
-
-        // seed tables
-        beforeEach(async () => {
-            return seedTables();
+            await truncateTables();
+            await seedUsers();
         });
 
         // SGB039
@@ -122,14 +117,12 @@ describe("PasswordResetController Tests", () => {
         }, timeout);
 
         // SGB043
-        // todo reset code valid until not matching
         it("request password reset token with user that has already a valid token", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(200);
-
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("email");
@@ -154,7 +147,7 @@ describe("PasswordResetController Tests", () => {
             smtpLogFacade.filter.addFilterCondition("rcpt_email", user.email, SQLComparisonOperator.EQUAL, SQLOperator.AND);
             smtpLogFacade.filter.addFilterCondition("sent", 0);
 
-            // check that mail that should have been sent
+            // check mail that should have been sent
             const mail = await smtpLogFacade.getOne();
             expect(mail).not.toBeUndefined();
 

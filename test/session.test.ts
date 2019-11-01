@@ -361,7 +361,6 @@ describe("SessionController Tests", () => {
             await seedGameSettings();
             await seedUsers();
             await seedStatistics();
-            await seedSessions();
         });
 
         it("successfully create new session", async () => {
@@ -372,7 +371,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -408,7 +408,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "")
@@ -424,7 +425,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Accept", "application/json")
@@ -444,7 +446,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + token)
@@ -464,7 +467,8 @@ describe("SessionController Tests", () => {
                 .send(
                     {
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -484,7 +488,8 @@ describe("SessionController Tests", () => {
                 .send(
                     {
                         _gameId: game.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -504,7 +509,8 @@ describe("SessionController Tests", () => {
                 .send(
                     {
                         _gameId: game.id,
-                        _patientId: validPatient.id
+                        _patientId: validPatient.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -528,7 +534,7 @@ describe("SessionController Tests", () => {
                 .expect(400);
 
             expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 3)).toBeTruthy();
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 4)).toBeTruthy();
 
         }, timeout);
 
@@ -540,7 +546,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: "invalid",
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -561,7 +568,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: "invalid",
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -582,7 +590,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: "invalid"
+                        _gameSettingId: "invalid",
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -603,7 +612,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: 9999,
                         _patientId: validPatient.id,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -624,7 +634,8 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: 9999,
-                        _gameSettingId: gameSettings.id
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -645,13 +656,57 @@ describe("SessionController Tests", () => {
                     {
                         _gameId: game.id,
                         _patientId: validPatient.id,
-                        _gameSettingId: 9999
+                        _gameSettingId: 9999,
+                        _elapsedTime: 500
                     }
                 )
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with no elapsed time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id,
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new session with an invalid elapsed time", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send(
+                    {
+                        _gameId: game.id,
+                        _patientId: validPatient.id,
+                        _gameSettingId: gameSettings.id,
+                        _elapsedTime: -1
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();

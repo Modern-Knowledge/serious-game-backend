@@ -282,7 +282,12 @@ router.post(
 
     check("_gameSettingId")
       .isNumeric()
-      .withMessage(rVM("id", "numeric"))
+      .withMessage(rVM("id", "numeric")),
+
+    check("_elapsedTime")
+        .isInt({min: 0})
+        .withMessage(rVM("id", "numeric"))
+
   ],
   async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
