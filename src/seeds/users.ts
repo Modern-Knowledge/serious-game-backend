@@ -31,6 +31,8 @@ validTherapist.failedLoginAttempts = 0;
 validTherapist.status = Status.ACTIVE;
 validTherapist.role = Roles.USER;
 validTherapist.accepted = true;
+validTherapist.resetcode = generatePasswordResetToken(8);
+validTherapist.resetcodeValidUntil = moment().add(8, "hours").toDate();
 
 // unaccepted therapist
 const unacceptedTherapist = new Therapist();
@@ -44,6 +46,7 @@ unacceptedTherapist.failedLoginAttempts = 0;
 unacceptedTherapist.status = Status.ACTIVE;
 unacceptedTherapist.role = Roles.ADMIN;
 unacceptedTherapist.accepted = false;
+unacceptedTherapist.resetcode = generatePasswordResetToken(8);
 
 // therapist with login cooldown
 const lockedTherapist = new Therapist();
@@ -99,6 +102,8 @@ validPatient1.failedLoginAttempts = 0;
 validPatient1.status = Status.ACTIVE;
 validPatient1.birthday = new Date();
 validPatient1.info = "Testinfo";
+validPatient1.resetcode = generatePasswordResetToken(8);
+validPatient1.resetcodeValidUntil = moment().subtract(1, "day").toDate();
 
 export {
     validAdminTherapist, validTherapist, unacceptedTherapist, lockedTherapist, tooManyFailedLoginAttemptsTherapist,

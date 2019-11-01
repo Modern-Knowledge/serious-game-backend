@@ -175,8 +175,8 @@ router.post("/reset-password",  [
         }
 
         user.password = bcrypt.hashSync(password, 12);
-        user.resetcode = undefined;
-        user.resetcodeValidUntil = undefined;
+        user.resetcode = null;
+        user.resetcodeValidUntil = null;
 
         await userFacade.updateUser(user);
 
