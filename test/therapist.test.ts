@@ -795,6 +795,30 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        it("try to update therapist with a existing email", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + validTherapist.id)
+                .send(
+                    {
+                        _email: "therapist@example.org",
+                        _forename: "Vorname",
+                        _lastname: "Nachname",
+                        _patients: [
+                            validPatient,
+                            validPatient1
+                        ]
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
         it("try to update therapist with an invalid patient list", async () => {
             authenticationToken = await authenticate(validTherapist);
 
