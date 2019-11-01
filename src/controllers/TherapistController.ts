@@ -183,7 +183,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
     const therapist = new Therapist().deserialize(req.body);
-    const dbTherapist = therapistFacade.getById(req.params.id);
+    const dbTherapist = await therapistFacade.getById(req.params.id);
     try {
         // check if therapist exists
         if (!dbTherapist) {

@@ -207,8 +207,6 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 });
 
 /**
- * todo: validation
- *
  * PUT :/id
  *
  * Update a patient by id
@@ -252,7 +250,6 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
     const id = Number(req.params.id);
 
     const patientFacade = new PatientFacade();
-    patientFacade.filter.addFilterCondition("id", id);
 
     const patient = new Patient().deserialize(req.body);
     try {
@@ -265,6 +262,12 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} wurde nicht gefunden!`)
             ]);
         }
+
+        patient.id = id;
+
+        const filter = patientFacade.filter;
+        filter.addFilterCondition("patient_id", patient.id);
+        patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
 
         const affectedRows = await patientFacade.updateUserPatient(patient);
 

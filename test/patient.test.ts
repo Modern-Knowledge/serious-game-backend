@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../src/app";
-import { dropTables, runMigrations, seedTables, truncateTables } from "../src/migrationHelper";
+import { dropTables, runMigrations, seedTables, seedUsers, truncateTables } from "../src/migrationHelper";
 import { authenticate, containsMessage } from "../src/util/testhelper";
 import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
 import * as bcrypt from "bcryptjs";
@@ -8,6 +8,7 @@ import { Status } from "../src/lib/enums/Status";
 import { validPatient, validPatient1, validTherapist } from "../src/seeds/users";
 import { PatientFacade } from "../src/db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "../src/db/entity/settings/PatientSettingFacade";
+import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
 
 describe("PatientController Tests", () => {
 
@@ -645,4 +646,65 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
     });
+
+    describe("PUT /patients/:id", () => {
+        const timeout = 100000;
+        const endpoint = "/patients";
+        let authenticationToken;
+
+        // drop tables
+        beforeAll(async () => {
+            return dropTables();
+        });
+
+        // run migrations
+        beforeAll(async () => {
+            return runMigrations();
+        });
+
+        beforeEach(async () => {
+            await truncateTables();
+            await seedUsers();
+        }, timeout);
+
+        it("successfully update patient", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + validPatient.id)
+                .send(
+                    {
+                        _email: "new.patient@mail.com",
+                        _forename: "Neuer Vorname",
+                        _lastname: "Neuer Nachname",
+                        _info: "Test info"
+                    }
+                )
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            console.log(res.body);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("patient");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            const patientId = res.body._data.patient._id;
+
+            const patientFacade = new PatientFacade();
+            const patient = await patientFacade.getById(patientId);
+
+            expect(patient).not.toBeUndefined();
+
+            if (patient) {
+                expect(patient.email).toEqual("new.patient@mail.com");
+                expect(patient.forename).toEqual("Neuer Vorname");
+                expect(patient.lastname).toEqual("Neuer Nachname");
+                expect(patient.info).toEqual("Test info");
+            }
+        }, timeout);
+    });
+
 });

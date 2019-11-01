@@ -14,7 +14,7 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
-for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date"]) {
+for (const category of ["email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info"]) {
     validationMessages.set(category, new Map());
 
 }
@@ -72,6 +72,11 @@ validationMessages.get("therapist").set("value_false", new HttpResponseMessage(H
  */
 validationMessages.get("date").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Kein gültiges Datum übergeben!`));
 validationMessages.get("date").set("wrong_order", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Start muss zeitlich vor dem Ende liegen!`));
+
+/**
+ * validation messages for info
+ */
+validationMessages.get("info").set("empty", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine Info übergeben!`));
 
 /**
  * retrieves the validationMessage by category and messageName
