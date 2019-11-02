@@ -73,7 +73,6 @@ router.get("/:id", authenticationMiddleware, [
     const gameFacade = new GameCompositeFacade();
 
     try {
-        console.log(await gameFacade.get());
         const game = await gameFacade.getById(id);
 
         if (!game) {

@@ -38,7 +38,7 @@ class DatabaseConnection {
             logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Test-Database`);
 
             this._pool = mysql.createPool({
-                connectionLimit: 10,
+                connectionLimit: 100,
                 host: process.env.TEST_DB_HOST,
                 user: process.env.TEST_DB_USER,
                 password: process.env.TEST_DB_PASS,
@@ -120,6 +120,7 @@ class DatabaseConnection {
         return new Promise<any[]>((resolve, reject) => {
             this.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) { // error with pool
+                    connection.release();
                     logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
                     return reject(error);
                 }
@@ -131,6 +132,7 @@ class DatabaseConnection {
                     logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Begin transaction!`);
 
                     if (error) { // error with starting transaction
+                        connection.release();
                         logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
                         return reject(error);
                     }
@@ -157,14 +159,15 @@ class DatabaseConnection {
                      * commit transaction
                      */
                     connection.commit((error: MysqlError) => {
-                        connection.release();
                         if (error) { // error when committing
                             return connection.rollback(() => {
+                                connection.release();
                                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction changes are rollbacked!`);
                                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
                                 return reject(error);
                             });
                         }
+                        connection.release();
                         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction was executed successful!`);
 
                         resolve(result);
@@ -183,6 +186,7 @@ class DatabaseConnection {
         return new Promise<any[]>((resolve, reject) => {
             databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) {
+                    connection.release();
                     logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${error}`);
                     reject(error);
                 }

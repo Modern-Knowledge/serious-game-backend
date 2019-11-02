@@ -29,8 +29,6 @@ describe("StatisticController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(200);
 
-            console.log(res.body);
-
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
             expect(res.body._data).toHaveProperty("statistic");

@@ -153,8 +153,6 @@ export function checkTherapistAdminPermission(req: Request, res: Response, next:
         return next();
     }
 
-    console.log(authUser);
-
     if (authUser instanceof Therapist && authUser.role === Roles.ADMIN) { // user is therapist & admin
         return next();
     }

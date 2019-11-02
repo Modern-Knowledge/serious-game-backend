@@ -18,7 +18,7 @@ describe("SMTPLoggingController Tests", () => {
             await seedSmtpLogs();
         }, timeout);
 
-        it("fetch all smtp logs", async () => {unacceptedTherapist
+        it("fetch all smtp logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
             const res = await request(app).get(endpoint)

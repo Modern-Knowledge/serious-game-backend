@@ -981,8 +981,6 @@ describe("TherapistController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(403);
 
-            console.log(res.body);
-
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
