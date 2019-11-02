@@ -51,16 +51,8 @@ export class UpdateQuery extends NamedParameterizedQuery {
     return returnStr;
   }
 
-  get update(): SQLUpdate {
-    return this._update;
-  }
-
   set update(value: SQLUpdate) {
     this._update = value;
-  }
-
-  get where(): SQLWhere {
-    return this._where;
   }
 
   set where(value: SQLWhere) {

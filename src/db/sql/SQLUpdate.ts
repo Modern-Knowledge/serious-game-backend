@@ -35,9 +35,6 @@ export class SQLUpdate extends SQLElement {
     return returnParams;
   }
 
-  /**
-   * returns the element type for the update
-   */
   public getElementType(): number {
     return SQLElementType.SQLUpdate;
   }
@@ -46,34 +43,10 @@ export class SQLUpdate extends SQLElement {
    * returns the sql for the update part of the query
    */
   public getSQL(): string {
-    if (this._attributes.getAttributes().length <= 0) {
-      return undefined;
-    }
-
     let returnStr: string = "UPDATE " + this._tableName + " " + this._tableAlias + " SET ";
     returnStr += this._attributes.getNameParamNamePairs();
 
     return returnStr;
-  }
-
-  get tableName(): string {
-    return this._tableName;
-  }
-
-  set tableName(value: string) {
-    this._tableName = value;
-  }
-
-  get tableAlias(): string {
-    return this._tableAlias;
-  }
-
-  set tableAlias(value: string) {
-    this._tableAlias = value;
-  }
-
-  get attributes(): SQLValueAttributes {
-    return this._attributes;
   }
 
   set attributes(value: SQLValueAttributes) {

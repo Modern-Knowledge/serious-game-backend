@@ -2,7 +2,6 @@ import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 import { SQLValueAttributes } from "./SQLValueAttributes";
 import { SQLElementType } from "./enums/SQLElementType";
-import { SQLValueAttribute } from "./SQLValueAttribute";
 import { SQLBlock } from "./SQLBlock";
 
 /**
@@ -33,9 +32,6 @@ export class SQLInsert extends SQLElement {
     return returnParams;
   }
 
-  /**
-   * returns the element type for the insert
-   */
   public getElementType(): number {
     return SQLElementType.SQLInsert;
   }
@@ -44,16 +40,6 @@ export class SQLInsert extends SQLElement {
    * returns the sql for the insert part of the query
    */
   public getSQL(): string {
-    if (this._attributes === undefined) {
-      return undefined;
-    }
-
-    const sqlAttributes: SQLValueAttribute[] = this._attributes.getAttributes();
-
-    if (sqlAttributes === undefined || sqlAttributes.length === 0) {
-      return undefined;
-    }
-
     let returnString: string = "INSERT INTO " + this._tableName;
 
     const attributeBlock: SQLBlock = new SQLBlock();
@@ -65,18 +51,6 @@ export class SQLInsert extends SQLElement {
     returnString += "VALUES" + valueBlock.getSQL();
 
     return returnString;
-  }
-
-  get tableName(): string {
-    return this._tableName;
-  }
-
-  set tableName(value: string) {
-    this._tableName = value;
-  }
-
-  get attributes(): SQLValueAttributes {
-    return this._attributes;
   }
 
   set attributes(value: SQLValueAttributes) {

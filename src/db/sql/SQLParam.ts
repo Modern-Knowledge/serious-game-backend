@@ -22,16 +22,8 @@ export class SQLParam {
     return this._name;
   }
 
-  set name(value: string) {
-    this._name = value;
-  }
-
   get value(): string | number | Date | boolean {
     return this._value;
-  }
-
-  set value(value: string | number | Date | boolean) {
-    this._value = value;
   }
 
 }

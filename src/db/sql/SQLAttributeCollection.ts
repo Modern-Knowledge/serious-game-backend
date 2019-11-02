@@ -21,17 +21,6 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
   }
 
   /**
-   * return all attributes
-   */
-  public getAttributes(): AttributeType[] {
-    if (this._attributes !== undefined) {
-      return this._attributes;
-    }
-
-    return undefined;
-  }
-
-  /**
    * returns a string of comma separated names
    * e.g.: id, name, ..
    */

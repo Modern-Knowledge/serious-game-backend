@@ -19,9 +19,6 @@ export class SQLDelete extends SQLElement {
     this._tableAlias = tableAlias;
   }
 
-  /**
-   * returns the element type for the delete query
-   */
   public getElementType(): number {
     return SQLElementType.SQLDelete;
   }
@@ -33,11 +30,4 @@ export class SQLDelete extends SQLElement {
     return "DELETE FROM " + this._tableName;
   }
 
-  get tableName(): string {
-    return this._tableName;
-  }
-
-  set tableName(value: string) {
-    this._tableName = value;
-  }
 }

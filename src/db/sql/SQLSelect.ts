@@ -16,9 +16,6 @@ export class SQLSelect extends SQLElement {
     this._attributes = attributes;
   }
 
-  /**
-   * returns the element type of a sql select
-   */
   public getElementType(): number {
     return SQLElementType.SQLSelect;
   }
@@ -27,9 +24,6 @@ export class SQLSelect extends SQLElement {
    * returns the sql string for the select part
    */
   public getSQL(): string {
-    if (this._attributes === undefined) {
-      return "";
-    }
     return "SELECT " + this._attributes.getCommaSeparatedNames() + " ";
   }
 }

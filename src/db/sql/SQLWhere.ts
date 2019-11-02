@@ -30,9 +30,6 @@ export class SQLWhere extends SQLElement {
     return returnParams;
   }
 
-  /**
-   * returns the element type for the where part of the query
-   */
   public getElementType(): number {
     return SQLElementType.SQLWhere;
   }
@@ -41,11 +38,7 @@ export class SQLWhere extends SQLElement {
    * returns the sql string for the where part
    */
   public getSQL(): string {
-    if (this._condition !== undefined) {
-      return "WHERE " + this._condition.getSQL();
-    }
-
-    return "";
+    return "WHERE " + this._condition.getSQL();
   }
 
 }

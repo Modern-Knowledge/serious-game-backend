@@ -34,8 +34,4 @@ export class SQLValueAttribute extends SQLAttribute {
   get value(): string | number | Date | boolean {
     return this._value;
   }
-
-  set value(value: string | number | Date | boolean) {
-    this._value = value;
-  }
 }

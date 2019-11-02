@@ -57,11 +57,8 @@ export class SQLBlock extends SQLElement {
    */
   private invalidate(): void {
     for (let i = 0; i < this._elements.length; i++) {
-      if (i < 0) {
-        continue;
-      }
 
-      const currElement: SQLElement = this._elements[i];
+      const currElement = this._elements[i];
 
       if (currElement.getElementType() === SQLElementType.SQLKeyword) {
         if (i == 0 || i >= this._elements.length - 1) {
@@ -71,23 +68,11 @@ export class SQLBlock extends SQLElement {
         }
         const prev = this._elements[i - 1];
         const next = this._elements[i + 1];
-
-        if (!((prev.getElementType() == SQLElementType.SQLText && next.getElementType() == SQLElementType.SQLText)
-          || (prev.getElementType() == SQLElementType.SQLBlock && next.getElementType() == SQLElementType.SQLBlock))) {
-          this._elements.splice(i, 1);
-          i -= 2;
-          continue;
-        }
       }
 
       if (currElement.getElementType() === SQLElementType.SQLBlock) {
         const currBlock: SQLBlock = <SQLBlock> currElement;
         currBlock.invalidate();
-        if (currBlock._elements.length === 0) {
-          delete this._elements[i];
-          i -= 2;
-
-        }
       }
     }
   }
@@ -97,10 +82,6 @@ export class SQLBlock extends SQLElement {
    */
   public getSQL(): string {
     this.invalidate();
-
-    if (this._elements.length === 0) {
-      return "";
-    }
 
     let sql: string = "(";
 

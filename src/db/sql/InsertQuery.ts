@@ -45,10 +45,6 @@ export class InsertQuery extends NamedParameterizedQuery {
     return returnSql;
   }
 
-  get insert(): SQLInsert {
-    return this._insert;
-  }
-
   set insert(value: SQLInsert) {
     this._insert = value;
   }

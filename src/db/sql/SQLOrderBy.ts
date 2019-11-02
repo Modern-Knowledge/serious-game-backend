@@ -22,9 +22,6 @@ export class SQLOrderBy extends SQLElement {
     this._tableAlias = tableAlias;
   }
 
-  /**
-   * returns the element type for the order by
-   */
   public getElementType(): number {
     return SQLElementType.SQLOrderBy;
   }

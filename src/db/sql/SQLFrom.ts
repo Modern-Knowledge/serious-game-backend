@@ -19,9 +19,6 @@ export class SQLFrom extends SQLElement {
     this._tableAlias = tableAlias;
   }
 
-  /**
-   * returns the element type of sql from
-   */
   public getElementType(): number {
     return SQLElementType.SQLFrom;
   }

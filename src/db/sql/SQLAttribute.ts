@@ -48,19 +48,7 @@ export class SQLAttribute {
     return this._name + this._tableAlias;
   }
 
-  get tableAlias(): string {
-    return this._tableAlias;
-  }
-
-  set tableAlias(value: string) {
-    this._tableAlias = value;
-  }
-
   get name(): string {
     return this._name;
-  }
-
-  set name(value: string) {
-    this._name = value;
   }
 }

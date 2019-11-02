@@ -44,9 +44,6 @@ export class SQLJoin extends SQLElement {
     return returnParams;
   }
 
-  /**
-   * returns the element type for the join
-   */
   public getElementType(): number {
     return SQLElementType.SQLJoin;
   }

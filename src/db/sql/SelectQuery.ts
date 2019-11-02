@@ -73,10 +73,7 @@ export class SelectQuery extends NamedParameterizedQuery {
     }
 
     if (this._sqlWhere !== undefined) {
-      let where: string = this._sqlWhere.getSQL();
-      if (where.length < 10) {
-        where = "";
-      }
+      const where: string = this._sqlWhere.getSQL();
       returnSQL += where;
     }
 

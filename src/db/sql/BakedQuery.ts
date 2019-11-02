@@ -25,10 +25,6 @@ export class BakedQuery {
    const returnArr: (string | number | Date | boolean)[] = [];
 
    this._values.forEach((value: SQLParam) => {
-      if (value === undefined) {
-        return;
-      }
-
       returnArr.push(value.value);
    });
 

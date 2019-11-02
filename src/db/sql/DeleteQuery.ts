@@ -46,17 +46,8 @@ export class DeleteQuery extends NamedParameterizedQuery {
     return returnStr;
   }
 
-
-  get delete(): SQLDelete {
-    return this._delete;
-  }
-
   set delete(value: SQLDelete) {
     this._delete = value;
-  }
-
-  get where(): SQLWhere {
-    return this._where;
   }
 
   set where(value: SQLWhere) {
