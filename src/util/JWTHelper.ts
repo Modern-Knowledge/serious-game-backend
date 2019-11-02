@@ -10,7 +10,7 @@ import { User } from "../lib/models/User";
 export class JWTHelper {
 
     private readonly _secretKey: string = process.env.SECRET_KEY;
-    private _expiresIn: number = 3600; // expires in 1 hour
+    private _expiresIn: number = Number(process.env.TOKEN_EXPIRE_TIME) || 3600;
 
     /**
      * creates jwt token for user
