@@ -1,5 +1,3 @@
-
-
 import { SmtpMessage } from "./SmtpMessage";
 
 /**

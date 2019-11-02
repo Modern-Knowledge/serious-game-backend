@@ -132,6 +132,12 @@ import FoodCategoryController from "./controllers/FoodCategoryController";
 import GameSettingController from "./controllers/GameSettingController";
 import IngredientController from "./controllers/IngredientController";
 import PatientSettingController from "./controllers/PatientSettingController";
+import { mailTransport } from "./util/mail/mailTransport";
+import { Mail } from "./util/mail/Mail";
+import { passwordResettet } from "./mail-texts/passwordResettet";
+import { formatDateTime } from "./lib/utils/dateFormatter";
+import { Recipient } from "./util/mail/Recipient";
+import { supportMail } from "./mail-texts/supportMail";
 
 
 /**
@@ -211,6 +217,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
     HttpResponseMessageSeverity.DANGER,
     err.message
   );
+
   let data;
 
   if (!inProduction()) {
@@ -220,9 +227,14 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, [
     message
   ]);
+
+  // send mail with error to support
+    const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)], supportMail, [err.name, err.message, err.stack]);
+    mailTransport.sendMail(m);
+
   logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
 
-    return res.status(res.locals.status || 500).send(httpResponse);
+  return res.status(res.locals.status || 500).send(httpResponse);
 });
 
 export default app;
