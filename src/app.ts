@@ -229,7 +229,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   ]);
 
   // send mail with error to support
-    const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)], supportMail, [err.name, err.message, err.stack]);
+    const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)], supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
     mailTransport.sendMail(m);
 
   logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
