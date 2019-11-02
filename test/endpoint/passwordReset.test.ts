@@ -1,19 +1,19 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedUsers, truncateTables } from "../src/migrationHelper";
-import { containsMessage } from "../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
+import app from "../../src/app";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
+import { containsMessage } from "../../src/util/testhelper";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     unacceptedTherapist,
     validAdminTherapist,
     validPatient,
     validPatient1,
     validTherapist
-} from "../src/seeds/users";
-import { UserFacade } from "../src/db/entity/user/UserFacade";
-import { SmtpLogFacade } from "../src/db/entity/log/SmtpLogFacade";
-import { SQLComparisonOperator } from "../src/db/sql/enums/SQLComparisonOperator";
-import { SQLOperator } from "../src/db/sql/enums/SQLOperator";
+} from "../../src/seeds/users";
+import { UserFacade } from "../../src/db/entity/user/UserFacade";
+import { SmtpLogFacade } from "../../src/db/entity/log/SmtpLogFacade";
+import { SQLComparisonOperator } from "../../src/db/sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../../src/db/sql/enums/SQLOperator";
 import * as bcrypt from "bcryptjs";
 
 describe("PasswordResetController Tests", () => {

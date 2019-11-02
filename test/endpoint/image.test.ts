@@ -1,10 +1,10 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedImages, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { image } from "../src/seeds/images";
+import app from "../../src/app";
+import { seedImages, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { image } from "../../src/seeds/images";
 
 describe("ImageController Tests", () => {
 

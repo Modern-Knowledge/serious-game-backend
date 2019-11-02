@@ -1,26 +1,37 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import request from "supertest";
-import app from "../src/app";
-import { seedPatientSettings, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validPatient, validPatient1, validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { pSettings } from "../src/seeds/patientSettings";
+import app from "../../src/app";
+import {
+    seedFoodCategories, seedIngredients,
+    seedUsers,
+    truncateTables
+} from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { egg } from "../../src/seeds/ingredients";
+import { vegetables } from "../../src/seeds/foodCategories";
 
-describe("PatientSettingController Tests", () => {
+describe("IngredientController Tests", () => {
 
-    describe("GET /patient-settings", () => {
-        const endpoint = "/patient-settings";
+    describe("GET /ingredients", () => {
+        const endpoint = "/ingredients";
         const timeout = 10000;
         let authenticationToken: string;
 
         beforeAll(async () => {
             await truncateTables();
             await seedUsers();
-            await seedPatientSettings();
-        });
+            await seedFoodCategories();
+            await seedIngredients();
+        }, timeout);
 
-        it("fetch all patient-settings", async () => {
-            authenticationToken = await authenticate(validPatient);
+        it("fetch all ingredients", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint)
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -30,11 +41,11 @@ describe("PatientSettingController Tests", () => {
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
-            expect(res.body._data).toHaveProperty("patientSettings");
+            expect(res.body._data).toHaveProperty("ingredients");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch all patient-settings without authentication", async () => {
+        it("try to fetch all ingredients without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -54,7 +65,7 @@ describe("PatientSettingController Tests", () => {
 
         }, timeout);
 
-        it("try to fetch all patient-settings with an expired token", async () => {
+        it("try to fetch all ingredients with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
             const res = await request(app).get(endpoint)
@@ -66,36 +77,24 @@ describe("PatientSettingController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
-
-        it("try to fetch all patient-settings with therapist user", async () => {
-            authenticationToken = await authenticate(validTherapist);
-
-            const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + authenticationToken)
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(403);
-
-            expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-        }, timeout);
     });
 
-    describe("GET /patient-settings/:id", () => {
-        const endpoint = "/patient-settings";
+    describe("GET /ingredients/:id", () => {
+        const endpoint = "/ingredients";
         const timeout = 10000;
         let authenticationToken: string;
 
         beforeAll(async () => {
             await truncateTables();
             await seedUsers();
-            await seedPatientSettings();
-        });
+            await seedFoodCategories();
+            await seedIngredients();
+        }, timeout);
 
-        it("fetch patient-setting with id", async () => {
-            authenticationToken = await authenticate(validPatient);
+        it("fetch ingredient with specific id", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + pSettings.id)
+            const res = await request(app).get(endpoint + "/" + egg.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -103,15 +102,15 @@ describe("PatientSettingController Tests", () => {
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
-            expect(res.body._data).toHaveProperty("patientSetting");
+            expect(res.body._data).toHaveProperty("ingredient");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
-            expect(res.body._data.patientSetting._id).toEqual(pSettings.id);
+            expect(res.body._data.ingredient._id).toEqual(egg.id);
 
         }, timeout);
 
-        it("try to fetch patient-setting with ID without authentication", async () => {
-            const res = await request(app).get(endpoint + "/" + pSettings.id)
+        it("try to fetch ingredient with id without authentication", async () => {
+            const res = await request(app).get(endpoint + "/" + egg.id)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -119,21 +118,12 @@ describe("PatientSettingController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-            const res1 = await request(app).get(endpoint + "/" + pSettings.id)
-                .set("Authorization", "")
-                .set("Accept", "application/json")
-                .expect("Content-Type", /json/)
-                .expect(401);
-
-            expect(res1.body._status).toEqual("fail");
-            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
         }, timeout);
 
-        it("try to fetch patient-setting with an expired token", async () => {
+        it("try to fetch ingredient with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
-            const res = await request(app).get(endpoint + "/" + pSettings.id)
+            const res = await request(app).get(endpoint + "/" + egg.id)
                 .set("Authorization", "Bearer " + token)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -143,8 +133,8 @@ describe("PatientSettingController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch patient-setting with an invalid id", async () => {
-            authenticationToken = await authenticate(validPatient);
+        it("try to fetch ingredient with an invalid id", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint + "/invalid")
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -156,8 +146,8 @@ describe("PatientSettingController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch patient-setting with a not existing id", async () => {
-            authenticationToken = await authenticate(validPatient);
+        it("try to fetch ingredient with a not existing id", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint + "/" + 9999)
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -168,31 +158,84 @@ describe("PatientSettingController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
+    });
 
-        it("try to fetch patient-setting with therapist user", async () => {
+    describe("GET /ingredients/category/:id", () => {
+        const endpoint = "/ingredients/category";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        beforeAll(async () => {
+            await truncateTables();
+            await seedUsers();
+            await seedFoodCategories();
+            await seedIngredients();
+        }, timeout);
+
+        it("fetch ingredients with category id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + pSettings.id)
+            const res = await request(app).get(endpoint + "/" + vegetables.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(403);
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("ingredients");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to fetch ingredients by category id without authentication", async () => {
+            const res = await request(app).get(endpoint + "/" + vegetables.id)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to fetch ingredients by category with an expired token", async () => {
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
+
+            const res = await request(app).get(endpoint + "/" + vegetables.id)
+                .set("Authorization", "Bearer " + token)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch patient-settings from another user", async () => {
-            authenticationToken = await authenticate(validPatient1);
+        it("try to fetch ingredients by category with an invalid id", async () => {
+            authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + pSettings.id)
+            const res = await request(app).get(endpoint + "/invalid")
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(403);
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        it("try to fetch ingredients by category with a not existing id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).get(endpoint + "/" + 9999)
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data.ingredients).toHaveLength(0);
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
     });
 });

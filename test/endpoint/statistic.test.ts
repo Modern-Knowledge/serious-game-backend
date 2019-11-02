@@ -1,12 +1,12 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedStatistics, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { statistic } from "../src/seeds/statistics";
+import app from "../../src/app";
+import { seedStatistics, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { statistic } from "../../src/seeds/statistics";
 import moment = require("moment");
-import { StatisticFacade } from "../src/db/entity/game/StatisticFacade";
+import { StatisticFacade } from "../../src/db/entity/game/StatisticFacade";
 
 describe("StatisticController Tests", () => {
     describe("GET /statistics/:id", () => {

@@ -1,19 +1,19 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { TherapistFacade } from "../src/db/entity/user/TherapistFacade";
+import app from "../../src/app";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { TherapistFacade } from "../../src/db/entity/user/TherapistFacade";
 import * as bcrypt from "bcryptjs";
-import { Status } from "../src/lib/enums/Status";
+import { Status } from "../../src/lib/enums/Status";
 import {
     unacceptedTherapist,
     validAdminTherapist,
     validPatient,
     validPatient1,
     validTherapist
-} from "../src/seeds/users";
-import { Roles } from "../src/lib/enums/Roles";
+} from "../../src/seeds/users";
+import { Roles } from "../../src/lib/enums/Roles";
 
 describe("TherapistController Tests", () => {
 

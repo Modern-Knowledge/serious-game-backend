@@ -1,15 +1,22 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedGames, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { game } from "../src/seeds/games";
+import app from "../../src/app";
+import {
+    seedDifficulties,
+    seedGames,
+    seedGameSettings,
+    seedUsers,
+    truncateTables
+} from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { game } from "../../src/seeds/games";
+import { gameSettings } from "../../src/seeds/gameSettings";
 
-describe("GameController Tests", () => {
+describe("GameSettingController Test", () => {
 
-    describe("GET /games", () => {
-        const endpoint = "/games";
+    describe("GET /game-settings", () => {
+        const endpoint = "/game-settings";
         const timeout = 10000;
         let authenticationToken: string;
 
@@ -17,9 +24,11 @@ describe("GameController Tests", () => {
             await truncateTables();
             await seedUsers();
             await seedGames();
-        }, 10000);
+            await seedDifficulties();
+            await seedGameSettings();
+        });
 
-        it("fetch all games", async () => {
+        it("fetch all game-settings", async () => {
             authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint)
@@ -30,11 +39,11 @@ describe("GameController Tests", () => {
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
-            expect(res.body._data).toHaveProperty("game");
+            expect(res.body._data).toHaveProperty("gameSettings");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch all games without authentication", async () => {
+        it("try to fetch all game-settings without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -45,7 +54,7 @@ describe("GameController Tests", () => {
 
         }, timeout);
 
-        it("try to fetch all games with an expired token", async () => {
+        it("try to fetch all game-settings with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
             const res = await request(app).get(endpoint)
@@ -59,8 +68,8 @@ describe("GameController Tests", () => {
         }, timeout);
     });
 
-    describe("GET /games/:id", () => {
-        const endpoint = "/games";
+    describe("GET /game-settings/:id", () => {
+        const endpoint = "/game-settings";
         const timeout = 10000;
         let authenticationToken: string;
 
@@ -68,12 +77,14 @@ describe("GameController Tests", () => {
             await truncateTables();
             await seedUsers();
             await seedGames();
-        }, 100000);
+            await seedDifficulties();
+            await seedGameSettings();
+        });
 
-        it("fetch game with specific id", async () => {
+        it("fetch game-setting with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + game.id)
+            const res = await request(app).get(endpoint + "/" + gameSettings.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -81,26 +92,28 @@ describe("GameController Tests", () => {
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
-            expect(res.body._data).toHaveProperty("game");
+            expect(res.body._data).toHaveProperty("gameSetting");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
-            expect(res.body._data.game._id).toEqual(game.id);
+            expect(res.body._data.gameSetting._id).toEqual(game.id);
+
         }, timeout);
 
-        it("try to fetch game with id without authentication", async () => {
-            const res = await request(app).get(endpoint + "/" + game.id)
+        it("try to fetch game-setting with id without authentication", async () => {
+            const res = await request(app).get(endpoint + "/" + gameSettings.id)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
         }, timeout);
 
-        it("try to fetch game with id and an expired token", async () => {
+        it("try to fetch game-setting with id and an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
-            const res = await request(app).get(endpoint + "/" + game.id)
+            const res = await request(app).get(endpoint + "/" + gameSettings.id)
                 .set("Authorization", "Bearer " + token)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -110,7 +123,7 @@ describe("GameController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch game with an invalid id", async () => {
+        it("try to fetch game-setting with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint + "/invalid")
@@ -123,7 +136,7 @@ describe("GameController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        it("try to fetch game with a not existing id", async () => {
+        it("try to fetch game-setting with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
             const res = await request(app).get(endpoint + "/" + 9999)

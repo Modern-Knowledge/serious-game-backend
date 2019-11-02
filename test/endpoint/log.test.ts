@@ -1,10 +1,10 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedLogs, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validAdminTherapist, validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { LogFacade } from "../src/db/entity/log/LogFacade";
+import app from "../../src/app";
+import { seedLogs, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { LogFacade } from "../../src/db/entity/log/LogFacade";
 
 describe("LoggingController Tests", () => {
     describe("GET /logging", () => {

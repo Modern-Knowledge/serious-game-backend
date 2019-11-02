@@ -4,18 +4,18 @@
  */
 
 import request from "supertest";
-import app from "../src/app";
-import { seedUsers, truncateTables } from "../src/migrationHelper";
-import { containsMessage } from "../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
+import app from "../../src/app";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
+import { containsMessage } from "../../src/util/testhelper";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     lockedTherapist,
     tooManyFailedLoginAttemptsTherapist,
     unacceptedTherapist,
     validPatient,
     validTherapist
-} from "../src/seeds/users";
-import { UserFacade } from "../src/db/entity/user/UserFacade";
+} from "../../src/seeds/users";
+import { UserFacade } from "../../src/db/entity/user/UserFacade";
 
 describe("LoginController Tests", () => {
 

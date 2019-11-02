@@ -1,10 +1,10 @@
 import request from "supertest";
-import app from "../src/app";
-import { seedHelptexts, seedUsers, truncateTables } from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { helptext } from "../src/seeds/helptexts";
+import app from "../../src/app";
+import { seedHelptexts, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { helptext } from "../../src/seeds/helptexts";
 
 describe("HelptextController Tests", () => {
 

@@ -1,19 +1,19 @@
 import request from "supertest";
-import app from "../src/app";
+import app from "../../src/app";
 import {
     seedDifficulties, seedGames,
     seedGameSettings,
     seedSessions, seedStatistics,
     seedUsers,
     truncateTables
-} from "../src/migrationHelper";
-import { authenticate, containsMessage } from "../src/util/testhelper";
-import { validPatient, validTherapist } from "../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../src/lib/utils/http/HttpResponse";
-import { session } from "../src/seeds/sessions";
-import { SessionFacade } from "../src/db/entity/game/SessionFacade";
-import { game } from "../src/seeds/games";
-import { gameSettings } from "../src/seeds/gameSettings";
+} from "../../src/migrationHelper";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { validPatient, validTherapist } from "../../src/seeds/users";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { session } from "../../src/seeds/sessions";
+import { SessionFacade } from "../../src/db/entity/game/SessionFacade";
+import { game } from "../../src/seeds/games";
+import { gameSettings } from "../../src/seeds/gameSettings";
 
 describe("SessionController Tests", () => {
 
