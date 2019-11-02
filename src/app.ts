@@ -112,7 +112,6 @@ const speedLimiter = slowDown({
 
 
 // Controllers (route handlers)
-import HomeController from "./controllers/HomeController";
 import LoginController from "./controllers/LoginController";
 import GameController from "./controllers/GameController";
 import VersionController from "./controllers/VersionController";
@@ -163,7 +162,6 @@ app.use(logLimitSlowDown);
 /**
  * Primary app routes.
  */
-app.use("/home", HomeController);
 app.use("/", LoginController);
 app.use("/version", VersionController);
 app.use("/users", UserController);

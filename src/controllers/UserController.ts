@@ -102,14 +102,6 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
     try {
         const user = await userFacade.getById(id);
 
-        if (!user) { // user does not exist
-            logEndpoint(controllerName, `User with id ${id} was not found!`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `BenutzerIn mit ID ${id} wurde nicht gefunden!`)
-            ]);
-        }
-
         // check if new password matches old password
         const validPassword = bcrypt.compareSync(oldPassword, user.password);
 

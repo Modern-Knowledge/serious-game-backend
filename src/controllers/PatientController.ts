@@ -162,10 +162,6 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
-    }
-
     const id = Number(req.params.id);
 
     const patientCompositeFacade = new PatientCompositeFacade();
@@ -175,20 +171,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     patientCompositeFacade.sessionFacadeFilter.addFilterCondition("patient_id", id);
     patientCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("patient_id", id);
 
-    const patientFacade = new PatientFacade();
-
     try {
-
-        const patient = await patientFacade.isPatient(id);
-        // check if user is therapist
-        if (!patient) {
-            logEndpoint(controllerName, `Patient with id ${id} was not found!`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} wurde nicht gefunden!`)
-            ]);
-        }
-
         await patientCompositeFacade.deletePatientComposite();
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully deleted!`, req);
@@ -270,14 +253,6 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
         patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
 
         const affectedRows = await patientFacade.updateUserPatient(patient);
-
-        if (affectedRows <= 0) { // no rows were updated
-            logEndpoint(controllerName, `Patient with id ${id} couldn't be updated`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} konnte nicht aktualisiert werden!`)
-            ], 400);
-        }
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully updated!`, req);
 

@@ -30,7 +30,7 @@ describe("PasswordResetController Tests", () => {
         // SGB039
         it("request password reset token with valid parameters", async () => {
             const res = await request(app).post(endpoint)
-                .send({email: validTherapist.email})
+                .send({email: validAdminTherapist.email})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(200);

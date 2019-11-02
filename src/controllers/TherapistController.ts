@@ -185,17 +185,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
     const therapist = new Therapist().deserialize(req.body);
-    const dbTherapist = await therapistFacade.getById(req.params.id);
     try {
-        // check if therapist exists
-        if (!dbTherapist) {
-            logEndpoint(controllerName, `Therapist with id ${req.params.id} was not found!`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${req.params.id} wurde nicht gefunden!`)
-            ]);
-        }
-
         therapist.id = req.params.id;
 
         const therapistPatient = new TherapistPatient();
@@ -250,10 +240,6 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
-    if (!checkRouteValidation(controllerName, req, res)) {
-        return failedValidation400Response(req, res);
-    }
-
     const id = Number(req.params.id);
 
     const therapistCompositeFacade = new TherapistCompositeFacade();
@@ -261,20 +247,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     therapistCompositeFacade.therapistUserFacadeFilter.addFilterCondition("id", id);
     therapistCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("therapist_id", id);
 
-    const therapistFacade = new TherapistFacade();
-
     try {
-        const therapist = await therapistFacade.isTherapist(id);
-
-        // check if user is therapist
-        if (!therapist) {
-            logEndpoint(controllerName, `Therapist with id ${id} was not found!`, req);
-
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
-            ]);
-        }
-
         await therapistCompositeFacade.deleteTherapistComposite();
 
         logEndpoint(controllerName, `Therapist with id ${id} was successfully deleted!`, req);
@@ -332,10 +305,6 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
         therapist.accepted = !therapist.accepted;
 
         const affectedRows = await therapistFacade.updateTherapist(therapist);
-        // no rows were updated
-        if (affectedRows <= 0) {
-           return next(new Error("TherapeutIn konnte nicht aktualisiert werden"));
-        }
 
         logEndpoint(controllerName, `Therapist with id ${id} was ${therapist.accepted ? "accepted" : "not accepted"}`, req);
 
