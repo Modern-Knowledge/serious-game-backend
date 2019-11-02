@@ -294,11 +294,17 @@ export async function seedTables(): Promise<void> {
   await seedLogs();
 }
 
+/**
+ * inserts example patient-settings into the database.
+ */
 export async function seedPatientSettings() {
   const patientSettingFacade = new PatientSettingFacade();
   await patientSettingFacade.insertPatientSetting(pSettings);
 }
 
+/**
+ * inserts example images into the database.
+ */
 export async function seedImages() {
   const imageFacade = new ImageFacade();
   const imageArr = [image];
@@ -307,6 +313,9 @@ export async function seedImages() {
   }
 }
 
+/**
+ * inserts example sessions into the database.
+ */
 export async function seedSessions() {
   const sessionFacade = new SessionFacade();
   const sessionsArr = [session];
@@ -315,6 +324,9 @@ export async function seedSessions() {
   }
 }
 
+/**
+ * inserts example statistics into the database.
+ */
 export async function seedStatistics() {
   const statisticFacade = new StatisticFacade();
   const statisticsArr = [statistic, statistic1];
@@ -323,26 +335,41 @@ export async function seedStatistics() {
   }
 }
 
+/**
+ * inserts example words into the database.
+ */
 export async function seedWords() {
   const wordFacade = new WordFacade();
   await wordFacade.insertWord(word);
 }
 
+/**
+ * inserts example errortexts into the database.
+ */
 export async function seedErrortexts() {
   const errorTextFacade = new ErrortextFacade();
   await errorTextFacade.insertErrortext(errortext);
 }
 
+/**
+ * inserts example helptext-games into the database.
+ */
 export async function seedHelptextGames() {
   const helptextGameFacade = new HelptextsGamesFacade();
   await helptextGameFacade.insertHelptextGames(helptextGames);
 }
 
+/**
+ * inserts example helptexts into the database.
+ */
 export async function seedHelptexts() {
   const helptextFacade = new HelptextFacade();
   await helptextFacade.insertHelptext(helptext);
 }
 
+/**
+ * inserts example game settings into the database.
+ */
 export async function seedGameSettings() {
   const gameSettingFacade = new GameSettingFacade();
   const gameSettingsArr = [
@@ -356,6 +383,9 @@ export async function seedGameSettings() {
   }
 }
 
+/**
+ * inserts example games into the database.
+ */
 export async function seedGames() {
   const gameFacade = new GameFacade();
   const games = [game, game2, game3, game4];
@@ -364,6 +394,9 @@ export async function seedGames() {
   }
 }
 
+/**
+ * inserts example ingredients into the database.
+ */
 export async function seedIngredients() {
   const ingredientFacade = new IngredientFacade();
   const ingredients = [egg, oil];
@@ -372,6 +405,9 @@ export async function seedIngredients() {
   }
 }
 
+/**
+ * inserts example recipes-ingredients into the database.
+ */
 export async function seedRecipeIngredientFacade() {
   const recipeIngredientFacade = new RecipeIngredientFacade();
   const recipeIngredients = [recipeIngredient1, recipeIngredient2];
@@ -380,6 +416,9 @@ export async function seedRecipeIngredientFacade() {
   }
 }
 
+/**
+ * inserts example recipes into the database.
+ */
 export async function seedRecipes() {
   const recipeFacade = new RecipeFacade();
   const recipes = [scrambledEgg, roastPork, proteinShake];
@@ -388,6 +427,9 @@ export async function seedRecipes() {
   }
 }
 
+/**
+ * inserts example food-categories into the database.
+ */
 export async function seedFoodCategories() {
   const foodCategoryFacade = new FoodCategoryFacade();
   const foodCategories = [
@@ -405,6 +447,9 @@ export async function seedFoodCategories() {
   }
 }
 
+/**
+ * inserts example severities into the database.
+ */
 export async function seedSeverities() {
   const severityFacade = new SeverityFacade();
   const severities = [severityEasy, severityMedium, severityHard];
@@ -413,6 +458,9 @@ export async function seedSeverities() {
   }
 }
 
+/**
+ * inserts example difficulties into the database.
+ */
 export async function seedDifficulties() {
   const difficultyFacade = new DifficultyFacade();
   const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
@@ -421,6 +469,9 @@ export async function seedDifficulties() {
   }
 }
 
+/**
+ * inserts example users into the database.
+ */
 export async function seedUsers(): Promise<void> {
   const therapistFacade = new TherapistFacade();
   const therapists = [
@@ -441,6 +492,9 @@ export async function seedUsers(): Promise<void> {
   }
 }
 
+/**
+ * inserts example smtp-logs into the database.
+ */
 export async function seedSmtpLogs(): Promise<void> {
   const smtpLogFacade = new SmtpLogFacade();
   const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
@@ -449,6 +503,9 @@ export async function seedSmtpLogs(): Promise<void> {
   }
 }
 
+/**
+ * inserts example logs into the database.
+ */
 export async function seedLogs(): Promise<void> {
   const logFacade = new LogFacade();
   const logArr = [
