@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { SQLJoin } from "../sql/SQLJoin";
 import { SQLBlock } from "../sql/SQLBlock";
@@ -108,7 +113,6 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             }
         }
 
-
         return g;
     }
 
@@ -121,7 +125,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }

@@ -1,10 +1,12 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import request from "supertest";
 import app from "../src/app";
 import {
-    dropTables,
-    runMigrations,
     seedFoodCategories, seedIngredients,
-    seedTables,
     seedUsers,
     truncateTables
 } from "../src/migrationHelper";
@@ -164,10 +166,10 @@ describe("IngredientController Tests", () => {
         let authenticationToken: string;
 
         beforeAll(async () => {
-            await dropTables();
-            await runMigrations();
             await truncateTables();
-            await seedTables();
+            await seedUsers();
+            await seedFoodCategories();
+            await seedIngredients();
         }, timeout);
 
         it("fetch ingredients with category id", async () => {

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import request from "supertest";
 import app from "../src/app";
 import { seedUsers, truncateTables } from "../src/migrationHelper";
@@ -18,17 +23,14 @@ describe("LoginController Tests", () => {
         const timeout = 100000;
         const endpoint = "/login";
 
-        // truncate tables
         beforeEach(async () => {
             return truncateTables();
         });
 
-        // seed tables
         beforeEach(async () => {
             return seedUsers();
         });
 
-        // SGB001
         it("login with correct therapist credentials", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validTherapist.email, password: "123456"})
@@ -53,7 +55,6 @@ describe("LoginController Tests", () => {
             }
         }, timeout);
 
-        // SGB002
         it("login with correct therapist credentials, but therapist was not accepted", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: unacceptedTherapist.email, password: "123456"})
@@ -65,7 +66,6 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB003
         it("login with correct patient credentials", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email, password: "123456"})
@@ -80,7 +80,6 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB004
         it("try to login with no password passed", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email})

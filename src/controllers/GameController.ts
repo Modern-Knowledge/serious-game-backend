@@ -1,5 +1,10 @@
 
 
+/*
+ * Copyright (c) 2019 Florian Mold
+ * All rights reserved.
+ */
+
 import express from "express";
 import { Request, Response } from "express";
 import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
@@ -68,6 +73,7 @@ router.get("/:id", authenticationMiddleware, [
     const gameFacade = new GameCompositeFacade();
 
     try {
+        console.log(await gameFacade.get());
         const game = await gameFacade.getById(id);
 
         if (!game) {
