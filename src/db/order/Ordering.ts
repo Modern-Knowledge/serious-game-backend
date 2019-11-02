@@ -22,13 +22,6 @@ export class Ordering {
     }
 
     /**
-     * clear order-bys
-     */
-    public clear() {
-        this._orderBys = [];
-    }
-
-    /**
      * returns order bys
      */
     get orderBys(): SQLOrderBy[] {

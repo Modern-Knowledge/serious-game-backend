@@ -29,7 +29,7 @@ export class FilterAttribute implements Filterable {
    */
   public getBlock(): SQLBlock {
     const block: SQLBlock = new SQLBlock();
-    block.addText(`${(this._tableAlias !== undefined ? this._tableAlias + "." : "")}${this._name} ${this._comparisonOperator} ::${this._tableAlias + "_" + this._name}::`);
+    block.addText(`${this._tableAlias + "."}${this._name} ${this._comparisonOperator} ::${this._tableAlias + "_" + this._name}::`);
     block.addParameter(new SQLParam(`${this._tableAlias + "_" + this._name}`, this._value, false));
 
     return block;
