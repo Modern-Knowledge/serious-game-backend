@@ -22,5 +22,6 @@ export function setPasswordResetToken(user: User): void {
  */
 export function generatePasswordResetToken(length: number = 8): number {
     const timestamp: number = new Date().getTime();
-    return timestamp % (10 ** length);
+    const str = "" + timestamp;
+    return Number(str.substr(0, 8));
 }
