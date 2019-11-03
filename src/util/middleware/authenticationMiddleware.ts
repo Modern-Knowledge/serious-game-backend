@@ -77,6 +77,10 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
     if (orgToken) { // check if token exists
         const refreshedToken = await refreshToken(orgToken);
 
+        if (!refreshedToken) {
+            return next();
+        }
+
         if (orgToken !== refreshedToken) { // token has changed -> change authorization header
             req.headers["authorization"] = "Bearer " + refreshedToken;
         }
@@ -95,8 +99,9 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
  * if token expires in less than 15 minutes -> refresh token for another hour
  * if token expires in more than 15 minutes -> return passed token
  */
-async function refreshToken(token: string): Promise<string> {
+export async function refreshToken(token: string): Promise<string> {
     const decodedToken = jwt.decode(token, {complete: true});
+    console.log(decodedToken);
     if (!decodedToken) { // token is invalid
         return undefined;
     }
