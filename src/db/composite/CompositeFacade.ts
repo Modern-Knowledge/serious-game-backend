@@ -120,15 +120,6 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * clears order-bys from the facades in the composite facade
-     */
-    public clearOrderBys(): void {
-        for (const orderBy of this.orderBys) {
-            orderBy.clear();
-        }
-    }
-
-    /**
      * combines the composite facade order-bys to one order-by
      */
     private combineOrderBys(): void {

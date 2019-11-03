@@ -14,7 +14,7 @@ import moment from "moment";
 import morgan from "morgan";
 import * as dotenv from "dotenv";
 import { DotenvConfigOutput } from "dotenv";
-import { inProduction, loggerString } from "./util/Helper";
+import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
 import cors from "cors";
 import methodOverride from "method-override";
 import helmet from "helmet";
@@ -200,7 +200,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 // only execute if nothing is sent before -> 404 route not found
 app.use((req: Request, res: Response, next: any) => {
   if (!res.headersSent) {
-    const error: Error = new Error("Route not found");
+    const error: Error = new Error("Route not found" + `"${req.method} ${getRequestUrl(req)}"`);
     res.locals.status = 404;
     next(error);
   }
@@ -230,7 +230,9 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
 
   // send mail with error to support
     const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)], supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
-    mailTransport.sendMail(m);
+    if (!inTestMode()) {
+        mailTransport.sendMail(m);
+    }
 
   logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
 
