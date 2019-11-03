@@ -2,7 +2,7 @@ import * as jwt from "jsonwebtoken";
 import { User } from "../../lib/models/User";
 import { JWTHelper } from "../JWTHelper";
 import logger from "../log/logger";
-import { loggerString, skipAuthentication } from "../Helper";
+import { loggerString } from "../Helper";
 import { ExtractJwt } from "passport-jwt";
 import { Request, Response } from "express";
 import { formatDateTime } from "../../lib/utils/dateFormatter";
@@ -31,11 +31,6 @@ import { http4xxResponse } from "../http/httpResponses";
  */
 export async function checkAuthentication(req: Request, res: Response, next: any): Promise<void> {
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthentication")}`);
-
-    if (skipAuthentication()) {
-        logger.warn(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthentication")} Checking the authentication token is skipped!`);
-        return next();
-    }
 
     passport.authenticate("jwt", { session: false}, (err, user, info) => {
         if (err) {
@@ -66,11 +61,6 @@ export async function checkAuthentication(req: Request, res: Response, next: any
  */
 export async function checkAuthenticationToken(req: Request, res: Response, next: any): Promise<void> {
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")}`);
-
-    if (skipAuthentication()) {
-        logger.warn(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")} Validating and refreshing the authentication token is skipped!`);
-        return next();
-    }
 
     const orgToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req); // retrieve token
 

@@ -61,22 +61,6 @@ export function inTestMode(): boolean {
 }
 
 /**
- * checks if the authentication token is checked or skipped
- */
-export function skipAuthentication(): boolean {
-    const value = Number(process.env.SKIP_AUTHENTICATION) || 0;
-    return value === 1;
-}
-
-/**
- * checks if permissions are checked or skipped
- */
-export function skipPermissionCheck(): boolean {
-    const value = Number(process.env.SKIP_PERMISSION_CHECK) || 0;
-    return value === 1;
-}
-
-/**
  * returns the current request url + parameters formatted as string
  * e.g.: http://localhost/home
  * @param req
