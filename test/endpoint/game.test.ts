@@ -10,7 +10,7 @@ describe("GameController Tests", () => {
 
     describe("GET /games", () => {
         const endpoint = "/games";
-        const timeout = 10000;
+        const timeout = 20000;
         let authenticationToken: string;
 
         beforeAll(async () => {

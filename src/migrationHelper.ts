@@ -93,10 +93,6 @@ import {
  * - seedTables: seed tables with test data
  */
 export async function migrate(): Promise<void> {
-  if (inProduction() || inTestMode()) {
-    return;
-  }
-
   const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
   const runDropTable = Number(process.env.RUN_DROP_TABLE) || 0;
   const runMigration = Number(process.env.RUN_MIGRATIONS) || 0;

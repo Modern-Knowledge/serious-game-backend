@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
-
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { SQLJoin } from "../sql/SQLJoin";
 import { SQLBlock } from "../sql/SQLBlock";
@@ -19,6 +14,9 @@ import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { CompositeFacade } from "./CompositeFacade";
 import { Ordering } from "../order/Ordering";
 import { arrayContainsModel } from "../../util/Helper";
+import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
+import { ErrortextGamesFacade } from "../entity/helptext/ErrortextGamesFacade";
+import { Errortext } from "../../lib/models/Errortext";
 
 /**
  * retrieves composite games
@@ -34,6 +32,9 @@ import { arrayContainsModel } from "../../util/Helper";
  * - helptexts_games (1:n)
  * - helptexts (1:n)
  *  - texts (1:1)
+ * - errortexts_games (1:n)
+ * - errortexts (1:n)
+ *  - texts (1:1)
  */
 export class GameCompositeFacade extends CompositeFacade<Game> {
 
@@ -41,11 +42,15 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     private _gameSettingsFacade: GameSettingFacade;
     private _helptextsGamesFacade: HelptextsGamesFacade;
     private _helptextFacade: HelptextFacade;
+    private _errortextGamesFacade: ErrortextGamesFacade;
+    private _errortextFacade: ErrortextFacade;
 
     private _withGameSettingsJoin: boolean;
     private _withDifficultyJoin: boolean;
     private _withHelptextJoin: boolean;
-    private _withTextJoin: boolean;
+    private _withHelptextTextJoin: boolean;
+    private _withErrortextJoin: boolean;
+    private _withErrortextTextJoin: boolean;
 
     /**
      * @param tableAlias
@@ -65,7 +70,9 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         this._withGameSettingsJoin = true;
         this._withDifficultyJoin = true;
         this._withHelptextJoin = true;
-        this._withTextJoin = true;
+        this._withHelptextTextJoin = true;
+        this._withErrortextJoin = true;
+        this._withErrortextTextJoin = true;
     }
 
     /**
@@ -83,6 +90,10 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withHelptextJoin) {
             returnAttributes.addSqlAttributes(this._helptextsGamesFacade.getSQLAttributes(excludedSQLAttributes));
             returnAttributes.addSqlAttributes(this._helptextFacade.getSQLAttributes(excludedSQLAttributes));
+        }
+        if (this._withErrortextJoin) {
+            returnAttributes.addSqlAttributes(this._errortextGamesFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._errortextFacade.getSQLAttributes(excludedSQLAttributes));
         }
 
         return returnAttributes;
@@ -110,6 +121,13 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             const ht: Helptext = this._helptextFacade.fillEntity(result);
             if (ht) {
                 g.helptexts.push(ht);
+            }
+        }
+
+        if (this._withErrortextJoin) {
+            const et: Errortext = this._errortextFacade.fillEntity(result);
+            if (et) {
+                g.errortexts.push(et);
             }
         }
 
@@ -142,6 +160,18 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             joins = joins.concat(this._helptextFacade.joins); // add helptext joins (text)
         }
 
+        if (this._withErrortextJoin) {
+            const errortextGameJoin: SQLBlock = new SQLBlock();
+            errortextGameJoin.addText(`${this._errortextGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
+            joins.push(new SQLJoin(this._errortextGamesFacade.tableName, this._errortextGamesFacade.tableAlias, errortextGameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+
+            const errortextsJoin: SQLBlock = new SQLBlock();
+            errortextsJoin.addText(`${this._errortextFacade.tableAlias}.error_id = ${this._errortextGamesFacade.tableAlias}.errortexts_error_id`);
+            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+
+            joins = joins.concat(this._errortextFacade.joins); // add helptext joins (text)
+        }
+
         return joins;
     }
 
@@ -163,6 +193,10 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
                     existingGame.helptexts = existingGame.helptexts.concat(game.helptexts);
                 }
 
+                if (!arrayContainsModel(game.errortexts[0], existingGame.errortexts)) {
+                    existingGame.errortexts = existingGame.errortexts.concat(game.errortexts);
+                }
+
                 if (!arrayContainsModel(game.gameSettings[0], existingGame.gameSettings)) {
                     existingGame.gameSettings = existingGame.gameSettings.concat(game.gameSettings);
                 }
@@ -179,17 +213,15 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         return [
             this.gameSettingFacadeFilter,
             this.helptextFacadeFilter,
-            this.textFacadeFilter,
+            this.helptextTextFacadeFilter,
+            this.errortextFacadeFilter,
+            this.errortextTextFacadeFilter,
             this.difficultyFacadeFilter
         ];
     }
 
     get difficultyFacadeFilter(): Filter {
         return this._gameSettingsFacade.difficultyFacadeFilter;
-    }
-
-    get textFacadeFilter(): Filter {
-        return this._helptextFacade.textFacadeFilter;
     }
 
     get gameSettingFacadeFilter(): Filter {
@@ -200,24 +232,34 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         return this._helptextFacade.filter;
     }
 
+    get helptextTextFacadeFilter(): Filter {
+        return this._helptextFacade.textFacadeFilter;
+    }
+
+    get errortextFacadeFilter(): Filter {
+        return this._errortextFacade.filter;
+    }
+
+    get errortextTextFacadeFilter(): Filter {
+        return this._errortextFacade.textFacadeFilter;
+    }
+
     /**
      * returns all sub facade order-bys of the facade as an array
      */
     protected get orderBys(): Ordering[] {
         return [
             this.difficultyFacadeOrderBy,
-            this.textFacadeOrderBy,
             this.gameSettingFacadeOrderBy,
-            this.helptextFacadeOrderBy
+            this.helptextFacadeOrderBy,
+            this.helptextTextFacadeOrderBy,
+            this.errortextFacadeOrderBy,
+            this.errortextTextFacadeOrderBy
         ];
     }
 
     get difficultyFacadeOrderBy(): Ordering {
         return this._gameSettingsFacade.difficultyFacadeOrderBy;
-    }
-
-    get textFacadeOrderBy(): Ordering {
-        return this._helptextFacade.textFacadeOrderBy;
     }
 
     get gameSettingFacadeOrderBy(): Ordering {
@@ -228,13 +270,34 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         return this._helptextFacade.ordering;
     }
 
-    get withTextJoin(): boolean {
-        return this._withTextJoin;
+    get helptextTextFacadeOrderBy(): Ordering {
+        return this._helptextFacade.textFacadeOrderBy;
     }
 
-    set withTextJoin(value: boolean) {
+    get errortextFacadeOrderBy(): Ordering {
+        return this._errortextFacade.ordering;
+    }
+
+    get errortextTextFacadeOrderBy(): Ordering {
+        return this._errortextFacade.textFacadeOrderBy;
+    }
+
+    get withHelptextTextJoin(): boolean {
+        return this._withHelptextTextJoin;
+    }
+
+    set withHelptextTextJoin(value: boolean) {
         this._helptextFacade.withTextJoin = value;
-        this._withTextJoin = value;
+        this._withHelptextTextJoin = value;
+    }
+
+    get withErrortextTextJoin(): boolean {
+        return this._withErrortextTextJoin;
+    }
+
+    set withErrortextTextJoin(value: boolean) {
+        this._errortextFacade.withTextJoin = value;
+        this._withErrortextTextJoin = value;
     }
 
     get withGameSettingsJoin(): boolean {
@@ -262,5 +325,11 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         this._withHelptextJoin = value;
     }
 
+    get withErrortextJoin(): boolean {
+        return this._withErrortextJoin;
+    }
 
+    set withErrortextJoin(value: boolean) {
+        this._withErrortextJoin = value;
+    }
 }

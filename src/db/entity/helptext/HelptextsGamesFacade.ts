@@ -1,5 +1,3 @@
-
-
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { HelptextGame } from "../../../lib/models/HelptextGame";

@@ -1,0 +1,62 @@
+import request from "supertest";
+import app from "../../src/app";
+import {
+    dropTables,
+    migrate,
+    seedErrortexts,
+    seedSeverities,
+    seedUsers,
+    truncateTables
+} from "../../src/migrationHelper";
+import { ErrortextFacade } from "../../src/db/entity/helptext/ErrortextFacade";
+import { HelptextFacade } from "../../src/db/entity/helptext/HelptextFacade";
+import { UserFacade } from "../../src/db/entity/user/UserFacade";
+import { GameFacade } from "../../src/db/entity/game/GameFacade";
+
+
+describe("migrationHelper Tests", () => {
+    const timeout = 10000;
+
+    beforeEach(async () => {
+        await migrate();
+    }, timeout);
+
+    it("test running migrations", async () => {
+        await request(app).get("/errortexts")
+            .set("Authorization", "Bearer ")
+            .set("Accept", "application/json");
+
+        // check database
+        const errortextFacade = new ErrortextFacade();
+        const errortexts = await errortextFacade.get();
+
+        expect(errortexts.length).not.toBe(0);
+
+        const helptextFacade = new HelptextFacade();
+        const helptexts = await helptextFacade.get();
+
+        expect(helptexts.length).not.toBe(0);
+
+        const userFacade = new UserFacade();
+        const users = await userFacade.get();
+
+        expect(users.length).not.toBe(0);
+
+        const gameFacade = new GameFacade();
+        const games = await gameFacade.get();
+
+        expect(games.length).not.toBe(0);
+    }, timeout);
+
+    /* it("test truncating tables without tables", async () => {
+        await dropTables();
+
+        await request(app).get("/errortexts")
+            .set("Authorization", "Bearer ")
+            .set("Accept", "application/json");
+
+        await truncateTables();
+    }); */
+
+
+});
