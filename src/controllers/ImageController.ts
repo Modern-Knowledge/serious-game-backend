@@ -48,6 +48,7 @@ router.get("/:id", authenticationMiddleware, [
 
         logEndpoint(controllerName, `The image with id ${id} was successfully loaded!`, req);
 
+        res.contentType("image/png");
         return res.status(200).send(image.image);
     }
     catch (error) {

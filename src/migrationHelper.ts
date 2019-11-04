@@ -60,7 +60,7 @@ import {
   recipeIngredient2
 } from "./seeds/recipeIngredients";
 import { helptext } from "./seeds/helptexts";
-import { errortext } from "./seeds/errortexts";
+import { errortext, errortext1 } from "./seeds/errortexts";
 import { word } from "./seeds/words";
 import { helptextGames } from "./seeds/helptextGames";
 import { pSettings } from "./seeds/patientSettings";
@@ -83,6 +83,8 @@ import {
   infoLogWithUser,
   verboseLogWithUser
 } from "./seeds/logs";
+import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
+import { errortextGames } from "./seeds/errortextGames";
 
 /**
  * runs multiple migrations based on .env variables
@@ -93,6 +95,10 @@ import {
  * - seedTables: seed tables with test data
  */
 export async function migrate(): Promise<void> {
+  if (inProduction()) {
+    return;
+  }
+
   const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
   const runDropTable = Number(process.env.RUN_DROP_TABLE) || 0;
   const runMigration = Number(process.env.RUN_MIGRATIONS) || 0;
@@ -281,6 +287,7 @@ export async function seedTables(): Promise<void> {
   await seedGameSettings();
   await seedHelptexts();
   await seedErrortexts();
+  await seedErrortextGames();
   await seedHelptextGames();
   await seedWords();
   await seedStatistics();
@@ -344,7 +351,18 @@ export async function seedWords() {
  */
 export async function seedErrortexts() {
   const errorTextFacade = new ErrortextFacade();
-  await errorTextFacade.insertErrortext(errortext);
+  const errortextArr = [errortext, errortext1];
+  for (const item of errortextArr) {
+    await errorTextFacade.insertErrortext(item);
+  }
+}
+
+/**
+ * inserts example errortext-games into the database.
+ */
+export async function seedErrortextGames() {
+  const errortextGameFacade = new ErrortextGamesFacade();
+  await errortextGameFacade.insertErrortextGame(errortextGames);
 }
 
 /**

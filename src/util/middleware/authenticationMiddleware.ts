@@ -91,7 +91,7 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
  */
 export async function refreshToken(token: string): Promise<string> {
     const decodedToken = jwt.decode(token, {complete: true});
-    console.log(decodedToken);
+
     if (!decodedToken) { // token is invalid
         return undefined;
     }

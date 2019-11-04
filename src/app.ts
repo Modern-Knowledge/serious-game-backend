@@ -52,7 +52,7 @@ import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
 import { migrate } from "./migrationHelper";
 
-if (!inProduction() || !inTestMode()) {
+if (!inTestMode()) {
     migrate().then(() => {});
 }
 

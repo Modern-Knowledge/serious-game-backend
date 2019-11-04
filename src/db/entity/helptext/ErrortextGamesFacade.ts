@@ -25,7 +25,7 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] =  ["errortexts_error_id", "games_id"];
+        const sqlAttributes: string[] =  ["error_id", "game_id"];
         let exclDefaultAttr: string[] = ["id", "created_at", "modified_at"];
 
         if (excludedSQLAttributes) {
@@ -61,8 +61,8 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
             errortextGame.gameId = result[this.name("game_id")];
         }
 
-        if (result[this.name("errortexts_error_id")]) {
-            errortextGame.errortextsErrorId = result[this.name("errortexts_error_id")];
+        if (result[this.name("error_id")]) {
+            errortextGame.errorId = result[this.name("error_id")];
         }
 
         return errortextGame;
@@ -79,7 +79,7 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
         const gameIdAttribute: SQLValueAttribute = new SQLValueAttribute("game_id", prefix, errortextGame.gameId);
         attributes.addAttribute(gameIdAttribute);
 
-        const errortextId: SQLValueAttribute = new SQLValueAttribute("errortexts_error_id", prefix, errortextGame.errortextsErrorId);
+        const errortextId: SQLValueAttribute = new SQLValueAttribute("error_id", prefix, errortextGame.errorId);
         attributes.addAttribute(errortextId);
 
         return attributes;
