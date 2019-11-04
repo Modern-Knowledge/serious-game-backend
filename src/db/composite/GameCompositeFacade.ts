@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- */
-
 import { SQLAttributes } from "../sql/SQLAttributes";
 import { SQLJoin } from "../sql/SQLJoin";
 import { SQLBlock } from "../sql/SQLBlock";
