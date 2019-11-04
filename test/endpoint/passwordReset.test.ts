@@ -161,7 +161,6 @@ describe("PasswordResetController Tests", () => {
         });
 
         it("reset password with valid parameters", async () => {
-
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,

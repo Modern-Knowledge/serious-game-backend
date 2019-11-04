@@ -25,7 +25,7 @@ describe("ImageController Tests", () => {
             const res = await request(app).get(endpoint + "/" + image.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
-                .expect("Content-Type", "application/octet-stream")
+                .expect("Content-Type", "image/png")
                 .expect(200);
 
             expect(res.body).not.toBeUndefined();
