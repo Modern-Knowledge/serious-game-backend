@@ -1,4 +1,4 @@
-# Serious Game Frontend
+# Serious Game Backend
 
 Die Backend-Instanz des Serious Games.
 
@@ -7,8 +7,8 @@ NodeJS+ExpressJS
 ## Getting Started
 
 ```
-git clone https://repo.inso.tuwien.ac.at/florian.mold/serious-game-frontend
-cd serious-game-frontend
+git clone https://repo.inso.tuwien.ac.at/florian.mold/serious-game-backend
+cd serious-game-backend
 ```
 
 ### Prerequisites
@@ -26,6 +26,13 @@ docker run --name serious-game-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root
 ### Installing
 
 Um eine lokale Instanz zum laufen zu bringen, müssen folgende Schritte ausgeführt werden:
+
+#### .env-Datei erstellen:
+
+```
+cp .env.example .env
+```
+Alle Daten in der .env-Datei dementsprechend ausfüllen.
 
 
 #### Dependencies installieren:
