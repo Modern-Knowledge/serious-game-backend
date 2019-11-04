@@ -52,7 +52,9 @@ import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
 import { migrate } from "./migrationHelper";
 
-migrate().then(() => {});
+if (!inProduction() || !inTestMode()) {
+    migrate().then(() => {});
+}
 
 logger.info(
   `${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`
