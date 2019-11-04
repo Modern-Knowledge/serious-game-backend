@@ -66,6 +66,8 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         this._gameSettingsFacade = new GameSettingFacade();
         this._helptextsGamesFacade = new HelptextsGamesFacade();
         this._helptextFacade = new HelptextFacade();
+        this._errortextGamesFacade = new ErrortextGamesFacade();
+        this._errortextFacade = new ErrortextFacade();
 
         this._withGameSettingsJoin = true;
         this._withDifficultyJoin = true;
@@ -166,7 +168,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
             joins.push(new SQLJoin(this._errortextGamesFacade.tableName, this._errortextGamesFacade.tableAlias, errortextGameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
 
             const errortextsJoin: SQLBlock = new SQLBlock();
-            errortextsJoin.addText(`${this._errortextFacade.tableAlias}.error_id = ${this._errortextGamesFacade.tableAlias}.errortexts_error_id`);
+            errortextsJoin.addText(`${this._errortextFacade.tableAlias}.error_id = ${this._errortextGamesFacade.tableAlias}.error_id`);
             joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._errortextFacade.joins); // add helptext joins (text)
