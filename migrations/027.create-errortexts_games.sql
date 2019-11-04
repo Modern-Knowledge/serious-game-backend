@@ -2,6 +2,8 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`errortexts_games`
 (
     `error_id` INT(11) NOT NULL,
     `game_id`            INT(11) NOT NULL,
+    `created_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified_at` TIMESTAMP NULL,
     PRIMARY KEY (`error_id`, `game_id`),
     INDEX `fk_errortexts_games_games1_idx` (`game_id` ASC),
     INDEX `fk_errortexts_games_errortexts1_idx` (`error_id` ASC),
