@@ -22,12 +22,10 @@ describe("SessionController Tests", () => {
         const timeout = 20000;
         let authenticationToken: string;
 
-        // clear database
         beforeAll(async () => {
             await truncateTables();
         }, timeout);
 
-        // seed tables
         beforeAll(async () => {
             await seedDifficulties();
             await seedGames();
@@ -37,6 +35,7 @@ describe("SessionController Tests", () => {
             await seedSessions();
         }, timeout);
 
+        // SGBSC01
         it("fetch session with id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -54,6 +53,7 @@ describe("SessionController Tests", () => {
             expect(res.body._data.session._id).toEqual(session.id);
         }, timeout);
 
+        // SGBSC02
         it("try to fetch session with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + session.id)
                 .set("Accept", "application/json")
@@ -74,6 +74,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC03
         it("try to fetch session by id with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -87,6 +88,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC04
         it("try to fetch session with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -100,6 +102,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC05
         it("try to fetch session with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -129,6 +132,7 @@ describe("SessionController Tests", () => {
             await seedSessions();
         }, timeout);
 
+        // SGBSC06
         it("fetch session by patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -145,6 +149,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC07
         it("try to fetch session by patient id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + validPatient.id)
                 .set("Accept", "application/json")
@@ -165,6 +170,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC08
         it("try to fetch session by patient id with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -178,6 +184,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC09
         it("try to fetch session with an invalid patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -191,6 +198,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC10
         it("try to fetch session with a not existing patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -224,6 +232,7 @@ describe("SessionController Tests", () => {
             await seedSessions();
         }, timeout);
 
+        // SGBSC11
         it("successfully delete session", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -244,6 +253,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC12
         it("try to delete session without authentication", async () => {
             const res = await request(app).delete(endpoint + "/" + session.id)
                 .set("Authorization", "")
@@ -263,6 +273,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC13
         it("try to delete session with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -276,6 +287,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC14
         it("try to delete session with patient user", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -289,6 +301,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC15
         it("try to delete session with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -302,6 +315,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC16
         it("try to delete session with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -315,6 +329,7 @@ describe("SessionController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSC17
         it("try to delete session without an id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -338,7 +353,6 @@ describe("SessionController Tests", () => {
             return truncateTables();
         });
 
-        // seed tables
         beforeEach(async () => {
             await seedDifficulties();
             await seedGames();
@@ -347,6 +361,7 @@ describe("SessionController Tests", () => {
             await seedStatistics();
         });
 
+        // SGBSC18
         it("successfully create new session", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -386,6 +401,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC19
         it("try to create session without authentication", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -422,6 +438,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC20
         it("try to create session with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -444,6 +461,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC21
         it("try to create new session without a game id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -465,6 +483,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC22
         it("try to create new session without a patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -486,6 +505,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC23
         it("try to create new session without a game-setting id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -507,6 +527,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC24
         it("try to create new session without data", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -522,6 +543,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC25
         it("try to create new session with an invalid game id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -544,6 +566,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC26
         it("try to create new session with an invalid patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -566,6 +589,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC27
         it("try to create new session with an invalid game setting id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -588,6 +612,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC28
         it("try to create new session with a not existing game id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -610,6 +635,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC29
         it("try to create new session with a not existing patient id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -632,6 +658,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC30
         it("try to create new session with a not existing gameSetting id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -654,6 +681,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC31
         it("try to create new session with no elapsed time", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -675,6 +703,7 @@ describe("SessionController Tests", () => {
 
         }, timeout);
 
+        // SGBSC32
         it("try to create new session with an invalid elapsed time", async () => {
             authenticationToken = await authenticate(validTherapist);
 

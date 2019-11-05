@@ -18,6 +18,7 @@ describe("LoggingController Tests", () => {
             await seedLogs();
         }, timeout);
 
+        // SGBLOC01
         it("fetch all logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -33,6 +34,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC02
         it("try to fetch all logs with no authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -44,6 +46,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC03
         it("try to fetch all logs with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -58,6 +61,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC04
         it("try to fetch all logs with no therapist admin", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -72,6 +76,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC05
         it("try to fetch all logs with debug level", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -92,6 +97,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC06
         it("try to fetch all logs with a specific method", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -112,6 +118,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC07
         it("try to fetch all logs with a user id", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -132,6 +139,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC08
         it("try to fetch all logs with a user id, method and level", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -173,6 +181,7 @@ describe("LoggingController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBLOC09
         it("insert a new log", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -210,6 +219,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC10
         it("try to insert a new log without a logger", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -234,6 +244,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC11
         it("try to insert a new log without a level", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -258,6 +269,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC12
         it("try to insert a new log without a message", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -282,6 +294,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC13
         it("try to insert a new log with a too short message", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -319,6 +332,7 @@ describe("LoggingController Tests", () => {
             await seedLogs();
         }, timeout);
 
+        // SGBLOC14
         it("deletes all logs older than 3 months", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -335,6 +349,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC15
         it("try to delete all logs older than 3 months without authentication", async () => {
 
             const res = await request(app).delete(endpoint)
@@ -347,6 +362,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC16
         it("try to delete all logs older than 3 months with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -361,6 +377,7 @@ describe("LoggingController Tests", () => {
 
         }, timeout);
 
+        // SGBLOC17
         it("deletes all logs older than 3 months without an admin therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 

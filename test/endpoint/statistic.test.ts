@@ -20,6 +20,7 @@ describe("StatisticController Tests", () => {
             await seedStatistics();
         }, timeout);
 
+        // SGBSTC01
         it("fetch statistic with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -38,6 +39,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC02
         it("try to fetch statistic with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + statistic.id)
                 .set("Accept", "application/json")
@@ -58,6 +60,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC03
         it("try to fetch statistic with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -71,6 +74,7 @@ describe("StatisticController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSTC04
         it("try to fetch statistic with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -84,6 +88,7 @@ describe("StatisticController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBSTC05
         it("try to fetch statistic with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -109,6 +114,7 @@ describe("StatisticController Tests", () => {
             await seedStatistics();
         }, timeout);
 
+        // SGBSTC06
         it("successfully update statistic", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -138,6 +144,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC07
         it("try to update statistic without authentication", async () => {
             const res = await request(app).put(endpoint + "/" + statistic.id)
                 .send({
@@ -153,6 +160,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC08
         it("try to update statistic with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -171,6 +179,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC09
         it("try to update statistic with no id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -189,6 +198,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC10
         it("try to update statistic with no start time", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -206,6 +216,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC11
         it("try to update statistic with no end time", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -223,6 +234,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC12
         it("try to update statistic with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -241,6 +253,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC13
         it("try to update statistic with an invalid start time", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -259,6 +272,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC14
         it("try to update statistic with an invalid end time", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -277,6 +291,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC15
         it("try to update statistic without any data", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -291,6 +306,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC16
         it("try to update statistic but startTime is after endTime", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -309,6 +325,7 @@ describe("StatisticController Tests", () => {
 
         }, timeout);
 
+        // SGBSTC17
         it("try to update statistic with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 

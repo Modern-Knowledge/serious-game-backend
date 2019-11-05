@@ -18,6 +18,7 @@ describe("SMTPLoggingController Tests", () => {
             await seedSmtpLogs();
         }, timeout);
 
+        // SBGSLC01
         it("fetch all smtp logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -34,6 +35,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC02
         it("fetch all sent smtp logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -60,6 +62,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC03
         it("fetch all simulated smtp logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -86,6 +89,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC04
         it("fetch all simulated and sent smtp-logs", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -115,6 +119,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC05
         it("try to fetch all smtp logs without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Authorization", "")
@@ -135,6 +140,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC06
         it("try to fetch all smtp logs with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -149,6 +155,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC07
         it("try to fetch all smtp logs without an admin therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -163,6 +170,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC08
         it("try to fetch all smtp logs with a patient", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -190,6 +198,7 @@ describe("SMTPLoggingController Tests", () => {
             await seedSmtpLogs();
         }, timeout);
 
+        // SBGSLC09
         it("deletes all smtp logs older than 3 months", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -206,6 +215,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC10
         it("try to delete all smtp logs older than 3 months without authentication", async () => {
             const res = await request(app).delete(endpoint)
                 .set("Accept", "application/json")
@@ -217,6 +227,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC11
         it("try to delete all smtp logs older than 3 months with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -231,6 +242,7 @@ describe("SMTPLoggingController Tests", () => {
 
         }, timeout);
 
+        // SBGSLC12
         it("deletes all smtp logs older than 3 months without an admin therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -244,6 +256,5 @@ describe("SMTPLoggingController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
         }, timeout);
-
     });
 });

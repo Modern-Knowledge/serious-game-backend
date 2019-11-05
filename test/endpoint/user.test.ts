@@ -20,6 +20,7 @@ describe("UserController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBUC01
         it("retrieve the user for the jwt", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -37,6 +38,7 @@ describe("UserController Tests", () => {
 
         }, timeout);
 
+        // SGBUC02
         it("trying to receive the user with jwt without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -57,6 +59,7 @@ describe("UserController Tests", () => {
 
         }, timeout);
 
+        // SGBUC03
         it("try to fetch user with jwt with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -84,6 +87,7 @@ describe("UserController Tests", () => {
             return seedUsers();
         });
 
+        // SGBUC04
         it("change password of user", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -118,6 +122,7 @@ describe("UserController Tests", () => {
             expect(smtpLog.subject).toContain("Ihr Passwort wurde zurückgesetzt!");
         }, timeout);
 
+        // SGBUC05
         it("try to change password without authentication", async () => {
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send({
@@ -133,6 +138,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC06
         it("try to change password with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -151,6 +157,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC07
         it("try to change password for another user", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -169,6 +176,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC08
         it("try to change password without an id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -187,6 +195,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC09
         it("try to change password without an old password", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -204,6 +213,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC10
         it("try to change password without a new password", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -221,6 +231,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC11
         it("try to change password without a password confirmation", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -238,6 +249,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC12
         it("try to change password with an invalid new password", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -256,6 +268,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC13
         it("try to change password with an invalid password confirmation", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -274,6 +287,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC14
         it("try to change password with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -292,6 +306,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC15
         it("try to change password but password and password-confirmation do not match", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -310,6 +325,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC16
         it("try to change password with an unknown id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -328,6 +344,7 @@ describe("UserController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBUC17
         it("try to change the password, but the old password does not match", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -345,6 +362,5 @@ describe("UserController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
-
     });
 });

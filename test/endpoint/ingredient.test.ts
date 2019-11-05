@@ -27,6 +27,7 @@ describe("IngredientController Tests", () => {
             await seedIngredients();
         }, timeout);
 
+        // SGBIC01
         it("fetch all ingredients", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -42,6 +43,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC02
         it("try to fetch all ingredients without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -62,6 +64,7 @@ describe("IngredientController Tests", () => {
 
         }, timeout);
 
+        // SGBIC03
         it("try to fetch all ingredients with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -88,6 +91,7 @@ describe("IngredientController Tests", () => {
             await seedIngredients();
         }, timeout);
 
+        // SGBIC04
         it("fetch ingredient with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -106,6 +110,7 @@ describe("IngredientController Tests", () => {
 
         }, timeout);
 
+        // SGBIC05
         it("try to fetch ingredient with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + egg.id)
                 .set("Accept", "application/json")
@@ -117,6 +122,7 @@ describe("IngredientController Tests", () => {
 
         }, timeout);
 
+        // SGBIC06
         it("try to fetch ingredient with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -130,6 +136,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC07
         it("try to fetch ingredient with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -143,6 +150,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC08
         it("try to fetch ingredient with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -169,6 +177,7 @@ describe("IngredientController Tests", () => {
             await seedIngredients();
         }, timeout);
 
+        // SGBIC09
         it("fetch ingredients with category id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -184,6 +193,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC10
         it("try to fetch ingredients by category id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + vegetables.id)
                 .set("Accept", "application/json")
@@ -195,6 +205,7 @@ describe("IngredientController Tests", () => {
 
         }, timeout);
 
+        // SGBIC11
         it("try to fetch ingredients by category with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -208,6 +219,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC12
         it("try to fetch ingredients by category with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -221,6 +233,7 @@ describe("IngredientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBIC13
         it("try to fetch ingredients by category with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
