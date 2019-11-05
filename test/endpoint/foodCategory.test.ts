@@ -23,6 +23,7 @@ describe("FoodCategoryController Tests", () => {
             await seedFoodCategories();
         });
 
+        // SGBFC01
         it("fetch all food-categories", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -38,6 +39,7 @@ describe("FoodCategoryController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBFC02
         it("try to fetch all food-categories without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -49,6 +51,7 @@ describe("FoodCategoryController Tests", () => {
 
         }, timeout);
 
+        // SGBFC03
         it("try to fetch all food-categories with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -74,6 +77,7 @@ describe("FoodCategoryController Tests", () => {
             await seedFoodCategories();
         }, timeout);
 
+        // SGBFC04
         it("fetch food-category with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -91,6 +95,7 @@ describe("FoodCategoryController Tests", () => {
             expect(res.body._data.foodCategory._id).toEqual(vegetables.id);
         }, timeout);
 
+        // SGBFC05
         it("try to fetch food-category with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + vegetables.id)
                 .set("Accept", "application/json")
@@ -102,6 +107,7 @@ describe("FoodCategoryController Tests", () => {
 
         }, timeout);
 
+        // SGBFC06
         it("try to fetch all food-category with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -115,6 +121,7 @@ describe("FoodCategoryController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBFC07
         it("try to fetch food-category with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -128,6 +135,7 @@ describe("FoodCategoryController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBFC08
         it("try to fetch food-category with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 

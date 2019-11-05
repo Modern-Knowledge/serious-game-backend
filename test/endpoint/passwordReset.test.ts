@@ -27,7 +27,7 @@ describe("PasswordResetController Tests", () => {
             await seedUsers();
         });
 
-        // SGB039
+        // SGBPRC01
         it("request password reset token with valid parameters", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validAdminTherapist.email})
@@ -65,7 +65,7 @@ describe("PasswordResetController Tests", () => {
 
         }, timeout);
 
-        // SGB040
+        // SGBPRC02
         it("request password reset token with invalid email", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: "invalidEmail"})
@@ -78,7 +78,7 @@ describe("PasswordResetController Tests", () => {
 
         }, timeout);
 
-        // SGB041
+        // SGBPRC03
         it("request password reset token with no email", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: ""})
@@ -100,7 +100,7 @@ describe("PasswordResetController Tests", () => {
 
         }, timeout);
 
-        // SGB042
+        // SGBPRC04
         it("request password reset token with email that does not exist", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: "notExistingMail@mail.com"})
@@ -113,7 +113,7 @@ describe("PasswordResetController Tests", () => {
 
         }, timeout);
 
-        // SGB043
+        // SGBPRC05
         it("request password reset token with user that has already a valid token", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email})
@@ -160,6 +160,7 @@ describe("PasswordResetController Tests", () => {
             await seedUsers();
         });
 
+        // SGBPRC06
         it("reset password with valid parameters", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -197,6 +198,7 @@ describe("PasswordResetController Tests", () => {
 
         }, timeout);
 
+        // SGBPRC07
         it("try to reset password without a password", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -211,6 +213,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC08
         it("try to reset password without a email", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -225,6 +228,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC09
         it("try to reset password without a token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -239,6 +243,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC10
         it("try to reset password with a too short token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -254,6 +259,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC11
         it("try to reset password with an invalid email", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -269,6 +275,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC12
         it("try to reset password with an invalid token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -284,6 +291,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC13
         it("try to reset password with a not existing email", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -299,6 +307,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC14
         it("try to reset password with a user that has not requested a token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -314,6 +323,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC15
         it("try to reset password with a user that has no token expire time in the database", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -329,6 +339,7 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC16
         it("try to reset password with a user that has an expired token", async () => {
             const res = await request(app).post(endpoint)
                 .send({

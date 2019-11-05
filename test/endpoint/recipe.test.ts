@@ -25,6 +25,7 @@ describe("RecipeController Tests", () => {
             await seedRecipes();
         });
 
+        // SGBRC01
         it("fetch all recipes", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -40,6 +41,7 @@ describe("RecipeController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBRC02
         it("try to fetch all recipes without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -60,6 +62,7 @@ describe("RecipeController Tests", () => {
 
         }, timeout);
 
+        // SGBRC03
         it("try to fetch all recipes with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -86,6 +89,7 @@ describe("RecipeController Tests", () => {
             await seedRecipes();
         });
 
+        // SGBRC04
         it("fetch recipe with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -103,6 +107,7 @@ describe("RecipeController Tests", () => {
             expect(res.body._data.recipe._id).toEqual(proteinShake.id);
         }, timeout);
 
+        // SGBRC05
         it("try to fetch recipe with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + proteinShake.id)
                 .set("Accept", "application/json")
@@ -123,6 +128,7 @@ describe("RecipeController Tests", () => {
 
         }, timeout);
 
+        // SGBRC06
         it("try to fetch recipe with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -136,6 +142,7 @@ describe("RecipeController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBRC07
         it("try to fetch recipe with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -149,6 +156,7 @@ describe("RecipeController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBRC08
         it("try to fetch recipe with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -161,6 +169,5 @@ describe("RecipeController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
-
     });
 });

@@ -21,6 +21,7 @@ describe("PatientController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBPC01
         it("fetch all patients", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -36,6 +37,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC02
         it("try to fetch all patients without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -46,6 +48,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC03
         it("try to fetch all patients with expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -70,7 +73,7 @@ describe("PatientController Tests", () => {
         }, timeout);
 
 
-        // SGB026
+        // SGBPC04
         it("register new patient with correct data", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -119,7 +122,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB027
+        // SGBPC05
         it("try to register patient with invalid email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -140,7 +143,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB028
+        // SGBPC06
         it("try to register patient with already existing email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -161,7 +164,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB029
+        // SGBPC07
         it("try to register patient where password and password_confirmation do not match", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -182,7 +185,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB030
+        // SGBPC08
         it("try to register patient with password that is too short", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -203,7 +206,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
         }, timeout);
 
-        // SGB031
+        // SGBPC09
         it("try to register a new patient where therapist flag ist set to true", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -224,7 +227,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB032
+        // SGBPC10
         it("try to register a new patient without the therapist flag", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -262,7 +265,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB033
+        // SGBPC11
         it("try to register a new patient without an email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -301,7 +304,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB034
+        // SGBPC12
         it("try to register a new patient without a forename", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -340,7 +343,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB035
+        // SGBPC13
         it("try to register a new patient without a lastname", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -379,7 +382,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB036
+        // SGBPC14
         it("try to register a new patient without a password", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -400,7 +403,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB037
+        // SGBPC15
         it("try to register a new patient without a password_confirmation", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -439,7 +442,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
-        // SGB038
+        // SGBPC16
         it("try to register a new patient without any data", async () => {
             const res = await request(app).post(endpoint)
                 .send()
@@ -481,6 +484,7 @@ describe("PatientController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBPC17
         it("successfully delete patient", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -501,6 +505,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
+        // SGBPC18
         it("try to delete patient without authentication", async () => {
             const res = await request(app).delete(endpoint + "/" + validPatient.id)
                 .set("Authorization", "")
@@ -513,6 +518,7 @@ describe("PatientController Tests", () => {
 
         }, timeout);
 
+        // SGBPC19
         it("try to delete patient with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -526,6 +532,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC20
         it("try to delete other patient", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -539,6 +546,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC21
         it("try to delete patient authenticated as therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -552,6 +560,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC22
         it("try to delete patient without an id", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -565,6 +574,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC23
         it("try to delete patient without an invalid id", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -589,6 +599,7 @@ describe("PatientController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBPC24
         it("successfully update patient", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -626,6 +637,7 @@ describe("PatientController Tests", () => {
             }
         }, timeout);
 
+        // SGBPC25
         it("try to update patient without authentication", async () => {
             const res = await request(app).put(endpoint + "/" + validPatient.id)
                 .send(
@@ -644,6 +656,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC26
         it("try to update patient with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -665,6 +678,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC27
         it("try to update patient without an id", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -686,6 +700,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC28
         it("try to update patient without an email", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -706,6 +721,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC29
         it("try to update patient without an forename", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -726,6 +742,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC30
         it("try to update patient without an lastname", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -746,6 +763,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC31
         it("try to update patient with an invalid email", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -767,6 +785,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC32
         it("try to update patient with an already existing email", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -788,6 +807,7 @@ describe("PatientController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPC33
         it("try to update patient with a not existing id", async () => {
             authenticationToken = await authenticate(validPatient);
 

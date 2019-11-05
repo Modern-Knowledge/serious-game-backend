@@ -28,6 +28,7 @@ describe("GameSettingController Test", () => {
             await seedGameSettings();
         });
 
+        // SGBGSC01
         it("fetch all game-settings", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -43,6 +44,7 @@ describe("GameSettingController Test", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBGSC02
         it("try to fetch all game-settings without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -54,6 +56,7 @@ describe("GameSettingController Test", () => {
 
         }, timeout);
 
+        // SGBGSC03
         it("try to fetch all game-settings with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -81,6 +84,7 @@ describe("GameSettingController Test", () => {
             await seedGameSettings();
         });
 
+        // SGBGSC04
         it("fetch game-setting with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -99,6 +103,7 @@ describe("GameSettingController Test", () => {
 
         }, timeout);
 
+        // SGBGSC05
         it("try to fetch game-setting with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + gameSettings.id)
                 .set("Accept", "application/json")
@@ -110,6 +115,7 @@ describe("GameSettingController Test", () => {
 
         }, timeout);
 
+        // SGBGSC06
         it("try to fetch game-setting with id and an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -123,6 +129,7 @@ describe("GameSettingController Test", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBGSC07
         it("try to fetch game-setting with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -136,6 +143,7 @@ describe("GameSettingController Test", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBGSC08
         it("try to fetch game-setting with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 

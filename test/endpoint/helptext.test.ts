@@ -19,6 +19,7 @@ describe("HelptextController Tests", () => {
             await seedHelptexts();
         });
 
+        // SGBHC01
         it("fetch all helptexts", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -34,6 +35,7 @@ describe("HelptextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBHC02
         it("try to fetch all helptexts without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -45,6 +47,7 @@ describe("HelptextController Tests", () => {
 
         }, timeout);
 
+        // SGBHC03
         it("try to fetch all helptexts with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -70,6 +73,7 @@ describe("HelptextController Tests", () => {
             await seedHelptexts();
         });
 
+        // SGBHC04
         it("fetch helptext with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -87,6 +91,7 @@ describe("HelptextController Tests", () => {
             expect(res.body._data.helptext._id).toEqual(helptext.id);
         }, timeout);
 
+        // SGBHC05
         it("try to fetch helptext with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + helptext.id)
                 .set("Accept", "application/json")
@@ -97,6 +102,7 @@ describe("HelptextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBHC06
         it("try to fetch helptext with id and an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -110,6 +116,7 @@ describe("HelptextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBHC07
         it("try to fetch helptext with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -123,6 +130,7 @@ describe("HelptextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBHC08
         it("try to fetch helptext with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 

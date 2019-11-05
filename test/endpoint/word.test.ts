@@ -19,6 +19,7 @@ describe("WordController Tests", () => {
             await seedWords();
         });
 
+        // SGBWC01
         it("fetch all words", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -34,6 +35,7 @@ describe("WordController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBWC02
         it("try to fetch all words without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -54,6 +56,7 @@ describe("WordController Tests", () => {
 
         }, timeout);
 
+        // SGBWC03
         it("try to fetch all words with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -79,6 +82,7 @@ describe("WordController Tests", () => {
             await seedWords();
         });
 
+        // SGBWC04
         it("fetch word with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -97,6 +101,7 @@ describe("WordController Tests", () => {
 
         }, timeout);
 
+        // SGBWC05
         it("try to fetch word with id without authentication", async () => {
             const res = await request(app).get(endpoint + "/" + word.id)
                 .set("Accept", "application/json")
@@ -117,6 +122,7 @@ describe("WordController Tests", () => {
 
         }, timeout);
 
+        // SGBWC06
         it("try to fetch word with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -130,6 +136,7 @@ describe("WordController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBWC07
         it("try to fetch word with an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -143,6 +150,7 @@ describe("WordController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBWC08
         it("try to fetch word with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -155,6 +163,5 @@ describe("WordController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
-
     });
 });
