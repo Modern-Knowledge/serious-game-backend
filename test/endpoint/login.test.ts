@@ -28,6 +28,7 @@ describe("LoginController Tests", () => {
             return seedUsers();
         });
 
+        // SGBLC01
         it("login with correct therapist credentials", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validTherapist.email, password: "123456"})
@@ -52,6 +53,7 @@ describe("LoginController Tests", () => {
             }
         }, timeout);
 
+        // SGBLC02
         it("login with correct therapist credentials, but therapist was not accepted", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: unacceptedTherapist.email, password: "123456"})
@@ -63,6 +65,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.WARNING, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBLC03
         it("login with correct patient credentials", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email, password: "123456"})
@@ -77,6 +80,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBLC04
         it("try to login with no password passed", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email})
@@ -88,7 +92,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB005
+        // SGBLC05
         it("try to login with no email passed", async () => {
             const res = await request(app).post(endpoint)
                 .send({password: "123456"})
@@ -109,7 +113,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB006
+        // SGBLC06
         it("try to login with no body passed", async () => {
             const res = await request(app).post(endpoint)
                 .set("Accept", "application/json")
@@ -120,7 +124,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
         }, timeout);
 
-        // SGB007
+        // SGBLC07
         it("try to login with invalid email passed", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: "invalidEmail", password: "123456"})
@@ -132,7 +136,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB008
+        // SGBLC08
         it("try to login with too short password", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email, password: "12345"})
@@ -144,7 +148,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB009
+        // SGBLC09
         it("try to login with not existing user", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: "notExistingEmail@mail.com", password: "123456"})
@@ -156,7 +160,7 @@ describe("LoginController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB010
+        // SGBLC10
         it("try to login with wrong credentials", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: validPatient.email, password: "1234562"})
@@ -174,7 +178,7 @@ describe("LoginController Tests", () => {
             }
         }, timeout);
 
-        // SGB011
+        // SGBLC11
         it("try to login with user that has still active login cooldown", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: lockedTherapist.email, password: "123456"})
@@ -186,7 +190,7 @@ describe("LoginController Tests", () => {
             containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
         }, timeout);
 
-        // SGB012
+        // SGBLC12
         it("try to login with user that has too many failed login attempts and gets locked", async () => {
             const res = await request(app).post(endpoint)
                 .send({email: tooManyFailedLoginAttemptsTherapist.email, password: "1234562"})

@@ -27,6 +27,7 @@ describe("TherapistController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBTC01
         it("fetch all therapists", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -42,6 +43,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC02
         it("try to fetch all therapists without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -52,6 +54,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC03
         it("try to fetch all therapists with expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -65,6 +68,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC04
         it("try to fetch all therapists with patient user", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -89,7 +93,7 @@ describe("TherapistController Tests", () => {
             await seedUsers();
         }, timeout);
 
-        // SGB013
+        // SGBTC05
         it("register new therapist with correct data", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -129,7 +133,7 @@ describe("TherapistController Tests", () => {
             }
         }, timeout);
 
-        // SGB014
+        // SGBTC06
         it("try to register therapist with invalid email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -151,7 +155,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB015
+        // SGBTC07
         it("try to register therapist with already existing email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -173,7 +177,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB016
+        // SGBTC08
         it("try to register therapist where password and password_confirmation do not match", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -195,7 +199,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB017
+        // SGBTC09
         it("try to register therapist with password that is too short", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -217,7 +221,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
         }, timeout);
 
-        // SGB018
+        // SGBTC10
         it("try to register therapist where therapist flag set to false", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -239,7 +243,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB019
+        // SGBTC11
         it("try to register a new therapist without the therapist flag", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -279,7 +283,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGB020
+        // SGBTC12
         it("try to register a new therapist without an email", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -320,7 +324,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
-        // SGB021
+        // SGBTC13
         it("try to register a new therapist without a forename", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -361,7 +365,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
-        // SGB022
+        // SGBTC14
         it("try to register a new therapist without a lastname", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -402,7 +406,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
-        // SGB023
+        // SGBTC15
         it("try to register a new therapist without a password", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -443,7 +447,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
-        // SGB024
+        // SGBTC16
         it("try to register a new therapist without a password_confirmation", async () => {
             const res = await request(app).post(endpoint)
                 .send(
@@ -484,7 +488,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
-        // SGB024
+        // SGBTC17
         it("try to register a new therapist without any data", async () => {
             const res = await request(app).post(endpoint)
                 .send()
@@ -527,6 +531,7 @@ describe("TherapistController Tests", () => {
             await seedUsers();
         }, timeout);
 
+        // SGBTC18
         it("successfully update therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -566,6 +571,7 @@ describe("TherapistController Tests", () => {
             }
         }, timeout);
 
+        // SGBTC19
         it("try to update therapist without authentication", async () => {
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send(
@@ -587,6 +593,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC20
         it("try to update therapist with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -611,6 +618,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC21
         it("try to update another therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -635,6 +643,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC22
         it("try to update therapist without an id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -659,6 +668,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC23
         it("try to update therapist without an email", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -678,6 +688,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC24
         it("try to update therapist without an forename", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -697,6 +708,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC25
         it("try to update therapist without an lastname", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -716,6 +728,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC26
         it("try to update therapist with an invalid email", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -740,6 +753,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC27
         it("try to update therapist with a not existing id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -764,6 +778,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC28
         it("try to update therapist with a existing email", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -788,6 +803,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC29
         it("try to update therapist with an invalid patient list", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -826,6 +842,7 @@ describe("TherapistController Tests", () => {
             return seedUsers();
         });
 
+        // SGBTC30
         it("successfully delete therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -846,6 +863,7 @@ describe("TherapistController Tests", () => {
 
         }, timeout);
 
+        // SGBTC31
         it("try to delete therapist without authentication", async () => {
             const res = await request(app).delete(endpoint + "/" + validTherapist.id)
                 .set("Authorization", "")
@@ -865,6 +883,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC32
         it("try to delete therapist with an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -878,6 +897,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC33
         it("try to delete other therapist", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -891,6 +911,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC34
         it("try to delete therapist authenticated as patient", async () => {
             authenticationToken = await authenticate(validPatient);
 
@@ -904,6 +925,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC35
         it("try to delete therapist without an id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -917,6 +939,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC36
         it("try to delete therapist without an invalid id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -944,6 +967,7 @@ describe("TherapistController Tests", () => {
             return seedUsers();
         });
 
+        // SGBTC37
         it("successfully accept therapist", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -958,6 +982,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC38
         it("successfully unaccept therapist", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -972,6 +997,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC39
         it("try to accept therapist without being authenticated as admin", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -985,6 +1011,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC40
         it("try to accept therapist with invalid id", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -998,6 +1025,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC41
         it("try to accept therapist without an id", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
@@ -1011,6 +1039,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC42
         it("try to accept therapist without authentication", async () => {
             const res = await request(app).put(endpoint + "/" + unacceptedTherapist.id)
                 .set("Authorization", "Bearer")
@@ -1030,6 +1059,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC43
         it("try to accept therapist without an expired token", async () => {
             const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
@@ -1043,6 +1073,7 @@ describe("TherapistController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBTC44
         it("try to accept therapist that does not exist", async () => {
             authenticationToken = await authenticate(validAdminTherapist);
 
