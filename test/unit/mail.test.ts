@@ -1,4 +1,4 @@
-import { MailTemplateParser } from "../../src/util/mail/MailTemplateParser";
+import { TemplateParser } from "TemplateParser.ts";
 import { MailTransport, mailTransport } from "../../src/util/mail/mailTransport";
 import { Mail } from "../../src/util/mail/Mail";
 import { passwordResettet } from "../../src/mail-texts/passwordResettet";
@@ -19,7 +19,6 @@ describe("util/mail/mailTransport Tests", () => {
         };
 
         expect(t).toThrow(Error);
-
     });
 
     it("try to send mail without subject", async () => {
@@ -72,10 +71,10 @@ describe("util/mail/mailTransport Tests", () => {
     });
 });
 
-describe("util/mail/MailTemplateParser Tests", () => {
+describe("util/mail/TemplateParser Tests", () => {
 
     it("try to parse mail template that has not replacement variables", async () => {
-        const mailTemplateParser = new MailTemplateParser(["Example", "01.01.1970"]);
+        const mailTemplateParser = new TemplateParser(["Example", "01.01.1970"]);
 
         const t = () => {
             mailTemplateParser.parse("Example Text");
@@ -85,7 +84,7 @@ describe("util/mail/MailTemplateParser Tests", () => {
     });
 
     it("try to parse mail template with not enough replacement variables", async () => {
-        const mailTemplateParser = new MailTemplateParser(["Example", "01.01.1970"]);
+        const mailTemplateParser = new TemplateParser(["Example", "01.01.1970"]);
 
         const t = () => {
             mailTemplateParser.parse(passwordResettet.html);
@@ -94,8 +93,8 @@ describe("util/mail/MailTemplateParser Tests", () => {
         expect(t).toThrow(Error);
     });
 
-    it("try to parse mail template with mor replacement variables than needed", async () => {
-        const mailTemplateParser = new MailTemplateParser(["Example", "01.01.1970", "support@mail.com", "asdasd"]);
+    it("try to parse mail template with more replacement variables than needed", async () => {
+        const mailTemplateParser = new TemplateParser(["Example", "01.01.1970", "support@mail.com", "asdasd"]);
         mailTemplateParser.parse(passwordResettet.html);
     });
 });

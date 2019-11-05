@@ -6,7 +6,7 @@ import { validTherapist } from "../../src/seeds/users";
 import { refreshToken } from "../../src/util/middleware/authenticationMiddleware";
 
 describe("util/middleware/authentication Tests", () => {
-    const timeout = 10000;
+    const timeout = 20000;
 
     beforeEach(async () => {
         await truncateTables();
@@ -16,8 +16,15 @@ describe("util/middleware/authentication Tests", () => {
     }, timeout);
 
     it("check if token gets prolonged if expire time is in less than 10 minutes", async () => {
-        process.env.TOKEN_EXPIRE_TIME = "360";
+        const currentEnv = process.env;
+        process.env = {TOKEN_EXPIRE_TIME: "800", SECRET_KEY: "123456"};
         const authenticationToken = await authenticate(validTherapist);
+
+        const delay = (ms: number) => {
+            return new Promise( resolve => setTimeout(resolve, ms) );
+        };
+
+        await delay(2000);
 
         const res = await request(app).get("/errortexts")
             .set("Authorization", "Bearer " + authenticationToken)
@@ -26,14 +33,16 @@ describe("util/middleware/authentication Tests", () => {
             .expect(200);
 
         const token = res.body._data.token;
-        // expect(token).not.toEqual(authenticationToken); // check if token changed
+        console.log(token);
 
-        process.env.TOKEN_EXPIRE_TIME = "3600";
-    });
+        expect(token).not.toEqual(authenticationToken); // check if token changed
+
+        process.env = currentEnv;
+    }, timeout);
 
     it("check if token gets prolonged if it is invalid", async () => {
         const token = await refreshToken("invalid");
-        // expect(token).toBeUndefined();
+        expect(token).toBeUndefined();
     });
 
 

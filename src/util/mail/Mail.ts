@@ -7,7 +7,7 @@
 import { Attachment } from "./Attachment";
 import { Recipient } from "./Recipient";
 import { MailPriority } from "./MailPriority";
-import { MailTemplateParser } from "./MailTemplateParser";
+import { TemplateParser } from "../TemplateParser";
 import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 
 /**
@@ -38,7 +38,7 @@ export class Mail {
      * @param replacementParams params to replace placeholder variables with
      */
     public constructor(to: Recipient[], messageTemplate: SmtpMessage, replacementParams: string[]) {
-        const parser = new MailTemplateParser(replacementParams);
+        const parser = new TemplateParser(replacementParams);
 
         this.to = to;
         this.replyTo = process.env.SUPPORT_MAIL || this.from;
