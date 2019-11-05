@@ -1,9 +1,9 @@
-import { TemplateParser } from "TemplateParser.ts";
 import { MailTransport, mailTransport } from "../../src/util/mail/mailTransport";
 import { Mail } from "../../src/util/mail/Mail";
 import { passwordResettet } from "../../src/mail-texts/passwordResettet";
 import { Recipient } from "../../src/util/mail/Recipient";
 import { SmtpMessage } from "../../src/mail-texts/SmtpMessage";
+import { TemplateParser } from "../../src/util/TemplateParser";
 
 describe("util/mail/mailTransport Tests", () => {
 
