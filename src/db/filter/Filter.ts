@@ -64,10 +64,6 @@ export class Filter implements Filterable {
     return this._root;
   }
 
-  set tableAlias(value: string) {
-    this._tableAlias = value;
-  }
-
   get isEmpty() {
     return this._empty;
   }
