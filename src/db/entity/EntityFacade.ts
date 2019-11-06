@@ -33,13 +33,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
 
         this.idFilter.clear();
 
-        if (result.length <= 1) {
-          return result[0];
-        }
-
-        const errorMsg: string = `${loggerString(__dirname, EntityFacade.name, "getById")} More than one result returned! (${result.length})`;
-        logger.error(errorMsg);
-        throw new Error(errorMsg);
+        return result[0];
     }
 
     /**
