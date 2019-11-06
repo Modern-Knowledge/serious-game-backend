@@ -3,10 +3,7 @@ import app from "../../src/app";
 import { UserFacade } from "../../src/db/entity/user/UserFacade";
 import { authenticate } from "../../src/util/testhelper";
 import { validTherapist } from "../../src/seeds/users";
-import { seedErrortexts, seedSeverities, seedUsers, truncateTables } from "../../src/migrationHelper";
-import { Mail } from '../../src/util/mail/Mail'
-import { Recipient } from '../../src/util/mail/Recipient'
-import { mailTransport } from '../../src/util/mail/mailTransport'
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
 
 describe("db/entity/EntityFacade Tests", () => {
 
