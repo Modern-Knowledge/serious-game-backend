@@ -85,6 +85,8 @@ import {
 } from "./seeds/logs";
 import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
 import { errortextGames } from "./seeds/errortextGames";
+import { TherapistsPatientsFacade } from './db/entity/user/TherapistsPatientsFacade'
+import { therapistPatient1, therapistPatient2 } from './seeds/therapistsPatients'
 
 /**
  * runs multiple migrations based on .env variables
@@ -530,6 +532,20 @@ export async function seedLogs(): Promise<void> {
   ];
   for (const item of logArr) {
     await logFacade.insertLog(item);
+  }
+}
+
+/**
+ * inserts example therapists-patients into the database.
+ */
+export async function seedTherapistPatients(): Promise<void> {
+  const therapistsPatientsFacade = new TherapistsPatientsFacade();
+  const therapistPatientArr = [
+    therapistPatient1,
+    therapistPatient2
+  ];
+  for (const item of therapistPatientArr) {
+    await therapistsPatientsFacade.insertTherapistPatient(item);
   }
 }
 
