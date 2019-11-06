@@ -21,7 +21,7 @@ export const jwtStrategy =  new Strategy(options, (payload, done) => {
     // @ts-ignore
     userFacade.getById(id).then(user => {
         if (!user) { // user not found
-            logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${user.id} was not correct!`);
+            logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${id} was not correct!`);
             return done(undefined, false);
         }
 
