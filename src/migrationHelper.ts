@@ -85,8 +85,8 @@ import {
 } from "./seeds/logs";
 import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
 import { errortextGames } from "./seeds/errortextGames";
-import { TherapistsPatientsFacade } from './db/entity/user/TherapistsPatientsFacade'
-import { therapistPatient1, therapistPatient2 } from './seeds/therapistsPatients'
+import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFacade";
+import { therapistPatient1, therapistPatient2 } from "./seeds/therapistsPatients";
 
 /**
  * runs multiple migrations based on .env variables
@@ -297,6 +297,7 @@ export async function seedTables(): Promise<void> {
   await seedImages();
   await seedSmtpLogs();
   await seedLogs();
+  await seedTherapistPatients();
 }
 
 /**
