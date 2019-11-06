@@ -33,7 +33,6 @@ describe("util/middleware/authentication Tests", () => {
             .expect(200);
 
         const token = res.body._data.token;
-        console.log(token);
 
         expect(token).not.toEqual(authenticationToken); // check if token changed
 
