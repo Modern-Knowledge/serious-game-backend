@@ -71,7 +71,7 @@ describe("util/mail/mailTransport Tests", () => {
     });
 });
 
-describe("util/mail/TemplateParser Tests", () => {
+describe("util/TemplateParser Tests", () => {
 
     it("try to parse mail template that has not replacement variables", async () => {
         const mailTemplateParser = new TemplateParser(["Example", "01.01.1970"]);
