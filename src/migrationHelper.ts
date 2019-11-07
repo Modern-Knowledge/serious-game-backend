@@ -1,5 +1,3 @@
-import { Therapist } from "./lib/models/Therapist";
-
 const marv = require("marv/api/promise"); // <-- Promise API
 const driver = require("marv-mysql-driver");
 import * as path from "path";
@@ -211,14 +209,14 @@ export async function runMigrations(): Promise<void> {
 /**
  * truncate every table in the application
  */
-export async function truncateTables(): Promise<void> {
+export async function truncateTables(): Promise<number> {
   const results = await getTables();
 
   if (results.length == 0) {
     logger.info(
       `${loggerString(__dirname, "", "", __filename)} No tables to truncate!`
     );
-    return;
+    return 0;
   }
 
   logger.info(
@@ -234,19 +232,21 @@ export async function truncateTables(): Promise<void> {
   await databaseConnection.query(
     `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
   );
+
+  return 1;
 }
 
 /**
  * drop every table in the application
  */
-export async function dropTables(): Promise<void> {
+export async function dropTables(): Promise<number> {
   const results = await getTables();
 
   if (results.length == 0) {
     logger.info(
       `${loggerString(__dirname, "", "", __filename)} No tables to drop!`
     );
-    return;
+    return 0;
   }
 
   logger.info(
@@ -262,19 +262,21 @@ export async function dropTables(): Promise<void> {
   await databaseConnection.query(
     `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
   );
+
+  return 1;
 }
 
 /**
  * seed tables with default data
  *
  */
-export async function seedTables(): Promise<void> {
+export async function seedTables(): Promise<number> {
   const results = await getTables();
   if (results.length == 0) {
     logger.info(
       `${loggerString(__dirname, "", "", __filename)} No tables to seed!`
     );
-    return;
+    return 0;
   }
 
   await seedUsers();
@@ -298,6 +300,8 @@ export async function seedTables(): Promise<void> {
   await seedSmtpLogs();
   await seedLogs();
   await seedTherapistPatients();
+
+  return 1;
 }
 
 /**

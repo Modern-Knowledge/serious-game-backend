@@ -4,7 +4,7 @@ import {
     dropTables,
     migrate,
     seedErrortexts,
-    seedSeverities,
+    seedSeverities, seedTables,
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
@@ -19,9 +19,11 @@ describe("migrationHelper Tests", () => {
 
     beforeEach(async () => {
         await migrate();
+
     }, timeout);
 
     it("test running migrations", async () => {
+
         await request(app).get("/errortexts")
             .set("Authorization", "Bearer ")
             .set("Accept", "application/json");
@@ -48,15 +50,37 @@ describe("migrationHelper Tests", () => {
         expect(games.length).not.toBe(0);
     }, timeout);
 
-    /* it("test truncating tables without tables", async () => {
+     it("test truncating tables without tables", async () => {
         await dropTables();
 
         await request(app).get("/errortexts")
             .set("Authorization", "Bearer ")
             .set("Accept", "application/json");
 
-        await truncateTables();
-    }); */
+        const res = await truncateTables();
+        expect(res).toEqual(0);
+    });
 
+    it("test dropping tables without tables", async () => {
+        await dropTables();
+
+        await request(app).get("/errortexts")
+            .set("Authorization", "Bearer ")
+            .set("Accept", "application/json");
+
+        const res = await dropTables();
+        expect(res).toEqual(0);
+    });
+
+    it("test seeding tables without tables", async () => {
+        await dropTables();
+
+        await request(app).get("/errortexts")
+            .set("Authorization", "Bearer ")
+            .set("Accept", "application/json");
+
+        const res = await seedTables();
+        expect(res).toEqual(0);
+    });
 
 });
