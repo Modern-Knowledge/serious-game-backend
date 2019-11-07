@@ -12,6 +12,7 @@ describe("db/entity/EntityFacade Tests", () => {
         await seedUsers();
     });
 
+    // SGBUEF01
     it("try to fetch one result from database where multiple results are existing", async () => {
         const authenticationToken = await authenticate(validTherapist);
 

@@ -7,6 +7,7 @@ import {
 
 describe("lib/utils/http/HttpResponse Tests", () => {
 
+    // SGBUHP01
     it("check deserialization of http response", async () => {
         const data = { data: "test", data1: "test2" };
         const message = [

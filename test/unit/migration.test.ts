@@ -3,9 +3,7 @@ import app from "../../src/app";
 import {
     dropTables,
     migrate,
-    seedErrortexts,
-    seedSeverities, seedTables,
-    seedUsers,
+    seedTables,
     truncateTables
 } from "../../src/migrationHelper";
 import { ErrortextFacade } from "../../src/db/entity/helptext/ErrortextFacade";
@@ -19,9 +17,9 @@ describe("migrationHelper Tests", () => {
 
     beforeEach(async () => {
         await migrate();
-
     }, timeout);
 
+    // SGBUMH01
     it("test running migrations", async () => {
 
         await request(app).get("/errortexts")
@@ -50,7 +48,8 @@ describe("migrationHelper Tests", () => {
         expect(games.length).not.toBe(0);
     }, timeout);
 
-     it("test truncating tables without tables", async () => {
+    // SGBUMH02
+    it("test truncating tables without tables", async () => {
         await dropTables();
 
         await request(app).get("/errortexts")
@@ -61,6 +60,7 @@ describe("migrationHelper Tests", () => {
         expect(res).toEqual(0);
     });
 
+    // SGBUMH03
     it("test dropping tables without tables", async () => {
         await dropTables();
 
@@ -72,6 +72,7 @@ describe("migrationHelper Tests", () => {
         expect(res).toEqual(0);
     });
 
+    // SGBUMH04
     it("test seeding tables without tables", async () => {
         await dropTables();
 

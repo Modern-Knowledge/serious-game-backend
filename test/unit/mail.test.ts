@@ -7,6 +7,7 @@ import { TemplateParser } from "../../src/util/TemplateParser";
 
 describe("util/mail/mailTransport Tests", () => {
 
+    // SGBUMT01
     it("try to send mail without recipients", async () => {
         const smtpMessage = new SmtpMessage();
         smtpMessage.subject = "subject";
@@ -21,6 +22,7 @@ describe("util/mail/mailTransport Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUMT02
     it("try to send mail without subject", async () => {
         const smtpMessage = new SmtpMessage();
         smtpMessage.html = "body";
@@ -34,6 +36,7 @@ describe("util/mail/mailTransport Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUMT03
     it("try to send mail without html body", async () => {
         const smtpMessage = new SmtpMessage();
         smtpMessage.subject = "subject";
@@ -47,6 +50,7 @@ describe("util/mail/mailTransport Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUMT04
     it("try to send mail without plain text body", async () => {
         const smtpMessage = new SmtpMessage();
         smtpMessage.subject = "subject";
@@ -60,6 +64,7 @@ describe("util/mail/mailTransport Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUMT05
     it("successfully send message", async () => {
         const currentEnv = process.env;
         process.env = {
@@ -81,6 +86,7 @@ describe("util/mail/mailTransport Tests", () => {
 
 describe("util/TemplateParser Tests", () => {
 
+    // SGBUTP01
     it("try to parse mail template that has not replacement variables", async () => {
         const mailTemplateParser = new TemplateParser(["Example", "01.01.1970"]);
 
@@ -91,6 +97,7 @@ describe("util/TemplateParser Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUTP02
     it("try to parse mail template with not enough replacement variables", async () => {
         const mailTemplateParser = new TemplateParser(["Example", "01.01.1970"]);
 
@@ -101,6 +108,7 @@ describe("util/TemplateParser Tests", () => {
         expect(t).toThrow(Error);
     });
 
+    // SGBUTP03
     it("try to parse mail template with more replacement variables than needed", async () => {
         const mailTemplateParser = new TemplateParser(["Example", "01.01.1970", "support@mail.com", "asdasd"]);
         mailTemplateParser.parse(passwordResettet.html);

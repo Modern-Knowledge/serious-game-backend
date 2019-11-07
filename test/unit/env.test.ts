@@ -2,6 +2,7 @@ import { checkEnvFunction } from "../../src/util/analysis/checkEnvVariables";
 
 describe("util/mail/analysis/checkEnvVariables Tests", () => {
 
+    // SGBUCEV01
     it("check env variables with required environment variables missing!", async () => {
         const currentEnv = process.env;
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass", DB_DATABASE: "database",
@@ -13,10 +14,10 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         };
 
         expect(t).toThrow(Error);
-
         process.env = currentEnv;
     });
 
+    // SGBUCEV02
     it("check env variables with optional environment variables missing!", async () => {
         const currentEnv = process.env;
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass",
@@ -29,6 +30,7 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         process.env = currentEnv;
     });
 
+    // SGBUCEV03
     it("check env variables with mail environment variables missing!", async () => {
         const currentEnv = process.env;
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass", DB_DATABASE: "database",
@@ -39,7 +41,6 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         checkEnvFunction();
 
         expect(process.env.SEND_MAILS).toEqual("0");
-
         process.env = currentEnv;
     });
 });

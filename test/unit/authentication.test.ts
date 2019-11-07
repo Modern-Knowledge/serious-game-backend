@@ -15,6 +15,7 @@ describe("util/middleware/authentication Tests", () => {
         await seedErrortexts();
     }, timeout);
 
+    // SGBUA01
     it("check if token gets prolonged if expire time is in less than 10 minutes", async () => {
         const currentEnv = process.env;
         process.env = {TOKEN_EXPIRE_TIME: "800", SECRET_KEY: "123456"};
@@ -39,6 +40,7 @@ describe("util/middleware/authentication Tests", () => {
         process.env = currentEnv;
     }, timeout);
 
+    // SGBUA02
     it("check if token gets prolonged if it is invalid", async () => {
         const token = await refreshToken("invalid");
         expect(token).toBeUndefined();
