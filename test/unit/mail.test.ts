@@ -61,13 +61,21 @@ describe("util/mail/mailTransport Tests", () => {
     });
 
     it("successfully send message", async () => {
-        process.env["SEND_MAILS"] = "1";
+        const currentEnv = process.env;
+        process.env = {
+            MAIL_HOST: process.env.MAIL_HOST,
+            MAIL_PORT: process.env.MAIL_PORT,
+            MAIL_SECURE: process.env.MAIL_SECURE,
+            MAIL_USER: process.env.MAIL_USER,
+            MAIL_PASS: process.env.MAIL_PASS,
+            SEND_MAILS: "1"
+        };
 
         const mailTransport = new MailTransport();
         const m = new Mail([new Recipient("Example", "florian.mold@live.at")], passwordResettet, ["Example", "01.01.1970", "support@mail.com"]);
         mailTransport.sendMail(m);
 
-        process.env["SEND_MAILS"] = "0";
+        process.env = currentEnv;
     });
 });
 
