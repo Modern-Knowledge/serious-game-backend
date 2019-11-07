@@ -84,4 +84,8 @@ describe("migrationHelper Tests", () => {
         expect(res).toEqual(0);
     });
 
+    afterAll(async () => {
+        await migrate();
+    }, timeout);
+
 });
