@@ -57,10 +57,10 @@ import {
   recipeIngredient1,
   recipeIngredient2
 } from "./seeds/recipeIngredients";
-import { helptext } from "./seeds/helptexts";
+import { helptext, helptext1 } from "./seeds/helptexts";
 import { errortext, errortext1 } from "./seeds/errortexts";
 import { word } from "./seeds/words";
-import { helptextGames } from "./seeds/helptextGames";
+import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
 import { pSettings } from "./seeds/patientSettings";
 import { StatisticFacade } from "./db/entity/game/StatisticFacade";
 import { statistic, statistic1 } from "./seeds/statistics";
@@ -82,9 +82,11 @@ import {
   verboseLogWithUser
 } from "./seeds/logs";
 import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
-import { errortextGames } from "./seeds/errortextGames";
+import { errortextGames, errortextGames1 } from "./seeds/errortextGames";
 import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFacade";
 import { therapistPatient1, therapistPatient2 } from "./seeds/therapistsPatients";
+import { ErrortextStatisticFacade } from "./db/entity/helptext/ErrortextStatisticFacade";
+import { errortextStatistic, errortextStatistic1 } from "./seeds/errortextStatistic";
 
 /**
  * runs multiple migrations based on .env variables
@@ -300,6 +302,7 @@ export async function seedTables(): Promise<number> {
   await seedSmtpLogs();
   await seedLogs();
   await seedTherapistPatients();
+  await seedErrortextStatistics();
 
   return 1;
 }
@@ -369,7 +372,29 @@ export async function seedErrortexts() {
  */
 export async function seedErrortextGames() {
   const errortextGameFacade = new ErrortextGamesFacade();
-  await errortextGameFacade.insertErrortextGame(errortextGames);
+  const errortextGamesArr = [
+    errortextGames,
+    errortextGames1
+  ];
+
+  for (const item of errortextGamesArr) {
+    await errortextGameFacade.insertErrortextGame(item);
+  }
+}
+
+/**
+ * inserts example errortext-statistics into the database.
+ */
+export async function seedErrortextStatistics() {
+  const errortextStatisticFacade = new ErrortextStatisticFacade();
+  const errortextStatisticArr = [
+    errortextStatistic,
+    errortextStatistic1
+  ];
+
+  for (const item of errortextStatisticArr) {
+    await errortextStatisticFacade.insertErrortextStatistic(item);
+  }
 }
 
 /**
@@ -377,15 +402,28 @@ export async function seedErrortextGames() {
  */
 export async function seedHelptextGames() {
   const helptextGameFacade = new HelptextsGamesFacade();
-  await helptextGameFacade.insertHelptextGames(helptextGames);
-}
+  const helptextGameArr = [
+    helptextGames,
+    helptextGames1
+  ];
+
+  for (const item of helptextGameArr) {
+    await helptextGameFacade.insertHelptextGames(item);
+  }}
 
 /**
  * inserts example helptexts into the database.
  */
 export async function seedHelptexts() {
   const helptextFacade = new HelptextFacade();
-  await helptextFacade.insertHelptext(helptext);
+  const helptextArr = [
+        helptext,
+        helptext1
+  ];
+
+  for (const item of helptextArr) {
+      await helptextFacade.insertHelptext(helptext);
+  }
 }
 
 /**
