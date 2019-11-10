@@ -16,8 +16,6 @@ import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
 import { SQLOperator } from "../db/sql/enums/SQLOperator";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 

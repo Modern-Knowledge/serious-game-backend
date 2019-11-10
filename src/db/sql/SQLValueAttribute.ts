@@ -5,7 +5,7 @@ import { SQLParam } from "./SQLParam";
  * represents a sql attribute that can hold a value
  */
 export class SQLValueAttribute extends SQLAttribute {
-  private _value: string | number | Date | boolean;
+  private readonly _value: string | number | Date | boolean;
 
   /**
    * @param name

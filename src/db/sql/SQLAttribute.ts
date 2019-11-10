@@ -3,8 +3,8 @@
  * e.g.: tableAlias.name
  */
 export class SQLAttribute {
-  private _tableAlias: string;
-  private _name: string;
+  private readonly _tableAlias: string;
+  private readonly _name: string;
 
   /**
    * @param name

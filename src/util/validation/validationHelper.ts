@@ -1,8 +1,6 @@
 
 
 import { validationResult } from "express-validator";
-import { toHttpResponseMessage } from "./validationMessages";
-import { HttpResponse, HttpResponseStatus } from "../../lib/utils/http/HttpResponse";
 import { Request, Response } from "express";
 import logger from "../log/logger";
 import { loggerString } from "../Helper";

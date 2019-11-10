@@ -29,8 +29,8 @@ import { arrayContainsModel } from "../../util/Helper";
 export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
     private _statisticFacade: StatisticFacade;
-    private _errortextFacade: ErrortextFacade;
-    private _errortextStatisticFacade: ErrortextStatisticFacade;
+    private readonly _errortextFacade: ErrortextFacade;
+    private readonly _errortextStatisticFacade: ErrortextStatisticFacade;
 
     private _withErrortextJoin: boolean;
     private _withTextJoin: boolean;

@@ -3,7 +3,6 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import * as bcrypt from "bcryptjs";
 
 /**
  * handles CRUD operations with the user-entity

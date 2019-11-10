@@ -3,7 +3,6 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Statistic } from "../../../lib/models/Statistic";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import {User} from "../../../lib/models/User";
 
 /**
  * handles CRUD operations with the statistic-entity

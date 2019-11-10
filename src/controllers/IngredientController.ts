@@ -16,7 +16,6 @@ import {
 } from "../util/validation/validationHelper";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { IngredientFacade } from "../db/entity/kitchen/IngredientFacade";
-import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 
 const router = express.Router();

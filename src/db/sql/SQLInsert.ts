@@ -8,7 +8,7 @@ import { SQLBlock } from "./SQLBlock";
  * represents the insert part of a sql query
  */
 export class SQLInsert extends SQLElement {
-  private _tableName: string;
+  private readonly _tableName: string;
   private _attributes: SQLValueAttributes;
 
   /**

@@ -8,8 +8,8 @@ import { SQLElementType } from "./enums/SQLElementType";
  */
 export class SQLUpdate extends SQLElement {
 
-  private _tableName: string;
-  private _tableAlias: string;
+  private readonly _tableName: string;
+  private readonly _tableAlias: string;
   private _attributes: SQLValueAttributes;
 
   /**

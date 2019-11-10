@@ -3,8 +3,8 @@
  * e.g.: name = value
  */
 export class SQLParam {
-  private _name: string;
-  private _value: string | number | Date | boolean;
+  private readonly _name: string;
+  private readonly _value: string | number | Date | boolean;
   private _percQuotes: boolean = false;
 
   /**

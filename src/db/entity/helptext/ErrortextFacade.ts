@@ -25,7 +25,7 @@ import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
  */
 export class ErrortextFacade extends CompositeFacade<Errortext> {
 
-    private _textFacade: TextFacade;
+    private readonly _textFacade: TextFacade;
     private _severityFacade: SeverityFacade;
 
     private _withTextJoin: boolean;

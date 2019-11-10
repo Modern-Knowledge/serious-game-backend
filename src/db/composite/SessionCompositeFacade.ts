@@ -40,9 +40,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     private _sessionFacade: SessionFacade;
     private _patientFacade: PatientFacade;
-    private _statisticCompositeFacade: StatisticCompositeFacade;
+    private readonly _statisticCompositeFacade: StatisticCompositeFacade;
     private _gameFacade: GameFacade;
-    private _gameSettingsFacade: GameSettingFacade;
+    private readonly _gameSettingsFacade: GameSettingFacade;
 
     private _withPatientJoin: boolean;
     private _withPatientUserJoin: boolean;

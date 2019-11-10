@@ -2,7 +2,6 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
 import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";

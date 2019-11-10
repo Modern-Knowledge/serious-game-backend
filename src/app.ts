@@ -136,8 +136,6 @@ import IngredientController from "./controllers/IngredientController";
 import PatientSettingController from "./controllers/PatientSettingController";
 import { mailTransport } from "./util/mail/mailTransport";
 import { Mail } from "./util/mail/Mail";
-import { passwordResettet } from "./mail-texts/passwordResettet";
-import { formatDateTime } from "./lib/utils/dateFormatter";
 import { Recipient } from "./util/mail/Recipient";
 import { supportMail } from "./mail-texts/supportMail";
 

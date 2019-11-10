@@ -6,7 +6,7 @@ import { SQLElementType } from "./enums/SQLElementType";
  */
 export class SQLDelete extends SQLElement {
 
-  private _tableName: string;
+  private readonly _tableName: string;
   private _tableAlias: string;
 
   /**

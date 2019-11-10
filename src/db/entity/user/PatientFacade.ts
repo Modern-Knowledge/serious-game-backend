@@ -21,7 +21,7 @@ import { Ordering } from "../../order/Ordering";
  */
 export class PatientFacade extends CompositeFacade<Patient> {
 
-    private _userFacade: UserFacade;
+    private readonly _userFacade: UserFacade;
 
     private _withUserJoin: boolean;
 

@@ -23,7 +23,7 @@ import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
  */
 export class HelptextFacade extends CompositeFacade<Helptext> {
 
-    private _textFacade: TextFacade;
+    private readonly _textFacade: TextFacade;
 
     private _withTextJoin: boolean;
 

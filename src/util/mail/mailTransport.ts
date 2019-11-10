@@ -6,7 +6,7 @@ import { SmtpLog } from "../../lib/models/SmtpLog";
 
 import * as nodemailer from "nodemailer";
 import { SmtpLogFacade } from "../../db/entity/log/SmtpLogFacade";
-import { inTestMode, loggerString } from "../Helper";
+import { loggerString } from "../Helper";
 
 /**
  * class used to handle mail sending with nodemailer

@@ -29,7 +29,7 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
 
     private _therapistFacade: TherapistFacade;
     private _patientFacade: PatientFacade;
-    private _therapistPatientFacade: TherapistsPatientsFacade;
+    private readonly _therapistPatientFacade: TherapistsPatientsFacade;
 
     private _withTherapistUserJoin: boolean;
     private _withPatientUserJoin: boolean;

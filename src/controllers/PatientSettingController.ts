@@ -9,7 +9,7 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
-import { checkPatientPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { checkPatientPermission} from "../util/middleware/permissionMiddleware";
 import { check } from "express-validator";
 import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation } from "../util/validation/validationHelper";

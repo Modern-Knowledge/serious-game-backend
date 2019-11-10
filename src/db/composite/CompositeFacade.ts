@@ -2,7 +2,6 @@ import { AbstractModel } from "../../lib/models/AbstractModel";
 import { EntityFacade } from "../entity/EntityFacade";
 import { Filter } from "../filter/Filter";
 import { SQLOperator } from "../sql/enums/SQLOperator";
-import { SQLOrderBy } from "../sql/SQLOrderBy";
 import { Ordering } from "../order/Ordering";
 
 /**

@@ -1,6 +1,6 @@
 
 
-import mysql, { FieldInfo, MysqlError, Pool, PoolConnection } from "mysql";
+import mysql, { MysqlError, Pool, PoolConnection } from "mysql";
 import logger from "../log/logger";
 import { inTestMode, loggerString } from "../Helper";
 import { SQLValueAttributes } from "../../db/sql/SQLValueAttributes";

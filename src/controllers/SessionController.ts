@@ -24,7 +24,6 @@ import {
   checkAuthenticationToken
 } from "../util/middleware/authenticationMiddleware";
 import {
-  checkPatientPermission,
   checkTherapistPermission
 } from "../util/middleware/permissionMiddleware";
 import moment from "moment";

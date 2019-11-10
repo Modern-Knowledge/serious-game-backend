@@ -9,7 +9,7 @@ import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
  */
 export class Filter implements Filterable {
   private _root: SQLBlock = new SQLBlock();
-  private _tableAlias: string;
+  private readonly _tableAlias: string;
   private _empty: boolean = true;
 
   public constructor(tableAlias?: string) {

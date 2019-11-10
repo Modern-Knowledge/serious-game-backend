@@ -40,9 +40,9 @@ import {TherapistsPatientsFacade} from "../entity/user/TherapistsPatientsFacade"
 export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     private _patientFacade: PatientFacade;
-    private _patientSettingsFacade: PatientSettingFacade;
-    private _sessionCompositeFacade: SessionCompositeFacade;
-    private _therapistPatientFacade: TherapistsPatientsFacade;
+    private readonly _patientSettingsFacade: PatientSettingFacade;
+    private readonly _sessionCompositeFacade: SessionCompositeFacade;
+    private readonly _therapistPatientFacade: TherapistsPatientsFacade;
 
     private _withUserJoin: boolean;
     private _withPatientSettingJoin: boolean;

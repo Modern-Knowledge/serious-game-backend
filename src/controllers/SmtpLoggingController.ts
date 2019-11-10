@@ -1,8 +1,6 @@
 
 
 import express, { Request, Response } from "express";
-import { LogFacade } from "../db/entity/log/LogFacade";
-import { Log } from "../lib/models/Log";
 import { SQLOrder } from "../db/sql/enums/SQLOrder";
 import {
     HttpResponse,

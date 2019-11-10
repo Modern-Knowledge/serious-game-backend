@@ -12,7 +12,6 @@ import { Filter } from "../../filter/Filter";
 import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Ordering } from "../../order/Ordering";
-import { Roles } from "../../../lib/enums/Roles";
 
 /**
  * handles CRUD operations with the therapist-entity
@@ -23,7 +22,7 @@ import { Roles } from "../../../lib/enums/Roles";
  * - users (1:1)
  */
 export class TherapistFacade extends CompositeFacade<Therapist> {
-    private _userFacade: UserFacade;
+    private readonly _userFacade: UserFacade;
 
     private _withUserJoin: boolean;
 

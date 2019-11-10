@@ -3,7 +3,6 @@
 import { EntityFacade } from "../EntityFacade";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { PatientSetting } from "../../../lib/models/PatientSetting";
-import { Session } from "../../../lib/models/Session";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 

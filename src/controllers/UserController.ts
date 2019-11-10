@@ -19,7 +19,6 @@ import { Mail } from "../util/mail/Mail";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 import { mailTransport } from "../util/mail/mailTransport";
-import { passwordValidator } from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
