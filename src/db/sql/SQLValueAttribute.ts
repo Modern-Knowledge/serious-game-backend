@@ -5,14 +5,14 @@ import { SQLParam } from "./SQLParam";
  * represents a sql attribute that can hold a value
  */
 export class SQLValueAttribute extends SQLAttribute {
-  private readonly _value: string | number | Date | boolean;
+  private readonly _value: any;
 
   /**
    * @param name
    * @param tableAlias
    * @param value
    */
-  public constructor(name: string, tableAlias: string, value: string | number | Date | boolean) {
+  public constructor(name: string, tableAlias: string, value: any) {
     super(name, tableAlias);
     this._value = value;
   }
@@ -31,7 +31,7 @@ export class SQLValueAttribute extends SQLAttribute {
     return new SQLParam(this.getParamName(), this._value, false);
   }
 
-  get value(): string | number | Date | boolean {
+  get value(): any {
     return this._value;
   }
 }

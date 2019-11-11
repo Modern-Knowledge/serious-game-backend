@@ -21,8 +21,8 @@ export class BakedQuery {
   /**
    * returns the parameters of a prepared statement as a list
    */
-  public fillParameters(): Array<string | number | Date | boolean> {
-   const returnArr: Array<string | number | Date | boolean> = [];
+  public fillParameters(): any[] {
+   const returnArr: any[] = [];
 
    this._values.forEach((value: SQLParam) => {
       returnArr.push(value.value);
