@@ -1,13 +1,25 @@
 {
     "rules": {
+        "deprecation": {
+            "severity": "warn"
+        },
         "class-name": true,
+        "interface-name": true,
+        "max-classes-per-file": false,
+        "member-access": true,
+        "no-consecutive-blank-lines": true,
         "comment-format": [
             true,
             "check-space"
         ],
         "indent": [
             true,
-            "spaces"
+            "spaces",
+            4
+        ],
+        "no-inferrable-types": [
+            true,
+            "ignore-params"
         ],
         "one-line": [
             true,
@@ -51,10 +63,15 @@
                 "variable-declaration": "onespace"
             }
         ],
-        "no-internal-module": true,
-        "no-trailing-whitespace": true,
-        "prefer-const": true,
-        "jsdoc-format": true
+        "object-literal-key-quotes": [
+            true,
+            "as-needed"
+        ],
+        "no-non-null-assertion": true,
+        "no-redundant-jsdoc": true,
+        "object-literal-sort-keys": true,
+        "ordered-imports": true,
+        "trailing-comma": false
     },
     "extends": ["tslint:recommended", "tslint-sonarts"]
 }
