@@ -1,8 +1,7 @@
 
-
-import { Mail } from "./Mail";
-import logger from "../log/logger";
 import { SmtpLog } from "../../lib/models/SmtpLog";
+import logger from "../log/logger";
+import { Mail } from "./Mail";
 
 import * as nodemailer from "nodemailer";
 import { SmtpLogFacade } from "../../db/entity/log/SmtpLogFacade";
@@ -43,7 +42,7 @@ class MailTransport {
      */
     public sendMail(mail: Mail): void {
         if (!mail.validate()) {
-            const errStr: string = `${loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
+            const errStr = `${loggerString(__dirname, MailTransport.name, "sendMail")} Mail ist not valid! ${JSON.stringify(mail)}`;
             logger.error(errStr);
             throw new Error(errStr);
         }

@@ -1,8 +1,7 @@
 
-
 import { Request } from "express";
-import logger from "./logger";
 import { loggerString } from "../Helper";
+import logger from "./logger";
 
 /**
  * logs debug messages at an endpoint

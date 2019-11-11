@@ -1,7 +1,7 @@
-import { SQLElement } from "./SQLElement";
-import { SQLValueAttributes } from "./SQLValueAttributes";
-import { SQLParam } from "./SQLParam";
 import { SQLElementType } from "./enums/SQLElementType";
+import { SQLElement } from "./SQLElement";
+import { SQLParam } from "./SQLParam";
+import { SQLValueAttributes } from "./SQLValueAttributes";
 
 /**
  * represents the update part of a sql query

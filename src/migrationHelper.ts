@@ -1,39 +1,37 @@
 const marv = require("marv/api/promise"); // <-- Promise API
 const driver = require("marv-mysql-driver");
 import * as path from "path";
-import { inProduction, inTestMode, loggerString } from "./util/Helper";
-import logger from "./util/log/logger";
-import { databaseConnection } from "./util/db/databaseConnection";
-import { TherapistFacade } from "./db/entity/user/TherapistFacade";
-import { PatientFacade } from "./db/entity/user/PatientFacade";
-import { PatientSettingFacade } from "./db/entity/settings/PatientSettingFacade";
 import { DifficultyFacade } from "./db/entity/enum/DifficultyFacade";
-import { SeverityFacade } from "./db/entity/enum/SeverityFacade";
 import { FoodCategoryFacade } from "./db/entity/enum/FoodCategoryFacade";
-import { RecipeFacade } from "./db/entity/kitchen/RecipeFacade";
-import { IngredientFacade } from "./db/entity/kitchen/IngredientFacade";
-import { RecipeIngredientFacade } from "./db/entity/kitchen/RecipeIngredientFacade";
+import { SeverityFacade } from "./db/entity/enum/SeverityFacade";
 import { GameFacade } from "./db/entity/game/GameFacade";
-import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
+import { SessionFacade } from "./db/entity/game/SessionFacade";
+import { StatisticFacade } from "./db/entity/game/StatisticFacade";
+import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
+import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
+import { ErrortextStatisticFacade } from "./db/entity/helptext/ErrortextStatisticFacade";
 import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
 import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
-import {
-  lockedTherapist,
-  tooManyFailedLoginAttemptsTherapist,
-  unacceptedTherapist,
-  validAdminTherapist,
-  validPatient,
-  validPatient1,
-  validTherapist
-} from "./seeds/users";
-import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
+import { ImageFacade } from "./db/entity/image/ImageFacade";
+import { IngredientFacade } from "./db/entity/kitchen/IngredientFacade";
+import { RecipeFacade } from "./db/entity/kitchen/RecipeFacade";
+import { RecipeIngredientFacade } from "./db/entity/kitchen/RecipeIngredientFacade";
+import { LogFacade } from "./db/entity/log/LogFacade";
+import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
+import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
+import { PatientSettingFacade } from "./db/entity/settings/PatientSettingFacade";
+import { PatientFacade } from "./db/entity/user/PatientFacade";
+import { TherapistFacade } from "./db/entity/user/TherapistFacade";
+import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFacade";
 import { WordFacade } from "./db/entity/word/WordFacade";
 import {
   difficultyEasy,
   difficultyHard,
   difficultyMedium
 } from "./seeds/difficulties";
-import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
+import { errortextGames, errortextGames1 } from "./seeds/errortextGames";
+import { errortext, errortext1 } from "./seeds/errortexts";
+import { errortextStatistic, errortextStatistic1 } from "./seeds/errortextStatistic";
 import {
   bread,
   care,
@@ -44,8 +42,6 @@ import {
   sweets,
   vegetables
 } from "./seeds/foodCategories";
-import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
-import { egg, oil } from "./seeds/ingredients";
 import { game, game2, game3, game4 } from "./seeds/games";
 import {
   gameSettings,
@@ -53,40 +49,44 @@ import {
   gameSettings2,
   gameSettings3
 } from "./seeds/gameSettings";
-import {
-  recipeIngredient1,
-  recipeIngredient2
-} from "./seeds/recipeIngredients";
-import { helptext, helptext1 } from "./seeds/helptexts";
-import { errortext, errortext1 } from "./seeds/errortexts";
-import { word } from "./seeds/words";
 import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
-import { pSettings } from "./seeds/patientSettings";
-import { StatisticFacade } from "./db/entity/game/StatisticFacade";
-import { statistic, statistic1 } from "./seeds/statistics";
-import { SessionFacade } from "./db/entity/game/SessionFacade";
-import { session } from "./seeds/sessions";
-import { ImageFacade } from "./db/entity/image/ImageFacade";
+import { helptext, helptext1 } from "./seeds/helptexts";
 import { image } from "./seeds/images";
-import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
-import {
-  notSentSmtpLog,
-  sentSmtpLog,
-  simulatedSmtpLog
-} from "./seeds/smtpLogs";
-import { LogFacade } from "./db/entity/log/LogFacade";
+import { egg, oil } from "./seeds/ingredients";
 import {
   debugLog,
   errorLogWithUser,
   infoLogWithUser,
   verboseLogWithUser
 } from "./seeds/logs";
-import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
-import { errortextGames, errortextGames1 } from "./seeds/errortextGames";
-import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFacade";
+import { pSettings } from "./seeds/patientSettings";
+import {
+  recipeIngredient1,
+  recipeIngredient2
+} from "./seeds/recipeIngredients";
+import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
+import { session } from "./seeds/sessions";
+import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
+import {
+  notSentSmtpLog,
+  sentSmtpLog,
+  simulatedSmtpLog
+} from "./seeds/smtpLogs";
+import { statistic, statistic1 } from "./seeds/statistics";
 import { therapistPatient1, therapistPatient2 } from "./seeds/therapistsPatients";
-import { ErrortextStatisticFacade } from "./db/entity/helptext/ErrortextStatisticFacade";
-import { errortextStatistic, errortextStatistic1 } from "./seeds/errortextStatistic";
+import {
+  lockedTherapist,
+  tooManyFailedLoginAttemptsTherapist,
+  unacceptedTherapist,
+  validAdminTherapist,
+  validPatient,
+  validPatient1,
+  validTherapist
+} from "./seeds/users";
+import { word } from "./seeds/words";
+import { databaseConnection } from "./util/db/databaseConnection";
+import { inProduction, inTestMode, loggerString } from "./util/Helper";
+import logger from "./util/log/logger";
 
 /**
  * runs multiple migrations based on .env variables
@@ -613,5 +613,5 @@ async function getTables(): Promise<string[]> {
     }"`
   );
 
-  return results.map(value => value["table_name"]);
+  return results.map((value) => value.table_name);
 }

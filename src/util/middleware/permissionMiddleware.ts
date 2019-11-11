@@ -1,11 +1,11 @@
-import { Therapist } from "../../lib/models/Therapist";
 import { Request, Response } from "express";
-import { http4xxResponse } from "../http/httpResponses";
-import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
-import { Patient } from "../../lib/models/Patient";
-import logger from "../log/logger";
-import { getRequestUrl, loggerString } from "../Helper";
 import { Roles } from "../../lib/enums/Roles";
+import { Patient } from "../../lib/models/Patient";
+import { Therapist } from "../../lib/models/Therapist";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
+import { getRequestUrl, loggerString } from "../Helper";
+import { http4xxResponse } from "../http/httpResponses";
+import logger from "../log/logger";
 
 /**
  * This file provides permission middleware for express

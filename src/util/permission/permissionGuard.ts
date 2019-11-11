@@ -1,7 +1,7 @@
-import { User } from "../../lib/models/User";
 import { UserInterface } from "../../lib/interfaces/UserInterface";
-import logger from "../log/logger";
+import { User } from "../../lib/models/User";
 import { loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * functions to check permissions in routes

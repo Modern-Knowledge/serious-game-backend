@@ -1,17 +1,16 @@
 
-
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { GameSetting } from "../../../lib/models/GameSetting";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { JoinType } from "../../sql/enums/JoinType";
-import { DifficultyFacade } from "../enum/DifficultyFacade";
-import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { DifficultyFacade } from "../enum/DifficultyFacade";
 
 /**
  * handles CRUD operations with game-settings-entity

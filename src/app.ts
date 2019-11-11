@@ -1,34 +1,32 @@
 
-
 /*
  * watch the order of the imports.
  * .env must be load before environment variables are used in loaded modules
  */
 
-import express, { Request, Response } from "express";
-import compression from "compression"; // compresses requests
 import bodyParser from "body-parser";
+import compression from "compression"; // compresses requests
+import cors from "cors";
+import { DotenvConfigOutput } from "dotenv";
+import * as dotenv from "dotenv";
+import express, { Request, Response } from "express";
+import rateLimit from "express-rate-limit";
+import slowDown from "express-slow-down";
+import helmet from "helmet";
 import lusca from "lusca";
-import passport from "passport";
+import methodOverride from "method-override";
 import moment from "moment";
 import morgan from "morgan";
-import * as dotenv from "dotenv";
-import { DotenvConfigOutput } from "dotenv";
-import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
-import cors from "cors";
-import methodOverride from "method-override";
-import helmet from "helmet";
+import passport from "passport";
+import swaggerUi from "swagger-ui-express";
 import {
   HttpResponse,
   HttpResponseMessage,
   HttpResponseMessageSeverity,
   HttpResponseStatus
 } from "./lib/utils/http/HttpResponse";
-import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
-import rateLimit from "express-rate-limit";
-import slowDown from "express-slow-down";
-
+import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
 
 process.env.TZ = "Europe/Vienna";
 moment.locale("de");
@@ -36,7 +34,7 @@ moment.locale("de");
 const config: DotenvConfigOutput = dotenv.config({ path: ".env" });
 if (config.error) {
   // .env not found
-  const message: string = `${loggerString(
+  const message = `${loggerString(
     __dirname,
     "",
     "",
@@ -45,12 +43,12 @@ if (config.error) {
   throw new Error(message);
 }
 
-import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middleware/middleware";
-import logger from "./util/log/logger";
-import { accessLogStream } from "./util/log/morgan";
+import { migrate } from "./migrationHelper";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
-import { migrate } from "./migrationHelper";
+import logger from "./util/log/logger";
+import { accessLogStream } from "./util/log/morgan";
+import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middleware/middleware";
 
 if (!inTestMode()) {
     migrate().then(() => {});
@@ -112,33 +110,31 @@ const speedLimiter = slowDown({
     delayMs: 500,
 });
 
-
 // Controllers (route handlers)
-import LoginController from "./controllers/LoginController";
-import GameController from "./controllers/GameController";
-import VersionController from "./controllers/VersionController";
-import UserController from "./controllers/UserController";
-import LoggingController from "./controllers/LoggingController";
-import SmtpLoggingController from "./controllers/SmtpLoggingController";
-import ImageController from "./controllers/ImageController";
-import TherapistController from "./controllers/TherapistController";
-import PatientController from "./controllers/PatientController";
-import PasswordResetController from "./controllers/PasswordResetController";
-import RecipeController from "./controllers/RecipeController";
-import WordController from "./controllers/WordController";
-import SessionController from "./controllers/SessionController";
-import StatisticController from "./controllers/StatisticController";
-import HelptextController from "./controllers/HelptextController";
 import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
+import GameController from "./controllers/GameController";
 import GameSettingController from "./controllers/GameSettingController";
+import HelptextController from "./controllers/HelptextController";
+import ImageController from "./controllers/ImageController";
 import IngredientController from "./controllers/IngredientController";
+import LoggingController from "./controllers/LoggingController";
+import LoginController from "./controllers/LoginController";
+import PasswordResetController from "./controllers/PasswordResetController";
+import PatientController from "./controllers/PatientController";
 import PatientSettingController from "./controllers/PatientSettingController";
-import { mailTransport } from "./util/mail/mailTransport";
-import { Mail } from "./util/mail/Mail";
-import { Recipient } from "./util/mail/Recipient";
+import RecipeController from "./controllers/RecipeController";
+import SessionController from "./controllers/SessionController";
+import SmtpLoggingController from "./controllers/SmtpLoggingController";
+import StatisticController from "./controllers/StatisticController";
+import TherapistController from "./controllers/TherapistController";
+import UserController from "./controllers/UserController";
+import VersionController from "./controllers/VersionController";
+import WordController from "./controllers/WordController";
 import { supportMail } from "./mail-texts/supportMail";
-
+import { Mail } from "./util/mail/Mail";
+import { mailTransport } from "./util/mail/mailTransport";
+import { Recipient } from "./util/mail/Recipient";
 
 /**
  * limit requests
@@ -189,7 +185,6 @@ app.use("/game-settings", GameSettingController);
 app.use("/smtp-logs", SmtpLoggingController);
 app.use("/patient-settings", PatientSettingController);
 
-
 /**
  * swagger api routes
  */
@@ -229,8 +224,9 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   ]);
 
   // send mail with error to support
-    const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)], supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
-    if (!inTestMode()) {
+  const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)],
+      supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
+  if (!inTestMode()) {
         mailTransport.sendMail(m);
     }
 

@@ -1,17 +1,16 @@
 
-
-import { UserFacade } from "./UserFacade";
 import { Therapist } from "../../../lib/models/Therapist";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
-import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/enums/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Filter } from "../../filter/Filter";
-import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
+import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { SQLJoin } from "../../sql/SQLJoin";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { UserFacade } from "./UserFacade";
 
 /**
  * handles CRUD operations with the therapist-entity

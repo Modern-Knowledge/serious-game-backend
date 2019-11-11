@@ -1,9 +1,7 @@
 
-
-import { AbstractModel } from "../lib/models/AbstractModel";
 import { Request } from "express";
+import { AbstractModel } from "../lib/models/AbstractModel";
 import { formatDateTime } from "../lib/utils/dateFormatter";
-
 
 /**
  * creates a string for logging that can be used in the winston logger
@@ -19,7 +17,7 @@ export function loggerString(directory?: string, className?: string, methodName?
     }
 
     const dir: string[] = directory.split("dist/");
-    let file: string = "";
+    let file = "";
     if (fileName) {
         file = fileName.split("dist/")[1];
     }
@@ -68,5 +66,3 @@ export function inTestMode(): boolean {
 export function getRequestUrl(req: Request): string {
     return `${req.protocol}://${req.hostname}${req.path}`;
 }
-
-

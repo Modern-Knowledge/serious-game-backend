@@ -1,5 +1,5 @@
-import { SQLParam } from "./SQLParam";
 import { BakedQuery } from "./BakedQuery";
+import { SQLParam } from "./SQLParam";
 
 /**
  * sql queries with named parameters

@@ -1,10 +1,10 @@
 import { NamedParameterizedQuery } from "./NamedParameterizedQuery";
-import { SQLSelect } from "./SQLSelect";
 import { SQLFrom } from "./SQLFrom";
 import { SQLJoin } from "./SQLJoin";
-import { SQLWhere } from "./SQLWhere";
-import { SQLParam } from "./SQLParam";
 import { SQLOrderBy } from "./SQLOrderBy";
+import { SQLParam } from "./SQLParam";
+import { SQLSelect } from "./SQLSelect";
+import { SQLWhere } from "./SQLWhere";
 
 /**
  * represents a sql select statement
@@ -61,12 +61,14 @@ export class SelectQuery extends NamedParameterizedQuery {
    * returns the sql for the select query
    */
   public getSql(): string {
-    let returnSQL: string = "";
-    if (this._sqlSelect !== undefined)
+    let returnSQL = "";
+    if (this._sqlSelect !== undefined) {
       returnSQL += this._sqlSelect.getSQL();
+    }
 
-    if (this._sqlFrom !== undefined)
+    if (this._sqlFrom !== undefined) {
       returnSQL += this._sqlFrom.getSQL();
+    }
 
     for (const currJoin of this._sqlJoins) {
       returnSQL += currJoin.getSQL();

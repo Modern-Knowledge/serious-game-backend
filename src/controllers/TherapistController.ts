@@ -1,12 +1,13 @@
 
-
+import * as bcrypt from "bcryptjs";
 import express from "express";
 import { Request, Response } from "express";
-import { JWTHelper } from "../util/JWTHelper";
+import { check } from "express-validator";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import { Therapist } from "../lib/models/Therapist";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import { Status } from "../lib/enums/Status";
+import { Therapist } from "../lib/models/Therapist";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
 import {
     HttpResponse,
@@ -14,21 +15,19 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { emailValidator } from "../util/validation/validators/emailValidator";
-import { passwordValidator } from "../util/validation/validators/passwordValidator";
-import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import * as bcrypt from "bcryptjs";
+import { JWTHelper } from "../util/JWTHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import {
     checkTherapistAdminPermission,
     checkTherapistPermission,
     checkUserPermission
 } from "../util/middleware/permissionMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
+import { emailValidator } from "../util/validation/validators/emailValidator";
+import { passwordValidator } from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
@@ -54,7 +53,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapists: therapists, token: res.locals.authorizationToken},
+                {therapists, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle TherapeutInnen wurden erfolgreich geladen!`)
                 ]
@@ -126,7 +125,7 @@ router.post("/", [
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { user: response, token: token},
+                { user: response, token},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
@@ -167,7 +166,6 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
     check("_forename").escape().trim()
         .not().isEmpty().withMessage(rVM("forename", "empty")),
-
 
     check("_lastname").escape().trim()
         .not().isEmpty().withMessage(rVM("lastname", "empty")),
@@ -214,7 +212,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapist: therapist, token: res.locals.authorizationToken}, [
+                {therapist, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn wurde erfolgreich aktualisiert!`)
                 ]
             )

@@ -1,6 +1,6 @@
 import { RecipeIngredient } from "../lib/models/RecipeIngredient";
-import { scrambledEgg } from "./recipes";
 import { egg, oil } from "./ingredients";
+import { scrambledEgg } from "./recipes";
 
 const recipeIngredient1 = new RecipeIngredient();
 recipeIngredient1.recipeId = scrambledEgg.id;

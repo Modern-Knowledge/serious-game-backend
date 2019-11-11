@@ -1,17 +1,17 @@
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/enums/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Filter } from "../../filter/Filter";
 import { Errortext } from "../../../lib/models/Errortext";
-import { TextFacade } from "./TextFacade";
-import { SeverityFacade } from "../enum/SeverityFacade";
-import { JoinCardinality } from "../../sql/enums/JoinCardinality";
-import { CompositeFacade } from "../../composite/CompositeFacade";
-import { Ordering } from "../../order/Ordering";
 import { Helptext } from "../../../lib/models/Helptext";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { CompositeFacade } from "../../composite/CompositeFacade";
+import { Filter } from "../../filter/Filter";
+import { Ordering } from "../../order/Ordering";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SeverityFacade } from "../enum/SeverityFacade";
+import { TextFacade } from "./TextFacade";
 
 /**
  * handles CRUD operations with the errortext-entity

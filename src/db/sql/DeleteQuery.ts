@@ -1,7 +1,7 @@
 import { NamedParameterizedQuery } from "./NamedParameterizedQuery";
 import { SQLDelete } from "./SQLDelete";
-import { SQLWhere } from "./SQLWhere";
 import { SQLParam } from "./SQLParam";
+import { SQLWhere } from "./SQLWhere";
 
 /**
  * represents a sql delete statement
@@ -33,7 +33,7 @@ export class DeleteQuery extends NamedParameterizedQuery {
    * returns the sql for delete query
    */
   public getSql(): string {
-    let returnStr: string = "";
+    let returnStr = "";
 
     if (this._delete !== undefined) {
       returnStr += this._delete.getSQL() + " ";

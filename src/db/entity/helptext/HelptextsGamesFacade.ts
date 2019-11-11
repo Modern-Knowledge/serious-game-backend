@@ -1,8 +1,8 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { HelptextGame } from "../../../lib/models/HelptextGame";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with helptexts-games-entity

@@ -1,8 +1,8 @@
+import { SQLElementType } from "./enums/SQLElementType";
+import { SQLBlock } from "./SQLBlock";
 import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 import { SQLValueAttributes } from "./SQLValueAttributes";
-import { SQLElementType } from "./enums/SQLElementType";
-import { SQLBlock } from "./SQLBlock";
 
 /**
  * represents the insert part of a sql query

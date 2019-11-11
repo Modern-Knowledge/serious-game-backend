@@ -1,5 +1,5 @@
-import { Difficulty } from "../lib/models/Difficulty";
 import { Difficulties } from "../lib/enums/Difficulties";
+import { Difficulty } from "../lib/models/Difficulty";
 
 const difficultyEasy = new Difficulty();
 difficultyEasy.id = 1;

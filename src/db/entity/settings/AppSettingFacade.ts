@@ -1,6 +1,6 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { AppSetting } from "../../../lib/models/AppSetting";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with app-setting-entity

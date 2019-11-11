@@ -1,7 +1,6 @@
 
-
-import logger from "../log/logger";
 import { loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * check if environment does not exist

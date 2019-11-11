@@ -1,24 +1,23 @@
 
-
-import express, { Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
-import { UserFacade } from "../db/entity/user/UserFacade";
-import { JWTHelper } from "../util/JWTHelper";
+import express, { Request, Response } from "express";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
+import moment from "moment";
+import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import { UserFacade } from "../db/entity/user/UserFacade";
+import { User } from "../lib/models/User";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { User } from "../lib/models/User";
-import moment from "moment";
-import { formatDateTime } from "../lib/utils/dateFormatter";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import { JWTHelper } from "../util/JWTHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -135,7 +134,7 @@ router.post("/login", [
         const token = await jwtHelper.generateJWT(reqUser);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {user: reqUser, token: token},
+            {user: reqUser, token},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
             ]
@@ -145,6 +144,5 @@ router.post("/login", [
         return next(error);
     }
 });
-
 
 export default router;

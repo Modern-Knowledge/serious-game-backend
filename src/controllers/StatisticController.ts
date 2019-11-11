@@ -1,23 +1,22 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
+import moment from "moment";
+import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
+import { StatisticFacade } from "../db/entity/game/StatisticFacade";
+import { Statistic } from "../lib/models/Statistic";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { StatisticFacade } from "../db/entity/game/StatisticFacade";
-import { Statistic } from "../lib/models/Statistic";
-import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
-import moment from "moment";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -66,7 +65,7 @@ router.get("/:id", authenticationMiddleware, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {statistic: statistic, token: res.locals.authorizationToken},
+                {statistic, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Statistik wurde erolgreich geladen!`)
                 ]
@@ -129,7 +128,7 @@ router.put("/:id", authenticationMiddleware, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {statistic: statistic, token: res.locals.authorizationToken},
+                {statistic, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Statistik wurde erfolgreich aktualisiert!`)
                 ]

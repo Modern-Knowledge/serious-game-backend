@@ -36,7 +36,7 @@ export class InsertQuery extends NamedParameterizedQuery {
    * returns the sql for the insert query
    */
   public getSql(): string {
-    let returnSql: string = "";
+    let returnSql = "";
 
     if (this._insert !== undefined) {
       returnSql += this._insert.getSQL();

@@ -1,17 +1,17 @@
-import { Therapist } from "../../lib/models/Therapist";
-import { TherapistFacade } from "../entity/user/TherapistFacade";
-import { PatientFacade } from "../entity/user/PatientFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/enums/JoinType";
-import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacade";
 import { Patient } from "../../lib/models/Patient";
-import { Filter } from "../filter/Filter";
-import { JoinCardinality } from "../sql/enums/JoinCardinality";
-import { CompositeFacade } from "./CompositeFacade";
-import { Ordering } from "../order/Ordering";
+import { Therapist } from "../../lib/models/Therapist";
 import { arrayContainsModel } from "../../util/Helper";
+import { PatientFacade } from "../entity/user/PatientFacade";
+import { TherapistFacade } from "../entity/user/TherapistFacade";
+import { TherapistsPatientsFacade } from "../entity/user/TherapistsPatientsFacade";
+import { Filter } from "../filter/Filter";
+import { Ordering } from "../order/Ordering";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { JoinType } from "../sql/enums/JoinType";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLBlock } from "../sql/SQLBlock";
+import { SQLJoin } from "../sql/SQLJoin";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composites therapists
@@ -26,71 +26,6 @@ import { arrayContainsModel } from "../../util/Helper";
  *   - users (1:1)
  */
 export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
-
-    private _therapistFacade: TherapistFacade;
-    private _patientFacade: PatientFacade;
-    private readonly _therapistPatientFacade: TherapistsPatientsFacade;
-
-    private _withTherapistUserJoin: boolean;
-    private _withPatientUserJoin: boolean;
-    private _withPatientJoin: boolean;
-
-    /**
-     * @param tableAlias
-     */
-    public constructor(tableAlias?: string) {
-        if (tableAlias) {
-            super("therapists", tableAlias);
-        } else {
-            super("therapists", "t");
-        }
-
-        this._therapistFacade = new TherapistFacade();
-        this._patientFacade = new PatientFacade();
-        this._therapistPatientFacade = new TherapistsPatientsFacade();
-
-        this._withTherapistUserJoin = true;
-        this._withPatientUserJoin = true;
-        this._withPatientJoin = true;
-    }
-
-    /**
-     * returns sql attributes that should be retrieved from the database
-     * @param excludedSQLAttributes attributes that should not be selected
-     */
-    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const returnAttributes: SQLAttributes = new SQLAttributes();
-
-        returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
-
-        if (this._withPatientJoin) {
-            returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
-            returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
-        }
-
-        return returnAttributes;
-    }
-
-    /**
-     * fills the entity
-     * @param result result for filling
-     */
-    protected fillEntity(result: any): Therapist {
-        if (!result[this.name("therapist_id")]) {
-            return undefined;
-        }
-
-        const t: Therapist = this._therapistFacade.fillEntity(result);
-
-        if (this._withPatientJoin) {
-            const p: Patient = this._patientFacade.fillEntity(result);
-            if (p) {
-                t.patients.push(p);
-            }
-        }
-
-        return t;
-    }
 
     /**
      * creates the joins for the composite therapists facade and returns them as a list
@@ -113,37 +48,6 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         }
 
         return joins;
-    }
-
-    /**
-     * post process the results of the select query
-     * e.g.: handle joins
-     * @param entities entities that where returned from the database
-     */
-    protected postProcessSelect(entities: Therapist[]): Therapist[] {
-        const therapistMap = new Map<number, Therapist>();
-
-        for (const therapist of entities) {
-            if (!therapistMap.has(therapist.id)) {
-                therapistMap.set(therapist.id, therapist);
-            } else {
-                const existingTherapist: Therapist = therapistMap.get(therapist.id);
-
-                if (!arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
-                    existingTherapist.patients = existingTherapist.patients.concat(therapist.patients);
-                }
-
-            }
-        }
-
-        return Array.from(therapistMap.values());
-    }
-
-    /**
-     * delete the therapist, the user and the therapist-patient connection
-     */
-    public async deleteTherapistComposite(): Promise<number> {
-        return await this.delete([this._therapistPatientFacade, this, this._therapistFacade.userFacade]);
     }
 
     /**
@@ -237,5 +141,100 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
         return this.therapistUserFacadeFilter;
     }
 
+    private _therapistFacade: TherapistFacade;
+    private _patientFacade: PatientFacade;
+    private readonly _therapistPatientFacade: TherapistsPatientsFacade;
+
+    private _withTherapistUserJoin: boolean;
+    private _withPatientUserJoin: boolean;
+    private _withPatientJoin: boolean;
+
+    /**
+     * @param tableAlias
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("therapists", tableAlias);
+        } else {
+            super("therapists", "t");
+        }
+
+        this._therapistFacade = new TherapistFacade();
+        this._patientFacade = new PatientFacade();
+        this._therapistPatientFacade = new TherapistsPatientsFacade();
+
+        this._withTherapistUserJoin = true;
+        this._withPatientUserJoin = true;
+        this._withPatientJoin = true;
+    }
+
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const returnAttributes: SQLAttributes = new SQLAttributes();
+
+        returnAttributes.addSqlAttributes(this._therapistFacade.getSQLAttributes(excludedSQLAttributes));
+
+        if (this._withPatientJoin) {
+            returnAttributes.addSqlAttributes(this._patientFacade.getSQLAttributes(excludedSQLAttributes));
+            returnAttributes.addSqlAttributes(this._therapistPatientFacade.getSQLAttributes(excludedSQLAttributes));
+        }
+
+        return returnAttributes;
+    }
+
+    /**
+     * delete the therapist, the user and the therapist-patient connection
+     */
+    public async deleteTherapistComposite(): Promise<number> {
+        return await this.delete([this._therapistPatientFacade, this, this._therapistFacade.userFacade]);
+    }
+
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): Therapist {
+        if (!result[this.name("therapist_id")]) {
+            return undefined;
+        }
+
+        const t: Therapist = this._therapistFacade.fillEntity(result);
+
+        if (this._withPatientJoin) {
+            const p: Patient = this._patientFacade.fillEntity(result);
+            if (p) {
+                t.patients.push(p);
+            }
+        }
+
+        return t;
+    }
+
+    /**
+     * post process the results of the select query
+     * e.g.: handle joins
+     * @param entities entities that where returned from the database
+     */
+    protected postProcessSelect(entities: Therapist[]): Therapist[] {
+        const therapistMap = new Map<number, Therapist>();
+
+        for (const therapist of entities) {
+            if (!therapistMap.has(therapist.id)) {
+                therapistMap.set(therapist.id, therapist);
+            } else {
+                const existingTherapist: Therapist = therapistMap.get(therapist.id);
+
+                if (!arrayContainsModel(therapist.patients[0], existingTherapist.patients)) {
+                    existingTherapist.patients = existingTherapist.patients.concat(therapist.patients);
+                }
+
+            }
+        }
+
+        return Array.from(therapistMap.values());
+    }
 
 }

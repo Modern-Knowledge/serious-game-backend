@@ -1,8 +1,6 @@
 
-
-
-import logger from "../log/logger";
 import { loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * analyses execution time based on environment variables

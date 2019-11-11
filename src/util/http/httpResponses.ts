@@ -1,14 +1,13 @@
 
-
+import { Response } from "express";
+import { Request } from "express";
+import { validationResult } from "express-validator";
 import {
     HttpResponse,
     HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
-import { Response } from "express";
-import { Request } from "express";
 import { toHttpResponseMessage } from "../validation/validationMessages";
-import { validationResult } from "express-validator";
 
 /**
  * stores predefined http responses
@@ -44,7 +43,6 @@ export function failedValidation400Response(req: Request, res: Response): Respon
         ]
     ));
 }
-
 
 /**
  * sends 403 response if permission to view/edit endpoint is rejected

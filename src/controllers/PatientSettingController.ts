@@ -1,20 +1,20 @@
 import express from "express";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { Request, Response } from "express";
-import { logEndpoint } from "../util/log/endpointLogger";
+import { check } from "express-validator";
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
-import { checkPatientPermission} from "../util/middleware/permissionMiddleware";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
 import { failedValidation400Response, forbidden403Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkPatientPermission } from "../util/middleware/permissionMiddleware";
 import { validatePermission } from "../util/permission/permissionGuard";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         logEndpoint(controllerName, `Return all patient-settings!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {patientSettings: patientSettings, token: res.locals.authorizationToken},
+            {patientSettings, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Patienten-Einstellungen erfolgreich geladen!")
             ]
@@ -92,7 +92,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Patient-Setting with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {patientSetting: patientSetting, token: res.locals.authorizationToken},
+            {patientSetting, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Patienten-Einstellung wurde erfolgreich gefunden.`)
             ]

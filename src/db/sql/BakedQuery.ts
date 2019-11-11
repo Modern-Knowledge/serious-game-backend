@@ -21,8 +21,8 @@ export class BakedQuery {
   /**
    * returns the parameters of a prepared statement as a list
    */
-  public fillParameters(): (string | number | Date | boolean)[] {
-   const returnArr: (string | number | Date | boolean)[] = [];
+  public fillParameters(): Array<string | number | Date | boolean> {
+   const returnArr: Array<string | number | Date | boolean> = [];
 
    this._values.forEach((value: SQLParam) => {
       returnArr.push(value.value);
@@ -31,13 +31,20 @@ export class BakedQuery {
    return returnArr;
  }
 
+    /**
+     * returns the sql, where parameters are replaced with questionmarks
+     */
+    public getBakedSQL(): string {
+        return this._sql;
+    }
+
   /**
    * adds the names of the parameters and the values of the parameters to the map
    * adds the values of the parameters to the _values map
    * @param params
    */
   private buildDictionary(params: SQLParam[]): void {
-    let count: number = 1;
+    let count = 1;
     const regexp: RegExp = new RegExp("::(.*?)::", "g");
     const array: RegExpMatchArray = this._sql.match(regexp);
 
@@ -48,7 +55,7 @@ export class BakedQuery {
 
         this._sql = this._sql.replace("::" + item + "::", "?");
 
-        let value: SQLParam = undefined;
+        let value: SQLParam;
         for (const currParam of params) {
           if (currParam.name === item) {
             value = currParam;
@@ -61,12 +68,4 @@ export class BakedQuery {
      }
     }
   }
-
-
-    /**
-     * returns the sql, where parameters are replaced with questionmarks
-     */
-    getBakedSQL(): string {
-        return this._sql;
-    }
 }

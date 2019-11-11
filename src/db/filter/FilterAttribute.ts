@@ -1,7 +1,7 @@
-import { Filterable } from "./Filterable";
-import { SQLBlock } from "../sql/SQLBlock";
 import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
+import { SQLBlock } from "../sql/SQLBlock";
 import { SQLParam } from "../sql/SQLParam";
+import { Filterable } from "./Filterable";
 
 /**
  * filterAttribute in the where part of a query

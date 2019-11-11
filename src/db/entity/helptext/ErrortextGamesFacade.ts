@@ -1,8 +1,8 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
-import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { ErrortextGame } from "../../../lib/models/ErrortextGame";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with errortext-games-entity

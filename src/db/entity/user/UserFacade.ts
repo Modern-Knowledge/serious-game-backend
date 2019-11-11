@@ -1,8 +1,8 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { User } from "../../../lib/models/User";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with the user-entity
@@ -61,21 +61,6 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
-     */
-    protected fillEntity(result: any): User {
-        if (!result[this.name("id")]) {
-            return undefined;
-        }
-
-        const u: User = new User();
-        this.fillUserEntity(result, u);
-
-        return u;
-    }
-
-    /**
      * assigns the retrieved values to the newly created user and returns the user
      * @param result retrieved result
      * @param u entity to fill
@@ -126,6 +111,21 @@ export class UserFacade extends EntityFacade<User> {
         if (result[this.name("resetcode_validuntil")]) {
             u.resetcodeValidUntil = result[this.name("resetcode_validuntil")];
         }
+
+        return u;
+    }
+
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): User {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
+        const u: User = new User();
+        this.fillUserEntity(result, u);
 
         return u;
     }

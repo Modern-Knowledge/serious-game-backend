@@ -1,8 +1,8 @@
 import { AbstractModel } from "../../lib/models/AbstractModel";
 import { EntityFacade } from "../entity/EntityFacade";
 import { Filter } from "../filter/Filter";
-import { SQLOperator } from "../sql/enums/SQLOperator";
 import { Ordering } from "../order/Ordering";
+import { SQLOperator } from "../sql/enums/SQLOperator";
 
 /**
  * base class for composite facades
@@ -11,7 +11,7 @@ import { Ordering } from "../order/Ordering";
 export abstract class CompositeFacade<EntityType extends AbstractModel<EntityType>> extends EntityFacade<EntityType> {
 
     private _sqlOperator: SQLOperator = SQLOperator.AND;
-    private _autoCombineFilter: boolean = true;
+    private _autoCombineFilter = true;
 
     /**
      * @param tableName

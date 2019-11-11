@@ -1,24 +1,26 @@
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
+import moment from "moment";
+import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
+import { GameFacade } from "../db/entity/game/GameFacade";
+import { SessionFacade } from "../db/entity/game/SessionFacade";
+import { StatisticFacade } from "../db/entity/game/StatisticFacade";
+import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
+import { PatientFacade } from "../db/entity/user/PatientFacade";
+import { Session } from "../lib/models/Session";
+import { Statistic } from "../lib/models/Statistic";
 import {
   HttpResponse,
   HttpResponseMessage,
   HttpResponseMessageSeverity,
   HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { Session } from "../lib/models/Session";
-import { SessionFacade } from "../db/entity/game/SessionFacade";
-import { StatisticFacade } from "../db/entity/game/StatisticFacade";
-import { Statistic } from "../lib/models/Statistic";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import {
   failedValidation400Response,
   http4xxResponse
 } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import {
   checkAuthentication,
   checkAuthenticationToken
@@ -26,10 +28,8 @@ import {
 import {
   checkTherapistPermission
 } from "../util/middleware/permissionMiddleware";
-import moment from "moment";
-import { GameFacade } from "../db/entity/game/GameFacade";
-import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 const router = express.Router();
 
 const controllerName = "SessionController";
@@ -91,7 +91,7 @@ router.get(
         .json(
           new HttpResponse(
             HttpResponseStatus.SUCCESS,
-            { session: session, token: res.locals.authorizationToken },
+            { session, token: res.locals.authorizationToken },
             [
               new HttpResponseMessage(
                 HttpResponseMessageSeverity.SUCCESS,
@@ -149,7 +149,7 @@ router.get(
         .json(
           new HttpResponse(
             HttpResponseStatus.SUCCESS,
-            { sessions: sessions, token: res.locals.authorizationToken },
+            { sessions, token: res.locals.authorizationToken },
             [
               new HttpResponseMessage(
                 HttpResponseMessageSeverity.SUCCESS,

@@ -1,9 +1,6 @@
 
-
-
-import { User } from "../../lib/models/User";
 import moment from "moment";
-
+import { User } from "../../lib/models/User";
 
 /**
  * generates and sets the password reset token for the passed user

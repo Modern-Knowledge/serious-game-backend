@@ -1,5 +1,5 @@
-import { SQLAttributeCollection } from "./SQLAttributeCollection";
 import { SQLAttribute } from "./SQLAttribute";
+import { SQLAttributeCollection } from "./SQLAttributeCollection";
 
 /**
  * handles interaction with sql attribute collection

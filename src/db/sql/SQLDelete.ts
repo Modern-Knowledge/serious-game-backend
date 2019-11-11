@@ -1,5 +1,5 @@
-import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./enums/SQLElementType";
+import { SQLElement } from "./SQLElement";
 
 /**
  * represents the delete part of a sql query

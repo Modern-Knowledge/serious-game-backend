@@ -1,19 +1,18 @@
 
-
-import { CompositeFacade } from "./CompositeFacade";
+import { Ingredient } from "../../lib/models/Ingredient";
 import { Recipe } from "../../lib/models/Recipe";
+import { arrayContainsModel } from "../../util/Helper";
+import { IngredientFacade } from "../entity/kitchen/IngredientFacade";
 import { RecipeFacade } from "../entity/kitchen/RecipeFacade";
 import { RecipeIngredientFacade } from "../entity/kitchen/RecipeIngredientFacade";
-import { IngredientFacade } from "../entity/kitchen/IngredientFacade";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { Ingredient } from "../../lib/models/Ingredient";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/enums/JoinType";
-import { JoinCardinality } from "../sql/enums/JoinCardinality";
 import { Filter } from "../filter/Filter";
 import { Ordering } from "../order/Ordering";
-import { arrayContainsModel } from "../../util/Helper";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { JoinType } from "../sql/enums/JoinType";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLBlock } from "../sql/SQLBlock";
+import { SQLJoin } from "../sql/SQLJoin";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite recipes

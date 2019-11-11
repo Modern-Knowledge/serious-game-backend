@@ -1,6 +1,6 @@
-import { game } from "./games";
 import { ErrortextGame } from "../lib/models/ErrortextGame";
 import { errortext, errortext1 } from "./errortexts";
+import { game } from "./games";
 
 const errortextGames = new ErrortextGame();
 errortextGames.gameId = game.id;

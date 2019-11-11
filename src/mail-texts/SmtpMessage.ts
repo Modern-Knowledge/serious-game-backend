@@ -1,5 +1,4 @@
 
-
 export class SmtpMessage {
     private _subject: string;
     private _html: string;

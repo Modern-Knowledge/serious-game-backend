@@ -1,24 +1,23 @@
 
-
+import * as bcrypt from "bcryptjs";
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
+import { UserFacade } from "../db/entity/user/UserFacade";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 import {
     HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import { passwordResettet } from "../mail-texts/passwordResettet";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
+import { Mail } from "../util/mail/Mail";
+import { mailTransport } from "../util/mail/mailTransport";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkUserPermission } from "../util/middleware/permissionMiddleware";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
 import { checkRouteValidation } from "../util/validation/validationHelper";
-import { UserFacade } from "../db/entity/user/UserFacade";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import * as bcrypt from "bcryptjs";
-import { Mail } from "../util/mail/Mail";
-import { passwordResettet } from "../mail-texts/passwordResettet";
-import { formatDateTime } from "../lib/utils/dateFormatter";
-import { mailTransport } from "../util/mail/mailTransport";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 

@@ -1,15 +1,14 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
-import { WordFacade } from "../db/entity/word/WordFacade";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
+import { WordFacade } from "../db/entity/word/WordFacade";
+import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -35,7 +34,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         logEndpoint(controllerName, `Return all words!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {words: words, token: res.locals.authorizationToken},
+            {words, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS)
             ]
@@ -83,7 +82,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Word with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {word: word, token: res.locals.authorizationToken}, [
+            {word, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Wort wurde erfolgreich gefunden.`)
             ]
         ));

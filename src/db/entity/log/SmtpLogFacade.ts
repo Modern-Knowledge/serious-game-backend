@@ -1,10 +1,9 @@
 
-
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
-import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SmtpLog } from "../../../lib/models/SmtpLog";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with the smtp-logs

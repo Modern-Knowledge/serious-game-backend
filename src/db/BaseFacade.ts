@@ -1,38 +1,114 @@
 
-
-import { SQLAttributes } from "./sql/SQLAttributes";
-import { SQLWhere } from "./sql/SQLWhere";
-import { SQLJoin } from "./sql/SQLJoin";
-import { SelectQuery } from "./sql/SelectQuery";
-import { SQLSelect } from "./sql/SQLSelect";
-import { SQLFrom } from "./sql/SQLFrom";
-import { BakedQuery } from "./sql/BakedQuery";
-import { SQLValueAttributes } from "./sql/SQLValueAttributes";
-import { InsertQuery } from "./sql/InsertQuery";
-import { SQLInsert } from "./sql/SQLInsert";
-import { UpdateQuery } from "./sql/UpdateQuery";
-import { SQLUpdate } from "./sql/SQLUpdate";
-import { DeleteQuery } from "./sql/DeleteQuery";
-import { SQLDelete } from "./sql/SQLDelete";
-import { AbstractModel } from "../lib/models/AbstractModel";
 import { FieldInfo, MysqlError, PoolConnection } from "mysql";
+import { Error } from "tslint/lib/error";
+import { AbstractModel } from "../lib/models/AbstractModel";
+import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
+import { Stopwatch } from "../util/analysis/Stopwatch";
+import { databaseConnection, TransactionQuery } from "../util/db/databaseConnection";
+import { loggerString } from "../util/Helper";
 import logger from "../util/log/logger";
 import { Filter } from "./filter/Filter";
-import { SQLOrder } from "./sql/enums/SQLOrder";
-import { Error } from "tslint/lib/error";
-import { Stopwatch } from "../util/analysis/Stopwatch";
-import { JoinCardinality } from "./sql/enums/JoinCardinality";
-import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
 import { Ordering } from "./order/Ordering";
-import { loggerString } from "../util/Helper";
-import { databaseConnection, TransactionQuery } from "../util/db/databaseConnection";
-import { SQLValueAttribute } from "./sql/SQLValueAttribute";
+import { BakedQuery } from "./sql/BakedQuery";
+import { DeleteQuery } from "./sql/DeleteQuery";
+import { JoinCardinality } from "./sql/enums/JoinCardinality";
 import { JoinType } from "./sql/enums/JoinType";
+import { SQLOrder } from "./sql/enums/SQLOrder";
+import { InsertQuery } from "./sql/InsertQuery";
+import { SelectQuery } from "./sql/SelectQuery";
+import { SQLAttributes } from "./sql/SQLAttributes";
+import { SQLDelete } from "./sql/SQLDelete";
+import { SQLFrom } from "./sql/SQLFrom";
+import { SQLInsert } from "./sql/SQLInsert";
+import { SQLJoin } from "./sql/SQLJoin";
+import { SQLSelect } from "./sql/SQLSelect";
+import { SQLUpdate } from "./sql/SQLUpdate";
+import { SQLValueAttribute } from "./sql/SQLValueAttribute";
+import { SQLValueAttributes } from "./sql/SQLValueAttributes";
+import { SQLWhere } from "./sql/SQLWhere";
+import { UpdateQuery } from "./sql/UpdateQuery";
 
 /**
  * base class for crud operations with the database
  */
 export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
+
+    /**
+     * combine joins for the entity and returns them as a list
+     */
+    get joins(): SQLJoin[] {
+        return [];
+    }
+
+    /**
+     * sets the filter
+     * @param filter
+     */
+    set filter(filter: Filter) {
+        this._filter = filter;
+    }
+
+    /**
+     * retrieves the filter for the facade
+     */
+    get filter(): Filter {
+        return this._filter;
+    }
+
+    /**
+     * returns the ordering of the facade (order-by)
+     */
+    get ordering(): Ordering {
+        return this._ordering;
+    }
+
+    /**
+     * sets the ordering of the facade (order-by)
+     * @param value
+     */
+    set ordering(value: Ordering) {
+        this._ordering = value;
+    }
+
+    get tableName(): string {
+        return this._tableName;
+    }
+
+    set tableName(value: string) {
+        this._tableName = value;
+    }
+
+    get tableAlias(): string {
+        return this._tableAlias;
+    }
+
+    set tableAlias(value: string) {
+        this._tableAlias = value;
+    }
+
+    get attributes(): string[] {
+        return this._attributes;
+    }
+
+    set attributes(value: string[]) {
+        this._attributes = value;
+    }
+
+    /**
+     * sets the function that is applied to the result set of a select query
+     * @param value function that takes an array of entity types
+     */
+    set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
+        this._postProcessFilter = value;
+    }
+
+    /**
+     * returns the sql-where clause
+     * @param filter
+     */
+    private static getSQLFilter(filter: Filter): SQLWhere {
+        return filter.isEmpty ? undefined : new SQLWhere(filter.getBlock());
+    }
 
     private _tableName: string;
     private _tableAlias: string;
@@ -40,10 +116,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
     private _ordering: Ordering;
     private _filter: Filter;
-
-    private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {
-        return entities;
-    };
 
     /**
      * @param tableName
@@ -55,6 +127,30 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
         this._filter = new Filter(tableAlias);
         this._ordering = new Ordering(tableAlias);
+    }
+
+    /**
+     * add an order by clause
+     * @param attribute attribute for ordering
+     * @param order attribute sort order (ASC|DESC)
+     */
+    public addOrderBy(attribute: string, order: SQLOrder = SQLOrder.DESC): void {
+        this.ordering.addOrderBy(attribute, order);
+    }
+
+    /**
+     * clear filter
+     */
+    public clearFilter(): void {
+        this._filter.clear();
+    }
+
+    /**
+     * returns the fully qualified name (columnName + tableAlias)
+     * @param column name of the column
+     */
+    public name(column: string): string {
+        return column + this._tableAlias;
     }
 
     /**
@@ -70,7 +166,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
         // filter excluded sql attributes
         if (excludedSQLAttributes) {
-            sqlAttributes = sqlAttributes.filter(function (x) {
+            sqlAttributes = sqlAttributes.filter(function(x) {
                 return excludedSQLAttributes.indexOf(x) < 0;
             });
         }
@@ -149,7 +245,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      *
      * returns all inserted ids as array
      */
-    protected async insert(attributes: SQLValueAttributes, additionalInserts?: {facade: any, entity: EntityType, callBackOnInsert?: any}[]): Promise<any[]> {
+    protected async insert(attributes: SQLValueAttributes, additionalInserts?: Array<{facade: any, entity: EntityType, callBackOnInsert?: any}>): Promise<any[]> {
         // array of queries
         const funcArray: TransactionQuery[] = [];
         if (additionalInserts) {
@@ -158,7 +254,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                 funcArray.push(func);
             }
         } else {
-            funcArray.push({function: this.getInsertQueryFn, attributes: attributes});
+            funcArray.push({function: this.getInsertQueryFn, attributes});
         }
 
         return await databaseConnection.transaction(funcArray);
@@ -212,7 +308,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * facade: facade to execute update in
      * entity: entity to insert
      */
-    protected async update(attributes: SQLValueAttributes, additionalUpdates?: {facade: any, entity: EntityType}[]): Promise<number> {
+    protected async update(attributes: SQLValueAttributes, additionalUpdates?: Array<{facade: any, entity: EntityType}>): Promise<number> {
         // array of queries
         const funcArray: TransactionQuery[] = [];
         if (additionalUpdates) {
@@ -221,7 +317,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                 funcArray.push(func);
             }
         }  else {
-            funcArray.push({function: this.getUpdateQueryFn, attributes: attributes});
+            funcArray.push({function: this.getUpdateQueryFn, attributes});
         }
         const result = await databaseConnection.transaction(funcArray);
         return result.reduce((pv, cv) => pv + cv, 0);
@@ -234,7 +330,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      */
     protected getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> = (connection: PoolConnection, attributes: SQLValueAttributes) => {
         if (this._filter.isEmpty) {
-            const error: string = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update-query specified!`;
+            const error = `${loggerString(__dirname, BaseFacade.name, "update")} No WHERE-clause for update-query specified!`;
             logger.error(error);
             throw new Error(error);
         }
@@ -300,7 +396,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      */
     protected getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> = (connection: PoolConnection) => {
         if (this._filter.isEmpty) {
-            const error: string = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
+            const error = `${loggerString(__dirname, BaseFacade.name, "delete")} No WHERE-clause for delete query specified!`;
             logger.error(error);
             throw new Error(error);
         }
@@ -325,96 +421,12 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     };
 
     /**
-     * creates and returns a select-query
-     * @param attributes columns that should be selected
-     * @param filter select query filtering
-     */
-    private getSelectQuery(attributes: SQLAttributes, filter: Filter): Query {
-        const npq: SelectQuery = new SelectQuery();
-
-        const select: SQLSelect = new SQLSelect(attributes);
-        const from: SQLFrom = new SQLFrom(this._tableName, this._tableAlias);
-
-        npq.sqlSelect = select;
-        npq.sqlFrom = from;
-        npq.addJoins(this.joins);
-        npq.sqlWhere = BaseFacade.getSQLFilter(filter);
-        npq.sqlOrderBy = this._ordering.orderBys;
-
-        const selectQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date | boolean)[] = selectQuery.fillParameters();
-
-        return {query: selectQuery.getBakedSQL(), params: params};
-    }
-
-    /**
-     * creates and returns an insert-query
-     * @param attributes columns that should be inserted
-     */
-    private getInsertQuery(attributes: SQLValueAttributes): Query {
-        const npq: InsertQuery = new InsertQuery();
-        const insert: SQLInsert = new SQLInsert(this._tableName);
-
-        insert.attributes = attributes;
-        npq.insert = insert;
-
-        const insertQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date | boolean)[] = insertQuery.fillParameters();
-
-        return {query: insertQuery.getBakedSQL(), params: params};
-    }
-
-    /**
-     * creates and returns an update-query
-     * @param attributes columns that should be set
-     */
-    private getUpdateQuery(attributes: SQLValueAttributes): Query {
-        const npq: UpdateQuery = new UpdateQuery();
-        const update: SQLUpdate = new SQLUpdate(this._tableName, this._tableAlias);
-
-        update.attributes = attributes;
-        npq.update = update;
-        npq.where = BaseFacade.getSQLFilter(this._filter);
-
-        const updateQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date | boolean)[] = updateQuery.fillParameters();
-
-        return {query: updateQuery.getBakedSQL(), params: params};
-    }
-
-    /**
-     * creates and returns a delete-query
-     */
-    private getDeleteQuery(): Query {
-        const npq: DeleteQuery = new DeleteQuery();
-
-        npq.delete = new SQLDelete(this._tableName, this._tableAlias);
-        npq.where = BaseFacade.getSQLFilter(this._filter);
-
-        const deleteQuery: BakedQuery = npq.bake();
-        const params: (string | number | Date | boolean)[] = deleteQuery.fillParameters();
-
-        let queryStr: string = deleteQuery.getBakedSQL();
-        const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
-        queryStr = queryStr.replace(regex, ""); // workaround for delete
-
-        return {query: queryStr, params: params};
-    }
-
-    /**
      * returns sql value attributes for insert-statement and update-statement
      * @param prefix prefix before the sql attribute
      * @param entity entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, entity: EntityType): SQLValueAttributes {
         return new SQLValueAttributes();
-    }
-
-    /**
-     * combine joins for the entity and returns them as a list
-     */
-    get joins(): SQLJoin[] {
-        return [];
     }
 
     /**
@@ -445,60 +457,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns the sql-where clause
-     * @param filter
-     */
-    private static getSQLFilter(filter: Filter): SQLWhere {
-        return filter.isEmpty ? undefined : new SQLWhere(filter.getBlock());
-    }
-
-    /**
-     * sets the filter
-     * @param filter
-     */
-    set filter(filter: Filter) {
-        this._filter = filter;
-    }
-
-    /**
-     * retrieves the filter for the facade
-     */
-    get filter(): Filter {
-        return this._filter;
-    }
-
-    /**
-     * returns the ordering of the facade (order-by)
-     */
-    get ordering(): Ordering {
-        return this._ordering;
-    }
-
-    /**
-     * sets the ordering of the facade (order-by)
-     * @param value
-     */
-    set ordering(value: Ordering) {
-        this._ordering = value;
-    }
-
-    /**
-     * add an order by clause
-     * @param attribute attribute for ordering
-     * @param order attribute sort order (ASC|DESC)
-     */
-    public addOrderBy(attribute: string, order: SQLOrder = SQLOrder.DESC): void {
-        this.ordering.addOrderBy(attribute, order);
-    }
-
-    /**
-     * clear filter
-     */
-    public clearFilter(): void {
-        this._filter.clear();
-    }
-
-    /**
      * post process the results of a select query
      * e.g.: handle joins
      * @param entities entities that where returned from the database
@@ -507,12 +465,85 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         return entities;
     }
 
+    private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {
+        return entities;
+    };
+
     /**
-     * returns the fully qualified name (columnName + tableAlias)
-     * @param column name of the column
+     * creates and returns a select-query
+     * @param attributes columns that should be selected
+     * @param filter select query filtering
      */
-    public name(column: string): string {
-        return column + this._tableAlias;
+    private getSelectQuery(attributes: SQLAttributes, filter: Filter): Query {
+        const npq: SelectQuery = new SelectQuery();
+
+        const select: SQLSelect = new SQLSelect(attributes);
+        const from: SQLFrom = new SQLFrom(this._tableName, this._tableAlias);
+
+        npq.sqlSelect = select;
+        npq.sqlFrom = from;
+        npq.addJoins(this.joins);
+        npq.sqlWhere = BaseFacade.getSQLFilter(filter);
+        npq.sqlOrderBy = this._ordering.orderBys;
+
+        const selectQuery: BakedQuery = npq.bake();
+        const params: Array<string | number | Date | boolean> = selectQuery.fillParameters();
+
+        return {query: selectQuery.getBakedSQL(), params};
+    }
+
+    /**
+     * creates and returns an insert-query
+     * @param attributes columns that should be inserted
+     */
+    private getInsertQuery(attributes: SQLValueAttributes): Query {
+        const npq: InsertQuery = new InsertQuery();
+        const insert: SQLInsert = new SQLInsert(this._tableName);
+
+        insert.attributes = attributes;
+        npq.insert = insert;
+
+        const insertQuery: BakedQuery = npq.bake();
+        const params: Array<string | number | Date | boolean> = insertQuery.fillParameters();
+
+        return {query: insertQuery.getBakedSQL(), params};
+    }
+
+    /**
+     * creates and returns an update-query
+     * @param attributes columns that should be set
+     */
+    private getUpdateQuery(attributes: SQLValueAttributes): Query {
+        const npq: UpdateQuery = new UpdateQuery();
+        const update: SQLUpdate = new SQLUpdate(this._tableName, this._tableAlias);
+
+        update.attributes = attributes;
+        npq.update = update;
+        npq.where = BaseFacade.getSQLFilter(this._filter);
+
+        const updateQuery: BakedQuery = npq.bake();
+        const params: Array<string | number | Date | boolean> = updateQuery.fillParameters();
+
+        return {query: updateQuery.getBakedSQL(), params};
+    }
+
+    /**
+     * creates and returns a delete-query
+     */
+    private getDeleteQuery(): Query {
+        const npq: DeleteQuery = new DeleteQuery();
+
+        npq.delete = new SQLDelete(this._tableName, this._tableAlias);
+        npq.where = BaseFacade.getSQLFilter(this._filter);
+
+        const deleteQuery: BakedQuery = npq.bake();
+        const params: Array<string | number | Date | boolean> = deleteQuery.fillParameters();
+
+        let queryStr: string = deleteQuery.getBakedSQL();
+        const regex: RegExp = new RegExp(this._tableAlias + "\\.", "g");
+        queryStr = queryStr.replace(regex, ""); // workaround for delete
+
+        return {query: queryStr, params};
     }
 
     /**
@@ -551,41 +582,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         }
 
     }
-
-    get tableName(): string {
-        return this._tableName;
-    }
-
-    set tableName(value: string) {
-        this._tableName = value;
-    }
-
-    get tableAlias(): string {
-        return this._tableAlias;
-    }
-
-    set tableAlias(value: string) {
-        this._tableAlias = value;
-    }
-
-    get attributes(): string[] {
-        return this._attributes;
-    }
-
-    set attributes(value: string[]) {
-        this._attributes = value;
-    }
-
-    /**
-     * sets the function that is applied to the result set of a select query
-     * @param value function that takes an array of entity types
-     */
-    set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
-        this._postProcessFilter = value;
-    }
 }
 
 interface Query {
     query: string;
-    params: (string | number | Date | boolean)[];
+    params: Array<string | number | Date | boolean>;
 }

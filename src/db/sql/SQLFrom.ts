@@ -1,5 +1,5 @@
-import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./enums/SQLElementType";
+import { SQLElement } from "./SQLElement";
 
 /**
  * represents the from part of an sql query
@@ -27,7 +27,7 @@ export class SQLFrom extends SQLElement {
    * returns the sql for the from element
    */
   public getSQL(): string {
-    let returnSQL: string = "";
+    let returnSQL = "";
 
     if (this._tableName !== undefined && (!(this._tableName.length === 0))) {
       returnSQL += "FROM " + this._tableName + " ";

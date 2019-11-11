@@ -1,27 +1,25 @@
 
-
+import * as bcrypt from "bcryptjs";
 import express, { Request, Response } from "express";
+import { check } from "express-validator";
+import moment from "moment";
 import { UserFacade } from "../db/entity/user/UserFacade";
+import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { setPasswordResetToken } from "../util/password/passwordHelper";
-import { Mail } from "../util/mail/Mail";
 import { passwordReset } from "../mail-texts/passwordReset";
-import { mailTransport } from "../util/mail/mailTransport";
-import moment from "moment";
-import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import { passwordResettet } from "../mail-texts/passwordResettet";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import * as bcrypt from "bcryptjs";
-
+import { logEndpoint } from "../util/log/endpointLogger";
+import { Mail } from "../util/mail/Mail";
+import { mailTransport } from "../util/mail/mailTransport";
+import { setPasswordResetToken } from "../util/password/passwordHelper";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -197,6 +195,5 @@ router.post("/reset-password",  [
         return next(e);
     }
 });
-
 
 export default router;

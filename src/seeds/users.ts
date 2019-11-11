@@ -1,9 +1,9 @@
-import { Therapist } from "../lib/models/Therapist";
-import { Gender } from "../lib/enums/Gender";
-import { Status } from "../lib/enums/Status";
-import { Roles } from "../lib/enums/Roles";
 import moment from "moment";
+import { Gender } from "../lib/enums/Gender";
+import { Roles } from "../lib/enums/Roles";
+import { Status } from "../lib/enums/Status";
 import { Patient } from "../lib/models/Patient";
+import { Therapist } from "../lib/models/Therapist";
 import { generatePasswordResetToken } from "../util/password/passwordHelper";
 
 // valid admin therapist

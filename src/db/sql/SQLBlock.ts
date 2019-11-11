@@ -1,7 +1,7 @@
-import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./enums/SQLElementType";
-import { SQLParam } from "./SQLParam";
+import { SQLElement } from "./SQLElement";
 import { SQLKeyword } from "./SQLKeyword";
+import { SQLParam } from "./SQLParam";
 import { SQLText } from "./SQLText";
 
 /**
@@ -53,6 +53,30 @@ export class SQLBlock extends SQLElement {
   }
 
   /**
+   * returns the sql for the sql block
+   */
+  public getSQL(): string {
+    this.invalidate();
+
+    let sql = "(";
+
+    for (const item of this._elements) {
+      sql += item.getSQL();
+    }
+
+    sql += ")";
+
+    return sql;
+  }
+
+  /**
+   * returns the element type of a sql block
+   */
+  public getElementType(): number {
+    return SQLElementType.SQLBlock;
+  }
+
+  /**
    *
    */
   private invalidate(): void {
@@ -71,33 +95,9 @@ export class SQLBlock extends SQLElement {
       }
 
       if (currElement.getElementType() === SQLElementType.SQLBlock) {
-        const currBlock: SQLBlock = <SQLBlock> currElement;
+        const currBlock: SQLBlock = currElement as SQLBlock;
         currBlock.invalidate();
       }
     }
-  }
-
-  /**
-   * returns the sql for the sql block
-   */
-  public getSQL(): string {
-    this.invalidate();
-
-    let sql: string = "(";
-
-    for (const item of this._elements) {
-      sql += item.getSQL();
-    }
-
-    sql += ")";
-
-    return sql;
-  }
-
-  /**
-   * returns the element type of a sql block
-   */
-  public getElementType(): number {
-    return SQLElementType.SQLBlock;
   }
 }

@@ -1,14 +1,13 @@
 
-
 import express, { Request, Response } from "express";
-import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
+import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 

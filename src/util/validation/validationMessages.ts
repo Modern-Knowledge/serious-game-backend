@@ -88,7 +88,6 @@ validationMessages.get("info").set("empty", new HttpResponseMessage(HttpResponse
  */
 validationMessages.get("patient").set("invalid", new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Nicht alle übergebenen PatientInnen sind valide!`));
 
-
 /**
  * retrieves the validationMessage by category and messageName
  * @param category category of the message

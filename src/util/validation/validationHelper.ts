@@ -1,9 +1,8 @@
 
-
-import { validationResult } from "express-validator";
 import { Request, Response } from "express";
-import logger from "../log/logger";
+import { validationResult } from "express-validator";
 import { loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * checks if a validation in express-validator was not successful

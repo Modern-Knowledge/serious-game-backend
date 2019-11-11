@@ -1,8 +1,8 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { Image } from "../../../lib/models/Image";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with the image-entity
@@ -45,7 +45,6 @@ export class ImageFacade extends EntityFacade<Image> {
         return image;
     }
 
-
     /**
      * fills the entity
      * @param result result for filling
@@ -62,7 +61,6 @@ export class ImageFacade extends EntityFacade<Image> {
         if (result[this.name("image")]) {
             i.image = result[this.name("image")];
         }
-
 
         return i;
     }

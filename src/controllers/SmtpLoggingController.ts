@@ -1,6 +1,9 @@
 
-
 import express, { Request, Response } from "express";
+import moment from "moment";
+import { SmtpLogFacade } from "../db/entity/log/SmtpLogFacade";
+import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../db/sql/enums/SQLOperator";
 import { SQLOrder } from "../db/sql/enums/SQLOrder";
 import {
     HttpResponse,
@@ -9,10 +12,6 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
-import moment from "moment";
-import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
-import { SmtpLogFacade } from "../db/entity/log/SmtpLogFacade";
-import { SQLOperator } from "../db/sql/enums/SQLOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
 
@@ -60,7 +59,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {logs: logs, token: res.locals.authorizationToken},
+                {logs, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `SMTP-Logs erfolgreich geladen!`)
                 ]
@@ -95,7 +94,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {affectedRows: affectedRows, token: res.locals.authorizationToken},
+                {affectedRows, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} SMTP-Logs wurden erfolgreich gelöscht!`)
                 ]
@@ -106,6 +105,5 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
         return next(error);
     }
 });
-
 
 export default router;

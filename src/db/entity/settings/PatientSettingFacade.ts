@@ -1,10 +1,9 @@
 
-
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { PatientSetting } from "../../../lib/models/PatientSetting";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with patient-settings-entity
@@ -55,7 +54,6 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
         return patientSetting;
     }
-
 
     /**
      * inserts a new session and returns the created session

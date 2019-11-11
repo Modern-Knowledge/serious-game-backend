@@ -1,5 +1,4 @@
 
-
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { User } from "../lib/models/User";

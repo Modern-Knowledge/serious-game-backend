@@ -1,8 +1,8 @@
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { ErrortextStatistic } from "../../../lib/models/ErrortextStatistic";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with errortext-statistic-entity
@@ -36,6 +36,17 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
+     * inserts a new errortext-statistic and returns the created errortext-statistic
+     * @param errortextStatistic
+     */
+    public async insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortextStatistic);
+        await this.insert(attributes);
+
+        return errortextStatistic;
+    }
+
+    /**
      * fills the entity
      * @param result result for filling
      */
@@ -49,17 +60,6 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
         if (result[this.name("statistic_id")]) {
             errortextStatistic.statisticId = result[this.name("statistic_id")];
         }
-
-        return errortextStatistic;
-    }
-
-    /**
-     * inserts a new errortext-statistic and returns the created errortext-statistic
-     * @param errortextStatistic
-     */
-    public async insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
-        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortextStatistic);
-        await this.insert(attributes);
 
         return errortextStatistic;
     }

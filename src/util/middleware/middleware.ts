@@ -1,9 +1,9 @@
 
 import { Request, Response } from "express";
-import { Stopwatch } from "../analysis/Stopwatch";
-import logger from "../log/logger";
 import { ExecutionTimeAnalyser } from "../analysis/ExecutionTimeAnalyser";
+import { Stopwatch } from "../analysis/Stopwatch";
 import { getRequestUrl, loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * This file provides request middleware for express

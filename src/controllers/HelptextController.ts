@@ -1,15 +1,14 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
+import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
+import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -35,7 +34,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         logEndpoint(controllerName, `Return all helptexts!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {helptexts: helptexts, token: res.locals.authorizationToken},
+            {helptexts, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Hilfetexte erfolgreich geladen!`)
             ]
@@ -82,7 +81,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Helptext with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {helptext: helptext, token: res.locals.authorizationToken},
+            {helptext, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Hilfetext wurde erfolgreich gefunden.`)
             ]

@@ -1,10 +1,9 @@
 
-
 import errorHandler from "errorhandler";
 
 import app from "./app";
-import logger from "./util/log/logger";
 import { inProduction, loggerString } from "./util/Helper";
+import logger from "./util/log/logger";
 
 /**
  * Error Handler. Provides full stack - remove for production

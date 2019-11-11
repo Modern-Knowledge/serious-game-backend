@@ -1,6 +1,6 @@
 import { SQLAttributeCollection } from "./SQLAttributeCollection";
-import { SQLValueAttribute } from "./SQLValueAttribute";
 import { SQLParam } from "./SQLParam";
+import { SQLValueAttribute } from "./SQLValueAttribute";
 
 /**
  * handles interaction with the sql value attributes collection
@@ -16,7 +16,7 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
    * e.g.: ::id::, ::name::
    */
   public getCommaSeparatedParameterName(): string {
-    let returnSql: string = "";
+    let returnSql = "";
 
     for (const currAttribute of this._attributes) {
       returnSql += "::" + currAttribute.getParamName() + "::, ";
@@ -47,7 +47,7 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
    * e.g.: name = "name", age = "12"
    */
   public getNameParamNamePairs(): string {
-    let returnSql: string = "";
+    let returnSql = "";
 
     for (const currAttribute of this._attributes) {
       returnSql += currAttribute.getPrefixedName(true) + " = ::" + currAttribute.getParamName() + "::, ";

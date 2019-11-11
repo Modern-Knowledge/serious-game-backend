@@ -1,6 +1,6 @@
 import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
-import { statistic } from "./statistics";
 import { errortext, errortext1 } from "./errortexts";
+import { statistic } from "./statistics";
 
 const errortextStatistic = new ErrortextStatistic();
 errortextStatistic.statisticId = statistic.id;

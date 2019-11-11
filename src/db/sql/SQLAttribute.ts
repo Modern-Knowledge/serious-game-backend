@@ -23,7 +23,7 @@ export class SQLAttribute {
    * @param withHighComas
    */
   public getPrefixedName(withHighComas: boolean): string {
-    let retStr: string = "";
+    let retStr = "";
 
     if (this._tableAlias !== undefined && (this._tableAlias.length > 0)) {
       retStr += this._tableAlias + ".";

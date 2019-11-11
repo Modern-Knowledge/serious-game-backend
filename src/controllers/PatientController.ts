@@ -1,30 +1,29 @@
 
-
+import * as bcrypt from "bcryptjs";
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
+import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { Patient } from "../lib/models/Patient";
 import { Status } from "../lib/enums/Status";
-import { JWTHelper } from "../util/JWTHelper";
+import { Patient } from "../lib/models/Patient";
+import { PatientSetting } from "../lib/models/PatientSetting";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { passwordValidator } from "../util/validation/validators/passwordValidator";
-import { emailValidator } from "../util/validation/validators/emailValidator";
-import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
-import { PatientSetting } from "../lib/models/PatientSetting";
-import * as bcrypt from "bcryptjs";
+import { JWTHelper } from "../util/JWTHelper";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkPatientPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
+import { emailValidator } from "../util/validation/validators/emailValidator";
+import { passwordValidator } from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
@@ -50,7 +49,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {patients: patients, token: res.locals.authorizationToken} ,
+                {patients, token: res.locals.authorizationToken} ,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle PatientInnen wurden erfolgreich geladen!`)
                 ]
@@ -115,7 +114,6 @@ router.post("/", [
     patient.failedLoginAttempts = 0;
     patient.password = bcrypt.hashSync(patient.password, 12);
 
-
     const patientSettingFacade = new PatientSettingFacade();
     const patientSetting = new PatientSetting();
 
@@ -134,7 +132,7 @@ router.post("/", [
 
         return res.status(201).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { token: token, user: createdPatient, patient_setting: createdPatientSetting },
+                { token, user: createdPatient, patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
                 ]
@@ -258,7 +256,7 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {patient: patient, token: res.locals.authorizationToken},
+                {patient, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`)
                 ]
@@ -268,7 +266,5 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
         return next(e);
     }
 });
-
-
 
 export default router;

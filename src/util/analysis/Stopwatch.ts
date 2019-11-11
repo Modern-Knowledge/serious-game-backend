@@ -1,5 +1,4 @@
 
-
 /**
  * simple stopwatch to measure execution time
  * stopwatch is autostarted when instanced

@@ -4,11 +4,11 @@
  * https://nodemailer.com/message/
  */
 
-import { Attachment } from "./Attachment";
-import { Recipient } from "./Recipient";
-import { MailPriority } from "./MailPriority";
-import { TemplateParser } from "../TemplateParser";
 import { SmtpMessage } from "../../mail-texts/SmtpMessage";
+import { TemplateParser } from "../TemplateParser";
+import { Attachment } from "./Attachment";
+import { MailPriority } from "./MailPriority";
+import { Recipient } from "./Recipient";
 
 /**
  * represents a Mail for nodemailer
@@ -29,7 +29,6 @@ export class Mail {
     /* header options */
     public priority: MailPriority = MailPriority.NORMAL;
     public headers: any;
-
 
     /**
      * Common parameters that every Mail needs
@@ -55,4 +54,3 @@ export class Mail {
         return !(this.to.length === 0 || this.subject.length === 0 || this.text.length === 0 || this.html.length === 0);
     }
 }
-

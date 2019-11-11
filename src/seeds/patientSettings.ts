@@ -1,5 +1,5 @@
-import { validPatient } from "./users";
 import { PatientSetting } from "../lib/models/PatientSetting";
+import { validPatient } from "./users";
 
 const pSettings = new PatientSetting();
 pSettings.id = 1;

@@ -1,6 +1,6 @@
+import { Mealtimes } from "../lib/enums/Mealtimes";
 import { Recipe } from "../lib/models/Recipe";
 import { difficultyEasy } from "./difficulties";
-import { Mealtimes } from "../lib/enums/Mealtimes";
 
 const scrambledEgg = new Recipe();
 scrambledEgg.id = 1;

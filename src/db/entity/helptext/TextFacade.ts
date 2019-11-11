@@ -1,10 +1,9 @@
 
-
-import { EntityFacade } from "../EntityFacade";
 import { Text } from "../../../lib/models/Text";
 import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with the text-entity
@@ -32,21 +31,6 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
-     */
-    protected fillEntity(result: any): Text {
-        if (!result[this.name("id")]) {
-            return undefined;
-        }
-
-        const text: Text = new Text();
-        this.fillTextEntity(result, text);
-
-        return text;
-    }
-
-    /**
      * assigns the retrieved common values to the newly created text and returns the text
      * @param result retrieved result
      * @param text entity to fill
@@ -61,6 +45,21 @@ export class TextFacade extends EntityFacade<Text> {
         if (result[this.name("text")]) {
             text.text = result[this.name("text")];
         }
+
+        return text;
+    }
+
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): Text {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
+        const text: Text = new Text();
+        this.fillTextEntity(result, text);
 
         return text;
     }

@@ -1,5 +1,5 @@
-import { validPatient, validPatient1, validTherapist } from "./users";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
+import { validPatient, validPatient1, validTherapist } from "./users";
 
 const therapistPatient1 = new TherapistPatient();
 therapistPatient1.patientId = validPatient.id;

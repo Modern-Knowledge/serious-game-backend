@@ -1,8 +1,8 @@
 import { Session } from "../lib/models/Session";
 import { game } from "./games";
-import { validPatient } from "./users";
-import { statistic } from "./statistics";
 import { gameSettings } from "./gameSettings";
+import { statistic } from "./statistics";
+import { validPatient } from "./users";
 
 const session = new Session();
 session.id = 1;

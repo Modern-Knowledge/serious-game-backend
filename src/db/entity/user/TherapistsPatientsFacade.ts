@@ -1,12 +1,10 @@
 
-
-import { EntityFacade } from "../EntityFacade";
-import { SQLAttributes } from "../../sql/SQLAttributes";
 import { TherapistPatient } from "../../../lib/models/TherapistPatient";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
-import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLComparisonOperator } from "../../sql/enums/SQLComparisonOperator";
-
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { EntityFacade } from "../EntityFacade";
 
 /**
  * handles CRUD operations with therapists-patients-entity
@@ -39,24 +37,6 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
-     */
-    protected fillEntity(result: any): TherapistPatient {
-        const therapistPatient: TherapistPatient = new TherapistPatient();
-
-        if (result[this.name("therapist_id")]) {
-            therapistPatient.therapistId = result[this.name("therapist_id")];
-        }
-
-        if (result[this.name("patient_id")]) {
-            therapistPatient.patientId = result[this.name("patient_id")];
-        }
-
-        return therapistPatient;
-    }
-
-    /**
      * inserts a new therapist-patient and returns the created therapist-patient
      * @param therapistPatient TherapistPatient to insert
      */
@@ -83,6 +63,24 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
             SQLComparisonOperator.EQUAL
         );
         return await this.delete([this]);
+    }
+
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    protected fillEntity(result: any): TherapistPatient {
+        const therapistPatient: TherapistPatient = new TherapistPatient();
+
+        if (result[this.name("therapist_id")]) {
+            therapistPatient.therapistId = result[this.name("therapist_id")];
+        }
+
+        if (result[this.name("patient_id")]) {
+            therapistPatient.patientId = result[this.name("patient_id")];
+        }
+
+        return therapistPatient;
     }
 
     /**

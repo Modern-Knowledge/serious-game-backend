@@ -1,24 +1,24 @@
-import express, { Request, Response } from 'express';
-import { check } from 'express-validator';
+import express, { Request, Response } from "express";
+import { check } from "express-validator";
 
-import { ErrortextFacade } from '../db/entity/helptext/ErrortextFacade';
-import { ErrortextStatisticFacade } from '../db/entity/helptext/ErrortextStatisticFacade';
-import { ErrortextStatistic } from '../lib/models/ErrortextStatistic';
+import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
+import { ErrortextStatisticFacade } from "../db/entity/helptext/ErrortextStatisticFacade";
+import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
 import {
   HttpResponse,
   HttpResponseMessage,
   HttpResponseMessageSeverity,
   HttpResponseStatus,
-} from '../lib/utils/http/HttpResponse';
-import { failedValidation400Response, http4xxResponse } from '../util/http/httpResponses';
-import { logEndpoint } from '../util/log/endpointLogger';
-import { checkAuthentication, checkAuthenticationToken } from '../util/middleware/authenticationMiddleware';
-import { checkRouteValidation } from '../util/validation/validationHelper';
-import { rVM } from '../util/validation/validationMessages';
+} from "../lib/utils/http/HttpResponse";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
-const controllerName = 'ErrortextController';
+const controllerName = "ErrortextController";
 
 const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
 
@@ -31,7 +31,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * - errortexts: all errortexts of the application
  * - token: authentication token
  */
-router.get('/', authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
   const errorTextFacade = new ErrortextFacade();
 
   try {
@@ -44,7 +44,7 @@ router.get('/', authenticationMiddleware, async (req: Request, res: Response, ne
       .json(
         new HttpResponse(
           HttpResponseStatus.SUCCESS,
-          { errortexts: errortexts, token: res.locals.authorizationToken },
+          { errortexts, token: res.locals.authorizationToken },
           [
             new HttpResponseMessage(
               HttpResponseMessageSeverity.SUCCESS,
@@ -71,12 +71,12 @@ router.get('/', authenticationMiddleware, async (req: Request, res: Response, ne
  * - token: authentication token
  */
 router.get(
-  '/:id',
+  "/:id",
   authenticationMiddleware,
   [
-    check('id')
+    check("id")
       .isNumeric()
-      .withMessage(rVM('id', 'numeric'))
+      .withMessage(rVM("id", "numeric"))
   ],
   async (req: Request, res: Response, next: any) => {
     if (!checkRouteValidation(controllerName, req, res)) {
@@ -107,7 +107,7 @@ router.get(
         .json(
           new HttpResponse(
             HttpResponseStatus.SUCCESS,
-            { errortext: errortext, token: res.locals.authorizationToken },
+            { errortext, token: res.locals.authorizationToken },
             [
               new HttpResponseMessage(
                 HttpResponseMessageSeverity.SUCCESS,
@@ -132,7 +132,7 @@ router.get(
  * - errortext: the created errortext
  * - token: authentication token
  */
-router.post('/', authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.post("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
   if (!checkRouteValidation(controllerName, req, res)) {
     return failedValidation400Response(req, res);
   }
@@ -162,7 +162,7 @@ router.post('/', authenticationMiddleware, async (req: Request, res: Response, n
       .json(
         new HttpResponse(
           HttpResponseStatus.SUCCESS,
-          { errortext: errortext, token: res.locals.authorizationToken },
+          { errortext, token: res.locals.authorizationToken },
           [
             new HttpResponseMessage(
               HttpResponseMessageSeverity.SUCCESS,
@@ -186,7 +186,7 @@ router.post('/', authenticationMiddleware, async (req: Request, res: Response, n
  * - errortexts: the created errortexts
  * - token: authentication token
  */
-router.post('/bulk', authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.post("/bulk", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
   if (!checkRouteValidation(controllerName, req, res)) {
     return failedValidation400Response(req, res);
   }
@@ -197,10 +197,10 @@ router.post('/bulk', authenticationMiddleware, async (req: Request, res: Respons
    * will not be unique
    */
   const errortextsData: any[] = req.body.errortexts
-    .map(errortext => errortext['_id'])
+    .map((errortext) => errortext._id)
     .map((errortext: any, index: any, final: any) => final.indexOf(errortext) === index && index)
-    .filter(errortext => req.body.errortexts[errortext])
-    .map(errortext => req.body.errortexts[errortext]);
+    .filter((errortext) => req.body.errortexts[errortext])
+    .map((errortext) => req.body.errortexts[errortext]);
 
   const errortextFacade = new ErrortextStatisticFacade();
 
@@ -229,7 +229,7 @@ router.post('/bulk', authenticationMiddleware, async (req: Request, res: Respons
       .json(
         new HttpResponse(
           HttpResponseStatus.SUCCESS,
-          { errortexts: errortexts, token: res.locals.authorizationToken },
+          { errortexts, token: res.locals.authorizationToken },
           [
             new HttpResponseMessage(
               HttpResponseMessageSeverity.SUCCESS,

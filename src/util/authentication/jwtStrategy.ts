@@ -1,8 +1,8 @@
-import { Strategy, ExtractJwt, StrategyOptions } from "passport-jwt";
-import logger from "../log/logger";
-import { loggerString } from "../Helper";
-import { TherapistCompositeFacade } from "../../db/composite/TherapistCompositeFacade";
+import { ExtractJwt, Strategy, StrategyOptions } from "passport-jwt";
 import { PatientCompositeFacade } from "../../db/composite/PatientCompositeFacade";
+import { TherapistCompositeFacade } from "../../db/composite/TherapistCompositeFacade";
+import { loggerString } from "../Helper";
+import logger from "../log/logger";
 
 const options: StrategyOptions = {
     secretOrKey: process.env.SECRET_KEY,
@@ -19,7 +19,7 @@ export const jwtStrategy =  new Strategy(options, (payload, done) => {
     const id = payload.id;
 
     // @ts-ignore
-    userFacade.getById(id).then(user => {
+    userFacade.getById(id).then((user) => {
         if (!user) { // user not found
             logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${id} was not correct!`);
             return done(undefined, false);
@@ -31,4 +31,3 @@ export const jwtStrategy =  new Strategy(options, (payload, done) => {
         return done(undefined, user, {message: "Token ist gültig!"});
     }).catch(done);
 });
-

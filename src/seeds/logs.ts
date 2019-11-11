@@ -1,5 +1,5 @@
 import { Log } from "../lib/models/Log";
-import { validTherapist } from './users'
+import { validTherapist } from "./users";
 
 const debugLog = new Log();
 debugLog.level = "debug";

@@ -11,7 +11,7 @@ export const emailValidator: CustomValidator = (email: any) => {
     const userFacade: UserFacade = new UserFacade();
     userFacade.filter.addFilterCondition("email", email);
 
-    return userFacade.getOne().then(user => {
+    return userFacade.getOne().then((user) => {
         if (user) {
             return Promise.reject(retrieveValidationMessage("email", "duplicate"));
         }

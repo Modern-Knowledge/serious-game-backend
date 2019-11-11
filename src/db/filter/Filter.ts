@@ -1,8 +1,8 @@
+import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../sql/enums/SQLOperator";
+import { SQLBlock } from "../sql/SQLBlock";
 import { Filterable } from "./Filterable";
 import { FilterAttribute } from "./FilterAttribute";
-import { SQLBlock } from "../sql/SQLBlock";
-import { SQLOperator } from "../sql/enums/SQLOperator";
-import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
 
 /**
  * filter for sql statements
@@ -10,7 +10,7 @@ import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
 export class Filter implements Filterable {
   private _root: SQLBlock = new SQLBlock();
   private readonly _tableAlias: string;
-  private _empty: boolean = true;
+  private _empty = true;
 
   public constructor(tableAlias?: string) {
     this._tableAlias = tableAlias;

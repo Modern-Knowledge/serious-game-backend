@@ -1,9 +1,8 @@
 
-
 import mysql, { MysqlError, Pool, PoolConnection } from "mysql";
-import logger from "../log/logger";
-import { inTestMode, loggerString } from "../Helper";
 import { SQLValueAttributes } from "../../db/sql/SQLValueAttributes";
+import { inTestMode, loggerString } from "../Helper";
+import logger from "../log/logger";
 
 /**
  * interface that defines queries that can used in a transaction
@@ -28,74 +27,6 @@ class DatabaseConnection {
         logger.info(`${loggerString(__dirname, DatabaseConnection.name, "constructor")} DatabaseConnection instance was created!`);
         this.connect();
         this.createPoolEvents();
-    }
-
-    /**
-     * establish pool connection to database
-     */
-    private connect(): void {
-        if (inTestMode()) {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Test-Database`);
-
-            this._pool = mysql.createPool({
-                connectionLimit: 100,
-                host: process.env.TEST_DB_HOST,
-                user: process.env.TEST_DB_USER,
-                password: process.env.TEST_DB_PASS,
-                database: process.env.TEST_DB_DATABASE,
-                debug: false,
-                waitForConnections: true,
-                multipleStatements: true
-            });
-        } else {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
-
-            this._pool = mysql.createPool({
-                connectionLimit: 100,
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASS,
-                database: process.env.DB_DATABASE,
-                debug: false,
-                waitForConnections: true,
-                multipleStatements: true
-            });
-        }
-    }
-
-    /**
-     * create events for pool connection
-     */
-    private createPoolEvents(): void {
-        this._pool.on("acquire", (connection) => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
-        });
-
-        this._pool.on("connection", () => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
-        });
-
-        this._pool.on("enqueue", () => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Waiting for available connection slot!`);
-        });
-
-        this._pool.on("release", (connection) => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} released!`);
-        });
-    }
-
-    /**
-     * close all connections in a pool
-     */
-    private disconnect(): void {
-        this._pool.end((err: MysqlError) => {
-            if (err) {
-                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ${err} ${this}`);
-                throw err;
-            } else {
-                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} Disconnected from database! ${this}`);
-            }
-        });
     }
 
     /**
@@ -139,7 +70,7 @@ class DatabaseConnection {
 
                     const result: any[]  = [];
 
-                    let response = undefined;
+                    let response;
                     /**
                      * execute the queries in a transaction
                      */
@@ -209,6 +140,74 @@ class DatabaseConnection {
 
     public toString(): string {
         return `{host: ${process.env.DB_HOST}, database: ${process.env.DB_DATABASE}, user: ${process.env.DB_USER}}`;
+    }
+
+    /**
+     * establish pool connection to database
+     */
+    private connect(): void {
+        if (inTestMode()) {
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Test-Database`);
+
+            this._pool = mysql.createPool({
+                connectionLimit: 100,
+                host: process.env.TEST_DB_HOST,
+                user: process.env.TEST_DB_USER,
+                password: process.env.TEST_DB_PASS,
+                database: process.env.TEST_DB_DATABASE,
+                debug: false,
+                waitForConnections: true,
+                multipleStatements: true
+            });
+        } else {
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
+
+            this._pool = mysql.createPool({
+                connectionLimit: 100,
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_DATABASE,
+                debug: false,
+                waitForConnections: true,
+                multipleStatements: true
+            });
+        }
+    }
+
+    /**
+     * create events for pool connection
+     */
+    private createPoolEvents(): void {
+        this._pool.on("acquire", (connection) => {
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
+        });
+
+        this._pool.on("connection", () => {
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
+        });
+
+        this._pool.on("enqueue", () => {
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Waiting for available connection slot!`);
+        });
+
+        this._pool.on("release", (connection) => {
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} released!`);
+        });
+    }
+
+    /**
+     * close all connections in a pool
+     */
+    private disconnect(): void {
+        this._pool.end((err: MysqlError) => {
+            if (err) {
+                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ${err} ${this}`);
+                throw err;
+            } else {
+                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} Disconnected from database! ${this}`);
+            }
+        });
     }
 
 }

@@ -1,22 +1,21 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
+import { IngredientFacade } from "../db/entity/kitchen/IngredientFacade";
 import {
     HttpResponse,
-    HttpResponseStatus,
     HttpResponseMessage,
-    HttpResponseMessageSeverity
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import {
     checkRouteValidation,
 } from "../util/validation/validationHelper";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { IngredientFacade } from "../db/entity/kitchen/IngredientFacade";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -42,7 +41,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(200).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,
-                    {ingredients: ingredients, token: res.locals.authorizationToken}, [
+                    {ingredients, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Zutate erfolgreich geladen!`)
                 ])
             );
@@ -101,7 +100,7 @@ router.get("/:id", authenticationMiddleware, [
                 .status(200)
                 .json(
                     new HttpResponse(HttpResponseStatus.SUCCESS,
-                        { ingredient: ingredient, token: res.locals.authorizationToken}, [
+                        { ingredient, token: res.locals.authorizationToken}, [
                         new HttpResponseMessage(
                             HttpResponseMessageSeverity.SUCCESS,
                             `Die Zutat wurde erfolgreich geladen!`
@@ -155,7 +154,7 @@ router.get("/category/:id", authenticationMiddleware, [
 
             return res.status(200).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,
-                    {ingredients: ingredients, token: res.locals.authorizationToken},
+                    {ingredients, token: res.locals.authorizationToken},
                     [new HttpResponseMessage(
                         HttpResponseMessageSeverity.SUCCESS,
                         `Die Zutaten der Kategorie ${categoryName} wurden erfolgreich geladen!`

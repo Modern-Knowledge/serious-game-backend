@@ -5,7 +5,7 @@
 export class SQLParam {
   private readonly _name: string;
   private readonly _value: string | number | Date | boolean;
-  private _percQuotes: boolean = false;
+  private _percQuotes = false;
 
   /**
    * @param name

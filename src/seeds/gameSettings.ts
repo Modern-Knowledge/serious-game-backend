@@ -1,6 +1,6 @@
 import { GameSetting } from "../lib/models/GameSetting";
-import { game, game2, game3, game4 } from "./games";
 import { difficultyEasy } from "./difficulties";
+import { game, game2, game3, game4 } from "./games";
 
 const gameSettings = new GameSetting();
 gameSettings.id = 1;

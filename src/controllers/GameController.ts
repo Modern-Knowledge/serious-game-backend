@@ -1,17 +1,14 @@
 
-
-
-
 import express from "express";
 import { Request, Response } from "express";
-import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
+import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
+import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -83,7 +80,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Game with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {game: game, token: res.locals.authorizationToken},
+            {game, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Spiel wurde erfolgreich gefunden.`)
             ]

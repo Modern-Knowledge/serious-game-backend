@@ -1,5 +1,5 @@
-import logger from "./log/logger";
 import { loggerString } from "./Helper";
+import logger from "./log/logger";
 
 /**
  * replace placeholder variables in texts
@@ -24,7 +24,7 @@ export class TemplateParser {
         const matched: RegExpMatchArray = text.match(regexp);
 
         if (matched === null) {
-            const errorStr: string = `${loggerString(__dirname, TemplateParser.name, "parse")} No variables to replace!`;
+            const errorStr = `${loggerString(__dirname, TemplateParser.name, "parse")} No variables to replace!`;
             logger.error(errorStr);
             throw new Error(errorStr);
         }
@@ -32,7 +32,7 @@ export class TemplateParser {
         if (matched.length < this._params.length) {
             logger.warn(`${loggerString(__dirname, TemplateParser.name, "parse")} Found placeholder variables amount (${matched.length}) does not match passed replacement variables amount (${this._params.length})! Surplus variables are discarded!`);
         } else if (matched.length > this._params.length) {
-            const errorStr: string = `${loggerString(__dirname, TemplateParser.name, "parse")} Not enough replacement variables passed!`;
+            const errorStr = `${loggerString(__dirname, TemplateParser.name, "parse")} Not enough replacement variables passed!`;
             logger.error(errorStr);
             throw new Error(errorStr);
         }

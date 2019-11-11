@@ -1,8 +1,8 @@
-import { HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import { User } from "../lib/models/User";
 import request from "supertest";
 import app from "../app";
-import logger from './log/logger'
+import { User } from "../lib/models/User";
+import { HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
+import logger from "./log/logger";
 
 /**
  * file contains functions that are helpful for testing
@@ -16,7 +16,7 @@ import logger from './log/logger'
  * @param amount amount of messages that should have the type messageType
  */
 export function containsMessage(messages: any, messageType: HttpResponseMessageSeverity, amount: number): boolean {
-    let i: number = 0;
+    let i = 0;
 
     for (const message of messages) {
         if (message._severity === messageType) {

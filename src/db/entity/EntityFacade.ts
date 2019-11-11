@@ -1,12 +1,11 @@
 
-
-import { BaseFacade } from "../BaseFacade";
 import { AbstractModel } from "../../lib/models/AbstractModel";
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
-import logger from "../../util/log/logger";
-import { Filter } from "../filter/Filter";
 import { loggerString } from "../../util/Helper";
+import logger from "../../util/log/logger";
+import { BaseFacade } from "../BaseFacade";
+import { Filter } from "../filter/Filter";
+import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
+import { SQLAttributes } from "../sql/SQLAttributes";
 
 /**
  * base facade for entities
@@ -57,7 +56,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
             return result[0];
         }
 
-        const errorMsg: string = `${loggerString(__dirname, EntityFacade.name, "getOne")} More than one result returned! (${result.length})`;
+        const errorMsg = `${loggerString(__dirname, EntityFacade.name, "getOne")} More than one result returned! (${result.length})`;
         logger.error(errorMsg);
         throw new Error(errorMsg);
     }

@@ -1,20 +1,19 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
+import { check } from "express-validator";
 import { RecipeCompositeFacade } from "../db/composite/RecipeCompositeFacade";
 import {
     HttpResponse,
-    HttpResponseStatus,
     HttpResponseMessage,
-    HttpResponseMessageSeverity
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { logEndpoint } from "../util/log/endpointLogger";
-import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -39,7 +38,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         logEndpoint(controllerName, `Return all recipes!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {recipes: recipes, token: res.locals.authorizationToken},
+            {recipes, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Rezepte erfolgreich geladen!`)
             ]
@@ -86,7 +85,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Recipe with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {recipe: recipe, token: res.locals.authorizationToken}, [
+            {recipe, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Rezept wurde erfolgreich geladen!`)
             ]
         ));

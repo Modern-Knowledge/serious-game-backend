@@ -1,9 +1,11 @@
 
-
 import express, { Request, Response } from "express";
+import moment from "moment";
 import { LogFacade } from "../db/entity/log/LogFacade";
-import { Log } from "../lib/models/Log";
+import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../db/sql/enums/SQLOperator";
 import { SQLOrder } from "../db/sql/enums/SQLOrder";
+import { Log } from "../lib/models/Log";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -11,18 +13,14 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import { logEndpoint } from "../util/log/endpointLogger";
-import moment from "moment";
-import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
-import { SQLOperator } from "../db/sql/enums/SQLOperator";
 
 const router = express.Router();
 
 const controllerName = "LoggingController";
 
 const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
-
 
 /**
  * GET /
@@ -70,7 +68,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {
-                    logs: logs,
+                    logs,
                     token: res.locals.authorizationToken
                 }
             )
@@ -142,7 +140,6 @@ router.post("/", async (req: Request, res: Response, next: any) => {
     }
 });
 
-
 /**
  * DELETE /
  *
@@ -165,7 +162,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {affectedRows: affectedRows, token: res.locals.authorizationToken},
+                {affectedRows, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} Logs wurden erfolgreich gelöscht!`)
                 ]
@@ -176,6 +173,5 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
         return next(error);
     }
 });
-
 
 export default router;

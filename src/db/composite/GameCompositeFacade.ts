@@ -1,22 +1,22 @@
-import { SQLAttributes } from "../sql/SQLAttributes";
-import { SQLJoin } from "../sql/SQLJoin";
-import { SQLBlock } from "../sql/SQLBlock";
-import { JoinType } from "../sql/enums/JoinType";
+import { Errortext } from "../../lib/models/Errortext";
 import { Game } from "../../lib/models/Game";
-import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
-import { GameFacade } from "../entity/game/GameFacade";
-import { HelptextFacade } from "../entity/helptext/HelptextFacade";
-import { HelptextsGamesFacade } from "../entity/helptext/HelptextsGamesFacade";
 import { GameSetting } from "../../lib/models/GameSetting";
 import { Helptext } from "../../lib/models/Helptext";
-import { Filter } from "../filter/Filter";
-import { JoinCardinality } from "../sql/enums/JoinCardinality";
-import { CompositeFacade } from "./CompositeFacade";
-import { Ordering } from "../order/Ordering";
 import { arrayContainsModel } from "../../util/Helper";
+import { GameFacade } from "../entity/game/GameFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";
 import { ErrortextGamesFacade } from "../entity/helptext/ErrortextGamesFacade";
-import { Errortext } from "../../lib/models/Errortext";
+import { HelptextFacade } from "../entity/helptext/HelptextFacade";
+import { HelptextsGamesFacade } from "../entity/helptext/HelptextsGamesFacade";
+import { GameSettingFacade } from "../entity/settings/GameSettingFacade";
+import { Filter } from "../filter/Filter";
+import { Ordering } from "../order/Ordering";
+import { JoinCardinality } from "../sql/enums/JoinCardinality";
+import { JoinType } from "../sql/enums/JoinType";
+import { SQLAttributes } from "../sql/SQLAttributes";
+import { SQLBlock } from "../sql/SQLBlock";
+import { SQLJoin } from "../sql/SQLJoin";
+import { CompositeFacade } from "./CompositeFacade";
 
 /**
  * retrieves composite games

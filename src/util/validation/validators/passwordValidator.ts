@@ -1,5 +1,4 @@
 
-
 import { CustomValidator } from "express-validator";
 import { retrieveValidationMessage } from "../validationMessages";
 

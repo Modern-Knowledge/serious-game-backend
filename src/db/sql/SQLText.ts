@@ -1,5 +1,5 @@
-import { SQLElement } from "./SQLElement";
 import { SQLElementType } from "./enums/SQLElementType";
+import { SQLElement } from "./SQLElement";
 
 /**
  * represents a simple text in sql

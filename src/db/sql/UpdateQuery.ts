@@ -1,7 +1,7 @@
 import { NamedParameterizedQuery } from "./NamedParameterizedQuery";
-import { SQLWhere } from "./SQLWhere";
-import { SQLUpdate } from "./SQLUpdate";
 import { SQLParam } from "./SQLParam";
+import { SQLUpdate } from "./SQLUpdate";
+import { SQLWhere } from "./SQLWhere";
 
 /**
  * represents a sql update query
@@ -38,7 +38,7 @@ export class UpdateQuery extends NamedParameterizedQuery {
    * returns the sql for the update query
    */
   public getSql(): string {
-    let returnStr: string = "";
+    let returnStr = "";
 
     if (this._update !== undefined) {
       returnStr += this._update.getSQL() + " ";

@@ -1,5 +1,5 @@
-import { Severity } from "../lib/models/Severity";
 import { Severities } from "../lib/enums/Severities";
+import { Severity } from "../lib/models/Severity";
 
 const severityEasy = new Severity();
 severityEasy.id = 1;

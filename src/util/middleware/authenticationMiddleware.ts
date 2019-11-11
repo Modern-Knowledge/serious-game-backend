@@ -1,24 +1,23 @@
-import * as jwt from "jsonwebtoken";
-import { User } from "../../lib/models/User";
-import { JWTHelper } from "../JWTHelper";
-import logger from "../log/logger";
-import { loggerString } from "../Helper";
-import { ExtractJwt } from "passport-jwt";
 import { Request, Response } from "express";
-import { formatDateTime } from "../../lib/utils/dateFormatter";
+import * as jwt from "jsonwebtoken";
 import passport from "passport";
+import { ExtractJwt } from "passport-jwt";
+import { User } from "../../lib/models/User";
+import { formatDateTime } from "../../lib/utils/dateFormatter";
 import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
 } from "../../lib/utils/http/HttpResponse";
+import { loggerString } from "../Helper";
 import { http4xxResponse } from "../http/httpResponses";
+import { JWTHelper } from "../JWTHelper";
+import logger from "../log/logger";
 
 /**
  * This file provides authentication middleware for express
  * - checkAuthentication: validates jwt token
  * - checkAuthenticationToken: checks token and refreshes it, if needed
  */
-
 
 /**
  * Middleware that validates the authorization (checks if user is logged in)
@@ -72,7 +71,7 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
         }
 
         if (orgToken !== refreshedToken) { // token has changed -> change authorization header
-            req.headers["authorization"] = "Bearer " + refreshedToken;
+            req.headers.authorization = "Bearer " + refreshedToken;
         }
 
         res.locals.authorizationToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
@@ -80,8 +79,6 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
 
     return next();
 }
-
-
 
 /**
  * checks is passed jwt-token is valid

@@ -1,15 +1,14 @@
 
-
 import express from "express";
 import { Request, Response } from "express";
-import { HttpResponse, HttpResponseStatus, HttpResponseMessageSeverity, HttpResponseMessage } from "../lib/utils/http/HttpResponse";
-import { logEndpoint } from "../util/log/endpointLogger";
 import { check } from "express-validator";
-import { rVM } from "../util/validation/validationMessages";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
+import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -34,7 +33,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         logEndpoint(controllerName, `Return all food-categories!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {foodCategories: foodCategories, token: res.locals.authorizationToken}, [
+            {foodCategories, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Lebensmittelkategorien erfolgreich geladen!")
             ]
         ));
@@ -80,7 +79,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `Food category with id ${id} was successfully loaded!`, req);
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {foodCategory: foodCategory, token: res.locals.authorizationToken},
+            {foodCategory, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Lebensmittelkategorie wurde erfolgreich gefunden.`)
             ]

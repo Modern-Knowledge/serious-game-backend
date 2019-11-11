@@ -25,7 +25,7 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
    * e.g.: id, name, ..
    */
   public getCommaSeparatedNamesUnaliased(): string {
-    let returnSQL: string = "";
+    let returnSQL = "";
 
     for (const currAttribute of this._attributes) {
       returnSQL += currAttribute.getPrefixedName(false) + ", ";
@@ -43,8 +43,7 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
    * e.g.: id as idu, name as nameu
    */
   public getCommaSeparatedNames(): string {
-    let returnSQL: string = "";
-
+    let returnSQL = "";
 
     for (const currAttribute of this._attributes) {
       returnSQL += currAttribute.getPrefixedName(false) + " AS " + currAttribute.getAliasName() + ", ";
@@ -56,6 +55,5 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
 
     return returnSQL;
   }
-
 
 }

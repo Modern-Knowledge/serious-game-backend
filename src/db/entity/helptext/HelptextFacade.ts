@@ -1,17 +1,16 @@
 
-
-import { SQLAttributes } from "../../sql/SQLAttributes";
-import { SQLJoin } from "../../sql/SQLJoin";
-import { JoinType } from "../../sql/enums/JoinType";
-import { SQLBlock } from "../../sql/SQLBlock";
-import { Filter } from "../../filter/Filter";
-import { TextFacade } from "./TextFacade";
 import { Helptext } from "../../../lib/models/Helptext";
-import { JoinCardinality } from "../../sql/enums/JoinCardinality";
 import { CompositeFacade } from "../../composite/CompositeFacade";
+import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
-import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { JoinCardinality } from "../../sql/enums/JoinCardinality";
+import { JoinType } from "../../sql/enums/JoinType";
+import { SQLAttributes } from "../../sql/SQLAttributes";
+import { SQLBlock } from "../../sql/SQLBlock";
+import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
+import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import { TextFacade } from "./TextFacade";
 
 /**
  * handles CRUD operations with the helptext-entity

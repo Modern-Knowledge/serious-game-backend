@@ -10,5 +10,4 @@ const helptextGames1 = new HelptextGame();
 helptextGames1.gameId = game.id;
 helptextGames1.helptextId = helptext1.id;
 
-
 export { helptextGames, helptextGames1 };
