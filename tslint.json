@@ -7,7 +7,6 @@
         "interface-name": true,
         "max-classes-per-file": false,
         "member-access": true,
-        "no-consecutive-blank-lines": true,
         "comment-format": [
             true,
             "check-space"
