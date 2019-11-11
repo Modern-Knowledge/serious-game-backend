@@ -36,6 +36,12 @@
             "always",
             "ignore-bound-class-methods"
         ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore"
+        ],
         "whitespace": [
             true,
             "check-branch",
