@@ -30,9 +30,14 @@ export class TemplateParser {
         }
 
         if (matched.length < this._params.length) {
-            logger.warn(`${loggerString(__dirname, TemplateParser.name, "parse")} Found placeholder variables amount (${matched.length}) does not match passed replacement variables amount (${this._params.length})! Surplus variables are discarded!`);
+            logger.warn(`${loggerString(__dirname, TemplateParser.name, "parse")} ` +
+                `Found placeholder variables amount (${matched.length}) does not match passed replacement ` +
+                `variables amount (${this._params.length})! Surplus variables are discarded!`);
+
         } else if (matched.length > this._params.length) {
-            const errorStr = `${loggerString(__dirname, TemplateParser.name, "parse")} Not enough replacement variables passed!`;
+            const errorStr = `${loggerString(__dirname, TemplateParser.name, "parse")} ` +
+                `Not enough replacement variables passed!`;
+
             logger.error(errorStr);
             throw new Error(errorStr);
         }

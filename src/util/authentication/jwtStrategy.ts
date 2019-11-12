@@ -5,8 +5,8 @@ import { loggerString } from "../Helper";
 import logger from "../log/logger";
 
 const options: StrategyOptions = {
-    secretOrKey: process.env.SECRET_KEY,
-    jwtFromRequest:  ExtractJwt.fromAuthHeaderAsBearerToken()
+    jwtFromRequest:  ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.SECRET_KEY
 };
 
 /**

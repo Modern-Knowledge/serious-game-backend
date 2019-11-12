@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
  * https://nodemailer.com/message/addresses/
  */
 export class Recipient {
@@ -9,8 +7,8 @@ export class Recipient {
     public readonly address: string;
 
     /**
-     * @param name
-     * @param address
+     * @param name name of the recipient
+     * @param address email of the recipient
      */
     constructor(name: string, address: string) {
         this.name = name;

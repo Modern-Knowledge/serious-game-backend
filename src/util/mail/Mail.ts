@@ -32,7 +32,7 @@ export class Mail {
 
     /**
      * Common parameters that every Mail needs
-     * @param to
+     * @param to array of recipients
      * @param messageTemplate messageTemplate for the mail
      * @param replacementParams params to replace placeholder variables with
      */

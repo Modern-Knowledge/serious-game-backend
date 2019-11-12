@@ -24,9 +24,9 @@ import logger from "../log/logger";
  * returns 401 if authentication is erroneous
  * continues request handling if request is valid
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export async function checkAuthentication(req: Request, res: Response, next: any): Promise<void> {
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthentication")}`);
@@ -54,9 +54,9 @@ export async function checkAuthentication(req: Request, res: Response, next: any
  * Token gets not refreshed if it is already expired
  * add authorizationToken to request variables
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export async function checkAuthenticationToken(req: Request, res: Response, next: any): Promise<void> {
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthenticationToken")}`);
@@ -99,7 +99,8 @@ export async function refreshToken(token: string): Promise<string> {
     const currentTime = Math.trunc(Date.now() / 1000);
 
     if (currentTime > expireTime) { // token expired -> return old token
-        logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${payload.id} has expired at ${formatDateTime(new Date(expireTime * 1000))}!`);
+        logger.debug(`${loggerString("", "", "", __filename)} ` +
+            `Token for user with id ${payload.id} has expired at ${formatDateTime(new Date(expireTime * 1000))}!`);
 
         return token;
     }
@@ -108,7 +109,9 @@ export async function refreshToken(token: string): Promise<string> {
 
     // if token expires in less than 15 minutes -> extend expire-time for one hour
     if (Math.abs(expireTime - currentTime) < interval) {
-        logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${payload.id} expires at ${formatDateTime(new Date(expireTime * 1000))}. Token gets refreshed for another hour!`);
+        logger.debug(`${loggerString("", "", "", __filename)} ` +
+            `Token for user with id ${payload.id} expires at ${formatDateTime(new Date(expireTime * 1000))}. ` +
+            `Token gets refreshed for another hour!`);
 
         const user = new User();
         user.id = payload.id;
@@ -119,7 +122,8 @@ export async function refreshToken(token: string): Promise<string> {
         return await jwtHelper.generateJWT(user);
     }
 
-    logger.debug(`${loggerString("", "", "", __filename)} Token for user with id ${payload.id} is valid until ${formatDateTime(new Date(expireTime * 1000))}`);
+    logger.debug(`${loggerString("", "", "", __filename)} ` +
+        `Token for user with id ${payload.id} is valid until ${formatDateTime(new Date(expireTime * 1000))}`);
 
     return token;
 }

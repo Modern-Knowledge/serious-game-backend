@@ -4,47 +4,49 @@ import "winston-daily-rotate-file";
 import { loggerString } from "../Helper";
 
 const logDir = "logs/";
-
 const logLevel = process.env.LOG_LEVEL || "error";
+const applicationName = "Serious Game Backend";
 
 const options: LoggerOptions = {
+    exceptionHandlers: [
+        new transports.File({ filename: logDir + "exceptions.log" })
+    ],
+
     level: logLevel,
 
     transports: [
         new transports.Console({
-            name: "console",
-            level: logLevel,
             colorize: "all",
+            handleExceptions: true,
+            label: applicationName,
+            level: logLevel,
+            name: "console",
             prettyPrint: true,
-            showLevel: true,
-            label: "Serious Game Backend",
-            handleExceptions: true
+            showLevel: true
         }),
         new transports.DailyRotateFile({
-            name: "info logger",
-            frequency: "24h",
-            filename: "info-%DATE%.log",
-            maxsize: "20m",
-            level: logLevel,
-            json: true,
-            showLevel: true,
             dirname: logDir,
-            label: "Serious Game Backend"
+            filename: "info-%DATE%.log",
+            frequency: "24h",
+            json: true,
+            label: applicationName,
+            level: logLevel,
+            maxsize: "20m",
+            name: "info logger",
+            showLevel: true
         }),
         new transports.File({
-            name: "error logger",
-            json: true,
             colorize: "all",
-            prettyPrint: true,
-            label: "Serious Game Backend",
-            showLevel: true,
-            level: "error",
             dirname: logDir,
-            filename: "error.log"
+            filename: "error.log",
+            json: true,
+            label: applicationName,
+            level: "error",
+            name: "error logger",
+            prettyPrint: true,
+            showLevel: true,
+
         })
-    ],
-    exceptionHandlers: [
-        new transports.File({ filename: logDir + "exceptions.log" })
     ]
 };
 

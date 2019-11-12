@@ -25,9 +25,9 @@ import logger from "../log/logger";
  * params:
  * - id: id of the user
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export function checkUserPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkUserPermission")}`);
@@ -38,7 +38,9 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
-    logger.debug(`${loggerString("", "", "", __filename)} User with ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}" of user with id ${req.params.id}!`);
+    logger.debug(`${loggerString("", "", "", __filename)} ` +
+        `User with ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}" ` +
+        `of user with id ${req.params.id}!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
@@ -48,9 +50,9 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
 /**
  * Middleware that guarantees that only therapists can access the requested endpoint
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export function checkTherapistPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")}`);
@@ -61,7 +63,9 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
         return next();
     }
 
-    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")} User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistPermission")} ` +
+        `User with ${req.params.id} is not allowed to view the endpoint "${getRequestUrl(req)}", ` +
+        `because he/she is no therapist!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
@@ -71,9 +75,9 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
 /**
  * Middleware that guarantees that only patients can access the requested endpoint
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export function checkPatientPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")}`);
@@ -84,7 +88,9 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
         return next();
     }
 
-    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")} User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no patient!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkPatientPermission")} ` +
+        `User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", ` +
+        `because he/she is no patient!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
@@ -96,9 +102,9 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
  *
  * admins can access special endpoints
  *
- * @param req
- * @param res
- * @param next
+ * @param req request
+ * @param res response
+ * @param next next middleware
  */
 export function checkTherapistAdminPermission(req: Request, res: Response, next: any) {
     logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistAdminPermission")}`);
@@ -109,7 +115,9 @@ export function checkTherapistAdminPermission(req: Request, res: Response, next:
         return next();
     }
 
-    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistAdminPermission")} User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", because he/she is no therapist or admin!`);
+    logger.debug(`${loggerString(__dirname, "permissionMiddleware", "checkTherapistAdminPermission")} ` +
+        `User with id ${authUser.id} is not allowed to view the endpoint "${getRequestUrl(req)}", ` +
+        `because he/she is no therapist or admin!`);
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)

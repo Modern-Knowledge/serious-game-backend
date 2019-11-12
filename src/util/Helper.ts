@@ -22,7 +22,8 @@ export function loggerString(directory?: string, className?: string, methodName?
         file = fileName.split("dist/")[1];
     }
 
-    return `[${formatDateTime()}] ${((dir[1]) ? dir[1] + "/" : "") + className}${methodName ? "." : ""}${methodName ? methodName : ""}${file}:`;
+    return `[${formatDateTime()}] ${((dir[1]) ? dir[1] + "/" : "") + className}${methodName ? "." : ""}` +
+        `${methodName ? methodName : ""}${file}:`;
 }
 
 /**
@@ -61,7 +62,7 @@ export function inTestMode(): boolean {
 /**
  * returns the current request url + parameters formatted as string
  * e.g.: http://localhost/home
- * @param req
+ * @param req request
  */
 export function getRequestUrl(req: Request): string {
     return `${req.protocol}://${req.hostname}${req.path}`;

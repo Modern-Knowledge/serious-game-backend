@@ -34,7 +34,8 @@ export function checkEnvFunction(): void {
     ]);
 
     if (unsetRequiredVars.length > 0) {
-        const errorStr = `${loggerString(__dirname, "", "", __filename)} Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
+        const errorStr = `${loggerString(__dirname, "", "", __filename)} ` +
+            `Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
         logger.error(errorStr);
         throw new Error(errorStr);
     }
@@ -49,7 +50,8 @@ export function checkEnvFunction(): void {
     ]);
 
     if (unsetOptionalVars.length > 0) {
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} ` +
+            `Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
     }
 
     /**
@@ -61,6 +63,7 @@ export function checkEnvFunction(): void {
 
     if (unsetMailVariables.length > 0) {
         process.env.SEND_MAILS = "0";
-        logger.warn(`${loggerString(__dirname, "", "", __filename)} Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
+        logger.warn(`${loggerString(__dirname, "", "", __filename)} ` +
+            `Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);
     }
 }

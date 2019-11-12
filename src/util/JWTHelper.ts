@@ -14,7 +14,7 @@ export class JWTHelper {
     /**
      * creates jwt token for user
      *
-     * @param user
+     * @param user user to generate token for
      */
     public async generateJWT(user: User): Promise<string> {
         const therapistFacade = new TherapistFacade();

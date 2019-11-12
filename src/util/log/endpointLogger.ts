@@ -9,7 +9,7 @@ import logger from "./logger";
  *
  * @param endpoint name of the controller, where the logging takes place
  * @param message logged message
- * @param req
+ * @param req request
  */
 export function logEndpoint(endpoint: string, message: string, req: Request): void {
     logger.debug(`${loggerString()} ${req.method + " " + endpoint + req.path}: ${message}`);

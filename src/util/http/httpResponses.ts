@@ -22,7 +22,11 @@ import { toHttpResponseMessage } from "../validation/validationMessages";
  * @param code http response status code
  * @param data data that is appended to the response
  */
-export function http4xxResponse(res: Response, messages?: HttpResponseMessage[], code: number = 404, data?: any): Response {
+export function http4xxResponse(
+    res: Response, messages?: HttpResponseMessage[],
+    code: number = 404,
+    data?: any): Response {
+
     return res.status(code).json(
         new HttpResponse(HttpResponseStatus.FAIL,
             data,

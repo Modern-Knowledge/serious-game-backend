@@ -18,14 +18,18 @@ export class ExecutionTimeAnalyser {
 
     /**
      * analyse the passed execution time and print warnings, errors
-     * @param executionTime
-     * @param methodName
+     * @param executionTime execution time of the method
+     * @param methodName name of method to analyze
      */
     public analyse(executionTime: number, methodName: string = ""): void {
         if (executionTime >= this._maxExecutionTime) {
-            logger.error(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation "${methodName}" is non performant (${executionTime}ms)! Refactor this method!`);
+            logger.error(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} ` +
+                `This operation "${methodName}" is non performant (${executionTime}ms)! Refactor this method!`);
+
         } else if (executionTime >= this._warnExecutionTime) {
-            logger.warn(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} This operation "${methodName}" takes very long (${executionTime}ms)! Consider refactoring this method!`);
+            logger.warn(`${loggerString(__dirname, ExecutionTimeAnalyser.name, "analyse")} ` +
+                `This operation "${methodName}" takes very long (${executionTime}ms)! ` +
+                `Consider refactoring this method!`);
         }
     }
 }
