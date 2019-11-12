@@ -55,8 +55,8 @@ checkEnvFunction();
 
 if (!inTestMode()) {
     migrate().then(() => {
-        logger.info(`${loggerString(__dirname, "", "", __filename)}
-        Successfully migrated!`);
+        logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
+        `Successfully migrated!`);
     });
 }
 

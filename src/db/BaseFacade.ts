@@ -4,7 +4,7 @@ import { Error } from "tslint/lib/error";
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
 import { Stopwatch } from "../util/analysis/Stopwatch";
-import { databaseConnection, TransactionQuery } from "../util/db/databaseConnection";
+import { databaseConnection, ITransactionQuery } from "../util/db/databaseConnection";
 import { loggerString } from "../util/Helper";
 import logger from "../util/log/logger";
 import { Filter } from "./filter/Filter";
@@ -205,8 +205,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                         `${query.sql} [${query.values}]`);
 
                     if (mysqlError) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ${error}`);
-                        reject(error);
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ${mysqlError}`);
+                        reject(mysqlError);
                     }
 
                     for (const item of results) {
@@ -261,10 +261,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         Promise<any[]> {
 
         // array of queries
-        const funcArray: TransactionQuery[] = [];
+        const funcArray: ITransactionQuery[] = [];
         if (additionalInserts) {
             for (const insert of additionalInserts) {
-                const func: TransactionQuery = {
+                const func: ITransactionQuery = {
                     attributes: insert.facade.getSQLInsertValueAttributes(insert.entity),
                     callBackOnInsert: insert.callBackOnInsert,
                     function: insert.facade.getInsertQueryFn
@@ -334,10 +334,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     protected async update(attributes: SQLValueAttributes,
                            additionalUpdates?: Array<{facade: any, entity: EntityType}>): Promise<number> {
         // array of queries
-        const funcArray: TransactionQuery[] = [];
+        const funcArray: ITransactionQuery[] = [];
         if (additionalUpdates) {
             for (const update of additionalUpdates) {
-                const func: TransactionQuery = {
+                const func: ITransactionQuery = {
                     attributes: update.facade.getSQLUpdateValueAttributes(update.entity),
                     function: update.facade.getUpdateQueryFn
                 };
@@ -406,10 +406,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      */
     protected async delete(additionalFacades?: any[]): Promise<number> {
         // array of queries
-        const funcArray: TransactionQuery[] = [];
+        const funcArray: ITransactionQuery[] = [];
         if (additionalFacades) {
             for (const facade of additionalFacades) {
-                const func: TransactionQuery = {function: facade.getDeleteQueryFn};
+                const func: ITransactionQuery = {function: facade.getDeleteQueryFn};
                 funcArray.push(func);
             }
         } else {

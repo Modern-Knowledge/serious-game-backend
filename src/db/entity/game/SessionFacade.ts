@@ -49,10 +49,6 @@ export class SessionFacade extends EntityFacade<Session> {
 
         this.fillDefaultAttributes(result, session);
 
-        if (result[this.name("id")]) {
-            session.id = result[this.name("id")];
-        }
-
         if (result[this.name("game_id")]) {
             session.gameId = result[this.name("game_id")];
         }

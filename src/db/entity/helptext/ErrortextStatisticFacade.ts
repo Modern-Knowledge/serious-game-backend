@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias for errortext-statistic-facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -21,37 +21,46 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql attributes that should be retrieved from the database.
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] =  ["errortext_id", "statistic_id"];
-        let exclDefaultAttr: string[] = ["id", "created_at", "modified_at"];
+        let excludedAttrDefault: string[] = [];
 
         if (excludedSQLAttributes) {
-            exclDefaultAttr = exclDefaultAttr.concat(excludedSQLAttributes);
+            excludedAttrDefault = excludedAttrDefault.concat(excludedSQLAttributes);
         }
-
-        return super.getSQLAttributes(exclDefaultAttr, sqlAttributes);
+        return super.getSQLAttributes(excludedAttrDefault, sqlAttributes);
     }
 
     /**
-     * inserts a new errortext-statistic and returns the created errortext-statistic
-     * @param errortextStatistic
+     * Inserts a new errortext-statistic and returns the created errortext-statistic.
+     * @param errortextStatistic errortext-statistic to insert
      */
     public async insertErrortextStatistic(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortextStatistic);
-        await this.insert(attributes);
+        const result = await this.insert(attributes);
+
+        if (result.length > 0) {
+            errortextStatistic.id = result[0].insertedId;
+        }
 
         return errortextStatistic;
     }
 
     /**
-     * fills the entity
+     * Fills the entity.
      * @param result result for filling
      */
     protected fillEntity(result: any): ErrortextStatistic {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
+
         const errortextStatistic: ErrortextStatistic = new ErrortextStatistic();
+
+        this.fillDefaultAttributes(result, errortextStatistic);
 
         if (result[this.name("errortext_id")]) {
             errortextStatistic.errortextId = result[this.name("errortext_id")];
@@ -65,17 +74,19 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
+     * Return common sql attributes for insert and update statement
      * @param prefix prefix before the sql attribute
      * @param errortextStatistic entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, errortextStatistic: ErrortextStatistic): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const statisticIdAttribute: SQLValueAttribute = new SQLValueAttribute("statistic_id", prefix, errortextStatistic.statisticId);
+        const statisticIdAttribute: SQLValueAttribute =
+            new SQLValueAttribute("statistic_id", prefix, errortextStatistic.statisticId);
         attributes.addAttribute(statisticIdAttribute);
 
-        const errortextIdAttribute: SQLValueAttribute = new SQLValueAttribute("errortext_id", prefix, errortextStatistic.errortextId);
+        const errortextIdAttribute: SQLValueAttribute =
+            new SQLValueAttribute("errortext_id", prefix, errortextStatistic.errortextId);
         attributes.addAttribute(errortextIdAttribute);
 
         return attributes;
