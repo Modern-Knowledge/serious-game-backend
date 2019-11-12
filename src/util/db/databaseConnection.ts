@@ -7,11 +7,16 @@ import logger from "../log/logger";
 /**
  * interface that defines queries that can used in a transaction
  *
- * function: executes insert, update or delete query (getInsertQueryFn, getUpdateQueryFn, getDeleteQueryFn in BaseFacade are examples for functions that can be passed)
+ * function: executes insert, update or delete query (getInsertQueryFn, getUpdateQueryFn,
+ * getDeleteQueryFn in BaseFacade are examples for functions that can be passed)
+ *
  * attributes: sqlValueAttributes that are injected into the insert or update query
- * callBackOnInsert: callback that is called, if the query returns a insertId. The function is called with the returned inserted id. Used to set id
+ *
+ * callBackOnInsert: callback that is called, if the query returns a insertId.
+ *
+ * The function is called with the returned inserted id. Used to set id
  */
-export interface TransactionQuery {
+export interface ITransactionQuery {
     function: ((connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any>);
     attributes?: SQLValueAttributes;
     callBackOnInsert?: (insertId: number, attributes: SQLValueAttributes) => void;
@@ -24,7 +29,8 @@ class DatabaseConnection {
     private _pool: Pool;
 
     public constructor() {
-        logger.info(`${loggerString(__dirname, DatabaseConnection.name, "constructor")} DatabaseConnection instance was created!`);
+        logger.info(`${loggerString(__dirname, DatabaseConnection.name, "constructor")} ` +
+            `DatabaseConnection instance was created!`);
         this.connect();
         this.createPoolEvents();
     }
@@ -45,8 +51,11 @@ class DatabaseConnection {
      *
      * returns the responses of the queries as an array
      */
-    public transaction(queryCallbacks: TransactionQuery[]): Promise<any[]> {
-        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} going to be executed in a transaction!`);
+    // tslint:disable-next-line:cognitive-complexity
+    public transaction(queryCallbacks: ITransactionQuery[]): Promise<any[]> {
+        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ` +
+            `${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} ` +
+            `going to be executed in a transaction!`);
 
         return new Promise<any[]>((resolve, reject) => {
             this.poolQuery((error: MysqlError, connection: PoolConnection) => {
@@ -59,13 +68,16 @@ class DatabaseConnection {
                 /**
                  * begin transaction
                  */
-                connection.beginTransaction(async (error: MysqlError) => {
-                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Begin transaction!`);
+                connection.beginTransaction(async (mysqlError: MysqlError) => {
+                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
+                        + `Begin transaction!`);
 
-                    if (error) { // error with starting transaction
+                    if (mysqlError) { // error with starting transaction
                         connection.release();
-                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
-                        return reject(error);
+                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
+                            + `${mysqlError}`);
+
+                        return reject(mysqlError);
                     }
 
                     const result: any[]  = [];
@@ -77,10 +89,14 @@ class DatabaseConnection {
                     for (let i = 0; i < queryCallbacks.length; i++) {
                         response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
 
-                        if (response && response.insertedId && i < queryCallbacks.length - 1) { // query was insert query
-                            if (queryCallbacks[i].callBackOnInsert) {
-                                queryCallbacks[i].callBackOnInsert(response.insertedId, queryCallbacks[i + 1].attributes); // execute callback with attributes of next element
-                            }
+                        if (response && response.insertedId &&
+                            i < queryCallbacks.length - 1 &&
+                            queryCallbacks[i].callBackOnInsert) { // insert query
+
+                                queryCallbacks[i].callBackOnInsert(
+                                    response.insertedId,
+                                    queryCallbacks[i + 1].attributes
+                                ); // execute callback with attributes of next element
                         }
 
                         result.push(response);
@@ -89,17 +105,27 @@ class DatabaseConnection {
                     /**
                      * commit transaction
                      */
-                    connection.commit((error: MysqlError) => {
-                        if (error) { // error when committing
+                    connection.commit((mysqlError1: MysqlError) => {
+                        if (mysqlError1) { // error when committing
                             return connection.rollback(() => {
                                 connection.release();
-                                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction changes are rollbacked!`);
-                                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
-                                return reject(error);
+
+                                logger.error(`${loggerString(
+                                    __dirname,
+                                    DatabaseConnection.name,
+                                    "transaction")} Transaction changes are rollbacked!`);
+
+                                logger.error(`${loggerString(
+                                    __dirname,
+                                    DatabaseConnection.name,
+                                    "transaction")} ${mysqlError1}`);
+
+                                return reject(mysqlError1);
                             });
                         }
                         connection.release();
-                        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} Transaction was executed successful!`);
+                        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
+                            + `Transaction was executed successful!`);
 
                         resolve(result);
                     });
@@ -122,14 +148,15 @@ class DatabaseConnection {
                     reject(error);
                 }
 
-                const query = connection.query(sql, params, (error: MysqlError, results) => {
+                const query = connection.query(sql, params, (mysqlError: MysqlError, results) => {
                     connection.release(); // release pool connection
 
-                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${query.sql} [${query.values}]`);
+                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "query")} ` +
+                        `${query.sql} [${query.values}]`);
 
-                    if (error) {
-                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${error}`);
-                        reject(error);
+                    if (mysqlError) {
+                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${mysqlError}`);
+                        reject(mysqlError);
                     }
 
                     resolve(results);
@@ -147,30 +174,32 @@ class DatabaseConnection {
      */
     private connect(): void {
         if (inTestMode()) {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Test-Database`);
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} ` +
+                `Connecting to Test-Database`);
 
             this._pool = mysql.createPool({
                 connectionLimit: 100,
-                host: process.env.TEST_DB_HOST,
-                user: process.env.TEST_DB_USER,
-                password: process.env.TEST_DB_PASS,
                 database: process.env.TEST_DB_DATABASE,
                 debug: false,
-                waitForConnections: true,
-                multipleStatements: true
+                host: process.env.TEST_DB_HOST,
+                multipleStatements: true,
+                password: process.env.TEST_DB_PASS,
+                user: process.env.TEST_DB_USER,
+                waitForConnections: true
             });
         } else {
-            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} Connecting to Productive-Database`);
+            logger.info(`${loggerString(__dirname, DatabaseConnection.name, "connect")} ` +
+                `Connecting to Productive-Database`);
 
             this._pool = mysql.createPool({
                 connectionLimit: 100,
-                host: process.env.DB_HOST,
-                user: process.env.DB_USER,
-                password: process.env.DB_PASS,
                 database: process.env.DB_DATABASE,
                 debug: false,
-                waitForConnections: true,
-                multipleStatements: true
+                host: process.env.DB_HOST,
+                multipleStatements: true,
+                password: process.env.DB_PASS,
+                user: process.env.DB_USER,
+                waitForConnections: true
             });
         }
     }
@@ -180,19 +209,23 @@ class DatabaseConnection {
      */
     private createPoolEvents(): void {
         this._pool.on("acquire", (connection) => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} acquired!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} ` +
+                `Connection ${connection.threadId} acquired!`);
         });
 
         this._pool.on("connection", () => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} New Connection created!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} ` +
+                `New Connection created!`);
         });
 
         this._pool.on("enqueue", () => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Waiting for available connection slot!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} ` +
+                `Waiting for available connection slot!`);
         });
 
         this._pool.on("release", (connection) => {
-            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} Connection ${connection.threadId} released!`);
+            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} ` +
+                `Connection ${connection.threadId} released!`);
         });
     }
 
@@ -202,10 +235,12 @@ class DatabaseConnection {
     private disconnect(): void {
         this._pool.end((err: MysqlError) => {
             if (err) {
-                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ${err} ${this}`);
+                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
+                    `${err} ${this}`);
                 throw err;
             } else {
-                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} Disconnected from database! ${this}`);
+                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
+                    `Disconnected from database! ${this}`);
             }
         });
     }
