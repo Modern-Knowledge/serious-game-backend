@@ -9,11 +9,13 @@ import { SmtpMessage } from "./SmtpMessage";
  */
 const passwordReset = new SmtpMessage();
 
+// tslint:disable-next-line:no-hardcoded-credentials
 passwordReset.subject = "Zurücksetzen des Passwortes";
 
 passwordReset.html = `
 <h2>Sehr geehrte/r ::name::</h2>
-<p>Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten. Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:</p>
+<p>Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten.
+Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:</p>
 <p>::code::</p>
 <p>Der Code ist gültig bis: ::validUntil::</p>
 
@@ -24,7 +26,8 @@ passwordReset.html = `
 passwordReset.text = `
 Sehr geehrte/r ::name::
 
-Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten. Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:
+Wir haben Ihre Anfrage zum Zurücksetzen des Passwortes erhalten.
+Geben Sie folgenden Code zum Zurücksetzen des Passwortes ein:
 ::code::
 
 Der Code ist gültig bis: ::validUntil::

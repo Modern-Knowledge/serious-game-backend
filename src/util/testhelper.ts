@@ -38,6 +38,7 @@ export async function authenticate(user: User): Promise<string> {
     logger.info("Running authentication for tests");
 
     const res = await request(app).post("/login")
+    // tslint:disable-next-line:no-hardcoded-credentials
         .send({email: user.email, password: "123456"})
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)

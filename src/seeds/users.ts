@@ -10,6 +10,7 @@ import { generatePasswordResetToken } from "../util/password/passwordHelper";
 const validAdminTherapist = new Therapist();
 validAdminTherapist.id = 1;
 validAdminTherapist.email = "therapist@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials no-duplicate-string
 validAdminTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validAdminTherapist.forename = "Max";
 validAdminTherapist.lastname = "Mustermann";
@@ -23,6 +24,7 @@ validAdminTherapist.accepted = true;
 const validTherapist = new Therapist();
 validTherapist.id = 2;
 validTherapist.email = "therapist1@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 validTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validTherapist.forename = "Tom";
 validTherapist.lastname = "Atkins";
@@ -38,6 +40,7 @@ validTherapist.resetcodeValidUntil = moment().add(8, "hours").toDate();
 const unacceptedTherapist = new Therapist();
 unacceptedTherapist.id = 3;
 unacceptedTherapist.email = "therapist2@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 unacceptedTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 unacceptedTherapist.forename = "Erika";
 unacceptedTherapist.lastname = "Mustermann";
@@ -52,6 +55,7 @@ unacceptedTherapist.resetcode = generatePasswordResetToken(8);
 const lockedTherapist = new Therapist();
 lockedTherapist.id = 4;
 lockedTherapist.email = "therapist3@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 lockedTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 lockedTherapist.forename = "John";
 lockedTherapist.lastname = "Doe";
@@ -66,6 +70,7 @@ lockedTherapist.loginCoolDown = moment().add(1, "day").toDate();
 const tooManyFailedLoginAttemptsTherapist = new Therapist();
 tooManyFailedLoginAttemptsTherapist.id = 5;
 tooManyFailedLoginAttemptsTherapist.email = "therapist4@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 tooManyFailedLoginAttemptsTherapist.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 tooManyFailedLoginAttemptsTherapist.forename = "Mario";
 tooManyFailedLoginAttemptsTherapist.lastname = "Müller";
@@ -79,6 +84,7 @@ tooManyFailedLoginAttemptsTherapist.accepted = true;
 const validPatient = new Patient();
 validPatient.id = 6;
 validPatient.email = "patient@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 validPatient.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validPatient.forename = "Patient";
 validPatient.lastname = "Patient";
@@ -94,6 +100,7 @@ validPatient.resetcodeValidUntil = moment().add(1, "day").toDate();
 const validPatient1 = new Patient();
 validPatient1.id = 7;
 validPatient1.email = "patient.name@example.org";
+// tslint:disable-next-line:no-hardcoded-credentials
 validPatient1.password = "$2y$12$yEETx0N9Rod3tZMeWBfb1enEdjIE19SUWCf4qpiosCX3w.SeDwCZu";
 validPatient1.forename = "Patient";
 validPatient1.lastname = "Patient";

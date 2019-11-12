@@ -14,17 +14,18 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     private _autoCombineFilter = true;
 
     /**
-     * @param tableName
-     * @param tableAlias
+     * @param tableName table-name of the facade
+     * @param tableAlias table-alias of the facade
      */
     protected constructor(tableName: string, tableAlias: string) {
         super(tableName, tableAlias);
     }
 
     /**
-     * returns the entity by id
-     * @param id
-     * @param excludedSQLAttributes
+     * Returns the entity by id.
+     *
+     * @param id id of the entity that should be retrieved
+     * @param excludedSQLAttributes attributes that should be excluded from select-query
      */
     public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
         this.combineOrderBys();
@@ -33,7 +34,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
 
     /**
      * returns all entities that match the specified filter
-     * @param excludedSQLAttributes
+     * @param excludedSQLAttributes attributes that should be excluded from select-query
      */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
         if (this._autoCombineFilter) {
@@ -47,7 +48,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
 
     /**
      * returns all entities that match the specified filter
-     * @param excludedSQLAttributes
+     * @param excludedSQLAttributes attributes that should be excluded from select-query
      */
     public async getOne(excludedSQLAttributes?: string[]): Promise<EntityType> {
         if (this._autoCombineFilter) {
@@ -96,16 +97,18 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * sql-operator to combine composite filters with
-     * @param value
+     * Sql-operator to combine composite filters with.
+     *
+     * @param value operator for combining filters
      */
     set sqlOperator(value: SQLOperator) {
         this._sqlOperator = value;
     }
 
     /**
-     * enable auto combine composite filters with specified sqlOperator
-     * @param value
+     * Enable auto combine composite filters with specified sqlOperator.
+     *
+     * @param value determines if the filters should be auto-combined with
      */
     set autoCombineFilter(value: boolean) {
         this._autoCombineFilter = value;
