@@ -1,79 +1,58 @@
-const marv = require("marv/api/promise"); // <-- Promise API
-const driver = require("marv-mysql-driver");
-import * as path from "path";
-import { DifficultyFacade } from "./db/entity/enum/DifficultyFacade";
-import { FoodCategoryFacade } from "./db/entity/enum/FoodCategoryFacade";
-import { SeverityFacade } from "./db/entity/enum/SeverityFacade";
-import { GameFacade } from "./db/entity/game/GameFacade";
-import { SessionFacade } from "./db/entity/game/SessionFacade";
-import { StatisticFacade } from "./db/entity/game/StatisticFacade";
-import { ErrortextFacade } from "./db/entity/helptext/ErrortextFacade";
-import { ErrortextGamesFacade } from "./db/entity/helptext/ErrortextGamesFacade";
-import { ErrortextStatisticFacade } from "./db/entity/helptext/ErrortextStatisticFacade";
-import { HelptextFacade } from "./db/entity/helptext/HelptextFacade";
-import { HelptextsGamesFacade } from "./db/entity/helptext/HelptextsGamesFacade";
-import { ImageFacade } from "./db/entity/image/ImageFacade";
-import { IngredientFacade } from "./db/entity/kitchen/IngredientFacade";
-import { RecipeFacade } from "./db/entity/kitchen/RecipeFacade";
-import { RecipeIngredientFacade } from "./db/entity/kitchen/RecipeIngredientFacade";
-import { LogFacade } from "./db/entity/log/LogFacade";
-import { SmtpLogFacade } from "./db/entity/log/SmtpLogFacade";
-import { GameSettingFacade } from "./db/entity/settings/GameSettingFacade";
-import { PatientSettingFacade } from "./db/entity/settings/PatientSettingFacade";
-import { PatientFacade } from "./db/entity/user/PatientFacade";
-import { TherapistFacade } from "./db/entity/user/TherapistFacade";
-import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFacade";
-import { WordFacade } from "./db/entity/word/WordFacade";
+import * as path from 'path';
+
+import { DifficultyFacade } from './db/entity/enum/DifficultyFacade';
+import { FoodCategoryFacade } from './db/entity/enum/FoodCategoryFacade';
+import { SeverityFacade } from './db/entity/enum/SeverityFacade';
+import { GameFacade } from './db/entity/game/GameFacade';
+import { SessionFacade } from './db/entity/game/SessionFacade';
+import { StatisticFacade } from './db/entity/game/StatisticFacade';
+import { ErrortextFacade } from './db/entity/helptext/ErrortextFacade';
+import { ErrortextGamesFacade } from './db/entity/helptext/ErrortextGamesFacade';
+import { ErrortextStatisticFacade } from './db/entity/helptext/ErrortextStatisticFacade';
+import { HelptextFacade } from './db/entity/helptext/HelptextFacade';
+import { HelptextsGamesFacade } from './db/entity/helptext/HelptextsGamesFacade';
+import { ImageFacade } from './db/entity/image/ImageFacade';
+import { IngredientFacade } from './db/entity/kitchen/IngredientFacade';
+import { RecipeFacade } from './db/entity/kitchen/RecipeFacade';
+import { RecipeIngredientFacade } from './db/entity/kitchen/RecipeIngredientFacade';
+import { LogFacade } from './db/entity/log/LogFacade';
+import { SmtpLogFacade } from './db/entity/log/SmtpLogFacade';
+import { GameSettingFacade } from './db/entity/settings/GameSettingFacade';
+import { PatientSettingFacade } from './db/entity/settings/PatientSettingFacade';
+import { PatientFacade } from './db/entity/user/PatientFacade';
+import { TherapistFacade } from './db/entity/user/TherapistFacade';
+import { TherapistsPatientsFacade } from './db/entity/user/TherapistsPatientsFacade';
+import { WordFacade } from './db/entity/word/WordFacade';
+import { difficultyEasy, difficultyHard, difficultyMedium } from './seeds/difficulties';
 import {
-  difficultyEasy,
-  difficultyHard,
-  difficultyMedium
-} from "./seeds/difficulties";
-import { errortextGames, errortextGames1 } from "./seeds/errortextGames";
-import { errortext, errortext1 } from "./seeds/errortexts";
-import { errortextStatistic, errortextStatistic1 } from "./seeds/errortextStatistic";
+  fridgeNotCheckedErrorTextGames,
+  itemAlreadyInFridgeErrorTextGames,
+  mealtimeErrorTextGames,
+  shoppingCartErrorTextGames,
+} from './seeds/errortextGames';
+import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from './seeds/errortexts';
 import {
-  bread,
-  care,
-  chilledGoods,
-  deepFrozen,
-  drinks,
-  household,
-  sweets,
-  vegetables
-} from "./seeds/foodCategories";
-import { game, game2, game3, game4 } from "./seeds/games";
-import {
-  gameSettings,
-  gameSettings1,
-  gameSettings2,
-  gameSettings3
-} from "./seeds/gameSettings";
-import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
-import { helptext, helptext1 } from "./seeds/helptexts";
-import { image } from "./seeds/images";
-import { egg, oil } from "./seeds/ingredients";
-import {
-  debugLog,
-  errorLogWithUser,
-  infoLogWithUser,
-  verboseLogWithUser
-} from "./seeds/logs";
-import { pSettings } from "./seeds/patientSettings";
-import {
-  recipeIngredient1,
-  recipeIngredient2
-} from "./seeds/recipeIngredients";
-import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
-import { session } from "./seeds/sessions";
-import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
-import {
-  notSentSmtpLog,
-  sentSmtpLog,
-  simulatedSmtpLog
-} from "./seeds/smtpLogs";
-import { statistic, statistic1 } from "./seeds/statistics";
-import { therapistPatient1, therapistPatient2 } from "./seeds/therapistsPatients";
+  fridgeNotCheckedErrorTextGamesStatistic,
+  itemAlreadyInFridgeErrorTextGamesStatistic,
+  mealtimeErrorTextGamesStatistic,
+  shoppingCartErrorTextGamesStatistic,
+} from './seeds/errortextStatistic';
+import { bread, care, chilledGoods, deepFrozen, drinks, household, sweets, vegetables } from './seeds/foodCategories';
+import { game, game2, game3, game4 } from './seeds/games';
+import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from './seeds/gameSettings';
+import { helptextGames, helptextGames1 } from './seeds/helptextGames';
+import { helptext, helptext1 } from './seeds/helptexts';
+import { image } from './seeds/images';
+import { egg, oil } from './seeds/ingredients';
+import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from './seeds/logs';
+import { pSettings } from './seeds/patientSettings';
+import { recipeIngredient1, recipeIngredient2 } from './seeds/recipeIngredients';
+import { proteinShake, roastPork, scrambledEgg } from './seeds/recipes';
+import { session } from './seeds/sessions';
+import { severityEasy, severityHard, severityMedium } from './seeds/severities';
+import { notSentSmtpLog, sentSmtpLog, simulatedSmtpLog } from './seeds/smtpLogs';
+import { statistic, statistic1 } from './seeds/statistics';
+import { therapistPatient1, therapistPatient2 } from './seeds/therapistsPatients';
 import {
   lockedTherapist,
   tooManyFailedLoginAttemptsTherapist,
@@ -81,13 +60,15 @@ import {
   validAdminTherapist,
   validPatient,
   validPatient1,
-  validTherapist
-} from "./seeds/users";
-import { word } from "./seeds/words";
-import { databaseConnection } from "./util/db/databaseConnection";
-import { inProduction, inTestMode, loggerString } from "./util/Helper";
-import logger from "./util/log/logger";
+  validTherapist,
+} from './seeds/users';
+import { word } from './seeds/words';
+import { databaseConnection } from './util/db/databaseConnection';
+import { inProduction, inTestMode, loggerString } from './util/Helper';
+import logger from './util/log/logger';
 
+const marv = require("marv/api/promise"); // <-- Promise API
+const driver = require("marv-mysql-driver");
 /**
  * runs multiple migrations based on .env variables
  *
@@ -361,7 +342,12 @@ export async function seedWords() {
  */
 export async function seedErrortexts() {
   const errorTextFacade = new ErrortextFacade();
-  const errortextArr = [errortext, errortext1];
+  const errortextArr = [
+    mealtimeError,
+    shoppingCartError,
+    fridgeNotCheckedError,
+    itemAlreadyInFridgeError
+  ];
   for (const item of errortextArr) {
     await errorTextFacade.insertErrortext(item);
   }
@@ -373,8 +359,10 @@ export async function seedErrortexts() {
 export async function seedErrortextGames() {
   const errortextGameFacade = new ErrortextGamesFacade();
   const errortextGamesArr = [
-    errortextGames,
-    errortextGames1
+    mealtimeErrorTextGames,
+    shoppingCartErrorTextGames,
+    fridgeNotCheckedErrorTextGames,
+    itemAlreadyInFridgeErrorTextGames
   ];
 
   for (const item of errortextGamesArr) {
@@ -388,8 +376,10 @@ export async function seedErrortextGames() {
 export async function seedErrortextStatistics() {
   const errortextStatisticFacade = new ErrortextStatisticFacade();
   const errortextStatisticArr = [
-    errortextStatistic,
-    errortextStatistic1
+    mealtimeErrorTextGamesStatistic,
+    shoppingCartErrorTextGamesStatistic,
+    fridgeNotCheckedErrorTextGamesStatistic,
+    itemAlreadyInFridgeErrorTextGamesStatistic
   ];
 
   for (const item of errortextStatisticArr) {
@@ -402,27 +392,22 @@ export async function seedErrortextStatistics() {
  */
 export async function seedHelptextGames() {
   const helptextGameFacade = new HelptextsGamesFacade();
-  const helptextGameArr = [
-    helptextGames,
-    helptextGames1
-  ];
+  const helptextGameArr = [helptextGames, helptextGames1];
 
   for (const item of helptextGameArr) {
     await helptextGameFacade.insertHelptextGames(item);
-  }}
+  }
+}
 
 /**
  * inserts example helptexts into the database.
  */
 export async function seedHelptexts() {
   const helptextFacade = new HelptextFacade();
-  const helptextArr = [
-        helptext,
-        helptext1
-  ];
+  const helptextArr = [helptext, helptext1];
 
   for (const item of helptextArr) {
-      await helptextFacade.insertHelptext(helptext);
+    await helptextFacade.insertHelptext(helptext);
   }
 }
 
@@ -583,10 +568,7 @@ export async function seedLogs(): Promise<void> {
  */
 export async function seedTherapistPatients(): Promise<void> {
   const therapistsPatientsFacade = new TherapistsPatientsFacade();
-  const therapistPatientArr = [
-    therapistPatient1,
-    therapistPatient2
-  ];
+  const therapistPatientArr = [therapistPatient1, therapistPatient2];
   for (const item of therapistPatientArr) {
     await therapistsPatientsFacade.insertTherapistPatient(item);
   }
@@ -613,5 +595,5 @@ async function getTables(): Promise<string[]> {
     }"`
   );
 
-  return results.map((value) => value.table_name);
+  return results.map(value => value.table_name);
 }

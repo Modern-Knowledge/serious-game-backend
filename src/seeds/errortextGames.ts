@@ -1,13 +1,25 @@
-import { ErrortextGame } from "../lib/models/ErrortextGame";
-import { errortext, errortext1 } from "./errortexts";
-import { game } from "./games";
+import { ErrortextGame } from '../lib/models/ErrortextGame';
+import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from './errortexts';
+import { game, game3, game4 } from './games';
 
-const errortextGames = new ErrortextGame();
-errortextGames.gameId = game.id;
-errortextGames.errorId = errortext.id;
+const mealtimeErrorTextGames = new ErrortextGame();
+mealtimeErrorTextGames.gameId = game.id;
+mealtimeErrorTextGames.errorId = mealtimeError.id;
 
-const errortextGames1 = new ErrortextGame();
-errortextGames1.gameId = game.id;
-errortextGames1.errorId = errortext1.id;
+const shoppingCartErrorTextGames = new ErrortextGame();
+shoppingCartErrorTextGames.gameId = game4.id;
+shoppingCartErrorTextGames.errorId = shoppingCartError.id;
 
-export { errortextGames, errortextGames1 };
+const fridgeNotCheckedErrorTextGames = new ErrortextGame();
+fridgeNotCheckedErrorTextGames.gameId = game3.id;
+fridgeNotCheckedErrorTextGames.errorId = fridgeNotCheckedError.id;
+
+const itemAlreadyInFridgeErrorTextGames = new ErrortextGame();
+itemAlreadyInFridgeErrorTextGames.gameId = game3.id;
+itemAlreadyInFridgeErrorTextGames.errorId = itemAlreadyInFridgeError.id;
+export {
+  mealtimeErrorTextGames,
+  shoppingCartErrorTextGames,
+  fridgeNotCheckedErrorTextGames,
+  itemAlreadyInFridgeErrorTextGames
+};
