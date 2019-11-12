@@ -6,7 +6,7 @@ import { User } from "../../lib/models/User";
  * generates and sets the password reset token for the passed user
  * passwordResetToken is  digits long
  * resetToken is valid 7 days from now
- * @param user
+ * @param user user where the reset token should be set
  */
 export function setPasswordResetToken(user: User): void {
     user.resetcode = generatePasswordResetToken(8);

@@ -18,8 +18,9 @@ export function validatePermission(authUser: User, resources: UserInterface[]): 
     logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")}`);
 
     for (const item of resources) { // checks every resource
-        if (item && item.getUserId && authUser.id !== item.getUserId()) { // check if user id is the same as the resources user id
-            logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")} User with id ${authUser.id} is not allowed to view the resources of user with id ${item.getUserId()}`);
+        if (item && item.getUserId && authUser.id !== item.getUserId()) { // check if user id = resources user id
+            logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")} ` +
+                `User with id ${authUser.id} is not allowed to view the resources of user with id ${item.getUserId()}`);
             return false;
         }
     }

@@ -32,6 +32,9 @@ export function checkRouteValidation(endpoint: string, req: Request, res: Respon
  */
 function logValidatorErrors(endpoint: string, errors: any[]): void {
     for (const error of errors) {
-        logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, Ort: ${error.location}, Text: ${error.msg.message}, Wert: ${!error.param.includes("password") ? error.value : ""}`);
+        logger.debug(`${loggerString()} ${endpoint}: Parameter: ${error.param}, ` +
+            `Ort: ${error.location}, ` +
+            `Text: ${error.msg.message}, ` +
+            `Wert: ${!error.param.includes("password") ? error.value : ""}`);
     }
 }
