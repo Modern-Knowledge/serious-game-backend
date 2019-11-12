@@ -50,14 +50,15 @@ import logger from "./util/log/logger";
 import { accessLogStream } from "./util/log/morgan";
 import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middleware/middleware";
 
-if (!inTestMode()) {
-    migrate().then(() => {});
-}
-
-logger.info(
-  `${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`
-);
+logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 checkEnvFunction();
+
+if (!inTestMode()) {
+    migrate().then(() => {
+        logger.info(`${loggerString(__dirname, "", "", __filename)}
+        Successfully migrated!`);
+    });
+}
 
 // Create Express server
 const app = express();
@@ -92,22 +93,24 @@ app.use(lusca.xssProtection(true));
  * max 500 requests per ip in 10 minutes
  */
 const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000,
     max: 500,
     // @ts-ignore
     message:  (new HttpResponse(HttpResponseStatus.FAIL,
         undefined, [
-            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Zu viele Anfragen, probieren Sie es später nochmal")
-        ]))
+            new HttpResponseMessage(
+                HttpResponseMessageSeverity.DANGER,
+                "Zu viele Anfragen, probieren Sie es später nochmal")
+        ])),
+    windowMs: 10 * 60 * 1000,
 });
 
 /**
  * allow 200 requests in 5 minutes, before adding a 500ms delay per request above 200 requests
  */
 const speedLimiter = slowDown({
-    windowMs: 5 * 60 * 1000,
     delayAfter: 200,
     delayMs: 500,
+    windowMs: 5 * 60 * 1000
 });
 
 // Controllers (route handlers)

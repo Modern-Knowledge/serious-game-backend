@@ -201,8 +201,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     (mysqlError: MysqlError, results: any, fields: FieldInfo[]) => {
                     connection.release(); // release pool connection
 
-                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")}
-                    ${query.sql} [${query.values}]`);
+                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                        `${query.sql} [${query.values}]`);
 
                     if (mysqlError) {
                         logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ${error}`);
@@ -219,18 +219,18 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     returnEntities = this.postProcessSelect(returnEntities);
                     returnEntities = this._postProcessFilter(returnEntities);
 
-                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")}
-                    ${returnEntities.length} result(s) returned!`);
+                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} `
+                        + `${returnEntities.length} result(s) returned!`);
 
                     if (returnEntities.length > 100) {
-                        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")}
-                        More than ${returnEntities.length} rows returned!
-                        Consider using WHERE-clause to shrink result set size`);
+                        logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                        `More than ${returnEntities.length} rows returned! ` +
+                        `Consider using WHERE-clause to shrink result set size`);
                     }
 
                     const elapsedTime = s.timeElapsed;
-                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")}
-                    Results computed in ${elapsedTime}!`);
+                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                    `Results computed in ${elapsedTime}!`);
 
                     const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
                     eta.analyse(s.measuredTime, BaseFacade.name + ".select");
@@ -358,8 +358,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     protected getUpdateQueryFn: (connection: PoolConnection, attributes: SQLValueAttributes) => Promise<any> =
         (connection: PoolConnection, attributes: SQLValueAttributes) => {
         if (this._filter.isEmpty) {
-            const error = `${loggerString(__dirname, BaseFacade.name, "update")}
-             No WHERE-clause for update-query specified!`;
+            const error = `${loggerString(__dirname, BaseFacade.name, "update")} ` +
+             `No WHERE-clause for update-query specified!`;
             logger.error(error);
             throw new Error(error);
         }
@@ -427,8 +427,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     protected getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> =
         (connection: PoolConnection) => {
         if (this._filter.isEmpty) {
-            const error = `${loggerString(__dirname, BaseFacade.name, "delete")}
-            No WHERE-clause for delete query specified!`;
+            const error = `${loggerString(__dirname, BaseFacade.name, "delete")} ` +
+            `No WHERE-clause for delete query specified!`;
             logger.error(error);
             throw new Error(error);
         }
@@ -612,14 +612,14 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
             }
         }
 
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")}
-        Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins,
-        ${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+        `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
+        `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
 
         const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
         if (oneToManyJoinAmount >= warnToManyJoins) {
-            logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")}
-            Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+            logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+            `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
         }
 
     }

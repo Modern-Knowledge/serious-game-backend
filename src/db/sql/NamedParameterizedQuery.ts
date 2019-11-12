@@ -6,22 +6,22 @@ import { SQLParam } from "./SQLParam";
  */
 export abstract class NamedParameterizedQuery {
 
- protected constructor() {}
+    protected constructor() {}
 
- /**
-  * returns parameters with values for the query
-  */
- public abstract getParameters(): SQLParam[];
+    /**
+     * returns parameters with values for the query
+     */
+    public abstract getParameters(): SQLParam[];
 
- /**
-  * returns a new baked query
-  */
- public bake(): BakedQuery {
-   return new BakedQuery(this);
- }
+    /**
+     * returns a new baked query
+     */
+    public bake(): BakedQuery {
+        return new BakedQuery(this);
+    }
 
- /**
-  * generates the final sql string
-  */
- public abstract getSql(): string;
+    /**
+     * generates the final sql string
+     */
+    public abstract getSql(): string;
 }

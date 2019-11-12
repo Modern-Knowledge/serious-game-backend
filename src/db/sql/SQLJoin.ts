@@ -9,73 +9,79 @@ import { SQLParam } from "./SQLParam";
  * represents the join part of a sql query
  */
 export class SQLJoin extends SQLElement {
-  private readonly _joinTableName: string;
-  private readonly _joinTableAlias: string;
+    private readonly _joinTableName: string;
+    private readonly _joinTableAlias: string;
 
-  private readonly _condition: SQLBlock;
-  private readonly _joinType: JoinType = JoinType.JOIN;
-  private readonly _joinCardinality: JoinCardinality = JoinCardinality.ONE_TO_ONE;
+    private readonly _condition: SQLBlock;
+    private readonly _joinType: JoinType = JoinType.JOIN;
+    private readonly _joinCardinality: JoinCardinality = JoinCardinality.ONE_TO_ONE;
 
-  /**
-   * @param joinTableName
-   * @param joinTableAlias
-   * @param condition
-   * @param joinType
-   * @param joinCardinality
-   */
-  public constructor(joinTableName: string, joinTableAlias: string, condition: SQLBlock, joinType: JoinType, joinCardinality?: JoinCardinality) {
-    super();
-    this._joinTableName = joinTableName;
-    this._joinTableAlias = joinTableAlias;
-    this._condition = condition;
-    this._joinType = joinType;
-    this._joinCardinality = joinCardinality;
-  }
+    /**
+     * @param joinTableName table-name of the joined table
+     * @param joinTableAlias table-alias of the joined table
+     * @param condition condition for the join
+     * @param joinType type of the join (left, right, ...)
+     * @param joinCardinality cardinality of the join (1:1, 1:n, ...)
+     */
+    public constructor(
+        joinTableName: string, joinTableAlias: string, condition: SQLBlock,
+        joinType: JoinType, joinCardinality?: JoinCardinality) {
 
-  /**
-   * returns the parameters for the join
-   */
-  public getParameters(): SQLParam[] {
-    let returnParams: SQLParam[] = [];
+        super();
+        this._joinTableName = joinTableName;
+        this._joinTableAlias = joinTableAlias;
+        this._condition = condition;
+        this._joinType = joinType;
+        this._joinCardinality = joinCardinality;
+    }
 
-    returnParams = returnParams.concat(this._parameters);
-    returnParams = returnParams.concat(this._condition.getParameters());
+    /**
+     * Returns the parameters for the join.
+     */
+    public getParameters(): SQLParam[] {
+        let returnParams: SQLParam[] = [];
 
-    return returnParams;
-  }
+        returnParams = returnParams.concat(this._parameters);
+        returnParams = returnParams.concat(this._condition.getParameters());
 
-  public getElementType(): number {
-    return SQLElementType.SQLJoin;
-  }
+        return returnParams;
+    }
 
-  /**
-   * returns the sql for the join part of the sql
-   */
-  public getSQL(): string {
-    const keyword: string = this._joinType;
-    let returnSQL = "";
+    /**
+     * Returns the element-type
+     */
+    public getElementType(): number {
+        return SQLElementType.SQLJoin;
+    }
 
-    if (this._joinTableName !== undefined && (!(this._joinTableName.length === 0))) {
-     returnSQL += keyword + " " + this._joinTableName + " ";
-   }
+    /**
+     * Returns the sql for the join part of the sql.
+     */
+    public getSQL(): string {
+        const keyword: string = this._joinType;
+        let returnSQL = "";
 
-    if (this._joinTableAlias !== undefined && (!(this._joinTableAlias.length === 0))) {
-     returnSQL += this._joinTableAlias + " ";
-   }
+        if (this._joinTableName !== undefined && (this._joinTableName.length !== 0)) {
+            returnSQL += keyword + " " + this._joinTableName + " ";
+        }
 
-    if (this._condition !== undefined) {
-     returnSQL += "ON " + this._condition.getSQL() + " ";
-   }
+        if (this._joinTableAlias !== undefined && (this._joinTableAlias.length !== 0)) {
+            returnSQL += this._joinTableAlias + " ";
+        }
 
-    return returnSQL;
-  }
+        if (this._condition !== undefined) {
+            returnSQL += "ON " + this._condition.getSQL() + " ";
+        }
 
-  get joinType(): JoinType {
-    return this._joinType;
-  }
+        return returnSQL;
+    }
 
-  get joinCardinality(): JoinCardinality {
-    return this._joinCardinality;
-  }
+    get joinType(): JoinType {
+        return this._joinType;
+    }
+
+    get joinCardinality(): JoinCardinality {
+        return this._joinCardinality;
+    }
 
 }

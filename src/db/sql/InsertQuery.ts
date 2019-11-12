@@ -8,44 +8,44 @@ import { SQLParam } from "./SQLParam";
  * e.g.: INSERT INTO %tablename% (%attributes%) VALUES (%values%)
  */
 export class InsertQuery extends NamedParameterizedQuery {
-  private _insert: SQLInsert;
+    private _insert: SQLInsert;
 
-  /**
-   * @param insert
-   */
-  public constructor(insert?: SQLInsert) {
-    super();
+    /**
+     * @param insert insert-query
+     */
+    public constructor(insert?: SQLInsert) {
+        super();
 
-    this._insert = insert;
-  }
-
-  /**
-   * returns the sql parameters (name-value pairs) for the insert query
-   */
-  public getParameters(): SQLParam[] {
-    let returnParams: SQLParam[] = [];
-
-    if (this._insert !== undefined) {
-      returnParams = returnParams.concat(this._insert.getParameters());
+        this._insert = insert;
     }
 
-    return returnParams;
-  }
+    /**
+     * returns the sql parameters (name-value pairs) for the insert query
+     */
+    public getParameters(): SQLParam[] {
+        let returnParams: SQLParam[] = [];
 
-  /**
-   * returns the sql for the insert query
-   */
-  public getSql(): string {
-    let returnSql = "";
+        if (this._insert !== undefined) {
+            returnParams = returnParams.concat(this._insert.getParameters());
+        }
 
-    if (this._insert !== undefined) {
-      returnSql += this._insert.getSQL();
+        return returnParams;
     }
 
-    return returnSql;
-  }
+    /**
+     * returns the sql for the insert query
+     */
+    public getSql(): string {
+        let returnSql = "";
 
-  set insert(value: SQLInsert) {
-    this._insert = value;
-  }
+        if (this._insert !== undefined) {
+            returnSql += this._insert.getSQL();
+        }
+
+        return returnSql;
+    }
+
+    set insert(value: SQLInsert) {
+        this._insert = value;
+    }
 }

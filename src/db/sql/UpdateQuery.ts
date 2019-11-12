@@ -10,52 +10,52 @@ import { SQLWhere } from "./SQLWhere";
  */
 export class UpdateQuery extends NamedParameterizedQuery {
 
-  private _update: SQLUpdate;
-  private _where: SQLWhere;
+    private _update: SQLUpdate;
+    private _where: SQLWhere;
 
-  public constructor() {
-    super();
-  }
-
-  /**
-   * returns the sql parameters (name-value pairs) for the update query
-   */
-  public getParameters(): SQLParam[] {
-    let returnParams: SQLParam[] = [];
-
-    if (this._update !== undefined) {
-      returnParams = returnParams.concat(this._update.getParameters());
+    public constructor() {
+        super();
     }
 
-    if (this._where !== undefined) {
-      returnParams = returnParams.concat(this._where.getParameters());
+    /**
+     * returns the sql parameters (name-value pairs) for the update query
+     */
+    public getParameters(): SQLParam[] {
+        let returnParams: SQLParam[] = [];
+
+        if (this._update !== undefined) {
+            returnParams = returnParams.concat(this._update.getParameters());
+        }
+
+        if (this._where !== undefined) {
+            returnParams = returnParams.concat(this._where.getParameters());
+        }
+
+        return returnParams;
     }
 
-    return returnParams;
-  }
+    /**
+     * returns the sql for the update query
+     */
+    public getSql(): string {
+        let returnStr = "";
 
-  /**
-   * returns the sql for the update query
-   */
-  public getSql(): string {
-    let returnStr = "";
+        if (this._update !== undefined) {
+            returnStr += this._update.getSQL() + " ";
+        }
 
-    if (this._update !== undefined) {
-      returnStr += this._update.getSQL() + " ";
+        if (this._where !== undefined) {
+            returnStr += this._where.getSQL();
+        }
+
+        return returnStr;
     }
 
-    if (this._where !== undefined) {
-      returnStr += this._where.getSQL();
+    set update(value: SQLUpdate) {
+        this._update = value;
     }
 
-    return returnStr;
-  }
-
-  set update(value: SQLUpdate) {
-    this._update = value;
-  }
-
-  set where(value: SQLWhere) {
-    this._where = value;
-  }
+    set where(value: SQLWhere) {
+        this._where = value;
+    }
 }

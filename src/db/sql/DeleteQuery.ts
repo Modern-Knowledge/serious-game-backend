@@ -9,48 +9,48 @@ import { SQLWhere } from "./SQLWhere";
  * e.g.: DELETE FROM %tablename% (WHERE condition)?
  */
 export class DeleteQuery extends NamedParameterizedQuery {
-  private _delete: SQLDelete;
-  private _where: SQLWhere;
+    private _delete: SQLDelete;
+    private _where: SQLWhere;
 
-  public constructor() {
-    super();
-  }
-
-  /**
-   * returns the sql parameters (name-value pairs) for the delete query
-   */
-  public getParameters(): SQLParam[] {
-    let returnParams: SQLParam[] = [];
-
-    if (this._where !== undefined) {
-      returnParams = returnParams.concat(this._where.getParameters());
+    public constructor() {
+        super();
     }
 
-    return returnParams;
-  }
+    /**
+     * Returns the sql parameters (name-value pairs) for the delete query.
+     */
+    public getParameters(): SQLParam[] {
+        let returnParams: SQLParam[] = [];
 
-  /**
-   * returns the sql for delete query
-   */
-  public getSql(): string {
-    let returnStr = "";
+        if (this._where !== undefined) {
+            returnParams = returnParams.concat(this._where.getParameters());
+        }
 
-    if (this._delete !== undefined) {
-      returnStr += this._delete.getSQL() + " ";
+        return returnParams;
     }
 
-    if (this._where !== undefined) {
-      returnStr += this._where.getSQL();
+    /**
+     * Returns the sql for delete query.
+     */
+    public getSql(): string {
+        let returnStr = "";
+
+        if (this._delete !== undefined) {
+            returnStr += this._delete.getSQL() + " ";
+        }
+
+        if (this._where !== undefined) {
+            returnStr += this._where.getSQL();
+        }
+
+        return returnStr;
     }
 
-    return returnStr;
-  }
+    set delete(value: SQLDelete) {
+        this._delete = value;
+    }
 
-  set delete(value: SQLDelete) {
-    this._delete = value;
-  }
-
-  set where(value: SQLWhere) {
-    this._where = value;
-  }
+    set where(value: SQLWhere) {
+        this._where = value;
+    }
 }

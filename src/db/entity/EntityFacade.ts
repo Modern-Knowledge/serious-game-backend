@@ -13,17 +13,18 @@ import { SQLAttributes } from "../sql/SQLAttributes";
 export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>> extends BaseFacade<EntityType> {
 
     /**
-     * @param tableName
-     * @param tableAlias
+     * @param tableName table-name of the entity
+     * @param tableAlias table-alias of the entity
      */
     protected constructor(tableName: string, tableAlias: string) {
         super(tableName, tableAlias);
     }
 
   /**
-   * returns the entity by id
-   * @param id
-   * @param excludedSQLAttributes
+   * Returns the entity by id.
+   *
+   * @param id id of the entity to receive
+   * @param excludedSQLAttributes attribute that should not be included in the result set
    */
     public async getById(id: number, excludedSQLAttributes?: string[]): Promise<EntityType> {
         const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
@@ -36,8 +37,9 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
     }
 
     /**
-     * returns all entities that match the specified filter
-     * @param excludedSQLAttributes
+     * Returns all entities that match the specified filter.
+     *
+     * @param excludedSQLAttributes attributes that should be excluded from the query
      */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
       const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
@@ -45,8 +47,9 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
     }
 
     /**
-     * returns the first entity that matches the specified filter
-     * @param excludedSQLAttributes
+     * Returns the first entity that matches the specified filter.
+     *
+     * @param excludedSQLAttributes attributes that should be excluded from the query
      */
     public async getOne(excludedSQLAttributes?: string[]): Promise<EntityType> {
         const attributes: SQLAttributes = this.getSQLAttributes(excludedSQLAttributes);
@@ -56,13 +59,14 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
             return result[0];
         }
 
-        const errorMsg = `${loggerString(__dirname, EntityFacade.name, "getOne")} More than one result returned! (${result.length})`;
+        const errorMsg = `${loggerString(__dirname, EntityFacade.name, "getOne")}
+        More than one result returned! (${result.length})`;
         logger.error(errorMsg);
         throw new Error(errorMsg);
     }
 
     /**
-     * returns the facade filter that can be used for filtering model with id
+     * Returns the facade filter that can be used for filtering model with id.
      */
     get idFilter(): Filter {
         return this.filter;

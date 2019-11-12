@@ -8,52 +8,55 @@ import { SQLValueAttributes } from "./SQLValueAttributes";
  * represents the insert part of a sql query
  */
 export class SQLInsert extends SQLElement {
-  private readonly _tableName: string;
-  private _attributes: SQLValueAttributes;
+    private readonly _tableName: string;
+    private _attributes: SQLValueAttributes;
 
-  /**
-   * @param tableName
-   */
-  public constructor(tableName: string) {
-    super();
-    this._tableName = tableName;
-  }
-
-  /**
-   * returns the name-value parameters for the insert
-   */
-  public getParameters(): SQLParam[] {
-    let returnParams: SQLParam[] = [];
-
-    if (this._attributes !== undefined) {
-      returnParams = returnParams.concat(this._attributes.getSqlParams());
+    /**
+     * @param tableName table-name of the sql-insert
+     */
+    public constructor(tableName: string) {
+        super();
+        this._tableName = tableName;
     }
 
-    return returnParams;
-  }
+    /**
+     * Returns the name-value parameters for the insert
+     */
+    public getParameters(): SQLParam[] {
+        let returnParams: SQLParam[] = [];
 
-  public getElementType(): number {
-    return SQLElementType.SQLInsert;
-  }
+        if (this._attributes !== undefined) {
+            returnParams = returnParams.concat(this._attributes.getSqlParams());
+        }
 
-  /**
-   * returns the sql for the insert part of the query
-   */
-  public getSQL(): string {
-    let returnString: string = "INSERT INTO " + this._tableName;
+        return returnParams;
+    }
 
-    const attributeBlock: SQLBlock = new SQLBlock();
-    attributeBlock.addText(this._attributes.getCommaSeparatedNamesUnaliased());
-    returnString += attributeBlock.getSQL() + " ";
+    /**
+     * Returns the element type.
+     */
+    public getElementType(): number {
+        return SQLElementType.SQLInsert;
+    }
 
-    const valueBlock: SQLBlock = new SQLBlock();
-    valueBlock.addText(this._attributes.getCommaSeparatedParameterName());
-    returnString += "VALUES" + valueBlock.getSQL();
+    /**
+     * Returns the sql for the insert part of the query.
+     */
+    public getSQL(): string {
+        let returnString: string = "INSERT INTO " + this._tableName;
 
-    return returnString;
-  }
+        const attributeBlock: SQLBlock = new SQLBlock();
+        attributeBlock.addText(this._attributes.getCommaSeparatedNamesUnaliased());
+        returnString += attributeBlock.getSQL() + " ";
 
-  set attributes(value: SQLValueAttributes) {
-    this._attributes = value;
-  }
+        const valueBlock: SQLBlock = new SQLBlock();
+        valueBlock.addText(this._attributes.getCommaSeparatedParameterName());
+        returnString += "VALUES" + valueBlock.getSQL();
+
+        return returnString;
+    }
+
+    set attributes(value: SQLValueAttributes) {
+        this._attributes = value;
+    }
 }

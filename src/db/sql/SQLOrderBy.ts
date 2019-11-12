@@ -11,9 +11,9 @@ export class SQLOrderBy extends SQLElement {
   private readonly _tableAlias: string;
 
   /**
-   * @param attribute
-   * @param order
-   * @param tableAlias
+   * @param attribute attribute of sql-order by
+   * @param order order of the order-by (ASC, DESC)
+   * @param tableAlias table-alias of the order-by
    */
   public constructor(attribute: string, order: SQLOrder, tableAlias: string) {
     super();
@@ -22,12 +22,15 @@ export class SQLOrderBy extends SQLElement {
     this._tableAlias = tableAlias;
   }
 
+  /**
+   * Returns the element type.
+   */
   public getElementType(): number {
     return SQLElementType.SQLOrderBy;
   }
 
   /**
-   * returns the sql string for the order by part
+   * Returns the sql string for the order by part.
    */
   public getSQL(): string {
     return this._tableAlias + "." + this._attribute + " " + this._order;

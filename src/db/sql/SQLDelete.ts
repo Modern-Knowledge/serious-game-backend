@@ -6,28 +6,28 @@ import { SQLElement } from "./SQLElement";
  */
 export class SQLDelete extends SQLElement {
 
-  private readonly _tableName: string;
-  private _tableAlias: string;
+    private readonly _tableName: string;
+    private _tableAlias: string;
 
-  /**
-   * @param tableName
-   * @param tableAlias
-   */
-  public constructor(tableName: string, tableAlias: string) {
-    super();
-    this._tableName = tableName;
-    this._tableAlias = tableAlias;
-  }
+    /**
+     * @param tableName table-name of the delete-query
+     * @param tableAlias table-alias of the delete-query
+     */
+    public constructor(tableName: string, tableAlias: string) {
+        super();
+        this._tableName = tableName;
+        this._tableAlias = tableAlias;
+    }
 
-  public getElementType(): number {
-    return SQLElementType.SQLDelete;
-  }
+    public getElementType(): number {
+        return SQLElementType.SQLDelete;
+    }
 
-  /**
-   * returns the sql for the delete query
-   */
-  public getSQL(): string {
-    return "DELETE FROM " + this._tableName;
-  }
+    /**
+     * Returns the sql for the delete query.
+     */
+    public getSQL(): string {
+        return "DELETE FROM " + this._tableName;
+    }
 
 }
