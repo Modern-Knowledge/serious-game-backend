@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -83,10 +83,12 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     protected getSQLValueAttributes(prefix: string, recipeIngredient: RecipeIngredient): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const recipeIdAttribute: SQLValueAttribute = new SQLValueAttribute("recipe_id", prefix, recipeIngredient.recipeId);
+        const recipeIdAttribute: SQLValueAttribute
+            = new SQLValueAttribute("recipe_id", prefix, recipeIngredient.recipeId);
         attributes.addAttribute(recipeIdAttribute);
 
-        const ingredientIdAttribute: SQLValueAttribute = new SQLValueAttribute("ingredient_id", prefix, recipeIngredient.ingredientId);
+        const ingredientIdAttribute: SQLValueAttribute
+            = new SQLValueAttribute("ingredient_id", prefix, recipeIngredient.ingredientId);
         attributes.addAttribute(ingredientIdAttribute);
 
         return attributes;

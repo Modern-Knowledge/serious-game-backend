@@ -10,8 +10,9 @@ import { EntityFacade } from "../EntityFacade";
  * handles CRUD operations with therapists-patients-entity
  */
 export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
+
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -27,7 +28,7 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
         const sqlAttributes: string[] = ["therapist_id", "patient_id"];
-        let exclDefaultAttr: string[] = ["id", "created_at", "modified_at"];
+        let exclDefaultAttr: string[] = ["id"];
 
         if (excludedSQLAttributes) {
             exclDefaultAttr = exclDefaultAttr.concat(excludedSQLAttributes);

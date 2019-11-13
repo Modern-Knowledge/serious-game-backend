@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class DifficultyFacade extends EntityFacade<Difficulty> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -74,7 +74,8 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
     protected getSQLValueAttributes(prefix: string, difficulty: Difficulty): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const difficultyAttribute: SQLValueAttribute = new SQLValueAttribute("difficulty", prefix, difficulty.difficulty);
+        const difficultyAttribute: SQLValueAttribute =
+            new SQLValueAttribute("difficulty", prefix, difficulty.difficulty);
         attributes.addAttribute(difficultyAttribute);
 
         return attributes;

@@ -49,16 +49,27 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
         if (this._withPatientSettingJoin) {
             const patientSettingJoin: SQLBlock = new SQLBlock();
-            patientSettingJoin.addText(`${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            patientSettingJoin.addText(
+                `${this._patientSettingsFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`
+            );
+            joins.push(new SQLJoin(
+                this._patientSettingsFacade.tableName, this._patientSettingsFacade.tableAlias, patientSettingJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         if (this._withSessionCompositeJoin) {
             const sessionJoin: SQLBlock = new SQLBlock();
-            sessionJoin.addText(`${this._sessionCompositeFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._sessionCompositeFacade.tableName, this._sessionCompositeFacade.tableAlias, sessionJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            sessionJoin.addText(
+                `${this._sessionCompositeFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id
+                `);
+            joins.push(new SQLJoin(
+                this._sessionCompositeFacade.tableName, this._sessionCompositeFacade.tableAlias, sessionJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY)
+            );
 
-            joins = joins.concat(this._sessionCompositeFacade.joins); // add session composite joins (game, patient, user, statistic, errortext, game-settings, difficulty)
+            // add session composite joins (game, patient, user, statistic, errortext, game-settings, difficulty)
+            joins = joins.concat(this._sessionCompositeFacade.joins);
 
         }
 
@@ -243,7 +254,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     private _withDifficultyJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -323,7 +334,10 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
      * delete the patient, the user, the patient settings, the session and the connection to the patients
      */
     public async deletePatientComposite(): Promise<number> {
-        return await this.delete([this._patientSettingsFacade, this._sessionCompositeFacade, this._therapistPatientFacade, this, this._patientFacade.userFacade]);
+        return await this.delete([
+            this._patientSettingsFacade, this._sessionCompositeFacade,
+            this._therapistPatientFacade, this, this._patientFacade.userFacade
+        ]);
     }
 
     /**

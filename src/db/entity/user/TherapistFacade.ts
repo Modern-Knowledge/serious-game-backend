@@ -26,7 +26,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     private _withUserJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -64,7 +64,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
     /**
      * inserts a new therapist and returns the created therapist
-     * @param therapist
+     * @param therapist therapist that should be inserted
      */
     public async insertTherapist(therapist: Therapist): Promise<Therapist> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(therapist);
@@ -72,31 +72,38 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
         /**
          * callback that is called after a user was inserted
          * @param insertId user id that was inserted before
-         * @param attributes attributes to append to
+         * @param sqlValueAttributes attributes to append to
          */
-        const onInsertUser = (insertId: number, attributes: SQLValueAttributes) => {
+        const onInsertUser = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             therapist.id = insertId;
-            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("therapist_id", this.tableName, therapist.id);
-            attributes.addAttribute(patientIdAttribute);
+            const patientIdAttribute: SQLValueAttribute =
+                new SQLValueAttribute("therapist_id", this.tableName, therapist.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [{facade: this._userFacade, entity: therapist, callBackOnInsert: onInsertUser}, {facade: this, entity: therapist}]);
+        await this.insert(attributes, [
+            {facade: this._userFacade, entity: therapist, callBackOnInsert: onInsertUser},
+            {facade: this, entity: therapist}
+            ]);
 
         return therapist;
     }
 
     /**
      * updates the patient and the associated user in a transaction
-     * @param therapist
+     * @param therapist therapist that should be updated
      */
     public async updateUserTherapist(therapist: Therapist): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
-        return this.update(attributes, [{facade: this, entity: therapist}, {facade: this._userFacade, entity: therapist}]);
+        return this.update(attributes, [
+                {facade: this, entity: therapist},
+                {facade: this._userFacade, entity: therapist}
+            ]);
     }
 
     /**
      * updates the therapists and returns the number of affected rows
-     * @param therapist
+     * @param therapist therapist that should be updated
      */
     public async updateTherapist(therapist: Therapist): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
@@ -112,7 +119,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
 
     /**
      * checks if the given id belongs to a therapist
-     * @param id
+     * @param id id of the user to check
      */
     public async isTherapist(id: number): Promise<boolean> {
         const therapist = await this.getById(id);

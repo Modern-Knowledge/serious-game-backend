@@ -32,7 +32,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     private _withSeverityJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -49,7 +49,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql attributes that should be retrieved from the database.
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -71,24 +71,28 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * inserts a new user and returns the created user
+     * Inserts a new user and returns the created user
      * @param errortext errortext to insert
      */
     public async insertErrortext(errortext: Errortext): Promise<Helptext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortext);
 
         /**
-         * callback that is called after a text was inserted
+         * callback that is executed after a text was inserted
          * @param insertId text id that was inserted before
-         * @param attributes attributes to append to
+         * @param sqlValueAttributes attributes where the id is appended
          */
-        const onInsertText = (insertId: number, attributes: SQLValueAttributes) => {
+        const onInsertText = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             errortext.id = insertId;
-            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("error_id", this.tableName, errortext.id);
-            attributes.addAttribute(patientIdAttribute);
+            const patientIdAttribute: SQLValueAttribute
+                = new SQLValueAttribute("error_id", this.tableName, errortext.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [{facade: this._textFacade, entity: errortext, callBackOnInsert: onInsertText}, {facade: this, entity: errortext}]);
+        await this.insert(attributes, [
+                {facade: this._textFacade, entity: errortext, callBackOnInsert: onInsertText },
+                {facade: this, entity: errortext}
+            ]);
 
         return errortext;
     }
@@ -145,13 +149,19 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
         if (this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.error_id = ${this._textFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(
+                new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         if (this._withSeverityJoin) {
             const severityJoin: SQLBlock = new SQLBlock();
             severityJoin.addText(`${this.tableAlias}.severity_id = ${this._severityFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(
+                this._severityFacade.tableName, this._severityFacade.tableAlias, severityJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE
+            ));
         }
 
         return joins;

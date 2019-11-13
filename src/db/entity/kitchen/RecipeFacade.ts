@@ -20,202 +20,202 @@ import { DifficultyFacade } from "../enum/DifficultyFacade";
  * - difficulties (1:1)
  */
 export class RecipeFacade extends CompositeFacade<Recipe> {
-  private _difficultyFacade: DifficultyFacade;
+    private _difficultyFacade: DifficultyFacade;
 
-  private _withDifficultyJoin: boolean;
+    private _withDifficultyJoin: boolean;
 
-  /**
-   * @param tableAlias
-   */
-  public constructor(tableAlias?: string) {
-    if (tableAlias) {
-      super("recipes", tableAlias);
-    } else {
-      super("recipes", "rec");
+    /**
+     * @param tableAlias table-alias of the facade
+     */
+    public constructor(tableAlias?: string) {
+        if (tableAlias) {
+            super("recipes", tableAlias);
+        } else {
+            super("recipes", "rec");
+        }
+
+        this._difficultyFacade = new DifficultyFacade();
+
+        this._withDifficultyJoin = true;
     }
 
-    this._difficultyFacade = new DifficultyFacade();
+    /**
+     * returns sql attributes that should be retrieved from the database
+     * @param excludedSQLAttributes attributes that should not be selected
+     */
+    public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
+        const sqlAttributes: string[] = [
+            "name",
+            "description",
+            "difficulty_id",
+            "mealtime"
+        ];
 
-    this._withDifficultyJoin = true;
-  }
+        const recipeAttributes: SQLAttributes = super.getSQLAttributes(
+            excludedSQLAttributes,
+            sqlAttributes
+        );
 
-  /**
-   * returns sql attributes that should be retrieved from the database
-   * @param excludedSQLAttributes attributes that should not be selected
-   */
-  public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-    const sqlAttributes: string[] = [
-      "name",
-      "description",
-      "difficulty_id",
-      "mealtime"
-    ];
+        if (this._withDifficultyJoin) {
+            const difficultyAttributes: SQLAttributes = this._difficultyFacade.getSQLAttributes(
+                excludedSQLAttributes
+            );
+            recipeAttributes.addSqlAttributes(difficultyAttributes);
+        }
 
-    const recipeAttributes: SQLAttributes = super.getSQLAttributes(
-      excludedSQLAttributes,
-      sqlAttributes
-    );
-
-    if (this._withDifficultyJoin) {
-      const difficultyAttributes: SQLAttributes = this._difficultyFacade.getSQLAttributes(
-        excludedSQLAttributes
-      );
-      recipeAttributes.addSqlAttributes(difficultyAttributes);
+        return recipeAttributes;
     }
 
-    return recipeAttributes;
-  }
+    /**
+     * inserts a new recipe and returns the created recipe
+     * @param recipe recipe to insert
+     */
+    public async insertRecipe(recipe: Recipe): Promise<Recipe> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(
+            recipe
+        );
+        const result = await this.insert(attributes);
 
-  /**
-   * inserts a new recipe and returns the created recipe
-   * @param recipe recipe to insert
-   */
-  public async insertRecipe(recipe: Recipe): Promise<Recipe> {
-    const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(
-      recipe
-    );
-    const result = await this.insert(attributes);
+        if (result.length > 0) {
+            recipe.id = result[0].insertedId;
+        }
 
-    if (result.length > 0) {
-      recipe.id = result[0].insertedId;
+        return recipe;
     }
 
-    return recipe;
-  }
+    /**
+     * fills the entity
+     * @param result result for filling
+     */
+    public fillEntity(result: any): Recipe {
+        if (!result[this.name("id")]) {
+            return undefined;
+        }
 
-  /**
-   * fills the entity
-   * @param result result for filling
-   */
-  public fillEntity(result: any): Recipe {
-    if (!result[this.name("id")]) {
-      return undefined;
+        const recipe: Recipe = new Recipe();
+
+        this.fillDefaultAttributes(result, recipe);
+
+        if (result[this.name("name")]) {
+            recipe.name = result[this.name("name")];
+        }
+
+        if (result[this.name("description")]) {
+            recipe.description = result[this.name("description")];
+        }
+
+        if (result[this.name("difficulty_id")]) {
+            recipe.difficultyId = result[this.name("difficulty_id")];
+        }
+
+        if (result[this.name("mealtime")]) {
+            recipe.mealtime = result[this.name("mealtime")];
+        }
+
+        if (this._withDifficultyJoin) {
+            const difficulty = this._difficultyFacade.fillEntity(result);
+            if (difficulty) {
+                recipe.difficulty = this._difficultyFacade.fillEntity(result);
+            }
+        }
+
+        return recipe;
     }
 
-    const recipe: Recipe = new Recipe();
+    /**
+     * return common sql attributes for insert and update statement
+     * @param prefix prefix before the sql attribute
+     * @param recipe entity to take values from
+     */
+    protected getSQLValueAttributes(
+        prefix: string,
+        recipe: Recipe
+    ): SQLValueAttributes {
+        const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-    this.fillDefaultAttributes(result, recipe);
+        const nameAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "name",
+            prefix,
+            recipe.name
+        );
+        attributes.addAttribute(nameAttribute);
 
-    if (result[this.name("name")]) {
-      recipe.name = result[this.name("name")];
+        const descriptionAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "description",
+            prefix,
+            recipe.description
+        );
+        attributes.addAttribute(descriptionAttribute);
+
+        const difficultyIdAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "difficulty_id",
+            prefix,
+            recipe.difficultyId
+        );
+        attributes.addAttribute(difficultyIdAttribute);
+
+        const mealtimeAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "mealtime",
+            prefix,
+            recipe.mealtime
+        );
+        attributes.addAttribute(mealtimeAttribute);
+
+        return attributes;
     }
 
-    if (result[this.name("description")]) {
-      recipe.description = result[this.name("description")];
+    /**
+     * creates the joins for the recipe facade and returns them as a list
+     */
+    get joins(): SQLJoin[] {
+        const joins: SQLJoin[] = [];
+
+        if (this._withDifficultyJoin) {
+            const difficultyJoin: SQLBlock = new SQLBlock();
+            difficultyJoin.addText(
+                `${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`
+            );
+            joins.push(
+                new SQLJoin(
+                    this._difficultyFacade.tableName,
+                    this._difficultyFacade.tableAlias,
+                    difficultyJoin,
+                    JoinType.JOIN,
+                    JoinCardinality.ONE_TO_ONE
+                )
+            );
+        }
+
+        return joins;
     }
 
-    if (result[this.name("difficulty_id")]) {
-      recipe.difficultyId = result[this.name("difficulty_id")];
+    /**
+     * returns all sub facade filters of the facade as an array
+     */
+    protected get filters(): Filter[] {
+        return [this.difficultyFacadeFilter];
     }
 
-    if (result[this.name("mealtime")]) {
-      recipe.mealtime = result[this.name("mealtime")];
+    get difficultyFacadeFilter(): Filter {
+        return this._difficultyFacade.filter;
     }
 
-    if (this._withDifficultyJoin) {
-      const difficulty = this._difficultyFacade.fillEntity(result);
-      if (difficulty) {
-        recipe.difficulty = this._difficultyFacade.fillEntity(result);
-      }
+    /**
+     * returns all sub facade order-bys of the facade as an array
+     */
+    protected get orderBys(): Ordering[] {
+        return [this.difficultyFacadeOrderBy];
     }
 
-    return recipe;
-  }
-
-  /**
-   * return common sql attributes for insert and update statement
-   * @param prefix prefix before the sql attribute
-   * @param recipe entity to take values from
-   */
-  protected getSQLValueAttributes(
-    prefix: string,
-    recipe: Recipe
-  ): SQLValueAttributes {
-    const attributes: SQLValueAttributes = new SQLValueAttributes();
-
-    const nameAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "name",
-      prefix,
-      recipe.name
-    );
-    attributes.addAttribute(nameAttribute);
-
-    const descriptionAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "description",
-      prefix,
-      recipe.description
-    );
-    attributes.addAttribute(descriptionAttribute);
-
-    const difficultyIdAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "difficulty_id",
-      prefix,
-      recipe.difficultyId
-    );
-    attributes.addAttribute(difficultyIdAttribute);
-
-    const mealtimeAttribute: SQLValueAttribute = new SQLValueAttribute(
-      "mealtime",
-      prefix,
-      recipe.mealtime
-    );
-    attributes.addAttribute(mealtimeAttribute);
-
-    return attributes;
-  }
-
-  /**
-   * creates the joins for the recipe facade and returns them as a list
-   */
-  get joins(): SQLJoin[] {
-    const joins: SQLJoin[] = [];
-
-    if (this._withDifficultyJoin) {
-      const difficultyJoin: SQLBlock = new SQLBlock();
-      difficultyJoin.addText(
-        `${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`
-      );
-      joins.push(
-        new SQLJoin(
-          this._difficultyFacade.tableName,
-          this._difficultyFacade.tableAlias,
-          difficultyJoin,
-          JoinType.JOIN,
-          JoinCardinality.ONE_TO_ONE
-        )
-      );
+    get difficultyFacadeOrderBy(): Ordering {
+        return this._difficultyFacade.ordering;
     }
 
-    return joins;
-  }
+    get withDifficultyJoin(): boolean {
+        return this._withDifficultyJoin;
+    }
 
-  /**
-   * returns all sub facade filters of the facade as an array
-   */
-  protected get filters(): Filter[] {
-    return [this.difficultyFacadeFilter];
-  }
-
-  get difficultyFacadeFilter(): Filter {
-    return this._difficultyFacade.filter;
-  }
-
-  /**
-   * returns all sub facade order-bys of the facade as an array
-   */
-  protected get orderBys(): Ordering[] {
-    return [this.difficultyFacadeOrderBy];
-  }
-
-  get difficultyFacadeOrderBy(): Ordering {
-    return this._difficultyFacade.ordering;
-  }
-
-  get withDifficultyJoin(): boolean {
-    return this._withDifficultyJoin;
-  }
-
-  set withDifficultyJoin(value: boolean) {
-    this._withDifficultyJoin = value;
-  }
+    set withDifficultyJoin(value: boolean) {
+        this._withDifficultyJoin = value;
+    }
 }

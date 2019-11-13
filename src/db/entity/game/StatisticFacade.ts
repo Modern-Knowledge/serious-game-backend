@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class StatisticFacade extends EntityFacade<Statistic> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {

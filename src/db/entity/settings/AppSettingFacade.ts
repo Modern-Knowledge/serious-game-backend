@@ -8,7 +8,7 @@ import { EntityFacade } from "../EntityFacade";
 export class AppSettingFacade extends EntityFacade<AppSetting> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {

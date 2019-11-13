@@ -27,7 +27,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     private _withTextJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias for facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -68,15 +68,19 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
         /**
          * callback that is called after a text was inserted
          * @param insertId text id that was inserted before
-         * @param attributes attributes to append to
+         * @param sqlValueAttributes attributes to append to
          */
-        const onInsertText = (insertId: number, attributes: SQLValueAttributes) => {
+        const onInsertText = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             helptext.id = insertId;
-            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("helptext_id", this.tableName, helptext.id);
-            attributes.addAttribute(patientIdAttribute);
+            const patientIdAttribute: SQLValueAttribute =
+                new SQLValueAttribute("helptext_id", this.tableName, helptext.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [{facade: this._textFacade, entity: helptext, callBackOnInsert: onInsertText}, {facade: this, entity: helptext}]);
+        await this.insert(attributes, [
+                {facade: this._textFacade, entity: helptext, callBackOnInsert: onInsertText},
+                {facade: this, entity: helptext}
+            ]);
 
         return helptext;
     }
@@ -117,7 +121,10 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
         if (this._withTextJoin) {
             const textJoin: SQLBlock = new SQLBlock();
             textJoin.addText(`${this.tableAlias}.helptext_id = ${this._textFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(
+                new SQLJoin(this._textFacade.tableName, this._textFacade.tableAlias, textJoin,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         return joins;

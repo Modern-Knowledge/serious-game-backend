@@ -27,7 +27,7 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     private _withDifficultyJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -114,7 +114,8 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
         const gameIdAttribute: SQLValueAttribute = new SQLValueAttribute("game_id", prefix, gameSetting.gameId);
         attributes.addAttribute(gameIdAttribute);
 
-        const difficultyId: SQLValueAttribute = new SQLValueAttribute("difficulty_id", prefix, gameSetting.difficultyId);
+        const difficultyId: SQLValueAttribute
+            = new SQLValueAttribute("difficulty_id", prefix, gameSetting.difficultyId);
         attributes.addAttribute(difficultyId);
 
         return attributes;
@@ -129,7 +130,10 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
         if (this._withDifficultyJoin) {
             const difficultyJoin: SQLBlock = new SQLBlock();
             difficultyJoin.addText(`${this.tableAlias}.difficulty_id = ${this._difficultyFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(
+                new SQLJoin(this._difficultyFacade.tableName, this._difficultyFacade.tableAlias, difficultyJoin,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         return joins;

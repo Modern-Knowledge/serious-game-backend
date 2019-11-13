@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
  */
 export class GameFacade extends EntityFacade<Game> {
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -31,7 +31,7 @@ export class GameFacade extends EntityFacade<Game> {
 
     /**
      * inserts a new game and returns the created game
-     * @param game
+     * @param game game that should be inserted
      */
     public async insertGame(game: Game): Promise<Game> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(game);

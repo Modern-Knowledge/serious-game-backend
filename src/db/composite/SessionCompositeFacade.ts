@@ -47,13 +47,19 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withGameJoin) {
             const gameJoin: SQLBlock = new SQLBlock();
             gameJoin.addText(`${this._gameFacade.tableAlias}.id = ${this.tableAlias}.game_id`);
-            joins.push(new SQLJoin(this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(
+                this._gameFacade.tableName, this._gameFacade.tableAlias, gameJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         if (this._withPatientJoin) {
             const patientJoin: SQLBlock = new SQLBlock();
             patientJoin.addText(`${this._patientFacade.tableAlias}.patient_id = ${this.tableAlias}.patient_id`);
-            joins.push(new SQLJoin(this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(
+                this._patientFacade.tableName, this._patientFacade.tableAlias, patientJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
 
             joins = joins.concat(this._patientFacade.joins); // add patient joins (user)
         }
@@ -61,7 +67,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withStatisticCompositeJoin) {
             const statisticJoin: SQLBlock = new SQLBlock();
             statisticJoin.addText(`${this._statisticCompositeFacade.tableAlias}.id = ${this.tableAlias}.statistic_id`);
-            joins.push(new SQLJoin(this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias, statisticJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(
+                this._statisticCompositeFacade.tableName, this._statisticCompositeFacade.tableAlias,
+                statisticJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
 
             joins = joins.concat(this._statisticCompositeFacade.joins); // add statistic joins (errortext)
         }
@@ -69,7 +78,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
         if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.id = ${this.tableAlias}.game_setting_id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(new SQLJoin(
+                this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }
@@ -285,7 +297,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     private _withDifficultyJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -389,7 +401,11 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
      * deletes the session, the statistic and the errortextStatistic
      */
     public async deleteSessionComposite(): Promise<number> {
-        return await this.delete([this._statisticCompositeFacade.errortextStatisticFacade, this, this._statisticCompositeFacade]);
+        return await this.delete([
+            this._statisticCompositeFacade.errortextStatisticFacade,
+            this,
+            this._statisticCompositeFacade
+        ]);
     }
 
     /**

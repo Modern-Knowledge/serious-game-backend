@@ -27,7 +27,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     private _withFoodCategoryJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -51,7 +51,8 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         const ingredientAttributes: SQLAttributes = super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
 
         if (this._withFoodCategoryJoin) {
-            const foodCategoryAttributes: SQLAttributes = this._foodCategoryFacade.getSQLAttributes(excludedSQLAttributes);
+            const foodCategoryAttributes: SQLAttributes
+                = this._foodCategoryFacade.getSQLAttributes(excludedSQLAttributes);
             ingredientAttributes.addSqlAttributes(foodCategoryAttributes);
         }
 
@@ -122,7 +123,8 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
         const imageIdAttribute: SQLValueAttribute = new SQLValueAttribute("image_id", prefix, ingredient.imageId);
         attributes.addAttribute(imageIdAttribute);
 
-        const foodCategoryId: SQLValueAttribute = new SQLValueAttribute("food_category_id", prefix, ingredient.foodCategoryId);
+        const foodCategoryId: SQLValueAttribute
+            = new SQLValueAttribute("food_category_id", prefix, ingredient.foodCategoryId);
         attributes.addAttribute(foodCategoryId);
 
         return attributes;
@@ -136,8 +138,13 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
 
         if (this._withFoodCategoryJoin) {
             const foodCategoryFacade: SQLBlock = new SQLBlock();
-            foodCategoryFacade.addText(`${this.tableAlias}.food_category_id = ${this._foodCategoryFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._foodCategoryFacade.tableName, this._foodCategoryFacade.tableAlias, foodCategoryFacade, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            foodCategoryFacade.addText(
+                `${this.tableAlias}.food_category_id = ${this._foodCategoryFacade.tableAlias}.id`
+            );
+            joins.push(
+                new SQLJoin(this._foodCategoryFacade.tableName, this._foodCategoryFacade.tableAlias, foodCategoryFacade,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE
+                ));
         }
 
         return joins;

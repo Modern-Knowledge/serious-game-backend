@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class SmtpLogFacade extends EntityFacade<SmtpLog> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {

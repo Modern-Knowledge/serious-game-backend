@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {

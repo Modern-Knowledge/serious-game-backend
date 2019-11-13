@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class SeverityFacade extends EntityFacade<Severity> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -33,7 +33,7 @@ export class SeverityFacade extends EntityFacade<Severity> {
 
     /**
      * inserts a new severity and returns the created severity
-     * @param severity
+     * @param severity severity to insert
      */
     public async insertSeverity(severity: Severity): Promise<Severity> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(severity);

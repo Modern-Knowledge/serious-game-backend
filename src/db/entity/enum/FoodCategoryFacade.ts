@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -33,7 +33,7 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
 
     /**
      * inserts a new food-category and returns the created food-category
-     * @param foodCategory
+     * @param foodCategory food-category to insert
      */
     public async insertFoodCategory(foodCategory: FoodCategory): Promise<FoodCategory> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(foodCategory);

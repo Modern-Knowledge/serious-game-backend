@@ -26,7 +26,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
     private _withUserJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -72,15 +72,19 @@ export class PatientFacade extends CompositeFacade<Patient> {
         /**
          * callback that is called after a user was inserted
          * @param insertId user id that was inserted before
-         * @param attributes to append to
+         * @param sqlValueAttributes to append to
          */
-        const onInsertUser = (insertId: number, attributes: SQLValueAttributes) => {
+        const onInsertUser = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             patient.id = insertId;
-            const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", this.tableName, patient.id);
-            attributes.addAttribute(patientIdAttribute);
+            const patientIdAttribute: SQLValueAttribute =
+                new SQLValueAttribute("patient_id", this.tableName, patient.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [{facade: this._userFacade, entity: patient, callBackOnInsert: onInsertUser}, {facade: this, entity: patient}]);
+        await this.insert(attributes, [
+                {facade: this._userFacade, entity: patient, callBackOnInsert: onInsertUser},
+                {facade: this, entity: patient}
+            ]);
 
         return patient;
     }
@@ -113,7 +117,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
     /**
      * checks if the given id belongs to a therapist
-     * @param id
+     * @param id id of the user that should be checked
      */
     public async isPatient(id: number): Promise<boolean> {
         const patient = await this.getById(id);
@@ -172,7 +176,10 @@ export class PatientFacade extends CompositeFacade<Patient> {
         if (this._withUserJoin) {
             const userJoin: SQLBlock = new SQLBlock();
             userJoin.addText(`${this.tableAlias}.patient_id = ${this._userFacade.tableAlias}.id`);
-            joins.push(new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            joins.push(
+                new SQLJoin(this._userFacade.tableName, this._userFacade.tableAlias, userJoin,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
         }
 
         return joins;

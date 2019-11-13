@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class LogFacade extends EntityFacade<Log> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -31,7 +31,7 @@ export class LogFacade extends EntityFacade<Log> {
 
     /**
      * inserts a new log and returns the id of the created log
-     * @param log
+     * @param log log that should be inserted
      */
     public async insertLog(log: Log): Promise<Log> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(log);

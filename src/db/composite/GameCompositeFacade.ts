@@ -53,7 +53,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     private _withErrortextTextJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the composite-facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -145,7 +145,10 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withGameSettingsJoin) {
             const gameSettingJoin: SQLBlock = new SQLBlock();
             gameSettingJoin.addText(`${this._gameSettingsFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias, gameSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(
+                new SQLJoin(this._gameSettingsFacade.tableName, this._gameSettingsFacade.tableAlias,
+                    gameSettingJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY)
+            );
 
             joins = joins.concat(this._gameSettingsFacade.joins); // add game-settings joins (difficulty)
         }
@@ -153,11 +156,18 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withHelptextJoin) {
             const helptextGamesJoin: SQLBlock = new SQLBlock();
             helptextGamesJoin.addText(`${this._helptextsGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias, helptextGamesJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(
+                new SQLJoin(this._helptextsGamesFacade.tableName, this._helptextsGamesFacade.tableAlias,
+                    helptextGamesJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY)
+            );
 
             const helptextsJoin: SQLBlock = new SQLBlock();
-            helptextsJoin.addText(`${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`);
-            joins.push(new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias, helptextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            helptextsJoin.addText(
+                `${this._helptextFacade.tableAlias}.helptext_id = ${this._helptextsGamesFacade.tableAlias}.helptext_id`
+            );
+            joins.push(
+                new SQLJoin(this._helptextFacade.tableName, this._helptextFacade.tableAlias,
+                    helptextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
 
             joins = joins.concat(this._helptextFacade.joins); // add helptext joins (text)
         }
@@ -165,11 +175,19 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
         if (this._withErrortextJoin) {
             const errortextGameJoin: SQLBlock = new SQLBlock();
             errortextGameJoin.addText(`${this._errortextGamesFacade.tableAlias}.game_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._errortextGamesFacade.tableName, this._errortextGamesFacade.tableAlias, errortextGameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            joins.push(
+                new SQLJoin(this._errortextGamesFacade.tableName, this._errortextGamesFacade.tableAlias,
+                    errortextGameJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY)
+            );
 
             const errortextsJoin: SQLBlock = new SQLBlock();
-            errortextsJoin.addText(`${this._errortextFacade.tableAlias}.error_id = ${this._errortextGamesFacade.tableAlias}.error_id`);
-            joins.push(new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias, errortextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            errortextsJoin.addText(
+                `${this._errortextFacade.tableAlias}.error_id = ${this._errortextGamesFacade.tableAlias}.error_id`
+            );
+            joins.push(
+                new SQLJoin(this._errortextFacade.tableName, this._errortextFacade.tableAlias,
+                    errortextsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
 
             joins = joins.concat(this._errortextFacade.joins); // add helptext joins (text)
         }

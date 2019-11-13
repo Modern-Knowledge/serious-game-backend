@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class SessionFacade extends EntityFacade<Session> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -21,7 +21,7 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql attributes that should be retrieved from the database.
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -37,7 +37,7 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * fills the entity
+     * Fills the entity.
      * @param result result for filling
      */
     public fillEntity(result: any): Session {
@@ -74,7 +74,7 @@ export class SessionFacade extends EntityFacade<Session> {
 
     /**
      * inserts a new session and returns the created session
-     * @param session
+     * @param session session to insert
      */
     public async insertSession(session: Session): Promise<Session> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(session);
@@ -102,10 +102,12 @@ export class SessionFacade extends EntityFacade<Session> {
         const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", prefix, session.patientId);
         attributes.addAttribute(patientIdAttribute);
 
-        const statisticIdAttribute: SQLValueAttribute = new SQLValueAttribute("statistic_id", prefix, session.statisticId);
+        const statisticIdAttribute: SQLValueAttribute
+            = new SQLValueAttribute("statistic_id", prefix, session.statisticId);
         attributes.addAttribute(statisticIdAttribute);
 
-        const gameSettingId: SQLValueAttribute = new SQLValueAttribute("game_setting_id", prefix, session.gameSettingId);
+        const gameSettingId: SQLValueAttribute
+            = new SQLValueAttribute("game_setting_id", prefix, session.gameSettingId);
         attributes.addAttribute(gameSettingId);
 
         const dateAttribute: SQLValueAttribute = new SQLValueAttribute("date", prefix, session.date);

@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class UserFacade extends EntityFacade<User> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -25,13 +25,18 @@ export class UserFacade extends EntityFacade<User> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["email", "password", "forename", "lastname", "gender", "last_login", "failed_login_attempts", "login_cooldown", "status", "resetcode", "resetcode_validuntil"];
+        const sqlAttributes: string[] =
+            [
+                "email", "password", "forename", "lastname",
+                "gender", "last_login", "failed_login_attempts",
+                "login_cooldown", "status", "resetcode", "resetcode_validuntil"
+            ];
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
 
     /**
      * inserts a new user and returns the created user
-     * @param user
+     * @param user user that should be inserted
      */
     public async insertUser(user: User): Promise<User> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(user);
@@ -156,10 +161,12 @@ export class UserFacade extends EntityFacade<User> {
         const lastLoginAttribute: SQLValueAttribute = new SQLValueAttribute("last_login", prefix, user.lastLogin);
         attributes.addAttribute(lastLoginAttribute);
 
-        const failedLoginAttemptsAttribute: SQLValueAttribute = new SQLValueAttribute("failed_login_attempts", prefix, user.failedLoginAttempts);
+        const failedLoginAttemptsAttribute: SQLValueAttribute
+            = new SQLValueAttribute("failed_login_attempts", prefix, user.failedLoginAttempts);
         attributes.addAttribute(failedLoginAttemptsAttribute);
 
-        const loginCooldownAttribute: SQLValueAttribute = new SQLValueAttribute("login_cooldown", prefix, user.loginCoolDown);
+        const loginCooldownAttribute: SQLValueAttribute
+            = new SQLValueAttribute("login_cooldown", prefix, user.loginCoolDown);
         attributes.addAttribute(loginCooldownAttribute);
 
         const statusAttribute: SQLValueAttribute = new SQLValueAttribute("status", prefix, user.status);
@@ -168,7 +175,8 @@ export class UserFacade extends EntityFacade<User> {
         const resetcodeAttribute: SQLValueAttribute = new SQLValueAttribute("resetcode", prefix, user.resetcode);
         attributes.addAttribute(resetcodeAttribute);
 
-        const resetcodeValidUntilAttribute: SQLValueAttribute = new SQLValueAttribute("resetcode_validuntil", prefix, user.resetcodeValidUntil);
+        const resetcodeValidUntilAttribute: SQLValueAttribute
+            = new SQLValueAttribute("resetcode_validuntil", prefix, user.resetcodeValidUntil);
         attributes.addAttribute(resetcodeValidUntilAttribute);
 
         return attributes;

@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -57,7 +57,7 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
     /**
      * inserts a new session and returns the created session
-     * @param patientSetting
+     * @param patientSetting patientSetting that should be inserted
      */
     public async insertPatientSetting(patientSetting: PatientSetting): Promise<PatientSetting> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patientSetting);
@@ -79,10 +79,12 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     protected getSQLValueAttributes(prefix: string, patientSetting: PatientSetting): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute("patient_id", prefix, patientSetting.patientId);
+        const patientIdAttribute: SQLValueAttribute
+            = new SQLValueAttribute("patient_id", prefix, patientSetting.patientId);
         attributes.addAttribute(patientIdAttribute);
 
-        const neglectAttribute: SQLValueAttribute = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
+        const neglectAttribute: SQLValueAttribute
+            = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
         attributes.addAttribute(neglectAttribute);
 
         return attributes;

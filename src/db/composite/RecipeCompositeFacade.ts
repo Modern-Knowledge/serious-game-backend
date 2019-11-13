@@ -38,7 +38,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     private _withFoodCategoryJoin: boolean;
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the composite facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -104,12 +104,22 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
 
         if (this._withIngredientsJoin) {
             const recipesIngredientsJoin: SQLBlock = new SQLBlock();
-            recipesIngredientsJoin.addText(`${this._recipeIngredientFacade.tableAlias}.recipe_id = ${this.tableAlias}.id`);
-            joins.push(new SQLJoin(this._recipeIngredientFacade.tableName, this._recipeIngredientFacade.tableAlias, recipesIngredientsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY));
+            recipesIngredientsJoin.addText(
+                `${this._recipeIngredientFacade.tableAlias}.recipe_id = ${this.tableAlias}.id`
+            );
+            joins.push(new SQLJoin(
+                this._recipeIngredientFacade.tableName, this._recipeIngredientFacade.tableAlias, recipesIngredientsJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_MANY)
+            );
 
             const ingredientsJoin: SQLBlock = new SQLBlock();
-            ingredientsJoin.addText(`${this._ingredientFacade.tableAlias}.id = ${this._recipeIngredientFacade.tableAlias}.ingredient_id`);
-            joins.push(new SQLJoin(this._ingredientFacade.tableName, this._ingredientFacade.tableAlias, ingredientsJoin, JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE));
+            ingredientsJoin.addText(
+                `${this._ingredientFacade.tableAlias}.id = ${this._recipeIngredientFacade.tableAlias}.ingredient_id`
+            );
+            joins.push(new SQLJoin(
+                this._ingredientFacade.tableName, this._ingredientFacade.tableAlias, ingredientsJoin,
+                JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
 
             joins = joins.concat(this._ingredientFacade.joins); // add ingredient joins (food_categories)
         }

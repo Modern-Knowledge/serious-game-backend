@@ -11,7 +11,7 @@ import { EntityFacade } from "../EntityFacade";
 export class TextFacade extends EntityFacade<Text> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {

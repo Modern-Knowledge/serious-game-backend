@@ -10,7 +10,7 @@ import { EntityFacade } from "../EntityFacade";
 export class WordFacade extends EntityFacade<Word> {
 
     /**
-     * @param tableAlias
+     * @param tableAlias table-alias of the facade
      */
     public constructor(tableAlias?: string) {
         if (tableAlias) {
@@ -32,7 +32,7 @@ export class WordFacade extends EntityFacade<Word> {
 
     /**
      * inserts a new word and returns the created word
-     * @param word
+     * @param word word that should be inserted
      */
     public async insertWord(word: Word): Promise<Word> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(word);
