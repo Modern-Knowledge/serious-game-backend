@@ -5,7 +5,7 @@
  */
 
 import { SmtpMessage } from "../../mail-texts/SmtpMessage";
-import { TemplateParser } from "../TemplateParser";
+import { TemplateParser } from "../../lib/utils/TemplateParser";
 import { Attachment } from "./Attachment";
 import { MailPriority } from "./MailPriority";
 import { Recipient } from "./Recipient";
