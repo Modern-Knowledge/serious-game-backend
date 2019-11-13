@@ -11,22 +11,22 @@ import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { Session } from "../lib/models/Session";
 import { Statistic } from "../lib/models/Statistic";
 import {
-  HttpResponse,
-  HttpResponseMessage,
-  HttpResponseMessageSeverity,
-  HttpResponseStatus
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {
-  failedValidation400Response,
-  http4xxResponse
+    failedValidation400Response,
+    http4xxResponse
 } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import {
-  checkAuthentication,
-  checkAuthenticationToken
+    checkAuthentication,
+    checkAuthenticationToken
 } from "../util/middleware/authenticationMiddleware";
 import {
-  checkTherapistPermission
+    checkTherapistPermission
 } from "../util/middleware/permissionMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { rVM } from "../util/validation/validationMessages";
@@ -35,8 +35,8 @@ const router = express.Router();
 const controllerName = "SessionController";
 
 const authenticationMiddleware = [
-  checkAuthenticationToken,
-  checkAuthentication
+    checkAuthenticationToken,
+    checkAuthentication
 ];
 
 /**
@@ -51,59 +51,59 @@ const authenticationMiddleware = [
  * - token: authentication token
  */
 router.get(
-  "/:id",
-  authenticationMiddleware,
-  [
-    check("id")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric"))
-  ],
-  async (req: Request, res: Response, next: any) => {
-    if (!checkRouteValidation(controllerName, req, res)) {
-      return failedValidation400Response(req, res);
+    "/:id",
+    authenticationMiddleware,
+    [
+        check("id")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric"))
+    ],
+    async (req: Request, res: Response, next: any) => {
+        if (!checkRouteValidation(controllerName, req, res)) {
+            return failedValidation400Response(req, res);
+        }
+
+        const id = Number(req.params.id);
+        const sessionCompositeFacade = new SessionCompositeFacade();
+
+        try {
+            const session = await sessionCompositeFacade.getById(id);
+
+            if (!session) {
+                logEndpoint(controllerName, `Session with id ${id} not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.DANGER,
+                        `Die Spielsitzung wurde nicht gefunden!`
+                    )
+                ]);
+            }
+
+            logEndpoint(
+                controllerName,
+                `Session with id ${id} was successfully loaded!`,
+                req
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new HttpResponse(
+                        HttpResponseStatus.SUCCESS,
+                        { session, token: res.locals.authorizationToken },
+                        [
+                            new HttpResponseMessage(
+                                HttpResponseMessageSeverity.SUCCESS,
+                                `Spielsitzung wurde erfolgreich geladen!`
+                            )
+                        ]
+                    )
+                );
+        } catch (error) {
+            return next(error);
+        }
     }
-
-    const id = Number(req.params.id);
-    const sessionCompositeFacade = new SessionCompositeFacade();
-
-    try {
-      const session = await sessionCompositeFacade.getById(id);
-
-      if (!session) {
-        logEndpoint(controllerName, `Session with id ${id} not found!`, req);
-
-        return http4xxResponse(res, [
-          new HttpResponseMessage(
-            HttpResponseMessageSeverity.DANGER,
-            `Die Spielsitzung wurde nicht gefunden!`
-          )
-        ]);
-      }
-
-      logEndpoint(
-        controllerName,
-        `Session with id ${id} was successfully loaded!`,
-        req
-      );
-
-      return res
-        .status(200)
-        .json(
-          new HttpResponse(
-            HttpResponseStatus.SUCCESS,
-            { session, token: res.locals.authorizationToken },
-            [
-              new HttpResponseMessage(
-                HttpResponseMessageSeverity.SUCCESS,
-                `Spielsitzung wurde erfolgreich geladen!`
-              )
-            ]
-          )
-        );
-    } catch (error) {
-      return next(error);
-    }
-  }
 );
 
 /**
@@ -119,49 +119,49 @@ router.get(
  * - token: authentication token
  */
 router.get(
-  "/patient/:id",
-  authenticationMiddleware,
-  [
-    check("id")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric"))
-  ],
-  async (req: Request, res: Response, next: any) => {
-    if (!checkRouteValidation(controllerName, req, res)) {
-      return failedValidation400Response(req, res);
+    "/patient/:id",
+    authenticationMiddleware,
+    [
+        check("id")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric"))
+    ],
+    async (req: Request, res: Response, next: any) => {
+        if (!checkRouteValidation(controllerName, req, res)) {
+            return failedValidation400Response(req, res);
+        }
+
+        const id = Number(req.params.id);
+        const sessionCompositeFacade = new SessionCompositeFacade();
+        sessionCompositeFacade.filter.addFilterCondition("patient_id", id);
+
+        try {
+            const sessions: Session[] = await sessionCompositeFacade.get();
+
+            logEndpoint(
+                controllerName,
+                `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`,
+                req
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new HttpResponse(
+                        HttpResponseStatus.SUCCESS,
+                        { sessions, token: res.locals.authorizationToken },
+                        [
+                            new HttpResponseMessage(
+                                HttpResponseMessageSeverity.SUCCESS,
+                                `Die Spielsitzungen wurden erfolgreich geladen!`
+                            )
+                        ]
+                    )
+                );
+        } catch (error) {
+            return next(error);
+        }
     }
-
-    const id = Number(req.params.id);
-    const sessionCompositeFacade = new SessionCompositeFacade();
-    sessionCompositeFacade.filter.addFilterCondition("patient_id", id);
-
-    try {
-      const sessions: Session[] = await sessionCompositeFacade.get();
-
-      logEndpoint(
-        controllerName,
-        `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`,
-        req
-      );
-
-      return res
-        .status(200)
-        .json(
-          new HttpResponse(
-            HttpResponseStatus.SUCCESS,
-            { sessions, token: res.locals.authorizationToken },
-            [
-              new HttpResponseMessage(
-                HttpResponseMessageSeverity.SUCCESS,
-                `Die Spielsitzungen wurden erfolgreich geladen!`
-              )
-            ]
-          )
-        );
-    } catch (error) {
-      return next(error);
-    }
-  }
 );
 
 /**
@@ -176,77 +176,77 @@ router.get(
  * - token: authentication token
  */
 router.delete(
-  "/:id",
-  authenticationMiddleware,
-  checkTherapistPermission,
-  [
-    check("id")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric"))
-  ],
-  async (req: Request, res: Response, next: any) => {
-    if (!checkRouteValidation(controllerName, req, res)) {
-      return failedValidation400Response(req, res);
+    "/:id",
+    authenticationMiddleware,
+    checkTherapistPermission,
+    [
+        check("id")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric"))
+    ],
+    async (req: Request, res: Response, next: any) => {
+        if (!checkRouteValidation(controllerName, req, res)) {
+            return failedValidation400Response(req, res);
+        }
+
+        const id = Number(req.params.id);
+        const sessionCompositeFacade = new SessionCompositeFacade();
+
+        try {
+            // check if session exists
+            const session: Session = await sessionCompositeFacade.getById(id);
+
+            if (!session) {
+                logEndpoint(
+                    controllerName,
+                    `Session with id ${id} was not found!`,
+                    req
+                );
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.DANGER,
+                        `Die Spielsitzung wurde nicht gefunden!`
+                    )
+                ]);
+            }
+
+            sessionCompositeFacade.filter.addFilterCondition("id", session.id);
+            sessionCompositeFacade.statisticFacadeFilter.addFilterCondition(
+                "id",
+                session.statisticId
+            );
+            sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition(
+                "statistic_id",
+                session.statisticId
+            );
+
+            await sessionCompositeFacade.deleteSessionComposite();
+
+            logEndpoint(
+                controllerName,
+                `Session with id ${id} was successfully deleted!`,
+                req
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new HttpResponse(
+                        HttpResponseStatus.SUCCESS,
+                        { token: res.locals.authorizationToken },
+                        [
+                            new HttpResponseMessage(
+                                HttpResponseMessageSeverity.SUCCESS,
+                                `Spielsitzung wurde erfolgreich gelöscht!`
+                            )
+                        ]
+                    )
+                );
+        } catch (error) {
+            return next(error);
+        }
     }
-
-    const id = Number(req.params.id);
-    const sessionCompositeFacade = new SessionCompositeFacade();
-
-    try {
-      // check if session exists
-      const session: Session = await sessionCompositeFacade.getById(id);
-
-      if (!session) {
-        logEndpoint(
-          controllerName,
-          `Session with id ${id} was not found!`,
-          req
-        );
-
-        return http4xxResponse(res, [
-          new HttpResponseMessage(
-            HttpResponseMessageSeverity.DANGER,
-            `Die Spielsitzung wurde nicht gefunden!`
-          )
-        ]);
-      }
-
-      sessionCompositeFacade.filter.addFilterCondition("id", session.id);
-      sessionCompositeFacade.statisticFacadeFilter.addFilterCondition(
-        "id",
-        session.statisticId
-      );
-      sessionCompositeFacade.errortextStatisticFacadeFilter.addFilterCondition(
-        "statistic_id",
-        session.statisticId
-      );
-
-      await sessionCompositeFacade.deleteSessionComposite();
-
-      logEndpoint(
-        controllerName,
-        `Session with id ${id} was successfully deleted!`,
-        req
-      );
-
-      return res
-        .status(200)
-        .json(
-          new HttpResponse(
-            HttpResponseStatus.SUCCESS,
-            { token: res.locals.authorizationToken },
-            [
-              new HttpResponseMessage(
-                HttpResponseMessageSeverity.SUCCESS,
-                `Spielsitzung wurde erfolgreich gelöscht!`
-              )
-            ]
-          )
-        );
-    } catch (error) {
-      return next(error);
-    }
-  }
 );
 
 /**
@@ -268,116 +268,120 @@ router.delete(
  * - token: authentication token
  */
 router.post(
-  "/",
-  authenticationMiddleware,
-  [
-    check("_gameId")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric")),
+    "/",
+    authenticationMiddleware,
+    [
+        check("_gameId")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric")),
 
-    check("_patientId")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric")),
+        check("_patientId")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric")),
 
-    check("_gameSettingId")
-      .isNumeric()
-      .withMessage(rVM("id", "numeric")),
+        check("_gameSettingId")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric")),
 
-    check("_elapsedTime")
-        .isInt({min: 0})
-        .withMessage(rVM("id", "numeric"))
+        check("_elapsedTime")
+            .isInt({min: 0})
+            .withMessage(rVM("id", "numeric"))
 
-  ],
-  async (req: Request, res: Response, next: any) => {
-    if (!checkRouteValidation(controllerName, req, res)) {
-      return failedValidation400Response(req, res);
+    ],
+    async (req: Request, res: Response, next: any) => {
+        if (!checkRouteValidation(controllerName, req, res)) {
+            return failedValidation400Response(req, res);
+        }
+
+        const gameFacade = new GameFacade();
+        const patientFacade = new PatientFacade();
+        const gameSettingFacade = new GameSettingFacade();
+
+        const sessionFacade = new SessionFacade();
+        const session = new Session().deserialize(req.body);
+        session.date = new Date();
+
+        const statisticFacade = new StatisticFacade();
+        const statistic = new Statistic();
+        statistic.startTime = new Date();
+        statistic.endTime = moment(statistic.startTime)
+            .add("ms", req.body._elapsedTime)
+            .toDate();
+
+        try {
+            // check if game exists
+            const game = await gameFacade.getById(req.body._gameId);
+            if (!game) { // game does not exist
+                logEndpoint(controllerName, `Game with id ${req.body._gameId} was not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                        `Spiel mit ID ${req.body._gameId} wurde nicht gefunden!`)
+                ]);
+            }
+
+            // check if patient exists
+            const patient = await patientFacade.getById(req.body._patientId);
+            if (!patient) { // game does not exist
+                logEndpoint(controllerName, `Patient with id ${req.body._patientId} was not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                        `PatientIm mit ID ${req.body._patientId} wurde nicht gefunden!`)
+                ]);
+            }
+
+            // check if game setting exists
+            const gameSetting = await gameSettingFacade.getById(req.body._gameSettingId);
+            if (!gameSetting) { // game does not exist
+                logEndpoint(controllerName,
+                    `GameSetting with id ${req.body._gameSettingId} was not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                        `Spieleinstelung mit ID ${req.body._gameSettingId} wurde nicht gefunden!`)
+                ]);
+            }
+
+            // insert statistic
+            const insertedStatistic = await statisticFacade.insertStatistic(statistic);
+
+            logEndpoint(
+                controllerName,
+                `Statistic with id ${insertedStatistic.id} for new session was successfully created!`,
+                req
+            );
+
+            session.statisticId = insertedStatistic.id;
+            session.statistic = insertedStatistic;
+
+            // insert statistic
+            const insertedSession = await sessionFacade.insertSession(session);
+
+            logEndpoint(
+                controllerName,
+                `Session with id ${insertedSession.id} was successfully created!`,
+                req
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new HttpResponse(
+                        HttpResponseStatus.SUCCESS,
+                        { session: insertedSession, token: res.locals.authorizationToken },
+                        [
+                            new HttpResponseMessage(
+                                HttpResponseMessageSeverity.SUCCESS,
+                                `Spielsitzung wurde erfolgreich erstellt`
+                            )
+                        ]
+                    )
+                );
+        } catch (error) {
+            return next(error);
+        }
     }
-
-    const gameFacade = new GameFacade();
-    const patientFacade = new PatientFacade();
-    const gameSettingFacade = new GameSettingFacade();
-
-    const sessionFacade = new SessionFacade();
-    const session = new Session().deserialize(req.body);
-    session.date = new Date();
-
-    const statisticFacade = new StatisticFacade();
-    const statistic = new Statistic();
-    statistic.startTime = new Date();
-    statistic.endTime = moment(statistic.startTime)
-      .add("ms", req.body._elapsedTime)
-      .toDate();
-
-    try {
-      // check if game exists
-      const game = await gameFacade.getById(req.body._gameId);
-      if (!game) { // game does not exist
-          logEndpoint(controllerName, `Game with id ${req.body._gameId} was not found!`, req);
-
-          return http4xxResponse(res, [
-            new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Spiel mit ID ${req.body._gameId} wurde nicht gefunden!`)
-          ]);
-      }
-
-      // check if patient exists
-      const patient = await patientFacade.getById(req.body._patientId);
-      if (!patient) { // game does not exist
-        logEndpoint(controllerName, `Patient with id ${req.body._patientId} was not found!`, req);
-
-        return http4xxResponse(res, [
-          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIm mit ID ${req.body._patientId} wurde nicht gefunden!`)
-        ]);
-      }
-
-      // check if game setting exists
-      const gameSetting = await gameSettingFacade.getById(req.body._gameSettingId);
-      if (!gameSetting) { // game does not exist
-        logEndpoint(controllerName, `GameSetting with id ${req.body._gameSettingId} was not found!`, req);
-
-        return http4xxResponse(res, [
-          new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Spieleinstelung mit ID ${req.body._gameSettingId} wurde nicht gefunden!`)
-        ]);
-      }
-
-      // insert statistic
-      const insertedStatistic = await statisticFacade.insertStatistic(statistic);
-
-      logEndpoint(
-        controllerName,
-        `Statistic with id ${insertedStatistic.id} for new session was successfully created!`,
-        req
-      );
-
-      session.statisticId = insertedStatistic.id;
-      session.statistic = insertedStatistic;
-
-      // insert statistic
-      const insertedSession = await sessionFacade.insertSession(session);
-
-      logEndpoint(
-        controllerName,
-        `Session with id ${insertedSession.id} was successfully created!`,
-        req
-      );
-
-      return res
-        .status(200)
-        .json(
-          new HttpResponse(
-            HttpResponseStatus.SUCCESS,
-            { session: insertedSession, token: res.locals.authorizationToken },
-            [
-              new HttpResponseMessage(
-                HttpResponseMessageSeverity.SUCCESS,
-                `Spielsitzung wurde erfolgreich erstellt`
-              )
-            ]
-          )
-        );
-    } catch (error) {
-      return next(error);
-    }
-  }
 );
 
 export default router;

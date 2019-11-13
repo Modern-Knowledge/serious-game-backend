@@ -35,7 +35,8 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * response:
  * - logs: all logs of the application
  */
-router.get("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, checkTherapistAdminPermission,
+    async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
     facade.addOrderBy("id", SQLOrder.ASC);
 
@@ -130,7 +131,8 @@ router.post("/", async (req: Request, res: Response, next: any) => {
                     insertedLogs: insertedLogs.length
                 },
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${insertedLogs.length} Log(s) erfolgreich angelegt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `${insertedLogs.length} Log(s) erfolgreich angelegt!`)
                 ]
             )
         );
@@ -148,7 +150,8 @@ router.post("/", async (req: Request, res: Response, next: any) => {
  * response:
  * - amount of deleted logs
  */
-router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
+    async (req: Request, res: Response, next: any) => {
     const facade: LogFacade = new LogFacade();
 
     // date 3 months in the past
@@ -164,7 +167,8 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {affectedRows, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} Logs wurden erfolgreich gelöscht!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `${affectedRows} Logs wurden erfolgreich gelöscht!`)
                 ]
             )
         );

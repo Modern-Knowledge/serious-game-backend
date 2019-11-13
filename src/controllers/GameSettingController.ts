@@ -3,7 +3,10 @@ import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
-import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
+import { HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -36,7 +39,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {gameSettings, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Spieleinstellungen erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    "Alle Spieleinstellungen erfolgreich geladen!")
             ]
         ));
     } catch (e) {
@@ -74,7 +78,8 @@ router.get("/:id", authenticationMiddleware, [
             logEndpoint(controllerName, `Game-Setting with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Spieleinstellung konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Die Spieleinstellung konnte nicht gefunden werden.`)
             ]);
         }
 
@@ -83,7 +88,8 @@ router.get("/:id", authenticationMiddleware, [
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {gameSetting, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Spieleinstellung wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Die Spieleinstellung wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

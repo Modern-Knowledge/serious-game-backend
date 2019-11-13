@@ -3,7 +3,10 @@ import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
 import { GameCompositeFacade } from "../db/composite/GameCompositeFacade";
-import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
+import { HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";

@@ -10,6 +10,7 @@ import { SmtpMessage } from "./SmtpMessage";
  */
 const passwordResettet = new SmtpMessage();
 
+// tslint:disable-next-line:no-hardcoded-credentials
 passwordResettet.subject = "Ihr Passwort wurde zurückgesetzt!";
 
 passwordResettet.html = `

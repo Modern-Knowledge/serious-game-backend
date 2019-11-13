@@ -1,20 +1,20 @@
-import express, { Request, Response } from 'express';
-import { check } from 'express-validator';
+import express, { Request, Response } from "express";
+import { check } from "express-validator";
 
-import { ErrortextFacade } from '../db/entity/helptext/ErrortextFacade';
-import { ErrortextStatisticFacade } from '../db/entity/helptext/ErrortextStatisticFacade';
-import { ErrortextStatistic } from '../lib/models/ErrortextStatistic';
+import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
+import { ErrortextStatisticFacade } from "../db/entity/helptext/ErrortextStatisticFacade";
+import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
 import {
   HttpResponse,
   HttpResponseMessage,
   HttpResponseMessageSeverity,
   HttpResponseStatus,
-} from '../lib/utils/http/HttpResponse';
-import { failedValidation400Response, http4xxResponse } from '../util/http/httpResponses';
-import { logEndpoint } from '../util/log/endpointLogger';
-import { checkAuthentication, checkAuthenticationToken } from '../util/middleware/authenticationMiddleware';
-import { checkRouteValidation } from '../util/validation/validationHelper';
-import { rVM } from '../util/validation/validationMessages';
+} from "../lib/utils/http/HttpResponse";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 

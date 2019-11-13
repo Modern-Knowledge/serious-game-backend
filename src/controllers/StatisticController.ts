@@ -95,8 +95,11 @@ router.put("/:id", authenticationMiddleware, [
     check("id").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("_startTime")
-        .isISO8601().withMessage(rVM("date", "invalid"))
-        .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes")).withMessage(rVM("date", "wrong_order")),
+        .isISO8601()
+        .withMessage(rVM("date", "invalid"))
+
+        .custom((value, { req }) => moment(value).isBefore(req.body._endTime, "minutes"))
+        .withMessage(rVM("date", "wrong_order")),
 
     check("_endTime")
         .isISO8601().withMessage(rVM("date", "invalid"))
@@ -120,7 +123,8 @@ router.put("/:id", authenticationMiddleware, [
             logEndpoint(controllerName, `Statistic with id ${req.params.id} couldn't be updated!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Statistik konnte nicht aktualisiert werden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Statistik konnte nicht aktualisiert werden!`)
             ]);
         }
 
@@ -130,7 +134,8 @@ router.put("/:id", authenticationMiddleware, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {statistic, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Statistik wurde erfolgreich aktualisiert!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Statistik wurde erfolgreich aktualisiert!`)
                 ]
             )
         );

@@ -17,11 +17,11 @@ router.get("/", (req: Request, res: Response) => {
     return res.status(200).json(
         new HttpResponse(HttpResponseStatus.SUCCESS,
             {
-                version: process.env.VERSION,
                 authors: [
                     {name: "Daniel Kaufmann"},
                     {name: "Florian Mold"},
-                ]
+                ],
+                version: process.env.VERSION,
             }
         )
     );

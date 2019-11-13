@@ -3,7 +3,10 @@ import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
 import { HelptextFacade } from "../db/entity/helptext/HelptextFacade";
-import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
+import { HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -83,7 +86,8 @@ router.get("/:id", authenticationMiddleware, [
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {helptext, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Hilfetext wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Der Hilfetext wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

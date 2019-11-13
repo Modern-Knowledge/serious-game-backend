@@ -111,7 +111,10 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
             ], 401);
         }
 
-        logEndpoint(controllerName, `The user with the id ${id} provided the correct password for changing the password!`, req);
+        logEndpoint(
+            controllerName,
+            `The user with the id ${id} provided the correct password for changing the password!`,
+            req);
 
         user.password = bcrypt.hashSync(newPassword, 12); // set new password
         userFacade.filter.addFilterCondition("id", user.id);
@@ -119,14 +122,19 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
 
         logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 
-        const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
+        const m = new Mail(
+            [user.recipient],
+            passwordResettet,
+            [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
+
         mailTransport.sendMail(m);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Ihr Password wurde erfolgreich geändert!`)
                 ]
             )
         );

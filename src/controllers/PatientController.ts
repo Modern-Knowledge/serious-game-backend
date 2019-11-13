@@ -51,7 +51,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {patients, token: res.locals.authorizationToken} ,
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle PatientInnen wurden erfolgreich geladen!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Alle PatientInnen wurden erfolgreich geladen!`)
                 ]
             )
         );
@@ -178,7 +179,8 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich gelöscht!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `PatientIn mit ID ${id} wurde erfolgreich gelöscht!`)
                 ]
             )
         );
@@ -240,7 +242,8 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
             logEndpoint(controllerName, `Patient with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `PatientIn mit ID ${id} wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `PatientIn mit ID ${id} wurde nicht gefunden!`)
             ]);
         }
 
@@ -258,7 +261,8 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {patient, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`)
                 ]
             )
         );

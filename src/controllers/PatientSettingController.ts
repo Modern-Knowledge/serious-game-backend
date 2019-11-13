@@ -43,7 +43,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {patientSettings, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Patienten-Einstellungen erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    "Alle Patienten-Einstellungen erfolgreich geladen!")
             ]
         ));
     } catch (e) {
@@ -85,7 +86,8 @@ router.get("/:id", authenticationMiddleware, [
             logEndpoint(controllerName, `Patient-Setting with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Patienten-Einstellung konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Die Patienten-Einstellung konnte nicht gefunden werden.`)
             ]);
         }
 
@@ -94,7 +96,8 @@ router.get("/:id", authenticationMiddleware, [
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {patientSetting, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Patienten-Einstellung wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Das Patienten-Einstellung wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

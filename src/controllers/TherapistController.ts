@@ -55,7 +55,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {therapists, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle TherapeutInnen wurden erfolgreich geladen!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Alle TherapeutInnen wurden erfolgreich geladen!`)
                 ]
             )
         );
@@ -213,7 +214,8 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {therapist, token: res.locals.authorizationToken}, [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn wurde erfolgreich aktualisiert!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `TherapeutIn wurde erfolgreich aktualisiert!`)
                 ]
             )
         );
@@ -254,7 +256,8 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde erfolgreich gelöscht!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `TherapeutIn mit ID ${id} wurde erfolgreich gelöscht!`)
                 ]
             )
         );
@@ -295,7 +298,8 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
             logEndpoint(controllerName, `Therapist with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `TherapeutIn mit ID ${id} wurde nicht gefunden!`)
             ]);
         }
 
@@ -304,13 +308,17 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
 
         const affectedRows = await therapistFacade.updateTherapist(therapist);
 
-        logEndpoint(controllerName, `Therapist with id ${id} was ${therapist.accepted ? "accepted" : "not accepted"}`, req);
+        logEndpoint(
+            controllerName,
+            `Therapist with id ${id} was ${therapist.accepted ? "accepted" : "not accepted"}`,
+            req);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `TherapeutIn mit ID ${id} wurde ${therapist.accepted ? "akzeptiert" : "abgelehnt"}!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `TherapeutIn mit ID ${id} wurde ${therapist.accepted ? "akzeptiert" : "abgelehnt"}!`)
                 ]
             )
         );

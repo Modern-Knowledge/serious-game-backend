@@ -30,7 +30,9 @@ const controllerName = "PasswordResetController";
  *
  * /password/reset:
  *      post:
- *          description: Checks if the requesting email exists. Generates a new reset token if none is set or the current one has expired. Sends an email with the token to the user
+ *          description: Checks if the requesting email exists.
+ *          Generates a new reset token if none is set or the current one has expired.
+ *          Sends an email with the token to the user
  *          produces:
  *              - application/json
  *          parameters:
@@ -62,13 +64,16 @@ router.post("/reset", [
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
             ]);
         }
 
         // check if token exists
         if (user.resetcode && user.resetcodeValidUntil && !(moment().isAfter(user.resetcodeValidUntil))) {
-            logEndpoint(controllerName, `No password reset token for ${user.email} was generated, because the current token is still valid!`, req);
+            logEndpoint(controllerName,
+                `No password reset token for ${user.email} was generated, because the current token is still valid!`,
+                req);
         } else {
             // generate token for reset
             setPasswordResetToken(user);
@@ -78,7 +83,11 @@ router.post("/reset", [
             logEndpoint(controllerName, `Password reset token for user with id ${user.id} was generated!`, req);
         }
 
-        const m = new Mail([user.recipient], passwordReset, [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDate(user.resetcodeValidUntil)]);
+        const m = new Mail(
+            [user.recipient],
+            passwordReset,
+            [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDate(user.resetcodeValidUntil)]
+        );
         mailTransport.sendMail(m);
 
         logEndpoint(controllerName, `Password reset token was successfully sent to user with id ${user.id}!`, req);
@@ -92,7 +101,8 @@ router.post("/reset", [
                     }
                 },
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`)
                 ]
             )
         );
@@ -142,7 +152,8 @@ router.post("/reset-password",  [
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
             ]);
         }
 
@@ -154,21 +165,27 @@ router.post("/reset-password",  [
                 logEndpoint(controllerName, `User with id ${user.id} has passed an invalid password reset token!`, req);
 
                 return http4xxResponse(res, [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der eingegebene Code "${token}" ist nicht korrekt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                        `Der eingegebene Code "${token}" ist nicht korrekt!`)
                 ], 400);
 
             } else if (moment().isAfter(user.resetcodeValidUntil)) {
-                logEndpoint(controllerName, `The password reset token for the user with ${user.id} is not valid anymore! (expired at ${user.resetcodeValidUntil})`, req);
+
+                logEndpoint(controllerName,
+                    `The password reset token for the user with ${user.id} is not valid anymore! ` +
+                    `(expired at ${user.resetcodeValidUntil})`, req);
 
                 return http4xxResponse(res, [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                        `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
                 ], 400);
             }
         } else {
             logEndpoint(controllerName, `User with id ${user.id} has not requested a password token!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
             ], 400);
         }
 
@@ -180,14 +197,19 @@ router.post("/reset-password",  [
 
         logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 
-        const m = new Mail([user.recipient], passwordResettet, [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]);
+        const m = new Mail(
+            [user.recipient],
+            passwordResettet,
+            [user.fullNameWithSirOrMadam, formatDateTime(), process.env.SUPPORT_MAIL || ""]
+        );
         mailTransport.sendMail(m);
 
         return res.status(200).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 undefined,
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Ihr Password wurde erfolgreich geändert!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Ihr Password wurde erfolgreich geändert!`)
                 ]
             )
         );

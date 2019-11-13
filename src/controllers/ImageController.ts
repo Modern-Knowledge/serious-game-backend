@@ -41,7 +41,8 @@ router.get("/:id", authenticationMiddleware, [
             logEndpoint(controllerName, `The image with id ${id} does not exist!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Bild mit der ID ${id} wurde nicht gefunden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Das Bild mit der ID ${id} wurde nicht gefunden!`)
             ]);
         }
 

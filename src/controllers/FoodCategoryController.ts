@@ -3,7 +3,10 @@ import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
 import { FoodCategoryFacade } from "../db/entity/enum/FoodCategoryFacade";
-import { HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity, HttpResponseStatus } from "../lib/utils/http/HttpResponse";
+import { HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus } from "../lib/utils/http/HttpResponse";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -34,7 +37,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {foodCategories, token: res.locals.authorizationToken}, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Alle Lebensmittelkategorien erfolgreich geladen!")
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    "Alle Lebensmittelkategorien erfolgreich geladen!")
             ]
         ));
     } catch (e) {
@@ -72,7 +76,8 @@ router.get("/:id", authenticationMiddleware, [
             logEndpoint(controllerName, `Food category with id ${id} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die Lebensmittelkategorie konnte nicht gefunden werden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Die Lebensmittelkategorie konnte nicht gefunden werden.`)
             ]);
         }
 
@@ -81,7 +86,8 @@ router.get("/:id", authenticationMiddleware, [
         return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {foodCategory, token: res.locals.authorizationToken},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Lebensmittelkategorie wurde erfolgreich gefunden.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Die Lebensmittelkategorie wurde erfolgreich gefunden.`)
             ]
         ));
     } catch (e) {

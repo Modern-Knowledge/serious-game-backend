@@ -80,16 +80,22 @@ router.post("/login", [
             logEndpoint(controllerName, `Therapist with id ${reqUser.id} tried to login, but is not accepted!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
+                    `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! ` +
+                    `Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
             ], 400);
         }
 
         // check if user is allowed to login (loginCoolDown)
         if (reqUser.loginCoolDown && moment().isBefore(reqUser.loginCoolDown)) {
-            logEndpoint(controllerName, `The account of the user with the id ${reqUser.id} is locked until ${formatDateTime(reqUser.loginCoolDown)}!`, req);
+            logEndpoint(controllerName, `The account of the user with the id ${reqUser.id} is ` +
+                `locked until ${formatDateTime(reqUser.loginCoolDown)}!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING, `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler fehlgeschlagener Loginversuche gesperrt ist. Ihr Account ist ab ${formatDateTime(reqUser.loginCoolDown)} wieder freigeschalten.`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
+                    `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler ` +
+                    `fehlgeschlagener Loginversuche gesperrt ist. ` +
+                    `Ihr Account ist ab ${formatDateTime(reqUser.loginCoolDown)} wieder freigeschalten.`)
             ], 400);
         }
 
@@ -106,19 +112,29 @@ router.post("/login", [
             const maxFailedLoginAttempts = Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 10;
 
             if (reqUser.failedLoginAttempts > maxFailedLoginAttempts) { // lock user
-                reqUser.loginCoolDown = moment().add((Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) * maxFailedLoginAttempts / 3, "hours").toDate();
-                logEndpoint(controllerName, `The account of the user with the id ${reqUser.id} has too many failed login attempts and gets locked until ${formatDateTime(reqUser.loginCoolDown)}`, req);
+                reqUser.loginCoolDown =
+                    moment().add(
+                        (Number(process.env.LOGIN_COOLDOWN_TIME_HOURS) || 1) *
+                        maxFailedLoginAttempts / 3, "hours").toDate();
+
+                logEndpoint(controllerName,
+                    `The account of the user with the id ${reqUser.id} has ` +
+                    `too many failed login attempts and gets locked until ${formatDateTime(reqUser.loginCoolDown)}`,
+                    req);
 
                 additionalMessages.push(
                     new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
-                        `Sie haben zu viele fehlgeschlagene Login-Versuche (${reqUser.failedLoginAttempts}) seit dem letzten erfolgreichen Login. Ihr Account ist bis zum ${formatDateTime(reqUser.loginCoolDown)} gesperrt!`)
+                        `Sie haben zu viele fehlgeschlagene Login-Versuche (${reqUser.failedLoginAttempts}) ` +
+                        `seit dem letzten erfolgreichen Login. ` +
+                        `Ihr Account ist bis zum ${formatDateTime(reqUser.loginCoolDown)} gesperrt!`)
                 );
             }
 
             await userFacade.updateUser(reqUser); // increase failed login attempts
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
                 ...additionalMessages
             ], 401);
         }

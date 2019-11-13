@@ -80,7 +80,9 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
  * - affectedRows: amount of deleted smtp-logs
  * - token: authentication token
  */
-router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, async (req: Request, res: Response, next: any) => {
+router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
+    async (req: Request, res: Response, next: any) => {
+
     const facade: SmtpLogFacade = new SmtpLogFacade();
 
     // date 3 months in the past
@@ -96,7 +98,8 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission, asyn
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {affectedRows, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `${affectedRows} SMTP-Logs wurden erfolgreich gelöscht!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `${affectedRows} SMTP-Logs wurden erfolgreich gelöscht!`)
                 ]
             )
         );
