@@ -67,7 +67,9 @@ import { databaseConnection } from "./util/db/databaseConnection";
 import { inProduction, inTestMode, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 
+// tslint:disable-next-line:no-var-requires
 const marv = require("marv/api/promise"); // <-- Promise API
+// tslint:disable-next-line:no-var-requires
 const driver = require("marv-mysql-driver");
 /**
  * runs multiple migrations based on .env variables
