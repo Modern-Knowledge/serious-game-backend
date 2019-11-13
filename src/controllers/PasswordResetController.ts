@@ -26,8 +26,6 @@ const router = express.Router();
 const controllerName = "PasswordResetController";
 
 /**
- * @swagger
- *
  * /password/reset:
  *      post:
  *          description: Checks if the requesting email exists.

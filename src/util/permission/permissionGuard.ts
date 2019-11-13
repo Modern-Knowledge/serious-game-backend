@@ -1,4 +1,4 @@
-import { UserInterface } from "../../lib/interfaces/UserInterface";
+import { IUserInterface } from "../../lib/interfaces/IUserInterface";
 import { User } from "../../lib/models/User";
 import { loggerString } from "../Helper";
 import logger from "../log/logger";
@@ -14,7 +14,7 @@ import logger from "../log/logger";
  * @param authUser authUser to validate permission
  * @param resources resource to check
  */
-export function validatePermission(authUser: User, resources: UserInterface[]): boolean {
+export function validatePermission(authUser: User, resources: IUserInterface[]): boolean {
     logger.debug(`${loggerString(__dirname, "permissionGuard", "validatePermission")}`);
 
     for (const item of resources) { // checks every resource
