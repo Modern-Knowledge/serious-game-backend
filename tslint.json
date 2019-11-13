@@ -3,33 +3,16 @@
         "deprecation": {
             "severity": "warn"
         },
-        "class-name": true,
-        "interface-name": true,
         "max-classes-per-file": false,
-        "member-access": true,
-        "comment-format": [
-            true,
-            "check-space"
-        ],
         "indent": [
             true,
             "spaces",
             4
         ],
-        "no-inferrable-types": [
-            true,
-            "ignore-params"
-        ],
         "one-line": [
             true,
             "check-open-brace",
             "check-whitespace"
-        ],
-        "no-var-keyword": true,
-        "quotemark": [
-            true,
-            "double",
-            "avoid-escape"
         ],
         "semicolon": [
             true,
@@ -42,39 +25,8 @@
             "check-format",
             "allow-leading-underscore"
         ],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-module",
-            "check-separator",
-            "check-type"
-        ],
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            },
-            {
-                "call-signature": "onespace",
-                "index-signature": "onespace",
-                "parameter": "onespace",
-                "property-declaration": "onespace",
-                "variable-declaration": "onespace"
-            }
-        ],
-        "object-literal-key-quotes": [
-            true,
-            "as-needed"
-        ],
         "no-non-null-assertion": true,
         "no-redundant-jsdoc": true,
-        "object-literal-sort-keys": true,
         "ordered-imports": true,
         "trailing-comma": false
     },
