@@ -4,8 +4,8 @@
  * https://nodemailer.com/message/
  */
 
-import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 import { TemplateParser } from "../../lib/utils/TemplateParser";
+import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 import { Attachment } from "./Attachment";
 import { MailPriority } from "./MailPriority";
 import { Recipient } from "./Recipient";

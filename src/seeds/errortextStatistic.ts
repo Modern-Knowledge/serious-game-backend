@@ -1,6 +1,6 @@
-import { ErrortextStatistic } from '../lib/models/ErrortextStatistic';
-import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from './errortexts';
-import { statistic } from './statistics';
+import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
+import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from "./errortexts";
+import { statistic } from "./statistics";
 
 const mealtimeErrorTextGamesStatistic = new ErrortextStatistic();
 mealtimeErrorTextGamesStatistic.statisticId = statistic.id;

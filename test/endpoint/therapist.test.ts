@@ -1,11 +1,11 @@
+import * as bcrypt from "bcryptjs";
 import request from "supertest";
 import app from "../../src/app";
-import { seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { TherapistFacade } from "../../src/db/entity/user/TherapistFacade";
-import * as bcrypt from "bcryptjs";
+import { Roles } from "../../src/lib/enums/Roles";
 import { Status } from "../../src/lib/enums/Status";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import {
     unacceptedTherapist,
     validAdminTherapist,
@@ -13,7 +13,7 @@ import {
     validPatient1,
     validTherapist
 } from "../../src/seeds/users";
-import { Roles } from "../../src/lib/enums/Roles";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
 
 describe("TherapistController Tests", () => {
 

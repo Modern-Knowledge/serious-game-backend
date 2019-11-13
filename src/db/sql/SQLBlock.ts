@@ -85,13 +85,12 @@ export class SQLBlock extends SQLElement {
             const currElement = this._elements[i];
 
             if (currElement.getElementType() === SQLElementType.SQLKeyword) {
+                // tslint:disable-next-line:no-collapsible-if
                 if (i === 0 || i >= this._elements.length - 1) {
                     this._elements.splice(i, 1);
                     i -= 2;
                     continue;
                 }
-                const prev = this._elements[i - 1];
-                const next = this._elements[i + 1];
             }
 
             if (currElement.getElementType() === SQLElementType.SQLBlock) {

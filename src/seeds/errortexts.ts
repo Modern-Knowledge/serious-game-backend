@@ -1,5 +1,5 @@
-import { Errortext } from '../lib/models/Errortext';
-import { severityEasy } from './severities';
+import { Errortext } from "../lib/models/Errortext";
+import { severityEasy } from "./severities";
 
 const mealtimeError = new Errortext();
 mealtimeError.id = 3;

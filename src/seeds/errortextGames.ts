@@ -1,6 +1,6 @@
-import { ErrortextGame } from '../lib/models/ErrortextGame';
-import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from './errortexts';
-import { game, game3, game4 } from './games';
+import { ErrortextGame } from "../lib/models/ErrortextGame";
+import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from "./errortexts";
+import { game, game3, game4 } from "./games";
 
 const mealtimeErrorTextGames = new ErrortextGame();
 mealtimeErrorTextGames.gameId = game.id;
