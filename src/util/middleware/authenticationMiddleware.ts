@@ -39,7 +39,7 @@ export async function checkAuthentication(req: Request, res: Response, next: any
         if (!user) { // user does not exist
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
-                    `Verifzierung der Authentifikation ist fehlgeschlagen`)
+                    `Verifzierung der Authentifikation ist fehlgeschlagen!`)
             ], 401);
         }
 

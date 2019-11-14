@@ -106,7 +106,9 @@ export async function migrate(): Promise<void> {
     }
 
     if (runDropTable === 1) {
-        logger.info(`${loggerString(__dirname, "", "", __filename)} Drop tables!`);
+        logger.info(
+            `${loggerString(__dirname, "", "", __filename)} Drop tables!`
+        );
         await dropTables();
     } else {
         logger.warn(

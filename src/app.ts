@@ -43,6 +43,17 @@ if (config.error) {
   throw new Error(message);
 }
 
+import { databaseConnection } from "./util/db/databaseConnection";
+
+let connectable;
+databaseConnection.ping().then(() => {
+    logger.info(
+        `${loggerString(__dirname, "", "", __filename)} ` +
+        `Successfully pinged database!`);
+}).catch((reason) => {
+    connectable = reason;
+});
+
 import { migrate } from "./migrationHelper";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
@@ -56,7 +67,9 @@ checkEnvFunction();
 if (!inTestMode()) {
     migrate().then(() => {
         logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
-        `Successfully migrated!`);
+            `Successfully migrated!`);
+    }).catch((error) => {
+        logger.error(`Running migrations failed! (${error.message})`);
     });
 }
 
@@ -73,7 +86,7 @@ app.set("port", process.env.PORT || 3000);
 app.set("env", inProduction() ? "production" : "development");
 
 // options for cors middleware
-const options: cors.CorsOptions = {}; // TODO: set cors options correct
+const options: cors.CorsOptions = {};
 
 // init middleware
 app.use(cors(options));
@@ -198,7 +211,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 // only execute if nothing is sent before -> 404 route not found
 app.use((req: Request, res: Response, next: any) => {
   if (!res.headersSent) {
-    const error: Error = new Error("Route not found" + `"${req.method} ${getRequestUrl(req)}"`);
+    const error: Error = new Error("Route not found " + `"${req.method} ${getRequestUrl(req)}"`);
     res.locals.status = 404;
     next(error);
   }
@@ -211,29 +224,23 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
     return next(err);
   }
 
-  const message = new HttpResponseMessage(
-    HttpResponseMessageSeverity.DANGER,
-    err.message
-  );
-
   let data;
 
   if (!inProduction()) {
-    data = err.stack;
+      data = err.stack;
   }
 
-  const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, [
-    message
-  ]);
+  const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, []);
 
   // send mail with error to support
   const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)],
       supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
-  if (!inTestMode()) {
-        mailTransport.sendMail(m);
-    }
 
-  logger.error(`${loggerString(__dirname, "", "", __filename)} ${err}`);
+  if (!inTestMode()) {
+      mailTransport.sendMail(m);
+  }
+
+  logger.error(`${loggerString(__dirname, "", "", __filename)} ${err.message}`);
 
   return res.status(res.locals.status || 500).send(httpResponse);
 });

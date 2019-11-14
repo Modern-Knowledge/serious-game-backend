@@ -192,9 +192,13 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
         return new Promise<EntityType[]>((resolve, reject) => {
             databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) {
-                    connection.release(); // release pool connection
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ${error}`);
-                    reject(error);
+                    if (connection) {
+                        connection.release(); // release pool connection
+                    }
+
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                        `${error.message}`);
+                    return reject(error);
                 }
 
                 const query = connection.query(npq.query, npq.params,
@@ -205,8 +209,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                         `${query.sql} [${query.values}]`);
 
                     if (mysqlError) {
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ${mysqlError}`);
-                        reject(mysqlError);
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                            `${mysqlError.message}`);
+                        return reject(mysqlError);
                     }
 
                     for (const item of results) {
@@ -235,7 +240,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
                     eta.analyse(s.measuredTime, BaseFacade.name + ".select");
 
-                    resolve(returnEntities);
+                    return resolve(returnEntities);
                 });
             });
         });
@@ -292,7 +297,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
 
                 if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ${error}`);
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "insert")} ` +
+                        `${error.message}`);
                     return reject(error);
                 }
 
@@ -372,7 +378,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
 
                 if (error) {
-                    logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error}`);
+                    logger.error(`${loggerString(__dirname, BaseFacade.name, "update")} ${error.message}`);
                     return reject(error);
                 }
 
@@ -445,7 +451,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
                     return connection.rollback(() => {
                         logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")}
                         Transaction changes are rollbacked!`);
-                        logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error}`);
+                        logger.error(`${loggerString(__dirname, BaseFacade.name, "delete")} ${error.message}`);
                         return reject(error);
                     });
                 }

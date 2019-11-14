@@ -60,8 +60,11 @@ class DatabaseConnection {
         return new Promise<any[]>((resolve, reject) => {
             this.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) { // error with pool
-                    connection.release();
-                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ${error}`);
+                    if (connection) {
+                        connection.release();
+                    }
+                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
+                        + `${error.message}`);
                     return reject(error);
                 }
 
@@ -75,7 +78,7 @@ class DatabaseConnection {
                     if (mysqlError) { // error with starting transaction
                         connection.release();
                         logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
-                            + `${mysqlError}`);
+                            + `${mysqlError.message}`);
 
                         return reject(mysqlError);
                     }
@@ -118,7 +121,7 @@ class DatabaseConnection {
                                 logger.error(`${loggerString(
                                     __dirname,
                                     DatabaseConnection.name,
-                                    "transaction")} ${mysqlError1}`);
+                                    "transaction")} ${mysqlError1.message}`);
 
                                 return reject(mysqlError1);
                             });
@@ -127,7 +130,7 @@ class DatabaseConnection {
                         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
                             + `Transaction was executed successful!`);
 
-                        resolve(result);
+                        return resolve(result);
                     });
                 });
             });
@@ -143,9 +146,12 @@ class DatabaseConnection {
         return new Promise<any[]>((resolve, reject) => {
             databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
                 if (error) {
-                    connection.release();
-                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${error}`);
-                    reject(error);
+                    if (connection) {
+                        connection.release();
+                    }
+                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} `
+                        + `${error.message}`);
+                    return reject(error);
                 }
 
                 const query = connection.query(sql, params, (mysqlError: MysqlError, results) => {
@@ -155,11 +161,42 @@ class DatabaseConnection {
                         `${query.sql} [${query.values}]`);
 
                     if (mysqlError) {
-                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} ${mysqlError}`);
-                        reject(mysqlError);
+                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "query")} `
+                            + `${mysqlError.message}`);
+                        return reject(mysqlError);
                     }
 
-                    resolve(results);
+                    return resolve(results);
+                });
+            });
+        });
+    }
+
+    public ping(): Promise<boolean> {
+        logger.info(`${loggerString(__dirname, DatabaseConnection.name, "ping")} Pinging Database!`);
+        return new Promise<boolean>((resolve, reject) => {
+            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    if (connection) {
+                        connection.release();
+                    }
+                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "ping")} `
+                        + `${error.message}`);
+                    return reject(false);
+                }
+
+                connection.ping((connectionErr) => {
+                    connection.release(); // release pool connection
+
+                    if (connectionErr) {
+                        logger.error(
+                            `${loggerString(__dirname, DatabaseConnection.name, "ping")} ` +
+                            `${connectionErr.message}`
+                        );
+                        return reject(false);
+                    }
+
+                    return resolve(true);
                 });
             });
         });
@@ -236,7 +273,7 @@ class DatabaseConnection {
         this._pool.end((err: MysqlError) => {
             if (err) {
                 logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
-                    `${err} ${this}`);
+                    `${err.message} ${this}`);
                 throw err;
             } else {
                 logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
