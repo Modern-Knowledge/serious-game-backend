@@ -1,4 +1,3 @@
-
 /*
  * watch the order of the imports.
  * .env must be load before environment variables are used in loaded modules
@@ -20,10 +19,10 @@ import morgan from "morgan";
 import passport from "passport";
 import swaggerUi from "swagger-ui-express";
 import {
-  HttpResponse,
-  HttpResponseMessage,
-  HttpResponseMessageSeverity,
-  HttpResponseStatus
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
 } from "./lib/utils/http/HttpResponse";
 import { specs } from "./util/documentation/swaggerSpecs";
 import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
@@ -33,14 +32,14 @@ moment.locale("de");
 
 const config: DotenvConfigOutput = dotenv.config({ path: ".env" });
 if (config.error) {
-  // .env not found
-  const message = `${loggerString(
-    __dirname,
-    "",
-    "",
-    __filename
-  )} .env couldn't be loaded!`;
-  throw new Error(message);
+    // .env not found
+    const message = `${loggerString(
+        __dirname,
+        "",
+        "",
+        __filename
+    )} .env couldn't be loaded!`;
+    throw new Error(message);
 }
 
 import { databaseConnection } from "./util/db/databaseConnection";
@@ -108,13 +107,13 @@ app.use(lusca.xssProtection(true));
 const limiter = rateLimit({
     max: 500,
     // @ts-ignore
-    message:  (new HttpResponse(HttpResponseStatus.FAIL,
+    message: (new HttpResponse(HttpResponseStatus.FAIL,
         undefined, [
             new HttpResponseMessage(
                 HttpResponseMessageSeverity.DANGER,
                 "Zu viele Anfragen, probieren Sie es später nochmal")
         ])),
-    windowMs: 10 * 60 * 1000,
+    windowMs: 10 * 60 * 1000
 });
 
 /**
@@ -210,39 +209,39 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 // matches all routes
 // only execute if nothing is sent before -> 404 route not found
 app.use((req: Request, res: Response, next: any) => {
-  if (!res.headersSent) {
-    const error: Error = new Error("Route not found " + `"${req.method} ${getRequestUrl(req)}"`);
-    res.locals.status = 404;
-    next(error);
-  }
+    if (!res.headersSent) {
+        const error: Error = new Error("Route not found " + `"${req.method} ${getRequestUrl(req)}"`);
+        res.locals.status = 404;
+        next(error);
+    }
 });
 
 // development error handler
 // will print stacktrace
 app.use((err: Error, req: Request, res: Response, next: any) => {
-  if (res.headersSent) {
-    return next(err);
-  }
+    if (res.headersSent) {
+        return next(err);
+    }
 
-  let data;
+    let data;
 
-  if (!inProduction()) {
-      data = err.stack;
-  }
+    if (!inProduction()) {
+        data = err.stack;
+    }
 
-  const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, []);
+    const httpResponse = new HttpResponse(HttpResponseStatus.ERROR, data, []);
 
-  // send mail with error to support
-  const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)],
-      supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
+    // send mail with error to support
+    const m = new Mail([new Recipient("Support", process.env.SUPPORT_MAIL)],
+        supportMail, [err.name, err.message, "<code>" + err.stack + "</code>"]);
 
-  if (!inTestMode()) {
-      mailTransport.sendMail(m);
-  }
+    if (!inTestMode()) {
+        mailTransport.sendMail(m);
+    }
 
-  logger.error(`${loggerString(__dirname, "", "", __filename)} ${err.message}`);
+    logger.error(`${loggerString(__dirname, "", "", __filename)} ${err.message}`);
 
-  return res.status(res.locals.status || 500).send(httpResponse);
+    return res.status(res.locals.status || 500).send(httpResponse);
 });
 
 export default app;
