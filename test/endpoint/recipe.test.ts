@@ -1,15 +1,20 @@
 import request from "supertest";
 import app from "../../src/app";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedDifficulties,
     seedRecipes,
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { proteinShake } from "../../src/seeds/recipes";
+import { validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("RecipeController Tests", () => {
 
@@ -64,10 +69,8 @@ describe("RecipeController Tests", () => {
 
         // SGBRC03
         it("try to fetch all recipes with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -130,10 +133,8 @@ describe("RecipeController Tests", () => {
 
         // SGBRC06
         it("try to fetch recipe with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint + "/" + proteinShake.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);

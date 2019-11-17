@@ -1,15 +1,20 @@
 import request from "supertest";
 import app from "../../src/app";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedErrortexts,
     seedSeverities,
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
+import { mealtimeError } from "../../src/seeds/errortexts";
 import { validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
-import { errortext } from "../../src/seeds/errortexts";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("ErrortextController Tests", () => {
 
@@ -55,10 +60,9 @@ describe("ErrortextController Tests", () => {
 
         // SGBEC03
         it("try to fetch all errortexts with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -85,7 +89,7 @@ describe("ErrortextController Tests", () => {
         it("fetch errortext with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + errortext.id)
+            const res = await request(app).get(endpoint + "/" + mealtimeError.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -96,12 +100,12 @@ describe("ErrortextController Tests", () => {
             expect(res.body._data).toHaveProperty("errortext");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
-            expect(res.body._data.errortext._id).toEqual(errortext.id);
+            expect(res.body._data.errortext._id).toEqual(mealtimeError.id);
         }, timeout);
 
         // SGBEC05
         it("try to fetch errortext with id without authentication", async () => {
-            const res = await request(app).get(endpoint + "/" + errortext.id)
+            const res = await request(app).get(endpoint + "/" + mealtimeError.id)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -113,10 +117,8 @@ describe("ErrortextController Tests", () => {
 
         // SGBEC06
         it("try to fetch all errortext with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
-            const res = await request(app).get(endpoint + "/" + errortext.id)
-                .set("Authorization", "Bearer " + token)
+            const res = await request(app).get(endpoint + "/" + mealtimeError.id)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);

@@ -1,10 +1,15 @@
 import request from "supertest";
 import app from "../../src/app";
-import { seedPatientSettings, seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validPatient, validPatient1, validTherapist } from "../../src/seeds/users";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedPatientSettings, seedUsers, truncateTables } from "../../src/migrationHelper";
 import { pSettings } from "../../src/seeds/patientSettings";
+import { validPatient, validPatient1, validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("PatientSettingController Tests", () => {
 
@@ -58,10 +63,8 @@ describe("PatientSettingController Tests", () => {
 
         // SGBPSC03
         it("try to fetch all patient-settings with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -138,10 +141,8 @@ describe("PatientSettingController Tests", () => {
 
         // SGBPSC07
         it("try to fetch patient-setting with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint + "/" + pSettings.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);

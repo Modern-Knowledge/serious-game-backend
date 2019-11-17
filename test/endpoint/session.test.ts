@@ -1,5 +1,7 @@
 import request from "supertest";
 import app from "../../src/app";
+import { SessionFacade } from "../../src/db/entity/game/SessionFacade";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedDifficulties, seedGames,
     seedGameSettings,
@@ -7,13 +9,16 @@ import {
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validPatient, validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
-import { session } from "../../src/seeds/sessions";
-import { SessionFacade } from "../../src/db/entity/game/SessionFacade";
 import { game } from "../../src/seeds/games";
 import { gameSettings } from "../../src/seeds/gameSettings";
+import { session } from "../../src/seeds/sessions";
+import { validPatient, validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("SessionController Tests", () => {
 
@@ -76,10 +81,8 @@ describe("SessionController Tests", () => {
 
         // SGBSC03
         it("try to fetch session by id with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint + "/" + session.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -172,10 +175,8 @@ describe("SessionController Tests", () => {
 
         // SGBSC08
         it("try to fetch session by patient id with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint + "/" + validPatient.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -275,10 +276,8 @@ describe("SessionController Tests", () => {
 
         // SGBSC13
         it("try to delete session with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).delete(endpoint + "/" + session.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -340,7 +339,6 @@ describe("SessionController Tests", () => {
                 .expect(404);
 
             expect(res.body._status).toEqual("error");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
     });
 
@@ -440,8 +438,6 @@ describe("SessionController Tests", () => {
 
         // SGBSC20
         it("try to create session with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).post(endpoint)
                 .send(
                     {
@@ -451,7 +447,7 @@ describe("SessionController Tests", () => {
                         _elapsedTime: 500
                     }
                 )
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);

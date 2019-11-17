@@ -1,13 +1,18 @@
+import * as bcrypt from "bcryptjs";
 import request from "supertest";
 import app from "../../src/app";
-import { seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
-import * as bcrypt from "bcryptjs";
-import { Status } from "../../src/lib/enums/Status";
-import { validPatient, validPatient1, validTherapist } from "../../src/seeds/users";
-import { PatientFacade } from "../../src/db/entity/user/PatientFacade";
 import { PatientSettingFacade } from "../../src/db/entity/settings/PatientSettingFacade";
+import { PatientFacade } from "../../src/db/entity/user/PatientFacade";
+import { Status } from "../../src/lib/enums/Status";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
+import { validPatient, validPatient1, validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("PatientController Tests", () => {
 
@@ -50,10 +55,8 @@ describe("PatientController Tests", () => {
 
         // SGBPC03
         it("try to fetch all patients with expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -71,7 +74,6 @@ describe("PatientController Tests", () => {
             await truncateTables();
             await seedUsers();
         }, timeout);
-
 
         // SGBPC04
         it("register new patient with correct data", async () => {
@@ -520,10 +522,8 @@ describe("PatientController Tests", () => {
 
         // SGBPC19
         it("try to delete patient with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).delete(endpoint + "/" + validPatient.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -571,7 +571,6 @@ describe("PatientController Tests", () => {
                 .expect(404);
 
             expect(res.body._status).toEqual("error");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
         // SGBPC23
@@ -658,8 +657,6 @@ describe("PatientController Tests", () => {
 
         // SGBPC26
         it("try to update patient with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).put(endpoint + "/" + validPatient.id)
                 .send(
                     {
@@ -669,7 +666,7 @@ describe("PatientController Tests", () => {
                         _info: "Test info"
                     }
                 )
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -697,7 +694,6 @@ describe("PatientController Tests", () => {
                 .expect(404);
 
             expect(res.body._status).toEqual("error");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
         // SGBPC28

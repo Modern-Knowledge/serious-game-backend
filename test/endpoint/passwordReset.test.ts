@@ -1,8 +1,12 @@
+import * as bcrypt from "bcryptjs";
 import request from "supertest";
 import app from "../../src/app";
-import { seedUsers, truncateTables } from "../../src/migrationHelper";
-import { containsMessage } from "../../src/util/testhelper";
+import { SmtpLogFacade } from "../../src/db/entity/log/SmtpLogFacade";
+import { UserFacade } from "../../src/db/entity/user/UserFacade";
+import { SQLComparisonOperator } from "../../src/db/sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../../src/db/sql/enums/SQLOperator";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import {
     unacceptedTherapist,
     validAdminTherapist,
@@ -10,11 +14,7 @@ import {
     validPatient1,
     validTherapist
 } from "../../src/seeds/users";
-import { UserFacade } from "../../src/db/entity/user/UserFacade";
-import { SmtpLogFacade } from "../../src/db/entity/log/SmtpLogFacade";
-import { SQLComparisonOperator } from "../../src/db/sql/enums/SQLComparisonOperator";
-import { SQLOperator } from "../../src/db/sql/enums/SQLOperator";
-import * as bcrypt from "bcryptjs";
+import { containsMessage } from "../../src/util/testhelper";
 
 describe("PasswordResetController Tests", () => {
 
@@ -350,7 +350,6 @@ describe("PasswordResetController Tests", () => {
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(400);
-
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();

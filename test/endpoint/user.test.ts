@@ -1,12 +1,17 @@
+import * as bcrypt from "bcryptjs";
 import request from "supertest";
 import app from "../../src/app";
-import { seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
-import { UserFacade } from "../../src/db/entity/user/UserFacade";
-import * as bcrypt from "bcryptjs";
 import { SmtpLogFacade } from "../../src/db/entity/log/SmtpLogFacade";
+import { UserFacade } from "../../src/db/entity/user/UserFacade";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedUsers, truncateTables } from "../../src/migrationHelper";
+import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("UserController Tests", () => {
 
@@ -61,10 +66,8 @@ describe("UserController Tests", () => {
 
         // SGBUC03
         it("try to fetch user with jwt with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -140,15 +143,13 @@ describe("UserController Tests", () => {
 
         // SGBUC06
         it("try to change password with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).put(endpoint + "/" + validTherapist.id)
                 .send({
                     oldPassword: "123456",
                     newPassword: "1234567",
                     newPasswordConfirmation: "1234567"
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -192,7 +193,6 @@ describe("UserController Tests", () => {
                 .expect(404);
 
             expect(res.body._status).toEqual("error");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
         // SGBUC09

@@ -1,10 +1,15 @@
 import request from "supertest";
 import app from "../../src/app";
-import { seedLogs, seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { LogFacade } from "../../src/db/entity/log/LogFacade";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedLogs, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("LoggingController Tests", () => {
     describe("GET /logging", () => {
@@ -48,10 +53,8 @@ describe("LoggingController Tests", () => {
 
         // SGBLOC03
         it("try to fetch all logs with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -204,7 +207,6 @@ describe("LoggingController Tests", () => {
             expect(res.body._data).toHaveProperty("insertedLogs");
             expect(res.body._data.insertedLogs).toEqual(1);
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
-
 
             // check if log was inserted
             const logFacade = new LogFacade();
@@ -364,10 +366,8 @@ describe("LoggingController Tests", () => {
 
         // SGBLOC16
         it("try to delete all logs older than 3 months with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).delete(endpoint)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);

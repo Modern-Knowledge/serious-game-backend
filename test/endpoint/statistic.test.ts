@@ -1,12 +1,17 @@
+import moment = require("moment");
 import request from "supertest";
 import app from "../../src/app";
-import { seedStatistics, seedUsers, truncateTables } from "../../src/migrationHelper";
-import { authenticate, containsMessage } from "../../src/util/testhelper";
-import { validTherapist } from "../../src/seeds/users";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
-import { statistic } from "../../src/seeds/statistics";
-import moment = require("moment");
 import { StatisticFacade } from "../../src/db/entity/game/StatisticFacade";
+import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
+import { seedStatistics, seedUsers, truncateTables } from "../../src/migrationHelper";
+import { statistic } from "../../src/seeds/statistics";
+import { validTherapist } from "../../src/seeds/users";
+import { authenticate, containsMessage } from "../../src/util/testhelper";
+
+const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
+    "ZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWx" +
+    "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
+    "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
 describe("StatisticController Tests", () => {
     describe("GET /statistics/:id", () => {
@@ -62,10 +67,8 @@ describe("StatisticController Tests", () => {
 
         // SGBSTC03
         it("try to fetch statistic with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).get(endpoint + "/" + statistic.id)
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -162,14 +165,12 @@ describe("StatisticController Tests", () => {
 
         // SGBSTC08
         it("try to update statistic with an expired token", async () => {
-            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwYXRpZW50QGV4YW1wbGUub3JnIiwidGhlcmFwaXN0IjpmYWxzZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qvVSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
-
             const res = await request(app).put(endpoint + "/" + statistic.id)
                 .send({
                     _startTime: new Date(),
                     _endTime: moment().add(1, "hour").toDate()
                 })
-                .set("Authorization", "Bearer " + token)
+                .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -194,8 +195,6 @@ describe("StatisticController Tests", () => {
                 .expect(404);
 
             expect(res.body._status).toEqual("error");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
-
         }, timeout);
 
         // SGBSTC10
