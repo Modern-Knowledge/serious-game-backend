@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
 
+import {StatisticFacade} from "../db/entity/game/StatisticFacade";
 import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
 import { ErrortextStatisticFacade } from "../db/entity/helptext/ErrortextStatisticFacade";
 import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
@@ -195,24 +196,45 @@ router.post("/", authenticationMiddleware, [
         }
 
         const errortextData = req.body;
-        const errortextFacade = new ErrortextStatisticFacade();
+        const errortextStatisticFacade = new ErrortextStatisticFacade();
+
+        const errortextFacade = new ErrortextFacade();
+        const statisticFacacde = new StatisticFacade();
+
+        const errortextId = errortextData.errortext._id;
+        const statisticId = errortextData.session._statisticId;
 
         try {
-            const errorTextStatistic = new ErrortextStatistic();
-            errorTextStatistic.errortextId = errortextData.errortext._id;
-            errorTextStatistic.statisticId = errortextData.session._statisticId;
-            const errortext = await errortextFacade.insertErrortextStatistic(
-                errorTextStatistic
-            );
+            const foundErrortext = await errortextFacade.getById(errortextId);
+            logEndpoint(controllerName, `Errortext ${errortextId} was not found!`, req);
 
-            if (!errortext) {
+            if (!foundErrortext) {
                 return http4xxResponse(res, [
                     new HttpResponseMessage(
                         HttpResponseMessageSeverity.DANGER,
-                        `Fehler beim erstellen des Fehlertexts!`
+                        `Fehlertext ${errortextId} wurde nicht gefunden!`
                     )
                 ]);
             }
+
+            const foundStatistic = await statisticFacacde.getById(statisticId);
+            if (!foundStatistic) {
+                logEndpoint(controllerName, `Statistic ${statisticId} was not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.DANGER,
+                        `Statistik ${statisticId} wurde nicht gefunden!`
+                    )
+                ]);
+            }
+
+            const errorTextStatistic = new ErrortextStatistic();
+            errorTextStatistic.errortextId = errortextId;
+            errorTextStatistic.statisticId = statisticId;
+            const errortext = await errortextStatisticFacade.insertErrortextStatistic(
+                errorTextStatistic
+            );
 
             logEndpoint(controllerName, `Errortext was successfully created!`, req);
 
@@ -242,7 +264,7 @@ router.post("/", authenticationMiddleware, [
  * Insert multiple errortexts at once
  *
  * body:
- * - errortexts [{
+ * - errortexts: [{
  *   - createdAt:
  *   - severity {
  *     - createdAt:
@@ -256,7 +278,7 @@ router.post("/", authenticationMiddleware, [
  *   - text:
  *   - severityId
  * }]
- * - session {
+ * - session: {
  *   - createdAt:
  *   - game: {
  *     - createdAt:
@@ -289,44 +311,79 @@ router.post("/", authenticationMiddleware, [
  * - errortexts: the created errortexts
  * - token: authentication token
  */
-router.post(
-    "/bulk",
-    authenticationMiddleware,
-    async (req: Request, res: Response, next: any) => {
+router.post("/bulk", authenticationMiddleware, [
+        check("errortexts.*._id").isNumeric().withMessage(rVM("errortext", "errortext_id")),
+
+        check("session._statisticId").isNumeric().withMessage(rVM("errortext", "statistic_id"))
+
+], async (req: Request, res: Response, next: any) => {
         if (!checkRouteValidation(controllerName, req, res)) {
             return failedValidation400Response(req, res);
         }
 
         const errortextsData: any[] = req.body.errortexts;
-        const errortextFacade = new ErrortextStatisticFacade();
+
+        if (!errortextsData) {
+            return http4xxResponse(res, [
+                new HttpResponseMessage(
+                    HttpResponseMessageSeverity.DANGER,
+                    `Keine Fehlertexte übergeben!`
+                )
+            ], 400);
+        }
+
+        const errortextStatisticFacade = new ErrortextStatisticFacade();
+
+        const errortextFacade = new ErrortextFacade();
+        const statisticFacacde = new StatisticFacade();
+
+        const statisticId = req.body.session._statisticId;
 
         try {
-            const errorTextStatistic = new ErrortextStatistic();
-            const errortexts = [];
-            for (const errortextData of errortextsData) {
-                errorTextStatistic.errortextId = errortextData._id;
-                errorTextStatistic.statisticId = req.body.session._statisticId;
-                errortexts.push(
-                    await errortextFacade.insertErrortextStatistic(errorTextStatistic)
-                );
-            }
+            const foundStatistic = await statisticFacacde.getById(statisticId);
+            if (!foundStatistic) {
+                logEndpoint(controllerName, `Statistic ${statisticId} was not found!`, req);
 
-            if (!errortexts) {
                 return http4xxResponse(res, [
                     new HttpResponseMessage(
                         HttpResponseMessageSeverity.DANGER,
-                        `Fehler beim Erstellen der Fehlertexte!`
+                        `Statistik ${statisticId} wurde nicht gefunden!`
                     )
                 ]);
             }
 
+            const errorTextStatistic = new ErrortextStatistic();
+            const errortexts = [];
+
+            for (const item of errortextsData) {
+                const errortextId = item._id;
+
+                const foundErrortext = await errortextFacade.getById(errortextId);
+                if (!foundErrortext) {
+                    logEndpoint(controllerName, `Errortext was not found!`, req);
+
+                    return http4xxResponse(res, [
+                        new HttpResponseMessage(
+                            HttpResponseMessageSeverity.DANGER,
+                            `Fehlertext ${errortextId} wurde nicht gefunden!`
+                        )
+                    ]);
+                }
+            }
+
+            for (const errortextData of errortextsData) {
+                errorTextStatistic.errortextId = errortextData._id;
+                errorTextStatistic.statisticId = statisticId;
+                errortexts.push(
+                    await errortextStatisticFacade.insertErrortextStatistic(errorTextStatistic)
+                );
+            }
+
             logEndpoint(controllerName, `Errortexts were successfully created!`, req);
 
-            return res
-                .status(200)
+            return res.status(200)
                 .json(
-                    new HttpResponse(
-                        HttpResponseStatus.SUCCESS,
+                    new HttpResponse(HttpResponseStatus.SUCCESS,
                         { errortexts, token: res.locals.authorizationToken },
                         [
                             new HttpResponseMessage(
