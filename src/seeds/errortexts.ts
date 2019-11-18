@@ -5,7 +5,7 @@ const mealtimeError = new Errortext();
 mealtimeError.id = 3;
 mealtimeError.name = "mealtime";
 mealtimeError.text =
-  "::recipe:: ist keine gültige Mahlzeit für das ::mealtime::";
+    "::recipe:: ist keine gültige Mahlzeit für das ::mealtime::";
 mealtimeError.severityId = severityEasy.id;
 
 const shoppingCartError = new Errortext();
@@ -24,12 +24,19 @@ const itemAlreadyInFridgeError = new Errortext();
 itemAlreadyInFridgeError.id = 6;
 itemAlreadyInFridgeError.name = "item-already-in-fridge";
 itemAlreadyInFridgeError.text =
-  "::item.name:: ist bereits im Kühlschrank vorhanden!";
+    "::item.name:: ist bereits im Kühlschrank vorhanden!";
 itemAlreadyInFridgeError.severityId = severityEasy.id;
 
+const shoppingListError = new Errortext();
+shoppingCartError.id = 7;
+shoppingCartError.name = "shopping-list";
+shoppingCartError.text = "Die Einkaufsliste ist nicht gültig!";
+shoppingCartError.severityId = severityEasy.id;
+
 export {
-  mealtimeError,
-  shoppingCartError,
-  fridgeNotCheckedError,
-  itemAlreadyInFridgeError
+    mealtimeError,
+    shoppingCartError,
+    fridgeNotCheckedError,
+    itemAlreadyInFridgeError,
+    shoppingListError
 };

@@ -1,5 +1,11 @@
 import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
-import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from "./errortexts";
+import {
+  fridgeNotCheckedError,
+  itemAlreadyInFridgeError,
+  mealtimeError,
+  shoppingCartError,
+  shoppingListError,
+} from "./errortexts";
 import { statistic } from "./statistics";
 
 const mealtimeErrorTextGamesStatistic = new ErrortextStatistic();
@@ -17,10 +23,16 @@ fridgeNotCheckedErrorTextGamesStatistic.errortextId = fridgeNotCheckedError.id;
 const itemAlreadyInFridgeErrorTextGamesStatistic = new ErrortextStatistic();
 itemAlreadyInFridgeErrorTextGamesStatistic.statisticId = statistic.id;
 itemAlreadyInFridgeErrorTextGamesStatistic.errortextId =
-  itemAlreadyInFridgeError.id;
+    itemAlreadyInFridgeError.id;
+
+const shoppingListErrorTextGamesStatistic = new ErrortextStatistic();
+shoppingListErrorTextGamesStatistic.statisticId = statistic.id;
+shoppingListErrorTextGamesStatistic.errortextId = shoppingListError.id;
+
 export {
-  mealtimeErrorTextGamesStatistic,
-  shoppingCartErrorTextGamesStatistic,
-  fridgeNotCheckedErrorTextGamesStatistic,
-  itemAlreadyInFridgeErrorTextGamesStatistic
+    mealtimeErrorTextGamesStatistic,
+    shoppingCartErrorTextGamesStatistic,
+    fridgeNotCheckedErrorTextGamesStatistic,
+    itemAlreadyInFridgeErrorTextGamesStatistic,
+    shoppingListErrorTextGamesStatistic
 };

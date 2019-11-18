@@ -29,13 +29,21 @@ import {
     itemAlreadyInFridgeErrorTextGames,
     mealtimeErrorTextGames,
     shoppingCartErrorTextGames,
+    shoppingListErrorTextGames,
 } from "./seeds/errortextGames";
-import { fridgeNotCheckedError, itemAlreadyInFridgeError, mealtimeError, shoppingCartError } from "./seeds/errortexts";
+import {
+    fridgeNotCheckedError,
+    itemAlreadyInFridgeError,
+    mealtimeError,
+    shoppingCartError,
+    shoppingListError,
+} from "./seeds/errortexts";
 import {
     fridgeNotCheckedErrorTextGamesStatistic,
     itemAlreadyInFridgeErrorTextGamesStatistic,
     mealtimeErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
+    shoppingListErrorTextGamesStatistic,
 } from "./seeds/errortextStatistic";
 import { bread, care, chilledGoods, deepFrozen, drinks, household, sweets, vegetables } from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
@@ -169,9 +177,15 @@ export async function runMigrations(): Promise<void> {
         table: "migrations",
 
         connection: {
-            database: !inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE,
-            host: !inTestMode() ? process.env.DB_HOST : process.env.TEST_DB_HOST,
-            password: !inTestMode() ? process.env.DB_PASS : process.env.TEST_DB_PASS,
+            database: !inTestMode()
+                ? process.env.DB_DATABASE
+                : process.env.TEST_DB_DATABASE,
+            host: !inTestMode()
+                ? process.env.DB_HOST
+                : process.env.TEST_DB_HOST,
+            password: !inTestMode()
+                ? process.env.DB_PASS
+                : process.env.TEST_DB_PASS,
             port: 3306,
             user: !inTestMode() ? process.env.DB_USER : process.env.TEST_DB_USER
         }
@@ -198,7 +212,12 @@ export async function truncateTables(): Promise<number> {
 
     if (results.length === 0) {
         logger.info(
-            `${loggerString(__dirname, "", "", __filename)} No tables to truncate!`
+            `${loggerString(
+                __dirname,
+                "",
+                "",
+                __filename
+            )} No tables to truncate!`
         );
         return 0;
     }
@@ -347,7 +366,8 @@ export async function seedErrortexts() {
         mealtimeError,
         shoppingCartError,
         fridgeNotCheckedError,
-        itemAlreadyInFridgeError
+        itemAlreadyInFridgeError,
+        shoppingListError
     ];
     for (const item of errortextArr) {
         await errorTextFacade.insertErrortext(item);
@@ -363,7 +383,8 @@ export async function seedErrortextGames() {
         mealtimeErrorTextGames,
         shoppingCartErrorTextGames,
         fridgeNotCheckedErrorTextGames,
-        itemAlreadyInFridgeErrorTextGames
+        itemAlreadyInFridgeErrorTextGames,
+        shoppingListErrorTextGames
     ];
 
     for (const item of errortextGamesArr) {
@@ -380,7 +401,8 @@ export async function seedErrortextStatistics() {
         mealtimeErrorTextGamesStatistic,
         shoppingCartErrorTextGamesStatistic,
         fridgeNotCheckedErrorTextGamesStatistic,
-        itemAlreadyInFridgeErrorTextGamesStatistic
+        itemAlreadyInFridgeErrorTextGamesStatistic,
+        shoppingListErrorTextGamesStatistic
     ];
 
     for (const item of errortextStatisticArr) {
@@ -592,7 +614,9 @@ async function getTables(): Promise<string[]> {
 
     const results = await databaseConnection.query(
         `SELECT table_name FROM information_schema.TABLES WHERE TABLE_SCHEMA = "${
-            !inTestMode() ? process.env.DB_DATABASE : process.env.TEST_DB_DATABASE
+            !inTestMode()
+                ? process.env.DB_DATABASE
+                : process.env.TEST_DB_DATABASE
         }"`
     );
 
