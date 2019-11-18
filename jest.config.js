@@ -17,6 +17,7 @@ module.exports = {
 	testEnvironment: 'node',
 	coveragePathIgnorePatterns: [
 		'/node_modules/',
-		'/src/lib'
+		'/src/lib',
+		'/src/migrationHelper.ts'
 	]
 };

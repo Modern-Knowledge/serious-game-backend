@@ -113,4 +113,13 @@ describe("util/TemplateParser Tests", () => {
         const mailTemplateParser = new TemplateParser(["Example", "01.01.1970", "support@mail.com", "asdasd"]);
         mailTemplateParser.parse(passwordResettet.html);
     });
+
+    // SGBUTP04
+    it("successfully parse template", async () => {
+        const mailTemplateParser = new TemplateParser(["Tom", "01.01.1970", "support@mail.com"]);
+        const parsed = mailTemplateParser.parse(passwordResettet.html);
+        expect(parsed).toContain("<h2>Sehr geehrte/r Tom</h2>");
+        expect(parsed).toContain("<p>Ihr Password wurde am 01.01.1970 zurückgesetzt.</p>");
+        expect(parsed).toContain( "<p><b>Kontaktieren Sie uns!:</b> support@mail.com</p>");
+    });
 });
