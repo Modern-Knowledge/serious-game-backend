@@ -16,11 +16,13 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
  * - date
  * - info
  * - patient
+ * - errortext
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
 const categories = [
-    "email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info", "patient"
+    "email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info", "patient",
+    "errortext"
 ];
 
 for (const category of categories) {
@@ -152,6 +154,18 @@ validationMessages.get("info").set(
 validationMessages.get("patient").set(
     "invalid",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Nicht alle übergebenen PatientInnen sind valide!`));
+
+/**
+ * validation messages for errortexts
+ */
+
+validationMessages.get("errortext").set(
+    "errortext_id",
+    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine gültige Fehlertext Id übergeben!`));
+
+validationMessages.get("errortext").set(
+    "statistic_id",
+    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine gültige Statistik Id übergeben!`));
 
 /**
  * retrieves the validationMessage by category and messageName

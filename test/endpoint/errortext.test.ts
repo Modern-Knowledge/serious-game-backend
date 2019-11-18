@@ -1,13 +1,15 @@
 import request from "supertest";
 import app from "../../src/app";
+import { ErrortextStatisticFacade } from "../../src/db/entity/helptext/ErrortextStatisticFacade";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedErrortexts,
-    seedSeverities,
+    seedSeverities, seedStatistics,
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
 import { mealtimeError } from "../../src/seeds/errortexts";
+import { statistic } from "../../src/seeds/statistics";
 import { validTherapist } from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";
 
@@ -155,6 +157,96 @@ describe("ErrortextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+    });
+
+    describe("POST /errortexts/", () => {
+        const endpoint = "/errortexts/";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        beforeEach(async () => {
+            await truncateTables();
+            await seedUsers();
+            await seedSeverities();
+            await seedErrortexts();
+            await seedStatistics();
+        });
+
+        it("create new errortext-statistic!", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).post(endpoint)
+                .send({
+                    errortext: {
+                        _id: mealtimeError.id
+                    },
+                    session: {
+                        _statisticId: statistic.id
+                    }
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("errortext");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            expect(res.body._data.errortext._id).toEqual(mealtimeError.id);
+            expect(res.body._data.errortext._id).toEqual(statistic.id);
+            expect(res.body._data.errortext._id).toEqual(statistic.id);
+
+            const errortextStatisticId = res.body._data.errortext.id;
+            // check if errortext-statistic was created
+            const errortextStatisticFacade = new ErrortextStatisticFacade();
+            const errortextStatistic = await errortextStatisticFacade.getById(errortextStatisticId);
+
+            if (errortextStatistic) {
+               expect(errortextStatistic).not.toBeUndefined();
+            }
+
+        }, timeout);
+
+        it("try to create new errortext-statistic without authentication", async () => {
+            const res = await request(app).post(endpoint)
+                .send({
+                    errortext: {
+                        _id: mealtimeError.id
+                    },
+                    session: {
+                        _statisticId: statistic.id
+                    }
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        it("try to create new error-statistic with an expired token", async () => {
+            const res = await request(app).post(endpoint)
+                .send({
+                    errortext: {
+                        _id: mealtimeError.id
+                    },
+                    session: {
+                        _statisticId: statistic.id
+                    }
+                })
+                .set("Authentication", "Bearer " + expiredToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
     });
 
 });
