@@ -7,7 +7,9 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         const currentEnv = process.env;
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass", DB_DATABASE: "database",
             VERSION: "1.1", PASSWORD_TOKEN_LENGTH: "6", PASSWORD_LENGTH: "8",
-            TEST_DB_HOST: "localhost", TEST_DB_USER: "user", TEST_DB_DATABASE: "database"};
+            TEST_DB_HOST: "localhost", TEST_DB_USER: "user", TEST_DB_DATABASE: "database",
+            DB_CONNECTION_LIMIT: "100"
+        };
 
         const t = () => {
            checkEnvFunction();
@@ -23,7 +25,9 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass",
             DB_DATABASE: "database", VERSION: "1.1", PASSWORD_TOKEN_LENGTH: "6",
             PASSWORD_LENGTH: "8", TEST_DB_HOST: "localhost", TEST_DB_USER: "user",
-            TEST_DB_PASS: "pass", TEST_DB_DATABASE: "database", SECRET_KEY: "123456"};
+            TEST_DB_PASS: "pass", TEST_DB_DATABASE: "database", SECRET_KEY: "123456",
+            DB_CONNECTION_LIMIT: "100"
+        };
 
         checkEnvFunction();
 
@@ -36,7 +40,9 @@ describe("util/mail/analysis/checkEnvVariables Tests", () => {
         process.env = {DB_HOST: "localhost", DB_USER: "user", DB_PASS: "pass", DB_DATABASE: "database",
             VERSION: "1.1", PASSWORD_TOKEN_LENGTH: "6", PASSWORD_LENGTH: "8",
             TEST_DB_HOST: "localhost", TEST_DB_USER: "user", TEST_DB_PASS: "pass",
-            TEST_DB_DATABASE: "database", SEND_MAILS: "1", SECRET_KEY: "123456"};
+            TEST_DB_DATABASE: "database", SEND_MAILS: "1", SECRET_KEY: "123456",
+            DB_CONNECTION_LIMIT: "100"
+        };
 
         checkEnvFunction();
 
