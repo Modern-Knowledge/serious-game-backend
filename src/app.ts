@@ -105,7 +105,7 @@ app.use(lusca.xssProtection(true));
  * max 500 requests per ip in 10 minutes
  */
 const limiter = rateLimit({
-    max: 500,
+    max: Number(process.env.RATE_LIMITER_MAX) || 500,
     // @ts-ignore
     message: (new HttpResponse(HttpResponseStatus.FAIL,
         undefined, [
@@ -113,16 +113,16 @@ const limiter = rateLimit({
                 HttpResponseMessageSeverity.DANGER,
                 "Zu viele Anfragen, probieren Sie es später nochmal")
         ])),
-    windowMs: 10 * 60 * 1000
+    windowMs: Number(process.env.RATE_LIMITER_DURATION) || 10 * 60 * 1000
 });
 
 /**
  * allow 200 requests in 5 minutes, before adding a 500ms delay per request above 200 requests
  */
 const speedLimiter = slowDown({
-    delayAfter: 200,
-    delayMs: 500,
-    windowMs: 5 * 60 * 1000
+    delayAfter: Number(process.env.SPEED_LIMIT_REQUEST_AFTER) || 200,
+    delayMs:  Number(process.env.SPEED_LIMIT_DELAY_MS) || 500,
+    windowMs:  Number(process.env.SPEED_LIMIT_DURATION) || 5 * 60 * 1000
 });
 
 // Controllers (route handlers)
