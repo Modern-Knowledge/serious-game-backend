@@ -18,6 +18,8 @@ module.exports = {
 	coveragePathIgnorePatterns: [
 		'/node_modules/',
 		'/src/lib',
-		'/src/migrationHelper.ts'
+		'/src/migrationHelper.ts',
+		'/src/utl/db/databaseConnection.ts',
+		'/src/util/mail/mailTransport.ts'
 	]
 };

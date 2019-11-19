@@ -30,7 +30,7 @@ export function checkEnvFunction(): void {
         "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION",
         "PASSWORD_TOKEN_LENGTH", "PASSWORD_LENGTH", "TEST_DB_HOST",
         "TEST_DB_USER", "TEST_DB_PASS", "TEST_DB_DATABASE", "SECRET_KEY",
-
+        "DB_CONNECTION_LIMIT"
     ]);
 
     if (unsetRequiredVars.length > 0) {

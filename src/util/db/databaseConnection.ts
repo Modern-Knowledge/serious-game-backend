@@ -215,7 +215,7 @@ class DatabaseConnection {
                 `Connecting to Test-Database`);
 
             this._pool = mysql.createPool({
-                connectionLimit: 100,
+                connectionLimit: Number(process.env.DB_CONNECTION_LIMIT),
                 database: process.env.TEST_DB_DATABASE,
                 debug: false,
                 host: process.env.TEST_DB_HOST,
@@ -229,7 +229,7 @@ class DatabaseConnection {
                 `Connecting to Productive-Database`);
 
             this._pool = mysql.createPool({
-                connectionLimit: 100,
+                connectionLimit: Number(process.env.DB_CONNECTION_LIMIT),
                 database: process.env.DB_DATABASE,
                 debug: false,
                 host: process.env.DB_HOST,
