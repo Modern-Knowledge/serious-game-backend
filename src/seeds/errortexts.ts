@@ -28,10 +28,10 @@ itemAlreadyInFridgeError.text =
 itemAlreadyInFridgeError.severityId = severityEasy.id;
 
 const shoppingListError = new Errortext();
-shoppingCartError.id = 7;
-shoppingCartError.name = "shopping-list";
-shoppingCartError.text = "Die Einkaufsliste ist nicht gültig!";
-shoppingCartError.severityId = severityEasy.id;
+shoppingListError.id = 7;
+shoppingListError.name = "shopping-list";
+shoppingListError.text = "Die Einkaufsliste ist nicht gültig!";
+shoppingListError.severityId = severityEasy.id;
 
 export {
     mealtimeError,
