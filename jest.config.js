@@ -19,7 +19,7 @@ module.exports = {
 		'/node_modules/',
 		'/src/lib',
 		'/src/migrationHelper.ts',
-		'/src/utl/db/databaseConnection.ts',
+		'/src/util/db/databaseConnection.ts',
 		'/src/util/mail/mailTransport.ts'
 	]
 };

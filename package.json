@@ -24,7 +24,8 @@
     "pre-build": "rm -rf dist/ && rm -rf src/lib && cp -r ../serious-game-library/src/. ./src/lib",
     "delete-docs": "rm -rf docs/",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles --runInBand --testTimeout=10000 --forceExit --coverage --verbose",
-    "watch-test": "npm run test -- --watchAll"
+    "watch-test": "npm run test -- --watchAll",
+    "start-db": "docker start serious-game"
   },
   "dependencies": {
     "async": "^3.0.1",
