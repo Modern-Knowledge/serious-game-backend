@@ -3,7 +3,6 @@ import * as bcrypt from "bcryptjs";
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
-import {HTTPStatusCode} from "../../../serious-game-library/src/utils/httpStatusCode";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import {
@@ -12,6 +11,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
 import { passwordReset } from "../mail-texts/passwordReset";
 import { passwordResettet } from "../mail-texts/passwordResettet";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";

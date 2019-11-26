@@ -2,12 +2,12 @@
 import { Response } from "express";
 import { Request } from "express";
 import { validationResult } from "express-validator";
-import {HTTPStatusCode} from "../../../../serious-game-library/src/utils/httpStatusCode";
 import {
     HttpResponse,
     HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../../lib/utils/http/HttpResponse";
+import { HTTPStatusCode } from "../../lib/utils/httpStatusCode";
 import { toHttpResponseMessage } from "../validation/validationMessages";
 
 /**
