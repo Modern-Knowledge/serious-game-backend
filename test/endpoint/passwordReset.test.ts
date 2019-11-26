@@ -56,7 +56,10 @@ describe("PasswordResetController Tests", () => {
             }
 
             const smtpLogFacade = new SmtpLogFacade();
-            smtpLogFacade.filter.addFilterCondition("rcpt_email", user.email, SQLComparisonOperator.EQUAL, SQLOperator.AND);
+            smtpLogFacade.filter.addFilterCondition("rcpt_email",
+                user.email,
+                SQLComparisonOperator.EQUAL,
+                SQLOperator.AND);
             smtpLogFacade.filter.addFilterCondition("sent", 0);
 
             // check that mail that should have been sent
@@ -106,10 +109,10 @@ describe("PasswordResetController Tests", () => {
                 .send({email: "notExistingMail@mail.com"})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(404);
+                .expect(200);
 
             expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
         }, timeout);
 
@@ -141,7 +144,9 @@ describe("PasswordResetController Tests", () => {
             }
 
             const smtpLogFacade = new SmtpLogFacade();
-            smtpLogFacade.filter.addFilterCondition("rcpt_email", user.email, SQLComparisonOperator.EQUAL, SQLOperator.AND);
+            smtpLogFacade.filter.addFilterCondition(
+                "rcpt_email",
+                user.email, SQLComparisonOperator.EQUAL, SQLOperator.AND);
             smtpLogFacade.filter.addFilterCondition("sent", 0);
 
             // check mail that should have been sent
@@ -162,10 +167,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC06
         it("reset password with valid parameters", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -189,7 +197,11 @@ describe("PasswordResetController Tests", () => {
             }
 
             const smtpLogFacade = new SmtpLogFacade();
-            smtpLogFacade.filter.addFilterCondition("rcpt_email", user.email, SQLComparisonOperator.EQUAL, SQLOperator.AND);
+            smtpLogFacade.filter.addFilterCondition(
+                "rcpt_email",
+                user.email,
+                SQLComparisonOperator.EQUAL,
+                SQLOperator.AND);
             smtpLogFacade.filter.addFilterCondition("sent", 0);
 
             // check mail that should have been sent
@@ -203,6 +215,7 @@ describe("PasswordResetController Tests", () => {
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
+                    password_confirmation: "123456",
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -215,9 +228,12 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC08
         it("try to reset password without a email", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -230,10 +246,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC09
         it("try to reset password without a token", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
-                    password: "123456"
+                    password: newPassword,
+                    password_confirmation: newPassword
                 })
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -245,10 +264,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC10
         it("try to reset password with a too short token", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: 1234
                 })
                 .set("Accept", "application/json")
@@ -261,10 +283,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC11
         it("try to reset password with an invalid email", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: "invalid",
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -277,10 +302,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC12
         it("try to reset password with an invalid token", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: "12345678"
                 })
                 .set("Accept", "application/json")
@@ -293,10 +321,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC13
         it("try to reset password with a not existing email", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: "not.existing@mail.com",
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -309,10 +340,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC14
         it("try to reset password with a user that has not requested a token", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validAdminTherapist.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: "12345678"
                 })
                 .set("Accept", "application/json")
@@ -325,10 +359,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC15
         it("try to reset password with a user that has no token expire time in the database", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: unacceptedTherapist.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: unacceptedTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -341,10 +378,13 @@ describe("PasswordResetController Tests", () => {
 
         // SGBPRC16
         it("try to reset password with a user that has an expired token", async () => {
+            const newPassword = "123456";
+
             const res = await request(app).post(endpoint)
                 .send({
                     email: validPatient1.email,
-                    password: "123456",
+                    password: newPassword,
+                    password_confirmation: newPassword,
                     token: validPatient1.resetcode
                 })
                 .set("Accept", "application/json")
@@ -355,5 +395,54 @@ describe("PasswordResetController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBPRC17
+        it("try to reset password without a password_confirmation", async () => {
+            const res = await request(app).post(endpoint)
+                .send({
+                    email: validTherapist.email,
+                    password: "123456",
+                    token: validTherapist.resetcode
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBPRC18
+        it("try to reset password where the password that does not match the confirmation", async () => {
+            const res = await request(app).post(endpoint)
+                .send({
+                    email: validTherapist.email,
+                    password: "123456",
+                    password_confirmation: "1234567",
+                    token: validTherapist.resetcode
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBPRC19
+        it("try to reset password where the password is too short", async () => {
+            const res = await request(app).post(endpoint)
+                .send({
+                    email: validTherapist.email,
+                    password: "12345",
+                    password_confirmation: "123456",
+                    token: validTherapist.resetcode
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+        }, timeout);
     });
 });

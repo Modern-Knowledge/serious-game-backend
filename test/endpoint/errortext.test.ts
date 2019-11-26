@@ -172,6 +172,7 @@ describe("ErrortextController Tests", () => {
             await seedStatistics();
         });
 
+        // SGBEC09
         it("create new errortext-statistic!", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -208,6 +209,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC10
         it("try to create new errortext-statistic without authentication", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -227,6 +229,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC11
         it("try to create new error-statistic with an expired token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -247,6 +250,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC12
         it("try to create errortext-statistic without any data", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -261,6 +265,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC13
         it("try to create errortext-statistic without errortext id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -280,6 +285,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC14
         it("try to create errortext-statistic without session id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -299,6 +305,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC15
         it("try to create errortext-statistic with an invalid errortext id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -321,6 +328,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC16
         it("try to create errortext-statistic with an invalid statistic id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -343,6 +351,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC17
         it("try to create errortext-statistic with a not known statistic id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -365,6 +374,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC18
         it("try to create errortext-statistic with a not known errortext id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -401,6 +411,7 @@ describe("ErrortextController Tests", () => {
             await seedStatistics();
         });
 
+        // SGBEC19
         it("create new errortext-statistics!", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -442,6 +453,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC20
         it("try to create errortext-statistics without authentication", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -466,6 +478,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC21
         it("try to create errortext-statistics with an expired token", async () => {
             const res = await request(app).post(endpoint)
                 .send({
@@ -491,6 +504,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC22
         it("try to create errortext-statistics without any data", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -505,6 +519,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC23
         it("try to create errortext-statistics without statistic id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -530,6 +545,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC24
         it("try to create errortext-statistics without errortexts", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -549,6 +565,7 @@ describe("ErrortextController Tests", () => {
 
         }, timeout);
 
+        // SGBEC25
         it("try to create errortext-statistics with an invalid statistic id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -575,6 +592,7 @@ describe("ErrortextController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
+        // SGBEC26
         it("try to create errortext-statistics with an invalid errortext-id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -602,6 +620,7 @@ describe("ErrortextController Tests", () => {
 
         });
 
+        // SGBEC27
         it("try to create errortext-statistics with a not existing statistic id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
@@ -629,6 +648,7 @@ describe("ErrortextController Tests", () => {
 
         });
 
+        // SGBEC28
         it("try to create errortext-statistics with a not existing errortext id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
