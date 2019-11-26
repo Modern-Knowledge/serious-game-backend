@@ -2,6 +2,7 @@
 import { Response } from "express";
 import { Request } from "express";
 import { validationResult } from "express-validator";
+import {HTTPStatusCode} from "../../../../serious-game-library/src/utils/httpStatusCode";
 import {
     HttpResponse,
     HttpResponseMessage, HttpResponseMessageSeverity,
@@ -23,8 +24,9 @@ import { toHttpResponseMessage } from "../validation/validationMessages";
  * @param data data that is appended to the response
  */
 export function http4xxResponse(
-    res: Response, messages?: HttpResponseMessage[],
-    code: number = 404,
+    res: Response,
+    messages?: HttpResponseMessage[],
+    code: number = HTTPStatusCode.NOT_FOUND,
     data?: any): Response {
 
     return res.status(code).json(
@@ -40,7 +42,7 @@ export function http4xxResponse(
  * @param res response object
  */
 export function failedValidation400Response(req: Request, res: Response): Response {
-    return res.status(400).json(new HttpResponse(HttpResponseStatus.FAIL,
+    return res.status(HTTPStatusCode.BAD_REQUEST).json(new HttpResponse(HttpResponseStatus.FAIL,
         undefined,
         [
             ...toHttpResponseMessage(validationResult(req).array())
@@ -54,7 +56,7 @@ export function failedValidation400Response(req: Request, res: Response): Respon
  * @param res response object
  */
 export function forbidden403Response(res: Response): Response {
-    return res.status(403).json(new HttpResponse(HttpResponseStatus.FAIL,
+    return res.status(HTTPStatusCode.FORBIDDEN).json(new HttpResponse(HttpResponseStatus.FAIL,
         undefined, [
             new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Sie dürfen diese Aktion nicht durchführen!")
         ]

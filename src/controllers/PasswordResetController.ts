@@ -3,6 +3,7 @@ import * as bcrypt from "bcryptjs";
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
+import {HTTPStatusCode} from "../../../serious-game-library/src/utils/httpStatusCode";
 import { UserFacade } from "../db/entity/user/UserFacade";
 import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
 import {
@@ -20,6 +21,7 @@ import { mailTransport } from "../util/mail/mailTransport";
 import { setPasswordResetToken } from "../util/password/passwordHelper";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { rVM } from "../util/validation/validationMessages";
+import {passwordValidator} from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 
@@ -62,9 +64,9 @@ router.post("/reset", [
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
             return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
-                    `Ihre E-Mail Adresse ${email} wurde nicht gefunden!`)
-            ]);
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `An Ihre E-Mail Adresse ${email} wurde ein Code zum Zurücksetzen des Passworts gesendet!`)
+            ], HTTPStatusCode.OK);
         }
 
         // check if token exists
@@ -90,7 +92,7 @@ router.post("/reset", [
 
         logEndpoint(controllerName, `Password reset token was successfully sent to user with id ${user.id}!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {
                     email: user.email,
@@ -123,8 +125,14 @@ router.post("/reset", [
  * - token: token for resetting the password
  */
 router.post("/reset-password",  [
-    check("password")
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
+    check("password").trim()
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)})
+        .withMessage(rVM("password", "length"))
+        .custom(passwordValidator).withMessage(rVM("password", "not_matching")),
+
+    check("password_confirmation").trim()
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)})
+        .withMessage(rVM("password", "confirmation")),
 
     check("email").normalizeEmail()
         .isEmail().withMessage(rVM("email", "invalid")),
