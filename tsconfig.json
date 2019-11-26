@@ -38,6 +38,7 @@
         "extendedDiagnostics": true
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "src/images"
     ]
 }
