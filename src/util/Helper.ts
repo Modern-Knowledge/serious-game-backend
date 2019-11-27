@@ -49,6 +49,7 @@ export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values
 }
 
 /**
+ * Load image from file system and
  *
  * @param filename image filename to read
  */

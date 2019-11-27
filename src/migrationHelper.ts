@@ -50,7 +50,7 @@ import { game, game2, game3, game4 } from "./seeds/games";
 import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
 import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
 import { helptext, helptext1 } from "./seeds/helptexts";
-import { image } from "./seeds/images";
+import { loadImages } from "./seeds/images";
 import { egg, oil } from "./seeds/ingredients";
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
@@ -321,7 +321,7 @@ export async function seedPatientSettings() {
  */
 export async function seedImages() {
     const imageFacade = new ImageFacade();
-    const imageArr = [image];
+    const imageArr = await loadImages();
     for (const item of imageArr) {
         await imageFacade.insertImage(item);
     }

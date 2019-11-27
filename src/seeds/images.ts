@@ -1,10 +1,15 @@
 import { Image } from "../lib/models/Image";
-import { getImage } from "../util/Helper";
+import {getImage, inTestMode} from "../util/Helper";
 
-const image = new Image();
-image.id = 1;
-getImage("malboro.png").then((value) => {
-    image.image = value;
-});
+async function loadImages(): Promise<Image[]> {
+    const image = new Image();
+    image.id = 1;
 
-export { image };
+    if (!inTestMode()) {
+        image.image = await getImage("malboro.png");
+    }
+
+    return [image];
+}
+
+export { loadImages };
