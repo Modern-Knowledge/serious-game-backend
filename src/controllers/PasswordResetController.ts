@@ -130,7 +130,7 @@ router.post("/reset-password",  [
         .withMessage(rVM("password", "length"))
         .custom(passwordValidator).withMessage(rVM("password", "not_matching")),
 
-    check("password_confirmation").trim()
+    check("passwordConfirmation").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)})
         .withMessage(rVM("password", "confirmation")),
 
