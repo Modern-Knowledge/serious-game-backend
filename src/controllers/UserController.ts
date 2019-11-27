@@ -70,13 +70,13 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
     check("id").isNumeric().withMessage(rVM("id", "numeric")),
 
     check("oldPassword").trim()
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "old_length")),
 
     check("newPassword").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length")),
 
     check("newPasswordConfirmation").trim()
-        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "length"))
+        .isLength({min: Number(process.env.PASSWORD_LENGTH)}).withMessage(rVM("password", "new_length"))
 
 ], async (req: Request, res: Response, next: any) => {
 

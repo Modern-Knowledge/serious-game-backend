@@ -81,19 +81,36 @@ validationMessages.get("password").set(
     "length",
     new HttpResponseMessage(
         HttpResponseMessageSeverity.DANGER,
-        `Das Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`));
+        `Das Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`)
+);
+
+validationMessages.get("password").set(
+    "old_length",
+    new HttpResponseMessage(
+        HttpResponseMessageSeverity.DANGER,
+        `Das alte Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`)
+);
+
+validationMessages.get("password").set(
+    "new_length",
+    new HttpResponseMessage(
+        HttpResponseMessageSeverity.DANGER,
+        `Die Bestätigung des neuen Passwort ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen)`)
+);
 
 validationMessages.get("password").set(
     "not_matching",
     new HttpResponseMessage(
         HttpResponseMessageSeverity.DANGER,
-        `Die beiden Passwörter stimmen nicht überein!`));
+        `Die beiden Passwörter stimmen nicht überein!`)
+);
 
 validationMessages.get("password").set(
     "confirmation",
     new HttpResponseMessage(
         HttpResponseMessageSeverity.DANGER,
-        `Die Passwort Bestätigung ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen!`));
+        `Die Passwort Bestätigung ist nicht gültig! (mind. ${process.env.PASSWORD_LENGTH} Zeichen!`)
+);
 
 /**
  * validation messages for token
