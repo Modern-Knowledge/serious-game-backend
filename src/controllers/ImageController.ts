@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import { check } from "express-validator";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -13,8 +14,6 @@ const router = express.Router();
 
 const controllerName = "ImageController";
 
-const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
-
 /**
  * GET /:id
  * returns image by id
@@ -22,7 +21,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
  * params:
  * - id: id of the image
  */
-router.get("/:id", authenticationMiddleware, [
+router.get("/:id", [
     check("id").isNumeric().withMessage(rVM("id", "numeric"))
 ], async (req: Request, res: Response, next: any) => {
 
@@ -49,7 +48,7 @@ router.get("/:id", authenticationMiddleware, [
         logEndpoint(controllerName, `The image with id ${id} was successfully loaded!`, req);
 
         res.contentType("image/png");
-        return res.status(200).send(image.image);
+        return res.status(HTTPStatusCode.OK).send(image.image);
     }
     catch (error) {
         return next(error);
