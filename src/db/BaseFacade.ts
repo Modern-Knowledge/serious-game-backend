@@ -36,7 +36,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     /**
      * combine joins for the entity and returns them as a list
      */
-    get joins(): SQLJoin[] {
+    protected get joins(): SQLJoin[] {
         return [];
     }
 
@@ -149,7 +149,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * returns the fully qualified name (columnName + tableAlias)
      * @param column name of the column
      */
-    public name(column: string): string {
+    protected name(column: string): string {
         return column + this._tableAlias;
     }
 
