@@ -127,8 +127,7 @@ router.post("/reset", [
 router.post("/reset-password",  [
     check("password").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)})
-        .withMessage(rVM("password", "length"))
-        .custom(passwordValidator).withMessage(rVM("password", "not_matching")),
+        .withMessage(rVM("password", "length")),
 
     check("passwordConfirmation").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)})
@@ -146,10 +145,18 @@ router.post("/reset-password",  [
         return failedValidation400Response(req, res);
     }
 
-    const {password, email, token} = req.body;
+    const {password, email, token, passwordConfirmation} = req.body;
 
     const userFacade = new UserFacade();
     userFacade.filter.addFilterCondition("email", email);
+
+    if (password !== passwordConfirmation) { // compares passwords
+        logEndpoint(controllerName, `Password and Password confirmation do not match!`, req);
+
+        return http4xxResponse(res, [
+            rVM("password", "not_matching")
+        ], 400);
+    }
 
     try {
         const user = await userFacade.getOne(email);

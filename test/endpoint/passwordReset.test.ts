@@ -173,7 +173,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -215,7 +215,7 @@ describe("PasswordResetController Tests", () => {
             const res = await request(app).post(endpoint)
                 .send({
                     email: validTherapist.email,
-                    password_confirmation: "123456",
+                    passwordConfirmation: "123456",
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -233,7 +233,7 @@ describe("PasswordResetController Tests", () => {
             const res = await request(app).post(endpoint)
                 .send({
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -252,7 +252,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword
+                    passwordConfirmation: newPassword
                 })
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -270,7 +270,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: 1234
                 })
                 .set("Accept", "application/json")
@@ -289,7 +289,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: "invalid",
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -308,7 +308,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: "12345678"
                 })
                 .set("Accept", "application/json")
@@ -327,7 +327,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: "not.existing@mail.com",
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -346,7 +346,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validAdminTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: "12345678"
                 })
                 .set("Accept", "application/json")
@@ -365,7 +365,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: unacceptedTherapist.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: unacceptedTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -384,7 +384,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validPatient1.email,
                     password: newPassword,
-                    password_confirmation: newPassword,
+                    passwordConfirmation: newPassword,
                     token: validPatient1.resetcode
                 })
                 .set("Accept", "application/json")
@@ -417,7 +417,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: "123456",
-                    password_confirmation: "1234567",
+                    passwordConfirmation: "1234567",
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -434,7 +434,7 @@ describe("PasswordResetController Tests", () => {
                 .send({
                     email: validTherapist.email,
                     password: "12345",
-                    password_confirmation: "123456",
+                    passwordConfirmation: "123456",
                     token: validTherapist.resetcode
                 })
                 .set("Accept", "application/json")
@@ -442,7 +442,7 @@ describe("PasswordResetController Tests", () => {
                 .expect(400);
 
             expect(res.body._status).toEqual("fail");
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 2)).toBeTruthy();
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
     });
 });
