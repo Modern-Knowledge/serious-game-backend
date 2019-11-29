@@ -16,6 +16,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import {
     failedValidation400Response,
     http4xxResponse
@@ -87,7 +88,7 @@ router.get(
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -145,7 +146,7 @@ router.get(
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -230,7 +231,7 @@ router.delete(
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -365,7 +366,7 @@ router.post(
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,

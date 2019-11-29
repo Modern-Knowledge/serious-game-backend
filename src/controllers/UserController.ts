@@ -93,7 +93,7 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
 
         return http4xxResponse(res, [
             rVM("password", "not_matching")
-        ], 400);
+        ], HTTPStatusCode.BAD_REQUEST);
     }
 
     const userFacade = new UserFacade();
@@ -109,7 +109,7 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Ihr altes Kennwort ist nicht korrekt!`),
-            ], 401);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         logEndpoint(

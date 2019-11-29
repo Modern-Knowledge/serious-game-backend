@@ -41,7 +41,7 @@ const controllerName = "PasswordResetController";
  *                in: formData
  *                type: string
  *          responses:
- *              200:
+ *              HttpStatusCode.OK:
  *                  description: user
  */
 router.post("/reset", [
@@ -155,7 +155,7 @@ router.post("/reset-password",  [
 
         return http4xxResponse(res, [
             rVM("password", "not_matching")
-        ], 400);
+        ], HTTPStatusCode.BAD_REQUEST);
     }
 
     try {
@@ -180,7 +180,7 @@ router.post("/reset-password",  [
                 return http4xxResponse(res, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                         `Der eingegebene Code "${token}" ist nicht korrekt!`)
-                ], 400);
+                ], HTTPStatusCode.BAD_REQUEST);
 
             } else if (moment().isAfter(user.resetcodeValidUntil)) {
 
@@ -191,7 +191,7 @@ router.post("/reset-password",  [
                 return http4xxResponse(res, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                         `Der Code "${token}" ist nicht mehr gültig! Fordern Sie einen neuen Code an!`)
-                ], 400);
+                ], HTTPStatusCode.BAD_REQUEST);
             }
         } else {
             logEndpoint(controllerName, `User with id ${user.id} has not requested a password token!`, req);
@@ -199,7 +199,7 @@ router.post("/reset-password",  [
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                     `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
-            ], 400);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         user.password = bcrypt.hashSync(password, 12);
@@ -217,7 +217,7 @@ router.post("/reset-password",  [
         );
         mailTransport.sendMail(m);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 undefined,
                 [

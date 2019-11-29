@@ -1,7 +1,7 @@
 
 import * as bcrypt from "bcryptjs";
-import express from "express";
 import { Request, Response } from "express";
+import express from "express";
 import { check } from "express-validator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
@@ -15,6 +15,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
@@ -47,7 +48,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all patients!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {patients, token: res.locals.authorizationToken} ,
                 [
@@ -131,7 +132,7 @@ router.post("/", [
 
         logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
-        return res.status(201).json(
+        return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 { token, user: createdPatient, patient_setting: createdPatientSetting },
                 [
@@ -175,7 +176,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully deleted!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
@@ -257,7 +258,7 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully updated!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {patient, token: res.locals.authorizationToken},
                 [

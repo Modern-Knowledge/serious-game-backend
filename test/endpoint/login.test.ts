@@ -153,7 +153,7 @@ describe("LoginController Tests", () => {
                 .send({email: "notExistingEmail@mail.com", password: "123456"})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(401);
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
@@ -165,7 +165,7 @@ describe("LoginController Tests", () => {
                 .send({email: validPatient.email, password: "1234562"})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(401);
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
@@ -195,7 +195,7 @@ describe("LoginController Tests", () => {
                 .send({email: tooManyFailedLoginAttemptsTherapist.email, password: "1234562"})
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(401);
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1);
@@ -203,7 +203,8 @@ describe("LoginController Tests", () => {
             const userFacade = new UserFacade();
             const user = await userFacade.getById(tooManyFailedLoginAttemptsTherapist.id);
             if (user) {
-                expect(user.failedLoginAttempts).toEqual(tooManyFailedLoginAttemptsTherapist.failedLoginAttempts + 1); // failed login attempts
+                expect(user.failedLoginAttempts)
+                    .toEqual(tooManyFailedLoginAttemptsTherapist.failedLoginAttempts + 1);
                 expect(user.loginCoolDown).not.toBeUndefined();
             }
         }, timeout);

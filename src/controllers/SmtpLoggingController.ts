@@ -11,6 +11,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
@@ -57,7 +58,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
 
         logEndpoint(controllerName, `All smtp-logs loaded successfully!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {logs, token: res.locals.authorizationToken},
                 [
@@ -94,7 +95,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
 
         logEndpoint(controllerName, `${affectedRows} smtp-logs were deleted!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {affectedRows, token: res.locals.authorizationToken},
                 [

@@ -12,6 +12,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
@@ -66,7 +67,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission,
 
         logEndpoint(controllerName, `All logs loaded successfully!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {
                     logs,
@@ -125,7 +126,7 @@ router.post("/", async (req: Request, res: Response, next: any) => {
 
         logEndpoint(controllerName, `${insertedLogs.length} logs successfully created!`, req);
 
-        return res.status(201).json(
+        return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {
                     insertedLogs: insertedLogs.length
@@ -163,7 +164,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
 
         logEndpoint(controllerName, `${affectedRows} logs were deleted!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {affectedRows, token: res.locals.authorizationToken},
                 [

@@ -12,6 +12,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -63,7 +64,7 @@ router.get("/:id", authenticationMiddleware, [
 
         logEndpoint(controllerName, `Statistic with id ${id} was successfully loaded!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {statistic, token: res.locals.authorizationToken},
                 [
@@ -130,7 +131,7 @@ router.put("/:id", authenticationMiddleware, [
 
         logEndpoint(controllerName, `Statistic with id ${req.params.id} was successfully updated!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {statistic, token: res.locals.authorizationToken},
                 [

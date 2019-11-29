@@ -5,6 +5,7 @@ import {
     HttpResponse,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -14,7 +15,7 @@ const controllerName = "VersionController";
 router.get("/", (req: Request, res: Response) => {
     logEndpoint(controllerName, `Version requested!`, req);
 
-    return res.status(200).json(
+    return res.status(HTTPStatusCode.OK).json(
         new HttpResponse(HttpResponseStatus.SUCCESS,
             {
                 authors: [

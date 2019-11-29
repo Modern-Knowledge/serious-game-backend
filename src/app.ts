@@ -24,6 +24,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "./lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "./lib/utils/httpStatusCode";
 import { specs } from "./util/documentation/swaggerSpecs";
 import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
 
@@ -211,7 +212,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use((req: Request, res: Response, next: any) => {
     if (!res.headersSent) {
         const error: Error = new Error("Route not found " + `"${req.method} ${getRequestUrl(req)}"`);
-        res.locals.status = 404;
+        res.locals.status = HTTPStatusCode.NOT_FOUND;
         next(error);
     }
 });
@@ -241,7 +242,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
 
     logger.error(`${loggerString(__dirname, "", "", __filename)} ${err.message}`);
 
-    return res.status(res.locals.status || 500).send(httpResponse);
+    return res.status(res.locals.status || HTTPStatusCode.INTERNAL_SERVER_ERROR).send(httpResponse);
 });
 
 export default app;

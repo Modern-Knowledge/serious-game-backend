@@ -3,7 +3,7 @@ import request from "supertest";
 import app from "../../src/app";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
-    seedFoodCategories, seedIngredients,
+    seedFoodCategories, seedImages, seedIngredients,
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
@@ -21,12 +21,13 @@ describe("IngredientController Tests", () => {
 
     describe("GET /ingredients", () => {
         const endpoint = "/ingredients";
-        const timeout = 10000;
+        const timeout = 20000;
         let authenticationToken: string;
 
         beforeAll(async () => {
             await truncateTables();
             await seedUsers();
+            await seedImages();
             await seedFoodCategories();
             await seedIngredients();
         }, timeout);
@@ -89,6 +90,7 @@ describe("IngredientController Tests", () => {
         beforeAll(async () => {
             await truncateTables();
             await seedUsers();
+            await seedImages();
             await seedFoodCategories();
             await seedIngredients();
         }, timeout);
@@ -173,6 +175,7 @@ describe("IngredientController Tests", () => {
         beforeAll(async () => {
             await truncateTables();
             await seedUsers();
+            await seedImages();
             await seedFoodCategories();
             await seedIngredients();
         }, timeout);

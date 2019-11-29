@@ -11,6 +11,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -47,7 +48,7 @@ router.get(
             logEndpoint(controllerName, `Return all errortexts!`, req);
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -115,7 +116,7 @@ router.get(
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -239,7 +240,7 @@ router.post("/", authenticationMiddleware, [
             logEndpoint(controllerName, `Errortext was successfully created!`, req);
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
@@ -329,7 +330,7 @@ router.post("/bulk", authenticationMiddleware, [
                     HttpResponseMessageSeverity.DANGER,
                     `Keine Fehlertexte übergeben!`
                 )
-            ], 400);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         const errortextStatisticFacade = new ErrortextStatisticFacade();
@@ -381,7 +382,7 @@ router.post("/bulk", authenticationMiddleware, [
 
             logEndpoint(controllerName, `Errortexts were successfully created!`, req);
 
-            return res.status(200)
+            return res.status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(HttpResponseStatus.SUCCESS,
                         { errortexts, token: res.locals.authorizationToken },

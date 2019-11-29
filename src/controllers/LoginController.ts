@@ -13,6 +13,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
@@ -66,7 +67,7 @@ router.post("/login", [
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `E-Mail Adresse oder Passwort falsch!`)
-            ], 401);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         // check if user is a therapist -> therapist is allowed to login (accepted == true)
@@ -83,7 +84,7 @@ router.post("/login", [
                 new HttpResponseMessage(HttpResponseMessageSeverity.WARNING,
                     `Ihr TherapeutInnen Account wurde noch nicht freigeschaltet! ` +
                     `Kontaktieren Sie den/die AdministratorIn, damit Sie freigeschaltet werden!`)
-            ], 400);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         // check if user is allowed to login (loginCoolDown)
@@ -96,7 +97,7 @@ router.post("/login", [
                     `Sie können sich nicht einloggen, da Ihr Account aufgrund vieler ` +
                     `fehlgeschlagener Loginversuche gesperrt ist. ` +
                     `Ihr Account ist ab ${formatDateTime(reqUser.loginCoolDown)} wieder freigeschalten.`)
-            ], 400);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         // compare passwords
@@ -136,7 +137,7 @@ router.post("/login", [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                     `Ihre E-Mail oder Ihr Kennwort ist nicht korrekt!`),
                 ...additionalMessages
-            ], 401);
+            ], HTTPStatusCode.BAD_REQUEST);
         }
 
         logEndpoint(controllerName, `The user with the id ${reqUser.id} has logged in successfully!`, req);
@@ -149,7 +150,7 @@ router.post("/login", [
 
         const token = await jwtHelper.generateJWT(reqUser);
 
-        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+        return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {user: reqUser, token},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)

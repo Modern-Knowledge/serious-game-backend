@@ -190,9 +190,9 @@ describe("UserController Tests", () => {
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(404);
+                .expect(403);
 
-            expect(res.body._status).toEqual("error");
+            expect(res.body._status).toEqual("fail");
         }, timeout);
 
         // SGBUC09
@@ -357,7 +357,7 @@ describe("UserController Tests", () => {
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
-                .expect(401);
+                .expect(400);
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();

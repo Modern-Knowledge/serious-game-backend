@@ -8,6 +8,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, forbidden403Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -40,7 +41,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all patient-settings!`, req);
 
-        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+        return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {patientSettings, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
@@ -93,7 +94,7 @@ router.get("/:id", authenticationMiddleware, [
 
         logEndpoint(controllerName, `Patient-Setting with id ${id} was successfully loaded!`, req);
 
-        return res.status(200).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+        return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {patientSetting, token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,

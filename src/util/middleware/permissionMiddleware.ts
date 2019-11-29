@@ -3,6 +3,7 @@ import { Roles } from "../../lib/enums/Roles";
 import { Patient } from "../../lib/models/Patient";
 import { Therapist } from "../../lib/models/Therapist";
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../../lib/utils/httpStatusCode";
 import { getRequestUrl, loggerString } from "../Helper";
 import { http4xxResponse } from "../http/httpResponses";
 import logger from "../log/logger";
@@ -44,7 +45,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 403);
+    ], HTTPStatusCode.FORBIDDEN);
 }
 
 /**
@@ -69,7 +70,7 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 403);
+    ], HTTPStatusCode.FORBIDDEN);
 }
 
 /**
@@ -94,7 +95,7 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 403);
+    ], HTTPStatusCode.FORBIDDEN);
 }
 
 /**
@@ -121,5 +122,5 @@ export function checkTherapistAdminPermission(req: Request, res: Response, next:
 
     return http4xxResponse(res, [
         new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Sie dürfen diese Aktion nicht durchführen!`)
-    ], 403);
+    ], HTTPStatusCode.FORBIDDEN);
 }

@@ -8,6 +8,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
 } from "../../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../../lib/utils/httpStatusCode";
 import { loggerString } from "../Helper";
 import { http4xxResponse } from "../http/httpResponses";
 import { JWTHelper } from "../JWTHelper";
@@ -40,7 +41,7 @@ export async function checkAuthentication(req: Request, res: Response, next: any
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                     `Verifzierung der Authentifikation ist fehlgeschlagen!`)
-            ], 401);
+            ], HTTPStatusCode.UNAUTHORIZED);
         }
 
         res.locals.user = user;

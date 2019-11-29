@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2019 Florian Mold
- * All rights reserved.
- * https://nodemailer.com/message/
- */
-
 import { TemplateParser } from "../../lib/utils/TemplateParser";
 import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 import { Attachment } from "./Attachment";

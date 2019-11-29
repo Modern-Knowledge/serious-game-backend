@@ -9,6 +9,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
@@ -39,7 +40,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all ingredients!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,
                     {ingredients, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Alle Zutate erfolgreich geladen!`)
@@ -97,7 +98,7 @@ router.get("/:id", authenticationMiddleware, [
             );
 
             return res
-                .status(200)
+                .status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(HttpResponseStatus.SUCCESS,
                         { ingredient, token: res.locals.authorizationToken}, [
@@ -152,7 +153,7 @@ router.get("/category/:id", authenticationMiddleware, [
                 categoryName = "\"" + ingredients[0].foodCategory.name + "\"";
             }
 
-            return res.status(200).json(
+            return res.status(HTTPStatusCode.OK).json(
                 new HttpResponse(HttpResponseStatus.SUCCESS,
                     {ingredients, token: res.locals.authorizationToken},
                     [new HttpResponseMessage(

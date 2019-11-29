@@ -1,7 +1,7 @@
 
 import * as bcrypt from "bcryptjs";
-import express from "express";
 import { Request, Response } from "express";
+import express from "express";
 import { check } from "express-validator";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
@@ -15,6 +15,7 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
@@ -51,7 +52,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all therapists!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {therapists, token: res.locals.authorizationToken},
                 [
@@ -124,7 +125,7 @@ router.post("/", [
 
         logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
 
-        return res.status(201).json(
+        return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 { user: response, token},
                 [
@@ -211,7 +212,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         logEndpoint(controllerName, `Updated therapist with id ${therapist.id}!`, req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {therapist, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
@@ -252,7 +253,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 
         logEndpoint(controllerName, `Therapist with id ${id} was successfully deleted!`, req);
 
-        return res.status(201).json(
+        return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
@@ -313,7 +314,7 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
             `Therapist with id ${id} was ${therapist.accepted ? "accepted" : "not accepted"}`,
             req);
 
-        return res.status(200).json(
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {token: res.locals.authorizationToken},
                 [
