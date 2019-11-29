@@ -1,5 +1,5 @@
 import { Image } from "../lib/models/Image";
-import {getImage, inTestMode} from "../util/Helper";
+import { getImage, inTestMode } from "../util/Helper";
 
 async function loadImages(): Promise<Image[]> {
     const image = new Image();

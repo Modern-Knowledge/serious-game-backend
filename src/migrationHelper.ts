@@ -288,6 +288,7 @@ export async function seedTables(): Promise<number> {
     await seedRecipes();
     await seedFoodCategories();
     await seedSeverities();
+    await seedImages();
     await seedIngredients();
     await seedRecipeIngredientFacade();
     await seedGames();
@@ -299,7 +300,6 @@ export async function seedTables(): Promise<number> {
     await seedWords();
     await seedStatistics();
     await seedSessions();
-    await seedImages();
     await seedSmtpLogs();
     await seedLogs();
     await seedTherapistPatients();
