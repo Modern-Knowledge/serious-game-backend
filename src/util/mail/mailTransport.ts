@@ -5,7 +5,7 @@ import { Mail } from "./Mail";
 
 import * as nodemailer from "nodemailer";
 import { SmtpLogFacade } from "../../db/entity/log/SmtpLogFacade";
-import { loggerString } from "../Helper";
+import { inTestMode, loggerString } from "../Helper";
 
 /**
  * class used to handle mail sending with nodemailer
@@ -66,7 +66,7 @@ class MailTransport {
 
         const smtpLogFacade: SmtpLogFacade = new SmtpLogFacade();
 
-        if (process.env.SEND_MAILS === "1") { // do not send mails in test mode
+        if (process.env.SEND_MAILS === "1" && !inTestMode()) { // do not send mails in test mode
             this._transporter.sendMail(mail).then((value: any) => {
                 logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
                     `Mail sent: ${value.messageId}!`);
