@@ -135,7 +135,7 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
                 {token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Ihr Password wurde erfolgreich geändert!`)
+                        `Ihr Passwort wurde erfolgreich geändert!`, true)
                 ]
             )
         );

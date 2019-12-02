@@ -102,7 +102,8 @@ router.post("/reset", [
                 },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`)
+                        `Der Code wurde erfolgreich an ${user.email} gesendet. Geben Sie nun den erhaltenen Code ein!`,
+                        true)
                 ]
             )
         );
@@ -222,7 +223,7 @@ router.post("/reset-password",  [
                 undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Ihr Password wurde erfolgreich geändert!`)
+                        `Ihr Password wurde erfolgreich geändert!`, true)
                 ]
             )
         );
