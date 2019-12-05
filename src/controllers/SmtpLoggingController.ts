@@ -91,7 +91,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
     facade.filter.addFilterCondition("created_at", date, SQLComparisonOperator.LESS_THAN);
 
     try {
-        const affectedRows = await facade.deleteSmtpLogs();
+        const affectedRows = await facade.delete();
 
         logEndpoint(controllerName, `${affectedRows} smtp-logs were deleted!`, req);
 

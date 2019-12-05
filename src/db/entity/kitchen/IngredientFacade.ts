@@ -63,9 +63,9 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
      * inserts a new ingredient and returns the created ingredient
      * @param ingredient ingredient to insert
      */
-    public async insertIngredient(ingredient: Ingredient): Promise<Ingredient> {
+    public async insert(ingredient: Ingredient): Promise<Ingredient> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(ingredient);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             ingredient.id = result[0].insertedId;

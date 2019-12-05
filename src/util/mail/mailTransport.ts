@@ -73,7 +73,7 @@ class MailTransport {
 
                 for (const item of smtpLogs) {
                     item.sent = 1;
-                    smtpLogFacade.insertLog(item).catch((dbError: any) => {
+                    smtpLogFacade.insert(item).catch((dbError: any) => {
                         logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
                             `${dbError.message}!`);
                     });
@@ -84,7 +84,7 @@ class MailTransport {
                     `Mail couldn't be sent \n ${error.message}!`);
 
                 for (const item of smtpLogs) {
-                    smtpLogFacade.insertLog(item).catch((dbError: any) => {
+                    smtpLogFacade.insert(item).catch((dbError: any) => {
                         logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
                             `${dbError.message}!`);
                     });
@@ -96,7 +96,7 @@ class MailTransport {
                 `Simulated mail was successfully sent!`);
 
             for (const item of smtpLogs) {
-                smtpLogFacade.insertLog(item).catch((error: any) => {
+                smtpLogFacade.insert(item).catch((error: any) => {
                     logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
                         `${error.message}!`);
                 });

@@ -118,7 +118,7 @@ router.put("/:id", authenticationMiddleware, [
 
     try {
         // update statistics
-        const affectedRows = await statisticFacade.updateStatistic(statistic);
+        const affectedRows = await statisticFacade.update(statistic);
 
         if (affectedRows <= 0) { // check amount of affected rows
             logEndpoint(controllerName, `Statistic with id ${req.params.id} couldn't be updated!`, req);

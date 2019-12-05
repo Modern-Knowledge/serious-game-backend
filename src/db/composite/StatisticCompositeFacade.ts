@@ -218,8 +218,8 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     /**
      * delete the statistic and the errortextStatistic
      */
-    public async deleteStatisticComposite(): Promise<number> {
-        return await this.delete([this._errortextStatisticFacade, this]);
+    public async delete(): Promise<number> {
+        return await this.deleteStatement([this._errortextStatisticFacade, this]);
     }
 
     /**

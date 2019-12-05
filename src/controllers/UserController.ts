@@ -119,7 +119,7 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
 
         user.password = bcrypt.hashSync(newPassword, 12); // set new password
         userFacade.filter.addFilterCondition("id", user.id);
-        await userFacade.updateUser(user);
+        await userFacade.update(user);
 
         logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 
@@ -187,7 +187,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     userFacade.filter.addFilterCondition("id", user.id);
 
     try {
-        const affectedRows = await userFacade.updateUser(user);
+        const affectedRows = await userFacade.update(user);
 
         if (affectedRows <= 0) {
             logEndpoint(controllerName, `User with id ${user.id} couldn't be updated!`, req);

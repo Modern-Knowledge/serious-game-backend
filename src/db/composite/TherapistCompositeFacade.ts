@@ -198,8 +198,8 @@ export class TherapistCompositeFacade extends CompositeFacade<Therapist> {
     /**
      * delete the therapist, the user and the therapist-patient connection
      */
-    public async deleteTherapistComposite(): Promise<number> {
-        return await this.delete([this._therapistPatientFacade, this, this._therapistFacade.userFacade]);
+    public async delete(): Promise<number> {
+        return await this.deleteStatement([this._therapistPatientFacade, this, this._therapistFacade.userFacade]);
     }
 
     /**

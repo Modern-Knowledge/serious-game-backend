@@ -35,9 +35,9 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
      * inserts a new food-category and returns the created food-category
      * @param foodCategory food-category to insert
      */
-    public async insertFoodCategory(foodCategory: FoodCategory): Promise<FoodCategory> {
+    public async insert(foodCategory: FoodCategory): Promise<FoodCategory> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(foodCategory);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             foodCategory.id = result[0].insertedId;

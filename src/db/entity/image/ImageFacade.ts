@@ -34,9 +34,9 @@ export class ImageFacade extends EntityFacade<Image> {
      * inserts a new word and returns the created word
      * @param image image to insert
      */
-    public async insertImage(image: Image): Promise<Image> {
+    public async insert(image: Image): Promise<Image> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(image);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             image.id = result[0].insertedId;

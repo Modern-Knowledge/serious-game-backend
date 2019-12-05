@@ -61,9 +61,9 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
      * inserts a new gameSetting and returns the created gameSetting
      * @param gameSetting gameSetting to insert
      */
-    public async insertGameSetting(gameSetting: GameSetting): Promise<GameSetting> {
+    public async insert(gameSetting: GameSetting): Promise<GameSetting> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(gameSetting);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             gameSetting.id = result[0].insertedId;

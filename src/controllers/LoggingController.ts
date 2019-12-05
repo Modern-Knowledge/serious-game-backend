@@ -116,7 +116,7 @@ router.post("/", async (req: Request, res: Response, next: any) => {
                 log.params = item.message.length === 0 ? [] : item.message;
 
                 if (item.logger && item.level) {
-                    await facade.insertLog(log);
+                    await facade.insert(log);
                     insertedLogs.push(log);
                 }
             } else {
@@ -160,7 +160,7 @@ router.delete("/", authenticationMiddleware, checkTherapistAdminPermission,
     facade.filter.addFilterCondition("created_at", date, SQLComparisonOperator.LESS_THAN);
 
     try {
-        const affectedRows = await facade.deleteLogs();
+        const affectedRows = await facade.delete();
 
         logEndpoint(controllerName, `${affectedRows} logs were deleted!`, req);
 

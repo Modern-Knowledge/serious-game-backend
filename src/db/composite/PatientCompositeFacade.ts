@@ -333,8 +333,8 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     /**
      * delete the patient, the user, the patient settings, the session and the connection to the patients
      */
-    public async deletePatientComposite(): Promise<number> {
-        return await this.delete([
+    public async delete(): Promise<number> {
+        return await this.deleteStatement([
             this._patientSettingsFacade, this._sessionCompositeFacade,
             this._therapistPatientFacade, this, this._patientFacade.userFacade
         ]);

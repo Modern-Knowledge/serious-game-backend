@@ -120,12 +120,12 @@ router.post("/", [
     const patientSetting = new PatientSetting();
 
     try {
-        const createdPatient = await patientFacade.insertPatient(patient);
+        const createdPatient = await patientFacade.insert(patient);
 
         patientSetting.patientId = createdPatient.id;
 
         // insert patient settings
-        const createdPatientSetting = await patientSettingFacade.insertPatientSetting(patientSetting);
+        const createdPatientSetting = await patientSettingFacade.insert(patientSetting);
 
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.generateJWT(createdPatient);
@@ -172,7 +172,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     patientCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("patient_id", id);
 
     try {
-        await patientCompositeFacade.deletePatientComposite();
+        await patientCompositeFacade.delete();
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully deleted!`, req);
 

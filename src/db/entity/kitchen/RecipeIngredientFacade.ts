@@ -40,9 +40,9 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
      * inserts a new recipeIngredient and returns the created recipeIngredient
      * @param recipeIngredient recipeIngredient to insert
      */
-    public async insertRecipeIngredient(recipeIngredient: RecipeIngredient): Promise<RecipeIngredient> {
+    public async insert(recipeIngredient: RecipeIngredient): Promise<RecipeIngredient> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(recipeIngredient);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             recipeIngredient.id = result[0].insertedId;

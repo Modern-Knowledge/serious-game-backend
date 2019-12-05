@@ -33,9 +33,9 @@ export class GameFacade extends EntityFacade<Game> {
      * inserts a new game and returns the created game
      * @param game game that should be inserted
      */
-    public async insertGame(game: Game): Promise<Game> {
+    public async insert(game: Game): Promise<Game> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(game);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             game.id = result[0].insertedId;

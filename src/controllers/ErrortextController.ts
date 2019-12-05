@@ -233,7 +233,7 @@ router.post("/", authenticationMiddleware, [
             const errorTextStatistic = new ErrortextStatistic();
             errorTextStatistic.errortextId = errortextId;
             errorTextStatistic.statisticId = statisticId;
-            const errortext = await errortextStatisticFacade.insertErrortextStatistic(
+            const errortext = await errortextStatisticFacade.insert(
                 errorTextStatistic
             );
 
@@ -376,7 +376,7 @@ router.post("/bulk", authenticationMiddleware, [
                 errorTextStatistic.errortextId = errortextData._id;
                 errorTextStatistic.statisticId = statisticId;
                 errortexts.push(
-                    await errortextStatisticFacade.insertErrortextStatistic(errorTextStatistic)
+                    await errortextStatisticFacade.insert(errorTextStatistic)
                 );
             }
 

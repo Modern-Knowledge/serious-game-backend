@@ -70,11 +70,11 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
      * inserts a new recipe and returns the created recipe
      * @param recipe recipe to insert
      */
-    public async insertRecipe(recipe: Recipe): Promise<Recipe> {
+    public async insert(recipe: Recipe): Promise<Recipe> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(
             recipe
         );
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             recipe.id = result[0].insertedId;

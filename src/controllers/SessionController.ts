@@ -222,7 +222,7 @@ router.delete(
                 session.statisticId
             );
 
-            await sessionCompositeFacade.deleteSessionComposite();
+            await sessionCompositeFacade.delete();
 
             logEndpoint(
                 controllerName,
@@ -345,7 +345,7 @@ router.post(
             }
 
             // insert statistic
-            const insertedStatistic = await statisticFacade.insertStatistic(statistic);
+            const insertedStatistic = await statisticFacade.insert(statistic);
 
             logEndpoint(
                 controllerName,
@@ -357,7 +357,7 @@ router.post(
             session.statistic = insertedStatistic;
 
             // insert statistic
-            const insertedSession = await sessionFacade.insertSession(session);
+            const insertedSession = await sessionFacade.insert(session);
 
             logEndpoint(
                 controllerName,

@@ -35,9 +35,9 @@ export class SeverityFacade extends EntityFacade<Severity> {
      * inserts a new severity and returns the created severity
      * @param severity severity to insert
      */
-    public async insertSeverity(severity: Severity): Promise<Severity> {
+    public async insert(severity: Severity): Promise<Severity> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(severity);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             severity.id = result[0].insertedId;

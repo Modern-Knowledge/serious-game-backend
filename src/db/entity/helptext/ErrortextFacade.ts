@@ -74,7 +74,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
      * Inserts a new user and returns the created user
      * @param errortext errortext to insert
      */
-    public async insertErrortext(errortext: Errortext): Promise<Helptext> {
+    public async insert(errortext: Errortext): Promise<Errortext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortext);
 
         /**
@@ -89,7 +89,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [
+        await this.insertStatement(attributes, [
                 {facade: this._textFacade, entity: errortext, callBackOnInsert: onInsertText },
                 {facade: this, entity: errortext}
             ]);

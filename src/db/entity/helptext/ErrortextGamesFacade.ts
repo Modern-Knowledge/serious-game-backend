@@ -39,9 +39,9 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
      * inserts a new errortextGame and returns the created errortextGame
      * @param errortextGame errortextGame to insert
      */
-    public async insertErrortextGame(errortextGame: ErrortextGame): Promise<ErrortextGame> {
+    public async insert(errortextGame: ErrortextGame): Promise<ErrortextGame> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortextGame);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             errortextGame.id = result[0].insertedId;

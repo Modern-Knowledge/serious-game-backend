@@ -29,12 +29,12 @@ import { SQLWhere } from "./sql/SQLWhere";
 import { UpdateQuery } from "./sql/UpdateQuery";
 
 /**
- * base class for crud operations with the database
+ * Base class for crud operations with the database.
  */
 export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
 
     /**
-     * combine joins for the entity and returns them as a list
+     * Combine the joins of the different sub-facades and returns them as a list.
      */
     protected get joins(): SQLJoin[] {
         return [];
@@ -49,21 +49,21 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * retrieves the filter for the facade
+     * Retrieves the filter for the facade.
      */
     get filter(): Filter {
         return this._filter;
     }
 
     /**
-     * returns the ordering of the facade (order-by)
+     * Returns the ordering of the facade (order-by).
      */
     get ordering(): Ordering {
         return this._ordering;
     }
 
     /**
-     * sets the ordering of the facade (order-by)
+     * Sets the ordering of the facade (order-by).
      * @param value new order-bys of the facade
      */
     set ordering(value: Ordering) {
@@ -95,7 +95,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * sets the function that is applied to the result set of a select query
+     * Sets the function that is applied to the result set of a select query.
+     * Can be used to filter results, which is not possible in sql.
+     *
      * @param value function that takes an array of entity types
      */
     set postProcessFilter(value: (entities: EntityType[]) => EntityType[]) {
@@ -103,7 +105,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * Creates the sql where clause from the given filter.
+     * Creates the sql-where clause from the given filter.
      * @param filter filter to create the where clause from
      */
     private static getSQLFilter(filter: Filter): SQLWhere {
@@ -130,7 +132,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * add an order by clause
+     * Add an order by clause.
      * @param attribute attribute for ordering
      * @param order attribute sort order (ASC|DESC)
      */
@@ -139,14 +141,16 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * clear filter
+     * Clear filter. Empties the filter.
      */
     public clearFilter(): void {
         this._filter.clear();
     }
 
     /**
-     * returns the fully qualified name (columnName + tableAlias)
+     * Returns the fully qualified name (columnName + tableAlias) of a column.
+     * Is used to identify the column in a result set.
+     *
      * @param column name of the column
      */
     protected name(column: string): string {
@@ -154,7 +158,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-columns that should be retrieved from the database.
+     * Every table has default columns like id, created_at, modified_at.
+     * Additional columns can be passed that are specific to the table.
+     * Furthermore columns can be excluded to reduce the result set.
+     *
      * @param excludedSQLAttributes attributes that should be excluded from the select query
      * @param allowedSqlAttributes attributes that should be included in the function
      */
@@ -175,8 +183,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * executes an select query and returns the results
-     * execution time of the query is analysed
+     * Executes an select query and returns the results as an array.
+     * Result rows are converted to an instance of the current entity.
+     * Execution time of the query is analysed
+     *
      * @param attributes attributes that should be retrieved
      * @param filter filter for selected (can be different from facade filter
      */
@@ -247,20 +257,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * executes an insert query and returns the id of the newly inserted row
-     * watch the order of the array
-     * statements are executed in this order
+     * Executes multiple insert queries and returns all inserted ids as an array.
+     * Watch the order of the queries. Statements are executed in this order.
      *
      * - facade: facade to execute insert in
      * - entity: entity to insert
      * - callBackOnInsert: callback that is executed after the insert, last callback in array will not be executed
      *
-     * returns all inserted ids as array
-     *
      * @param attributes name-value pairs of attributes that should be inserted
      * @param additionalInserts queries to execute in the transaction
      */
-    protected async insert(
+    protected async insertStatement(
         attributes: SQLValueAttributes,
         additionalInserts?: Array<{facade: any, entity: EntityType, callBackOnInsert?: any}>):
         Promise<any[]> {
@@ -284,7 +291,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns the function for executing insert queries
+     * Returns the function for executing insert queries.
+     * Returned function can be executed to insert the specified row.
+     *
      * @param connection database connection for the query
      * @param attributes attributes to take values for the insert
      */
@@ -326,19 +335,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * executes an update query and returns the number of affected rows
-     * facade to execute update in, entity is the entity for updating
-     * watch the order of the array
+     * Executes multiple update queries and returns the number of affected rows.
+     *
      * statements are executed in this order
      * facade: facade to execute update in
      * entity: entity to insert
      *
      * @param attributes name-value pairs of the entity that should be changed
      * @param additionalUpdates additionalUpdates to execute facade is for
-     *
      */
-    protected async update(attributes: SQLValueAttributes,
-                           additionalUpdates?: Array<{facade: any, entity: EntityType}>): Promise<number> {
+    protected async updateStatement(attributes: SQLValueAttributes,
+                                    additionalUpdates?: Array<{facade: any, entity: EntityType}>): Promise<number> {
         // array of queries
         const funcArray: ITransactionQuery[] = [];
         if (additionalUpdates) {
@@ -357,7 +364,9 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns the function for executing update queries
+     * Returns the function for executing update queries.
+     * Function can be executed to update the row.
+     *
      * @param connection database connection for the query
      * @param attributes attributes for the update query
      */
@@ -388,7 +397,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     };
 
     /**
-     * return attributes that are common to all updates (modified_at)
+     * Return attributes that are common to all updates (modified_at).
+     *
      * @param entity entity to take values for the update statement
      */
     protected getSQLUpdateValueAttributes(entity: EntityType): SQLValueAttributes {
@@ -405,12 +415,11 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * if no additionalFacade is provided, than the current (this) is used
-     * executes a delete query in a transaction and returns the number of affected rows
-     * watch the order of the array
-     * statements are executed in this order
+     * Executes multiple delete queries in a transaction and returns the number of affected rows.
+     * If no additionalFacade is provided, than the current (this) is used for deletion.
+     * Watch the order of the array. Statements are executed in this order.
      */
-    protected async delete(additionalFacades?: any[]): Promise<number> {
+    protected async deleteStatement(additionalFacades?: any[]): Promise<number> {
         // array of queries
         const funcArray: ITransactionQuery[] = [];
         if (additionalFacades) {
@@ -427,7 +436,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns the function for executing delete queries
+     * Returns the function for executing delete queries.
+     * Function can be executed to delete the specified entities.
      * @param connection connection to the database
      */
     protected getDeleteQueryFn: (connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any> =
@@ -461,7 +471,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     };
 
     /**
-     * returns sql value attributes for insert-statement and update-statement
+     * Returns sql value attributes for insert-statement and update-statement.
+     *
      * @param prefix prefix before the sql attribute
      * @param entity entity to take values from
      */
@@ -470,13 +481,15 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * assigns the retrieved values to the newly created entity and returns it
+     * Assigns the retrieved values to the newly created entity and returns it.
+     *
      * @param result results from the select query
      */
     protected abstract fillEntity(result: any): EntityType;
 
     /**
-     * fill default attributes that every model has (id, created_at, modified_at)
+     * Fill default attributes that every model has (id, created_at, modified_at).
+     *
      * @param result result to take values from
      * @param entity entity to fill
      */
@@ -497,8 +510,10 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * post process the results of a select query
-     * e.g.: handle joins
+     * Post process the results of a select query.
+     * e.g.: Handle joins: Joins increase the size of the result set with
+     * duplicate rows. This must be handled.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: EntityType[]): EntityType[] {
@@ -506,7 +521,39 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
+     * Function that should be overwritten to provide insert-functionality
+     * for the entities in the child-facade. If the function is not overwritten
+     * than it returns undefined, which indicates that nothing was inserted.
+     *
+     * @param entity entity to insert
+     */
+    protected async insert(entity: EntityType): Promise<EntityType> {
+        return undefined;
+    }
+
+    /**
+     * Function that should be overwritten to provide update-functionality
+     * for the entities in the child-facade. If the function is not overwritten
+     * that it returns 0, which indicates that nothing was updated.
+     *
+     * @param entity entity to update
+     */
+    protected async update(entity: EntityType): Promise<number> {
+        return 0;
+    }
+
+    /**
+     * Function that should be overwritten, to provide delete-functionality
+     * for the entities in the child-facade. If the function is not overwritten
+     * than it returns 0, which indicates that nothing was deleted.
+     */
+    protected async delete(): Promise<number> {
+        return 0;
+    }
+
+    /**
      * Post filtering of results that were fetched from the database.
+     *
      * @param entities entities that should be filtered
      */
     private _postProcessFilter: (entities: EntityType[]) => EntityType[] = (entities) => {
@@ -514,7 +561,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     };
 
     /**
-     * creates and returns a select-query
+     * Creates and returns a select-query.
+     *
      * @param attributes columns that should be selected
      * @param filter select query where clause
      */
@@ -537,7 +585,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * creates and returns an insert-query
+     * Creates and returns an insert-query.
+     *
      * @param attributes columns that should be inserted
      */
     private getInsertQuery(attributes: SQLValueAttributes): IQuery {
@@ -554,7 +603,8 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * creates and returns an update-query
+     * Creates and returns an update-query.
+     *
      * @param attributes columns that should be set for update
      */
     private getUpdateQuery(attributes: SQLValueAttributes): IQuery {
@@ -591,7 +641,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
     }
 
     /**
-     * returns performance infos (amount, cardinality) about the sql joins
+     * Returns performance infos (amount, cardinality) about the sql-joins
      */
     private joinAnalyzer(): void {
         let oneToManyJoinAmount = 0;
@@ -627,7 +677,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
             logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
             `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
         }
-
     }
 }
 

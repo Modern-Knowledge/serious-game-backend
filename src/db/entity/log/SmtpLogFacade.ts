@@ -34,17 +34,17 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
      * inserts a new smtp-log and sets the id of the created smtp-log
      * @param smtpLog log to insert
      */
-    public async insertLog(smtpLog: SmtpLog): Promise<SmtpLog> {
+    public async insert(smtpLog: SmtpLog): Promise<SmtpLog> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(smtpLog);
-        await this.insert(attributes);
+        await this.insertStatement(attributes);
         return smtpLog;
     }
 
     /**
      * deletes the specified smtp-logs and returns the number of affected rows
      */
-    public deleteSmtpLogs(): Promise<number> {
-        return this.delete();
+    public delete(): Promise<number> {
+        return this.deleteStatement();
     }
 
     /**

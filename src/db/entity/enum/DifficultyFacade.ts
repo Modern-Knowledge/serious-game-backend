@@ -35,9 +35,9 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
      * inserts a new difficulty and returns the created difficulty
      * @param difficulty difficulty to insert
      */
-    public async insertDifficulty(difficulty: Difficulty): Promise<Difficulty> {
+    public async insert(difficulty: Difficulty): Promise<Difficulty> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(difficulty);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             difficulty.id = result[0].insertedId;

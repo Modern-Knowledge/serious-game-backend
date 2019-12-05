@@ -400,8 +400,8 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     /**
      * deletes the session, the statistic and the errortextStatistic
      */
-    public async deleteSessionComposite(): Promise<number> {
-        return await this.delete([
+    public async delete(): Promise<number> {
+        return await this.deleteStatement([
             this._statisticCompositeFacade.errortextStatisticFacade,
             this,
             this._statisticCompositeFacade

@@ -59,10 +59,10 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
      * inserts a new session and returns the created session
      * @param patientSetting patientSetting that should be inserted
      */
-    public async insertPatientSetting(patientSetting: PatientSetting): Promise<PatientSetting> {
+    public async insert(patientSetting: PatientSetting): Promise<PatientSetting> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patientSetting);
 
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             patientSetting.id = result[0].insertedId;

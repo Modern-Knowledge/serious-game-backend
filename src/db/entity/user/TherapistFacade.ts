@@ -66,7 +66,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * inserts a new therapist and returns the created therapist
      * @param therapist therapist that should be inserted
      */
-    public async insertTherapist(therapist: Therapist): Promise<Therapist> {
+    public async insert(therapist: Therapist): Promise<Therapist> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(therapist);
 
         /**
@@ -81,7 +81,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [
+        await this.insertStatement(attributes, [
             {facade: this._userFacade, entity: therapist, callBackOnInsert: onInsertUser},
             {facade: this, entity: therapist}
             ]);
@@ -95,7 +95,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      */
     public async updateUserTherapist(therapist: Therapist): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
-        return this.update(attributes, [
+        return this.updateStatement(attributes, [
                 {facade: this, entity: therapist},
                 {facade: this._userFacade, entity: therapist}
             ]);
@@ -105,16 +105,16 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
      * updates the therapists and returns the number of affected rows
      * @param therapist therapist that should be updated
      */
-    public async updateTherapist(therapist: Therapist): Promise<number> {
+    public async update(therapist: Therapist): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(therapist);
-        return this.update(attributes);
+        return this.updateStatement(attributes);
     }
 
     /**
      * deletes the specified therapist in the database and returns the number of affected rows
      */
-    public async deleteTherapist(): Promise<number> {
-        return await this.delete([this, this._userFacade]);
+    public async delete(): Promise<number> {
+        return await this.deleteStatement([this, this._userFacade]);
     }
 
     /**

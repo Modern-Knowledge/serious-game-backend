@@ -62,7 +62,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
      * inserts a new user and returns the created user
      * @param helptext helptext to insert
      */
-    public async insertHelptext(helptext: Helptext): Promise<Helptext> {
+    public async insert(helptext: Helptext): Promise<Helptext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptext);
 
         /**
@@ -77,7 +77,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [
+        await this.insertStatement(attributes, [
                 {facade: this._textFacade, entity: helptext, callBackOnInsert: onInsertText},
                 {facade: this, entity: helptext}
             ]);

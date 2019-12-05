@@ -131,7 +131,7 @@ router.post("/login", [
                 );
             }
 
-            await userFacade.updateUser(reqUser); // increase failed login attempts
+            await userFacade.update(reqUser); // increase failed login attempts
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
@@ -146,7 +146,7 @@ router.post("/login", [
         reqUser.failedLoginAttempts = 0;
         reqUser.loginCoolDown = null;
 
-        await userFacade.updateUser(reqUser);
+        await userFacade.update(reqUser);
 
         const token = await jwtHelper.generateJWT(reqUser);
 

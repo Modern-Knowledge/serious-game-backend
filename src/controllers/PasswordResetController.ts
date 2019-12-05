@@ -78,7 +78,7 @@ router.post("/reset", [
             // generate token for reset
             setPasswordResetToken(user);
 
-            await userFacade.updateUser(user);
+            await userFacade.update(user);
 
             logEndpoint(controllerName, `Password reset token for user with id ${user.id} was generated!`, req);
         }
@@ -207,7 +207,7 @@ router.post("/reset-password",  [
         user.resetcode = null;
         user.resetcodeValidUntil = null;
 
-        await userFacade.updateUser(user);
+        await userFacade.update(user);
 
         logEndpoint(controllerName, `The new password for user with id ${user.id} has been set!`, req);
 

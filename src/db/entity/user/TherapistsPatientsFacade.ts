@@ -41,13 +41,13 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
      * inserts a new therapist-patient and returns the created therapist-patient
      * @param therapistPatient TherapistPatient to insert
      */
-    public async insertTherapistPatient(therapistPatient: TherapistPatient): Promise<TherapistPatient> {
+    public async insert(therapistPatient: TherapistPatient): Promise<TherapistPatient> {
         const attributes: SQLValueAttributes = this.getSQLValueAttributes(
             this.tableName,
             therapistPatient
         );
 
-        await this.insert(attributes);
+        await this.insertStatement(attributes);
 
         return therapistPatient;
     }
@@ -63,7 +63,7 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
             therapistPatient.therapistId,
             SQLComparisonOperator.EQUAL
         );
-        return await this.delete([this]);
+        return await this.deleteStatement([this]);
     }
 
     /**

@@ -34,9 +34,9 @@ export class WordFacade extends EntityFacade<Word> {
      * inserts a new word and returns the created word
      * @param word word that should be inserted
      */
-    public async insertWord(word: Word): Promise<Word> {
+    public async insert(word: Word): Promise<Word> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(word);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             word.id = result[0].insertedId;

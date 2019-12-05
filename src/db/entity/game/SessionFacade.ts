@@ -76,10 +76,10 @@ export class SessionFacade extends EntityFacade<Session> {
      * inserts a new session and returns the created session
      * @param session session to insert
      */
-    public async insertSession(session: Session): Promise<Session> {
+    public async insert(session: Session): Promise<Session> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(session);
 
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
            session.id = result[0].insertedId;

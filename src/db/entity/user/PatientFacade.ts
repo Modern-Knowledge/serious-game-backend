@@ -66,7 +66,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
      * inserts a new therapist and returns the created therapist
      * @param patient patient to insert
      */
-    public async insertPatient(patient: Patient): Promise<Patient> {
+    public async insert(patient: Patient): Promise<Patient> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patient);
 
         /**
@@ -81,7 +81,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insert(attributes, [
+        await this.insertStatement(attributes, [
                 {facade: this._userFacade, entity: patient, callBackOnInsert: onInsertUser},
                 {facade: this, entity: patient}
             ]);
@@ -96,23 +96,24 @@ export class PatientFacade extends CompositeFacade<Patient> {
      */
     public updateUserPatient(patient: Patient): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
-        return this.update(attributes, [{facade: this, entity: patient}, {facade: this._userFacade, entity: patient}]);
+        return this.updateStatement(attributes,
+            [{facade: this, entity: patient}, {facade: this._userFacade, entity: patient}]);
     }
 
     /**
      * updates the patients and returns the number of affected rows
      * @param patient patient to update
      */
-    public updatePatient(patient: Patient): Promise<number> {
+    public update(patient: Patient): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
-        return this.update(attributes);
+        return this.updateStatement(attributes);
     }
 
     /**
      * deletes the patient and the associated user
      */
-    public deletePatient(): Promise<number> {
-        return this.delete([this, this._userFacade]);
+    public delete(): Promise<number> {
+        return this.deleteStatement([this, this._userFacade]);
     }
 
     /**

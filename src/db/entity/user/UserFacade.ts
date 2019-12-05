@@ -38,9 +38,9 @@ export class UserFacade extends EntityFacade<User> {
      * inserts a new user and returns the created user
      * @param user user that should be inserted
      */
-    public async insertUser(user: User): Promise<User> {
+    public async insert(user: User): Promise<User> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(user);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             user.id = result[0].insertedId;
@@ -53,16 +53,16 @@ export class UserFacade extends EntityFacade<User> {
      * updates the given user in the database and returns the number of affected rows
      * @param user user that should be updated
      */
-    public updateUser(user: User): Promise<number> {
+    public update(user: User): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(user);
-        return this.update(attributes);
+        return this.updateStatement(attributes);
     }
 
     /**
      * deletes the specified user in the database and returns the number of affected rows
      */
-    public deleteUser(): Promise<number> {
-        return this.delete([this]);
+    public delete(): Promise<number> {
+        return this.deleteStatement([this]);
     }
 
     /**

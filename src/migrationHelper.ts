@@ -313,7 +313,7 @@ export async function seedTables(): Promise<number> {
  */
 export async function seedPatientSettings() {
     const patientSettingFacade = new PatientSettingFacade();
-    await patientSettingFacade.insertPatientSetting(pSettings);
+    await patientSettingFacade.insert(pSettings);
 }
 
 /**
@@ -323,7 +323,7 @@ export async function seedImages() {
     const imageFacade = new ImageFacade();
     const imageArr = await loadImages();
     for (const item of imageArr) {
-        await imageFacade.insertImage(item);
+        await imageFacade.insert(item);
     }
 }
 
@@ -334,7 +334,7 @@ export async function seedSessions() {
     const sessionFacade = new SessionFacade();
     const sessionsArr = [session];
     for (const item of sessionsArr) {
-        await sessionFacade.insertSession(item);
+        await sessionFacade.insert(item);
     }
 }
 
@@ -345,7 +345,7 @@ export async function seedStatistics() {
     const statisticFacade = new StatisticFacade();
     const statisticsArr = [statistic, statistic1];
     for (const item of statisticsArr) {
-        await statisticFacade.insertStatistic(item);
+        await statisticFacade.insert(item);
     }
 }
 
@@ -354,7 +354,7 @@ export async function seedStatistics() {
  */
 export async function seedWords() {
     const wordFacade = new WordFacade();
-    await wordFacade.insertWord(word);
+    await wordFacade.insert(word);
 }
 
 /**
@@ -370,7 +370,7 @@ export async function seedErrortexts() {
         shoppingListError
     ];
     for (const item of errortextArr) {
-        await errorTextFacade.insertErrortext(item);
+        await errorTextFacade.insert(item);
     }
 }
 
@@ -388,7 +388,7 @@ export async function seedErrortextGames() {
     ];
 
     for (const item of errortextGamesArr) {
-        await errortextGameFacade.insertErrortextGame(item);
+        await errortextGameFacade.insert(item);
     }
 }
 
@@ -406,7 +406,7 @@ export async function seedErrortextStatistics() {
     ];
 
     for (const item of errortextStatisticArr) {
-        await errortextStatisticFacade.insertErrortextStatistic(item);
+        await errortextStatisticFacade.insert(item);
     }
 }
 
@@ -418,7 +418,7 @@ export async function seedHelptextGames() {
     const helptextGameArr = [helptextGames, helptextGames1];
 
     for (const item of helptextGameArr) {
-        await helptextGameFacade.insertHelptextGames(item);
+        await helptextGameFacade.insert(item);
     }
 }
 
@@ -430,7 +430,7 @@ export async function seedHelptexts() {
     const helptextArr = [helptext, helptext1];
 
     for (const item of helptextArr) {
-        await helptextFacade.insertHelptext(helptext);
+        await helptextFacade.insert(item);
     }
 }
 
@@ -446,7 +446,7 @@ export async function seedGameSettings() {
         gameSettings3
     ];
     for (const item of gameSettingsArr) {
-        await gameSettingFacade.insertGameSetting(item);
+        await gameSettingFacade.insert(item);
     }
 }
 
@@ -457,7 +457,7 @@ export async function seedGames() {
     const gameFacade = new GameFacade();
     const games = [game, game2, game3, game4];
     for (const item of games) {
-        await gameFacade.insertGame(item);
+        await gameFacade.insert(item);
     }
 }
 
@@ -468,7 +468,7 @@ export async function seedIngredients() {
     const ingredientFacade = new IngredientFacade();
     const ingredients = [egg, oil];
     for (const item of ingredients) {
-        await ingredientFacade.insertIngredient(item);
+        await ingredientFacade.insert(item);
     }
 }
 
@@ -479,7 +479,7 @@ export async function seedRecipeIngredientFacade() {
     const recipeIngredientFacade = new RecipeIngredientFacade();
     const recipeIngredients = [recipeIngredient1, recipeIngredient2];
     for (const item of recipeIngredients) {
-        await recipeIngredientFacade.insertRecipeIngredient(item);
+        await recipeIngredientFacade.insert(item);
     }
 }
 
@@ -490,7 +490,7 @@ export async function seedRecipes() {
     const recipeFacade = new RecipeFacade();
     const recipes = [scrambledEgg, roastPork, proteinShake];
     for (const item of recipes) {
-        await recipeFacade.insertRecipe(item);
+        await recipeFacade.insert(item);
     }
 }
 
@@ -510,7 +510,7 @@ export async function seedFoodCategories() {
         household
     ];
     for (const item of foodCategories) {
-        await foodCategoryFacade.insertFoodCategory(item);
+        await foodCategoryFacade.insert(item);
     }
 }
 
@@ -521,7 +521,7 @@ export async function seedSeverities() {
     const severityFacade = new SeverityFacade();
     const severities = [severityEasy, severityMedium, severityHard];
     for (const item of severities) {
-        await severityFacade.insertSeverity(item);
+        await severityFacade.insert(item);
     }
 }
 
@@ -532,7 +532,7 @@ export async function seedDifficulties() {
     const difficultyFacade = new DifficultyFacade();
     const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
     for (const item of difficulties) {
-        await difficultyFacade.insertDifficulty(item);
+        await difficultyFacade.insert(item);
     }
 }
 
@@ -549,13 +549,13 @@ export async function seedUsers(): Promise<void> {
         tooManyFailedLoginAttemptsTherapist
     ];
     for (const item of therapists) {
-        await therapistFacade.insertTherapist(item);
+        await therapistFacade.insert(item);
     }
 
     const patientFacade = new PatientFacade();
     const patients = [validPatient, validPatient1];
     for (const item of patients) {
-        await patientFacade.insertPatient(item);
+        await patientFacade.insert(item);
     }
 }
 
@@ -566,7 +566,7 @@ export async function seedSmtpLogs(): Promise<void> {
     const smtpLogFacade = new SmtpLogFacade();
     const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
     for (const item of smtpLogsArr) {
-        await smtpLogFacade.insertLog(item);
+        await smtpLogFacade.insert(item);
     }
 }
 
@@ -582,7 +582,7 @@ export async function seedLogs(): Promise<void> {
         verboseLogWithUser
     ];
     for (const item of logArr) {
-        await logFacade.insertLog(item);
+        await logFacade.insert(item);
     }
 }
 
@@ -593,7 +593,7 @@ export async function seedTherapistPatients(): Promise<void> {
     const therapistsPatientsFacade = new TherapistsPatientsFacade();
     const therapistPatientArr = [therapistPatient1, therapistPatient2];
     for (const item of therapistPatientArr) {
-        await therapistsPatientsFacade.insertTherapistPatient(item);
+        await therapistsPatientsFacade.insert(item);
     }
 }
 

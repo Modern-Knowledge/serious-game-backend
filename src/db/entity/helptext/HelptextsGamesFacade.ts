@@ -39,9 +39,9 @@ export class HelptextsGamesFacade extends EntityFacade<HelptextGame> {
      * inserts a new helptextsGames and returns the created helptextsGames
      * @param helptextGames helptextGames to insert
      */
-    public async insertHelptextGames(helptextGames: HelptextGame): Promise<HelptextGame> {
+    public async insert(helptextGames: HelptextGame): Promise<HelptextGame> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptextGames);
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             helptextGames.id = result[0].insertedId;

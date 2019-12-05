@@ -118,7 +118,7 @@ router.post("/", [
     therapist.accepted = false;
 
     try {
-        const response = await therapistFacade.insertTherapist(therapist);
+        const response = await therapistFacade.insert(therapist);
 
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.generateJWT(response);
@@ -199,7 +199,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
         // reassign patients
         for (const patient of therapist.patients) {
             therapistPatient.patientId = patient.id;
-            await therapistPatientsFacade.insertTherapistPatient(therapistPatient);
+            await therapistPatientsFacade.insert(therapistPatient);
         }
 
         logEndpoint(controllerName, `Reassigned all patients to the therapist with id ${therapist.id}!`, req);
@@ -249,7 +249,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
     therapistCompositeFacade.therapistPatientFacadeFilter.addFilterCondition("therapist_id", id);
 
     try {
-        await therapistCompositeFacade.deleteTherapistComposite();
+        await therapistCompositeFacade.delete();
 
         logEndpoint(controllerName, `Therapist with id ${id} was successfully deleted!`, req);
 
@@ -307,7 +307,7 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
         // toggle therapist accepted
         therapist.accepted = !therapist.accepted;
 
-        const affectedRows = await therapistFacade.updateTherapist(therapist);
+        const affectedRows = await therapistFacade.update(therapist);
 
         logEndpoint(
             controllerName,

@@ -57,10 +57,10 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * inserts a new statistic and returns the created user
      * @param statistic Statistic to insert
      */
-    public async insertStatistic(statistic: Statistic): Promise<Statistic> {
+    public async insert(statistic: Statistic): Promise<Statistic> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(statistic);
 
-        const result = await this.insert(attributes);
+        const result = await this.insertStatement(attributes);
 
         if (result.length > 0) {
             statistic.id = result[0].insertedId;
@@ -73,9 +73,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
      * updates the given statistic in the database and returns the number of affected rows
      * @param statistic user that should be updated
      */
-    public async updateStatistic(statistic: Statistic): Promise<number> {
+    public async update(statistic: Statistic): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(statistic);
-        return await this.update(attributes);
+        return await this.updateStatement(attributes);
     }
 
     /**
