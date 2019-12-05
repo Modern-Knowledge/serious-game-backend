@@ -8,7 +8,8 @@ import { SQLComparisonOperator } from "../sql/enums/SQLComparisonOperator";
 import { SQLAttributes } from "../sql/SQLAttributes";
 
 /**
- * base facade for entities
+ * Base facade for entities
+ * Provides common methods for retrieving values from the database.
  */
 export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>> extends BaseFacade<EntityType> {
 
@@ -21,7 +22,7 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
     }
 
   /**
-   * Returns the entity by id.
+   * Returns an entity by id.
    *
    * @param id id of the entity to receive
    * @param excludedSQLAttributes attribute that should not be included in the result set
@@ -48,6 +49,8 @@ export abstract class EntityFacade<EntityType extends AbstractModel<EntityType>>
 
     /**
      * Returns the first entity that matches the specified filter.
+     * Only the first entity of the result-set is being returned.
+     * If more than one result is returned an error is thrown.
      *
      * @param excludedSQLAttributes attributes that should be excluded from the query
      */

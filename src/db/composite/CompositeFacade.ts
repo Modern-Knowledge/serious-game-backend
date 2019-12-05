@@ -5,8 +5,8 @@ import { Ordering } from "../order/Ordering";
 import { SQLOperator } from "../sql/enums/SQLOperator";
 
 /**
- * base class for composite facades
- * contains methods for filtering composite facades
+ * Base class for composite facades
+ * Provides methods that can handle multiple filters and multiple order-bys
  */
 export abstract class CompositeFacade<EntityType extends AbstractModel<EntityType>> extends EntityFacade<EntityType> {
 
@@ -22,7 +22,8 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * Returns the entity by id.
+     * Returns an entity by id.
+     * Before the execution of the select-query all order-bys of the composite-facade are combined.
      *
      * @param id id of the entity that should be retrieved
      * @param excludedSQLAttributes attributes that should be excluded from select-query
@@ -33,7 +34,10 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * returns all entities that match the specified filter
+     * Returns all entities that match the specified filter.
+     * Before the execution of the select-query all filters of the composite-facade are
+     * combined the option is enabled. Afterwards all order-bys of the composite-facade are combined.
+     *
      * @param excludedSQLAttributes attributes that should be excluded from select-query
      */
     public async get(excludedSQLAttributes?: string[]): Promise<EntityType[]> {
@@ -47,7 +51,12 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * returns all entities that match the specified filter
+     * Returns all entities that match the specified filter.
+     * Only the first entity of the result-set is being returned.
+     * If more than one result is returned an error is thrown.
+     * Before the execution of the select-query all filters of the composite-facade are
+     * combined the option is enabled. Afterwards all order-bys of the composite-facade are combined.
+     *
      * @param excludedSQLAttributes attributes that should be excluded from select-query
      */
     public async getOne(excludedSQLAttributes?: string[]): Promise<EntityType> {
@@ -61,14 +70,14 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub facade-filters of the composite-facade as an array.
      */
     protected get filters(): Filter[] {
         return [];
     }
 
     /**
-     * clears filters from the facades in the composite facade
+     * Clears every filter of the composite-facade.
      */
     public clearFacadeFilters(): void {
         for (const filter of this.filters) {
@@ -77,7 +86,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * combines the composite facade filters to one filter with the specified sql-operator
+     * Combines the composite-facade filters to one filter with the specified sql-operator.
      */
     private combineFilters(): void {
         const compositeFacadeFilters: Filter[] = this.filters;
@@ -97,7 +106,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * Sql-operator to combine composite filters with.
+     * Sql-operator to automatically combine composite-filters with.
      *
      * @param value operator for combining filters
      */
@@ -106,7 +115,7 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * Enable auto combine composite filters with specified sqlOperator.
+     * Enables automatic combination of the composite filters with specified sql-operator.
      *
      * @param value determines if the filters should be auto-combined with
      */
@@ -115,14 +124,14 @@ export abstract class CompositeFacade<EntityType extends AbstractModel<EntityTyp
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [];
     }
 
     /**
-     * combines the composite facade order-bys to one order-by
+     * Combines the composite facade order-bys to one order-by.
      */
     private combineOrderBys(): void {
         const compositeFacadeOrdering: Ordering[] = this.orderBys;
