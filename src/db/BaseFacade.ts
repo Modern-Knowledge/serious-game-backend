@@ -27,11 +27,12 @@ import { SQLValueAttribute } from "./sql/SQLValueAttribute";
 import { SQLValueAttributes } from "./sql/SQLValueAttributes";
 import { SQLWhere } from "./sql/SQLWhere";
 import { UpdateQuery } from "./sql/UpdateQuery";
+import { WritableFacade } from "./WritableFacade";
 
 /**
  * Base class for crud operations with the database.
  */
-export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
+export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> extends WritableFacade<EntityType> {
 
     /**
      * Combine the joins of the different sub-facades and returns them as a list.
@@ -124,6 +125,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      * @param tableAlias table-alias of the facade
      */
     protected constructor(tableName: string, tableAlias: string) {
+        super();
         this._tableName = tableName;
         this._tableAlias = tableAlias;
 
@@ -518,37 +520,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> {
      */
     protected postProcessSelect(entities: EntityType[]): EntityType[] {
         return entities;
-    }
-
-    /**
-     * Function that should be overwritten to provide insert-functionality
-     * for the entities in the child-facade. If the function is not overwritten
-     * than it returns undefined, which indicates that nothing was inserted.
-     *
-     * @param entity entity to insert
-     */
-    protected async insert(entity: EntityType): Promise<EntityType> {
-        return undefined;
-    }
-
-    /**
-     * Function that should be overwritten to provide update-functionality
-     * for the entities in the child-facade. If the function is not overwritten
-     * that it returns 0, which indicates that nothing was updated.
-     *
-     * @param entity entity to update
-     */
-    protected async update(entity: EntityType): Promise<number> {
-        return 0;
-    }
-
-    /**
-     * Function that should be overwritten, to provide delete-functionality
-     * for the entities in the child-facade. If the function is not overwritten
-     * than it returns 0, which indicates that nothing was deleted.
-     */
-    protected async delete(): Promise<number> {
-        return 0;
     }
 
     /**
