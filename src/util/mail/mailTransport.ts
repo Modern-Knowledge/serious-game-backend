@@ -8,7 +8,7 @@ import { SmtpLogFacade } from "../../db/entity/log/SmtpLogFacade";
 import { inTestMode, loggerString } from "../Helper";
 
 /**
- * class used to handle mail sending with nodemailer
+ * handle mail-sending with node-mailer.
  */
 class MailTransport {
     private _transporter: any;
@@ -39,8 +39,12 @@ class MailTransport {
     }
 
     /**
-     * sends the provided mail
-     * @param mail mail to send
+     * Sends the provided mail via smtp. If the mail is not valid, the function throws an error.
+     * Only send mails if the .env variable "SEND_MAILS" is set and the application is not running in test-mode.
+     * Inserts a log for every mail that should be sent. Logs show if the mails were really sent through smtp or
+     * if it they were just simulated.
+     *
+     * @param mail mail that should be sent
      */
     public sendMail(mail: Mail): void {
         if (!mail.validate()) {
@@ -73,10 +77,7 @@ class MailTransport {
 
                 for (const item of smtpLogs) {
                     item.sent = 1;
-                    smtpLogFacade.insert(item).catch((dbError: any) => {
-                        logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
-                            `${dbError.message}!`);
-                    });
+                    this.insertSmtpLog(item);
                 }
 
             }).catch((error: any) => {
@@ -84,10 +85,7 @@ class MailTransport {
                     `Mail couldn't be sent \n ${error.message}!`);
 
                 for (const item of smtpLogs) {
-                    smtpLogFacade.insert(item).catch((dbError: any) => {
-                        logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
-                            `${dbError.message}!`);
-                    });
+                    this.insertSmtpLog(item);
                 }
 
             });
@@ -96,12 +94,23 @@ class MailTransport {
                 `Simulated mail was successfully sent!`);
 
             for (const item of smtpLogs) {
-                smtpLogFacade.insert(item).catch((error: any) => {
-                    logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
-                        `${error.message}!`);
-                });
+                this.insertSmtpLog(item);
             }
         }
+    }
+
+    /**
+     * Inserts the given smtp-log into the database. If an error occurs while creating the log, an error is printed.
+     *
+     * @param item smtp-log that should be inserted
+     */
+    private insertSmtpLog(item: SmtpLog): void {
+        const smtpLogFacade: SmtpLogFacade = new SmtpLogFacade();
+
+        smtpLogFacade.insert(item).catch((dbError: any) => {
+            logger.error(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
+                `${dbError.message}!`);
+        });
     }
 }
 

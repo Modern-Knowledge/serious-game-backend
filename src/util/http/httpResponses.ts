@@ -11,16 +11,12 @@ import { HTTPStatusCode } from "../../lib/utils/httpStatusCode";
 import { toHttpResponseMessage } from "../validation/validationMessages";
 
 /**
- * stores predefined http responses
- */
-
-/**
- * returns a default http 4xx response. Response status is set to HttpResponseStatus.FAIL
- * default status code: 404
+ * Returns a default http 4xx response. Response status is set to HttpResponseStatus.FAIL
+ * Default status code: 404
  *
- * @param res http response that is returned
- * @param messages messages that are appended to the http response
- * @param code http response status code
+ * @param res http-response
+ * @param messages messages that are appended to the http-response
+ * @param code http-response status-code
  * @param data data that is appended to the response
  */
 export function http4xxResponse(
@@ -37,7 +33,9 @@ export function http4xxResponse(
 }
 
 /**
- * sends default 400 response if an error occurred in express-validator
+ * Sends default 400 response if an error occurred in express-validator. Includes
+ * the validation errors in the response.
+ *
  * @param req request object
  * @param res response object
  */
@@ -51,7 +49,7 @@ export function failedValidation400Response(req: Request, res: Response): Respon
 }
 
 /**
- * sends 403 response if permission to view/edit endpoint is rejected
+ * Sends http-403 response if the permission to view/edit endpoint is rejected.
  *
  * @param res response object
  */

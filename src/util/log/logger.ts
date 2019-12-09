@@ -7,6 +7,9 @@ const logDir = "logs/";
 const logLevel = process.env.LOG_LEVEL || "error";
 const applicationName = "Serious Game Backend";
 
+/**
+ * Define logging options.
+ */
 const options: LoggerOptions = {
     exceptionHandlers: [
         new transports.File({ filename: logDir + "exceptions.log" })

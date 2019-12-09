@@ -1,5 +1,8 @@
 import * as Stream from "stream";
 
+/**
+ * Attachment that can be appended to the mail.
+ */
 export class Attachment {
     public filename: string;
     public content: string | Buffer | Stream;

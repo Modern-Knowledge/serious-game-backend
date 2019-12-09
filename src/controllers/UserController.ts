@@ -204,7 +204,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {user, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `BenutzerIn wurde erfolgreich aktualisiert!`)
+                        `BenutzerIn wurde erfolgreich aktualisiert!`, true)
                 ]
             )
         );

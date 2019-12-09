@@ -5,7 +5,7 @@ import { MailPriority } from "./MailPriority";
 import { Recipient } from "./Recipient";
 
 /**
- * represents a Mail for nodemailer
+ * Represents a Mail that can be sent via node-mailer.
  */
 export class Mail {
     public from: string = process.env.MAIL_USER;
@@ -20,15 +20,16 @@ export class Mail {
     /* Advanced fields */
     public replyTo: string;
 
-    /* header options */
+    /* Header options */
     public priority: MailPriority = MailPriority.NORMAL;
     public headers: any;
 
     /**
-     * Common parameters that every Mail needs
+     * Creates a new mail with the attributes that every mail needs.
+     *
      * @param to array of recipients
-     * @param messageTemplate messageTemplate for the mail
-     * @param replacementParams params to replace placeholder variables with
+     * @param messageTemplate message-template for the mail
+     * @param replacementParams params to replace placeholder variables in template
      */
     public constructor(to: Recipient[], messageTemplate: SmtpMessage, replacementParams: string[]) {
         const parser = new TemplateParser(replacementParams);
@@ -41,8 +42,8 @@ export class Mail {
     }
 
     /**
-     * validate mail
-     * check that required attributes are set (recipients, subject, text, html)
+     * Validates a mail.
+     * Check that required attributes are set (recipients, subject, text, html)
      */
     public validate(): boolean {
         return !(this.to.length === 0 || this.subject.length === 0 || this.text.length === 0 || this.html.length === 0);
