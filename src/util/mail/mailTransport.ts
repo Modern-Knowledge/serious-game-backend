@@ -68,8 +68,6 @@ class MailTransport {
             smtpLogs.push(smtpLog);
         }
 
-        const smtpLogFacade: SmtpLogFacade = new SmtpLogFacade();
-
         if (process.env.SEND_MAILS === "1" && !inTestMode()) { // do not send mails in test mode
             this._transporter.sendMail(mail).then((value: any) => {
                 logger.info(`${loggerString(__dirname, MailTransport.name, "sendMail")} ` +
