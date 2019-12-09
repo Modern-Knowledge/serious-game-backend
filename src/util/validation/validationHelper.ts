@@ -5,10 +5,9 @@ import { loggerString } from "../Helper";
 import logger from "../log/logger";
 
 /**
- * checks if a validation in express-validator was not successful
- * logs errors to console
- *
- * returns http 400 to the client and sends the occurred errors as HttpResponseMessages back to client
+ * Retrieves the validation results from the express-validator. Checks if an
+ * error occurred within the validation. If an error has been reported, the function
+ * prints these errors and returns false. Otherwise true is returned.
  *
  * @param endpoint name of the endpoint that is validated
  * @param req request object
@@ -26,9 +25,10 @@ export function checkRouteValidation(endpoint: string, req: Request, res: Respon
 }
 
 /**
- * logs errors to console that are produced by express-validator
- * @param endpoint endpoint that reports the errors
- * @param errors error array that is returned by express validator
+ * Logs errors that are produced by express-validator.
+ *
+ * @param endpoint endpoint where the validation failed
+ * @param errors array of validation-errors, that are returned by express validator
  */
 function logValidatorErrors(endpoint: string, errors: any[]): void {
     for (const error of errors) {

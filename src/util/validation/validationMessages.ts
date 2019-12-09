@@ -2,7 +2,7 @@
 import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
 
 /**
- * contains validation messages
+ * Map contains categorized validation messages.
  *
  * categories:
  * - email
@@ -31,7 +31,7 @@ for (const category of categories) {
 }
 
 /**
- * validation messages for email
+ * Validation messages for email.
  */
 validationMessages.get("email").set(
     "empty",
@@ -46,14 +46,14 @@ validationMessages.get("email").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Die E-Mail ist bereits vergeben!"));
 
 /**
- * validation messages for gender
+ * Validation messages for gender.
  */
 validationMessages.get("gender").set(
     "wrong_value",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Kein gültiges Geschlecht übergeben!"));
 
 /**
- * validation messages for forename
+ * Validation messages for forename.
  */
 validationMessages.get("forename").set(
     "empty",
@@ -64,7 +64,7 @@ validationMessages.get("forename").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Der Vorname darf keine Zahlen enthalten!"));
 
 /**
- * validation messages for lastname
+ * Validation messages for lastname.
  */
 validationMessages.get("lastname").set(
     "empty",
@@ -75,7 +75,7 @@ validationMessages.get("lastname").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Der Nachname darf keine Zahlen enthalten!"));
 
 /**
- * validation messages for password
+ * Validation messages for password.
  */
 validationMessages.get("password").set(
     "length",
@@ -113,7 +113,7 @@ validationMessages.get("password").set(
 );
 
 /**
- * validation messages for token
+ * Validation messages for token.
  */
 validationMessages.get("token").set(
     "length",
@@ -126,14 +126,14 @@ validationMessages.get("token").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Das Token darf nur aus Zahlen bestehen!`));
 
 /**
- * validation messages for id
+ * Validation messages for id.
  */
 validationMessages.get("id").set(
     "numeric",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Die ID darf nur Zahlen beinhalten!`));
 
 /**
- * validation messages for therapist
+ * Validation messages for therapist.
  */
 validationMessages.get("therapist").set(
     "value_true",
@@ -148,7 +148,7 @@ validationMessages.get("therapist").set(
         `Diesem Endpoint muss ein/e PatientIn übergeben werden!`));
 
 /**
- * validation messages for date
+ * Validation messages for date.
  */
 validationMessages.get("date").set(
     "invalid",
@@ -159,23 +159,22 @@ validationMessages.get("date").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Der Start muss zeitlich vor dem Ende liegen!`));
 
 /**
- * validation messages for info
+ * Validation messages for info.
  */
 validationMessages.get("info").set(
     "empty",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine Info übergeben!`));
 
 /**
- * validation messages for patients
+ * Validation messages for patients.
  */
 validationMessages.get("patient").set(
     "invalid",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Nicht alle übergebenen PatientInnen sind valide!`));
 
 /**
- * validation messages for errortexts
+ * Validation messages for errortexts.
  */
-
 validationMessages.get("errortext").set(
     "errortext_id",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine gültige Fehlertext Id übergeben!`));
@@ -185,7 +184,8 @@ validationMessages.get("errortext").set(
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, `Keine gültige Statistik Id übergeben!`));
 
 /**
- * retrieves the validationMessage by category and messageName
+ * Retrieves the validationMessage by category and message-name.
+ *
  * @param category category of the message
  * @param messageName name of the massage
  */
@@ -194,8 +194,9 @@ export function retrieveValidationMessage(category: string, messageName: string)
 }
 
 /**
- * shortcut method for retrieveValidationMessage
- * retrieves the validationMessage by category and messageName
+ * Shortcut method for retrieving validation messages.
+ * Retrieves the validationMessage by category and message-name.
+ *
  * @param category category of the message
  * @param messageName name of the massage
  */
@@ -204,8 +205,10 @@ export function rVM(category: string, messageName: string): HttpResponseMessage 
 }
 
 /**
- * converts error array that is produced by express-validator to HttpResponseMessage[] for responding to client
- * @param errors error array that is returned by express validator
+ * Converts an error-array that was produced by express-validator to HttpResponseMessage[]. The http-message
+ * array is sent back to the client.
+ *
+ * @param errors array of errors that are returned by the express validator
  */
 export function toHttpResponseMessage(errors: any[]): HttpResponseMessage[] {
     const httpErrors: HttpResponseMessage[] = [];

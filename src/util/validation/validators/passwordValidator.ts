@@ -3,8 +3,9 @@ import { CustomValidator } from "express-validator";
 import { retrieveValidationMessage } from "../validationMessages";
 
 /**
- * additional passwordValidator
- * checks if password matches password-confirmation in body
+ * Additional passwordValidator. Checks if password matches the password-confirmation
+ * in the body. Returns true it is does, otherwise false is returned.
+ *
  * @param password password to check
  * @param req request to check against
  */
