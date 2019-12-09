@@ -79,13 +79,15 @@ import logger from "./util/log/logger";
 const marv = require("marv/api/promise"); // <-- Promise API
 // tslint:disable-next-line:no-var-requires
 const driver = require("marv-mysql-driver");
+
 /**
- * runs multiple migrations based on .env variables
+ * Runs multiple migration processes on the database. Every operation can be
+ * disabled in the .env.
  *
- * - truncateTables: truncate every table in the application
- * - dropTables: drop every table in the application
- * - runMigrations: run migrations from migrations folder
- * - seedTables: seed tables with test data
+ * - truncateTables: Truncate every table in the application.
+ * - dropTables: Drop every table in the application.
+ * - runMigrations: Run migrations from migrations folder.
+ * - seedTables: Seed tables with test data.
  */
 export async function migrate(): Promise<void> {
     if (inProduction()) {
@@ -104,12 +106,7 @@ export async function migrate(): Promise<void> {
         await truncateTables();
     } else {
         logger.warn(
-            `${loggerString(
-                __dirname,
-                "",
-                "",
-                __filename
-            )} Running truncate tables is skipped!`
+            `${loggerString(__dirname, "", "", __filename)} Running truncate tables is skipped!`
         );
     }
 
@@ -120,12 +117,7 @@ export async function migrate(): Promise<void> {
         await dropTables();
     } else {
         logger.warn(
-            `${loggerString(
-                __dirname,
-                "",
-                "",
-                __filename
-            )} Running drop tables is skipped!`
+            `${loggerString(__dirname, "", "", __filename)} Running drop tables is skipped!`
         );
     }
 
@@ -136,12 +128,7 @@ export async function migrate(): Promise<void> {
         await runMigrations();
     } else {
         logger.warn(
-            `${loggerString(
-                __dirname,
-                "",
-                "",
-                __filename
-            )} Running migrations is skipped!`
+            `${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`
         );
     }
 
@@ -158,19 +145,14 @@ export async function migrate(): Promise<void> {
 }
 
 /**
- * run migration in Database
- * successful migrations are stored in migrations table
+ * Run migrations to create tables in the database. Depending on the environment (test, prod) the test-database or the
+ * production-database is seeded.
  */
 export async function runMigrations(): Promise<void> {
     const directory = path.resolve("migrations");
 
     logger.info(
-        `${loggerString(
-            __dirname,
-            "",
-            "",
-            __filename
-        )} Running migrations from ${directory}!`
+        `${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`
     );
 
     const options = {
@@ -195,43 +177,33 @@ export async function runMigrations(): Promise<void> {
     await marv.migrate(migrations, driver(options));
 
     logger.info(
-        `${loggerString(
-            __dirname,
-            "",
-            "",
-            __filename
-        )} Completed running migrations!`
+        `${loggerString(__dirname, "", "", __filename)} Completed running migrations!`
     );
 }
 
 /**
- * truncate every table in the application
+ * Truncates every table of the specified database. First it checks if the database contains at least one table.
+ * If that is the case, all tables are truncated.
  */
 export async function truncateTables(): Promise<number> {
     const results = await getTables();
 
     if (results.length === 0) {
         logger.info(
-            `${loggerString(
-                __dirname,
-                "",
-                "",
-                __filename
-            )} No tables to truncate!`
+            `${loggerString(__dirname, "", "", __filename)} No tables to truncate!`
         );
         return 0;
     }
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Truncate ${
-            results.length
-        } tables!`
+        `${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`
     );
 
     let stmt = "";
     for (const item of results) {
         stmt += `TRUNCATE TABLE ${item}; `;
     }
+
     await databaseConnection.query(
         `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
     );
@@ -240,7 +212,8 @@ export async function truncateTables(): Promise<number> {
 }
 
 /**
- * drop every table in the application
+ * Drops every table of the specified database. First it checks if the database contains at least one table.
+ * If that is the case, all tables are dropped.
  */
 export async function dropTables(): Promise<number> {
     const results = await getTables();
@@ -253,15 +226,14 @@ export async function dropTables(): Promise<number> {
     }
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Drop ${
-            results.length
-        } tables!`
+        `${loggerString(__dirname, "", "", __filename)} Drop ${results.length} tables!`
     );
 
     let stmt = "";
     for (const item of results) {
         stmt += `DROP TABLE ${item}; `;
     }
+
     await databaseConnection.query(
         `SET FOREIGN_KEY_CHECKS=0; ${stmt} SET FOREIGN_KEY_CHECKS=1;`
     );
@@ -270,8 +242,9 @@ export async function dropTables(): Promise<number> {
 }
 
 /**
- * seed tables with default data
- *
+ * Seeds all tables with example data. If no tables were found, the function returns
+ * 0. If all tables were seeded successfully, the function returns 1. When an error
+ * occurs, the function throws an error.
  */
 export async function seedTables(): Promise<number> {
     const results = await getTables();
@@ -309,7 +282,7 @@ export async function seedTables(): Promise<number> {
 }
 
 /**
- * inserts example patient-settings into the database.
+ * Inserts example patient-settings into the database.
  */
 export async function seedPatientSettings() {
     const patientSettingFacade = new PatientSettingFacade();
@@ -317,7 +290,7 @@ export async function seedPatientSettings() {
 }
 
 /**
- * inserts example images into the database.
+ * Inserts example images into the database.
  */
 export async function seedImages() {
     const imageFacade = new ImageFacade();
@@ -328,7 +301,7 @@ export async function seedImages() {
 }
 
 /**
- * inserts example sessions into the database.
+ * Inserts example sessions into the database.
  */
 export async function seedSessions() {
     const sessionFacade = new SessionFacade();
@@ -339,7 +312,7 @@ export async function seedSessions() {
 }
 
 /**
- * inserts example statistics into the database.
+ * Inserts example statistics into the database.
  */
 export async function seedStatistics() {
     const statisticFacade = new StatisticFacade();
@@ -350,7 +323,7 @@ export async function seedStatistics() {
 }
 
 /**
- * inserts example words into the database.
+ * Inserts example words into the database.
  */
 export async function seedWords() {
     const wordFacade = new WordFacade();
@@ -358,7 +331,7 @@ export async function seedWords() {
 }
 
 /**
- * inserts example errortexts into the database.
+ * Inserts example errortexts into the database.
  */
 export async function seedErrortexts() {
     const errorTextFacade = new ErrortextFacade();
@@ -375,7 +348,7 @@ export async function seedErrortexts() {
 }
 
 /**
- * inserts example errortext-games into the database.
+ * Inserts example errortext-game relationships into the database.
  */
 export async function seedErrortextGames() {
     const errortextGameFacade = new ErrortextGamesFacade();
@@ -393,7 +366,7 @@ export async function seedErrortextGames() {
 }
 
 /**
- * inserts example errortext-statistics into the database.
+ * Inserts example errortext-statistic relationships into the database.
  */
 export async function seedErrortextStatistics() {
     const errortextStatisticFacade = new ErrortextStatisticFacade();
@@ -411,7 +384,7 @@ export async function seedErrortextStatistics() {
 }
 
 /**
- * inserts example helptext-games into the database.
+ * Inserts example helptext-game relationships into the database.
  */
 export async function seedHelptextGames() {
     const helptextGameFacade = new HelptextsGamesFacade();
@@ -423,7 +396,7 @@ export async function seedHelptextGames() {
 }
 
 /**
- * inserts example helptexts into the database.
+ * Inserts example help-texts into the database.
  */
 export async function seedHelptexts() {
     const helptextFacade = new HelptextFacade();
@@ -435,7 +408,7 @@ export async function seedHelptexts() {
 }
 
 /**
- * inserts example game settings into the database.
+ * Inserts example game-settings into the database.
  */
 export async function seedGameSettings() {
     const gameSettingFacade = new GameSettingFacade();
@@ -451,7 +424,7 @@ export async function seedGameSettings() {
 }
 
 /**
- * inserts example games into the database.
+ * Inserts example games into the database.
  */
 export async function seedGames() {
     const gameFacade = new GameFacade();
@@ -462,7 +435,7 @@ export async function seedGames() {
 }
 
 /**
- * inserts example ingredients into the database.
+ * Inserts example ingredients into the database.
  */
 export async function seedIngredients() {
     const ingredientFacade = new IngredientFacade();
@@ -473,7 +446,7 @@ export async function seedIngredients() {
 }
 
 /**
- * inserts example recipes-ingredients into the database.
+ * Inserts example recipe-ingredient relationships into the database.
  */
 export async function seedRecipeIngredientFacade() {
     const recipeIngredientFacade = new RecipeIngredientFacade();
@@ -484,7 +457,7 @@ export async function seedRecipeIngredientFacade() {
 }
 
 /**
- * inserts example recipes into the database.
+ * Inserts example recipes into the database.
  */
 export async function seedRecipes() {
     const recipeFacade = new RecipeFacade();
@@ -495,7 +468,7 @@ export async function seedRecipes() {
 }
 
 /**
- * inserts example food-categories into the database.
+ * Inserts example food-categories into the database.
  */
 export async function seedFoodCategories() {
     const foodCategoryFacade = new FoodCategoryFacade();
@@ -515,7 +488,7 @@ export async function seedFoodCategories() {
 }
 
 /**
- * inserts example severities into the database.
+ * Inserts example severities into the database.
  */
 export async function seedSeverities() {
     const severityFacade = new SeverityFacade();
@@ -526,7 +499,7 @@ export async function seedSeverities() {
 }
 
 /**
- * inserts example difficulties into the database.
+ * Inserts example difficulties into the database.
  */
 export async function seedDifficulties() {
     const difficultyFacade = new DifficultyFacade();
@@ -537,7 +510,7 @@ export async function seedDifficulties() {
 }
 
 /**
- * inserts example users into the database.
+ * Inserts example users (therapists, patients) into the database.
  */
 export async function seedUsers(): Promise<void> {
     const therapistFacade = new TherapistFacade();
@@ -548,6 +521,7 @@ export async function seedUsers(): Promise<void> {
         lockedTherapist,
         tooManyFailedLoginAttemptsTherapist
     ];
+
     for (const item of therapists) {
         await therapistFacade.insert(item);
     }
@@ -571,7 +545,7 @@ export async function seedSmtpLogs(): Promise<void> {
 }
 
 /**
- * inserts example logs into the database.
+ * Inserts example logs into the database.
  */
 export async function seedLogs(): Promise<void> {
     const logFacade = new LogFacade();
@@ -587,7 +561,7 @@ export async function seedLogs(): Promise<void> {
 }
 
 /**
- * inserts example therapists-patients into the database.
+ * Inserts example therapist-patient relationships into the database.
  */
 export async function seedTherapistPatients(): Promise<void> {
     const therapistsPatientsFacade = new TherapistsPatientsFacade();
@@ -598,18 +572,11 @@ export async function seedTherapistPatients(): Promise<void> {
 }
 
 /**
- * retrieves every table from the specified database except migrations and migration_lock
- * testMode -> choose tables from test_db
- * prodMode -> choose tables from prod_db
+ * Retrieves all table-names from the specified database.
  */
 async function getTables(): Promise<string[]> {
     logger.debug(
-        `${loggerString(
-            __dirname,
-            "",
-            "",
-            __filename
-        )} Retrieve all tables of the application!`
+        `${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`
     );
 
     const results = await databaseConnection.query(
