@@ -1,7 +1,7 @@
 import { SmtpMessage } from "./SmtpMessage";
 
 /**
- * Template for sending the user an E-Mail with the reset-token for the password
+ * Template for sending the user an E-Mail with the reset-token for the password. <br/>
  * Params (3):
  * - ::name:: name of the recipient
  * - ::code:: reset-token for resetting the password

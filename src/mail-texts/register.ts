@@ -2,8 +2,8 @@
 import { SmtpMessage } from "./SmtpMessage";
 
 /**
- * Template for sending the user an E-Mail after he/her has registered
- * Params (3):
+ * Template for sending the user an E-Mail after he/her has registered. <br/>
+ * Params (1):
  * - ::name:: name of the recipient
  */
 const register = new SmtpMessage();

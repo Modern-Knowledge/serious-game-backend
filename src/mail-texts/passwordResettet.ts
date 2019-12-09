@@ -2,7 +2,7 @@
 import { SmtpMessage } from "./SmtpMessage";
 
 /**
- * Template for sending the user an E-Mail after the password was resettet
+ * Template for sending the user an E-Mail after the password was resettet <br/>
  * Params (3):
  * - ::name:: name of the recipient
  * - ::date_time_resetted:: datetime when the reset has taken place

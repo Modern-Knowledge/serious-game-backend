@@ -1,8 +1,8 @@
 import { SmtpMessage } from "./SmtpMessage";
 
 /**
- * Template for sending the support information about an erroneous route
- * Params (1):
+ * Template for sending the support information about an erroneous route. <br/>
+ * Params (3):
  * - ::name:: name of the exception
  * - ::message:: message of the exception
  * - ::stack:: stacktrace of the exception

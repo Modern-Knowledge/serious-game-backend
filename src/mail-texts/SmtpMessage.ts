@@ -1,4 +1,7 @@
-
+/**
+ * Message that can be sent via smtp to multiple recipients.
+ * Contains a subject, html-text, plain-text.
+ */
 export class SmtpMessage {
     private _subject: string;
     private _html: string;
