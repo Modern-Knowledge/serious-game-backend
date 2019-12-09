@@ -5,16 +5,11 @@ import { inTestMode, loggerString } from "../Helper";
 import logger from "../log/logger";
 
 /**
- * interface that defines queries that can used in a transaction
+ * Interface that defines queries that can used in a transaction.
  *
- * function: executes insert, update or delete query (getInsertQueryFn, getUpdateQueryFn,
- * getDeleteQueryFn in BaseFacade are examples for functions that can be passed)
- *
- * attributes: sqlValueAttributes that are injected into the insert or update query
- *
- * callBackOnInsert: callback that is called, if the query returns a insertId.
- *
- * The function is called with the returned inserted id. Used to set id
+ * function: Represents insert-, update- or delete-queries that are executed in a transaction.
+ * attributes: SqlValueAttributes that are injected into the insert or update query.
+ * callBackOnInsert: Callback that is executed, if the query returns an inserted id.
  */
 export interface ITransactionQuery {
     function: ((connection: PoolConnection, attributes?: SQLValueAttributes) => Promise<any>);
@@ -23,7 +18,9 @@ export interface ITransactionQuery {
 }
 
 /**
- * handles database connection and database interaction
+ * Handles the connection to the database. Creates a pool of mysql-connections and manages
+ * the retrieval of the connections. Queries can be executed in a transaction with a rollback,
+ * if an error occurs while querying the database.
  */
 class DatabaseConnection {
     private _pool: Pool;
@@ -36,7 +33,8 @@ class DatabaseConnection {
     }
 
     /**
-     * retrieves a connection from the pool and executes the callback
+     * Retrieves a mysql connection from the pool and executes the callback.
+     *
      * @param callback callback to execute if connection is retrieved
      */
     public poolQuery(callback: (err: MysqlError, connection: PoolConnection) => void): void {
@@ -44,12 +42,13 @@ class DatabaseConnection {
     }
 
     /**
-     * executes the passed queries in a transaction
-     * queries can be of type insert, update, delete
+     * Execute the array of queries in a transaction. If a query fails, then the changes of all queries are reverted.
+     * Queries can be of type insert, update, delete. Returns the responses of the queries as an array.
+     * If the query is an insert-query, a callback can be passed that is executed with the current results.
+     * e.g.: Used to set the inserted id for the next query.
+     * The callback if the last query is not executed.
      *
      * @param queryCallbacks array of queries that are executed in the transaction
-     *
-     * returns the responses of the queries as an array
      */
     // tslint:disable-next-line:cognitive-complexity
     public transaction(queryCallbacks: ITransactionQuery[]): Promise<any[]> {
@@ -86,6 +85,7 @@ class DatabaseConnection {
                     const result: any[]  = [];
 
                     let response;
+
                     /**
                      * execute the queries in a transaction
                      */
@@ -93,8 +93,7 @@ class DatabaseConnection {
                         response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
 
                         if (response && response.insertedId &&
-                            i < queryCallbacks.length - 1 &&
-                            queryCallbacks[i].callBackOnInsert) { // insert query
+                            i < queryCallbacks.length - 1 && queryCallbacks[i].callBackOnInsert) { // insert query
 
                                 queryCallbacks[i].callBackOnInsert(
                                     response.insertedId,
@@ -138,7 +137,10 @@ class DatabaseConnection {
     }
 
     /**
-     * execute a sql query and returns the results as array
+     * Execute a sql-query and returns the results as an array. Takes a connection
+     * from the pool and releases it afterwards. If an error occurs while executing the
+     * query the function throws an error.
+     *
      * @param sql sql query to be executed
      * @param params parameters for prepared query that are later replaced
      */
@@ -172,6 +174,10 @@ class DatabaseConnection {
         });
     }
 
+    /**
+     * Pings the database and checks if it îs reachable. If the database
+     * responds the function returns true. Otherwise it returns false.
+     */
     public ping(): Promise<boolean> {
         logger.info(`${loggerString(__dirname, DatabaseConnection.name, "ping")} Pinging Database!`);
         return new Promise<boolean>((resolve, reject) => {
@@ -202,12 +208,11 @@ class DatabaseConnection {
         });
     }
 
-    public toString(): string {
-        return `{host: ${process.env.DB_HOST}, database: ${process.env.DB_DATABASE}, user: ${process.env.DB_USER}}`;
-    }
-
     /**
-     * establish pool connection to database
+     * Establishes a connection pool from the database credentials. Credentials
+     * depend on the current environment. If the application runs in test-mode,
+     * the pool is created for the test-database. Otherwise the connection is made
+     * to the productive database.
      */
     private connect(): void {
         if (inTestMode()) {
@@ -242,7 +247,9 @@ class DatabaseConnection {
     }
 
     /**
-     * create events for pool connection
+     * Creates events for the connection-pool. Events are executed, when a connection is taken from the pool, when a
+     * new connection is created, when a connection is released and added back to the pool and when a client waits
+     * for a connection.
      */
     private createPoolEvents(): void {
         this._pool.on("acquire", (connection) => {
@@ -267,7 +274,7 @@ class DatabaseConnection {
     }
 
     /**
-     * close all connections in a pool
+     * Closes the pool and disconnects every connection.
      */
     private disconnect(): void {
         this._pool.end((err: MysqlError) => {
