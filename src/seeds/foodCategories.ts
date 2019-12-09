@@ -32,4 +32,8 @@ const household = new FoodCategory();
 household.id = 8;
 household.name = "Haushalt";
 
-export { vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household };
+const stapleFood = new FoodCategory();
+stapleFood.id = 9;
+stapleFood.name = "Grundnahrungsmittel";
+
+export { vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household, stapleFood };
