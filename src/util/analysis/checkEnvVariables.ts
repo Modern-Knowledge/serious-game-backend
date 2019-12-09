@@ -3,17 +3,19 @@ import { loggerString } from "../Helper";
 import logger from "../log/logger";
 
 /**
- * check if environment does not exist
- * @param variable variable to check
+ * Checks if a .env does not exist.
+ *
+ * @param variable name of the .env variable to check
  */
 function checkEnvVariable(variable: string): boolean {
     return !process.env[variable];
 }
 
 /**
- * check an array of environment variables
- * returns the variables that do not exist in process.env
- * @param variables variables to check
+ * Checks an array of environment variables.
+ * Returns an array with the variable names that were not found in process.env.
+ *
+ * @param variables array of .env variable-names to check
  */
 function checkEnvVariables(variables: string[]): string[] {
     return variables.filter(checkEnvVariable);
@@ -23,8 +25,11 @@ function checkEnvVariables(variables: string[]): string[] {
  * check if all required environment variables are set
  */
 export function checkEnvFunction(): void {
+
     /**
-     * throw an error if these env variables are not present
+     * Checks an array of .env-variables that are required to run the application
+     * properly. If a variable is missing from process.env, the function throws an
+     * error. The application does not with one of this variables missing.
      */
     const unsetRequiredVars: string[] = checkEnvVariables([
         "DB_HOST", "DB_USER", "DB_PASS", "DB_DATABASE", "VERSION",
@@ -33,7 +38,7 @@ export function checkEnvFunction(): void {
         "DB_CONNECTION_LIMIT"
     ]);
 
-    if (unsetRequiredVars.length > 0) {
+    if (unsetRequiredVars.length > 0) { // some variables are not found
         const errorStr = `${loggerString(__dirname, "", "", __filename)} ` +
             `Some required ENV variables are not set: [${unsetRequiredVars.join(", ")}]!`;
         logger.error(errorStr);
@@ -41,7 +46,9 @@ export function checkEnvFunction(): void {
     }
 
     /**
-     * print an warning, if these env variables are not present
+     * Checks an array of .env-variables that are optional for running the application. If one variable is missing
+     * the value is replaced with a default value in the application. If a variable is missing, the function prints a
+     * warning.
      */
     const unsetOptionalVars: string[] = checkEnvVariables([
         "PORT", "LOG_LEVEL", "WARN_ONE_TO_MANY_JOINS", "WARN_EXECUTION_TIME", "MAX_EXECUTION_TIME",
@@ -49,19 +56,20 @@ export function checkEnvFunction(): void {
         "RUN_MIGRATIONS", "RUN_SEED", "RUN_TRUNCATE_TABLE", "RUN_DROP_TABLE", "TOKEN_EXPIRE_TIME"
     ]);
 
-    if (unsetOptionalVars.length > 0) {
+    if (unsetOptionalVars.length > 0) { // some variables are not found
         logger.warn(`${loggerString(__dirname, "", "", __filename)} ` +
             `Some optional ENV variables are not set: [${unsetOptionalVars.join(", ")}]!`);
     }
 
     /**
-     * print an warning, if these env variables are not present
+     * Checks the .env variables that are required for sending mails. If one variable is missing, mail-sending is
+     * disabled and a warning is printed.
      */
     const unsetMailVariables: string[] = checkEnvVariables(
         ["MAIL_HOST", "MAIL_PORT", "MAIL_SECURE", "MAIL_USER", "MAIL_PASS"]
     );
 
-    if (unsetMailVariables.length > 0) {
+    if (unsetMailVariables.length > 0) { // some variables are not found
         process.env.SEND_MAILS = "0";
         logger.warn(`${loggerString(__dirname, "", "", __filename)} ` +
             `Some mail ENV variables are not set: [${unsetMailVariables.join(", ")}]!`);

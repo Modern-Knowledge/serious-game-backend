@@ -1,7 +1,7 @@
 
 /**
- * simple stopwatch to measure execution time
- * stopwatch is autostarted when instanced
+ * Simple stopwatch to measure execution times.
+ * Thee Stopwatch is autostarted, if an instance is created.
  */
 export class Stopwatch {
     private readonly _name: string;
@@ -16,13 +16,17 @@ export class Stopwatch {
         }
     }
 
+    /**
+     * Calculates the difference between the start of the watch and the time
+     * when the function is called.
+     */
     get measuredTime(): number {
         const end = process.hrtime(this._start);
         return Math.round(end[1] / 1000000);
     }
 
     /**
-     * returns the elapsed time since the start in ms
+     * Returns the elapsed time since the start of the stopwatch.
      */
     get timeElapsed(): string {
         const time: number = this.measuredTime;
