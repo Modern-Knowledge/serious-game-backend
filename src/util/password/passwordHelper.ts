@@ -3,22 +3,24 @@ import moment from "moment";
 import { User } from "../../lib/models/User";
 
 /**
- * generates and sets the password reset token for the passed user
- * passwordResetToken is  digits long
- * resetToken is valid 7 days from now
+ * Generates and sets the password reset token for the given user. Token length
+ * is set as a .env variable.
+ *
  * @param user user where the reset token should be set
  */
 export function setPasswordResetToken(user: User): void {
-    user.resetcode = generatePasswordResetToken(8);
+    user.resetcode = generatePasswordResetToken(Number(process.env.PASSWORD_TOKEN_LENGTH));
     user.resetcodeValidUntil = moment().add(1, "days").toDate();
 }
 
 /**
- * generates a password reset token with the specified length
+ * Generates a password reset token with the specified length. Extracts
+ * n digits from the current timestamp.
+ *
  * @param length length of the password token
  */
-export function generatePasswordResetToken(length: number = 8): number {
+export function generatePasswordResetToken(length: number): number {
     const timestamp: number = new Date().getTime();
     const str = "" + timestamp;
-    return Number(str.substr(0, 8));
+    return Number(str.substr(0, length));
 }
