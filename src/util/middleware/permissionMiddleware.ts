@@ -9,7 +9,7 @@ import { http4xxResponse } from "../http/httpResponses";
 import logger from "../log/logger";
 
 /**
- * This file provides permission middleware for express
+ * This file provides permission middleware for express:
  *
  * - checkUserPermission: check if user is allowed to view the endpoint
  * - checkTherapistPermission: check if authUser is a therapist
@@ -17,8 +17,9 @@ import logger from "../log/logger";
  */
 
 /**
- * Middleware that checks if a user is allowed to view the requested endpoint
- * Some endpoints can only be viewed by the user who owns the endpoint
+ * Middleware that checks if a user is allowed to view the requested endpoint.
+ * Some endpoints can only be viewed by the user who owns the endpoint.
+ * e.g.:User can only edit himself.
  *
  * Unexpected behavior may occur if the middleware is applied to endpoints where
  * there is no user id as a path variable, but an id for another resource
@@ -49,7 +50,7 @@ export function checkUserPermission(req: Request, res: Response, next: any) {
 }
 
 /**
- * Middleware that guarantees that only therapists can access the requested endpoint
+ * Middleware that guarantees only therapists access the requested endpoint.
  *
  * @param req request
  * @param res response
@@ -74,7 +75,7 @@ export function checkTherapistPermission(req: Request, res: Response, next: any)
 }
 
 /**
- * Middleware that guarantees that only patients can access the requested endpoint
+ * Middleware that guarantees only patients access the requested endpoint.
  *
  * @param req request
  * @param res response
@@ -99,9 +100,7 @@ export function checkPatientPermission(req: Request, res: Response, next: any) {
 }
 
 /**
- * Middleware that guarantees that only admin therapists can access the requested endpoint
- *
- * admins can access special endpoints
+ * Middleware that guarantees only admin therapists access the requested endpoint.
  *
  * @param req request
  * @param res response

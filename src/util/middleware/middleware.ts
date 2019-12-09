@@ -6,12 +6,9 @@ import { getRequestUrl, loggerString } from "../Helper";
 import logger from "../log/logger";
 
 /**
- * This file provides request middleware for express
- */
-
-/**
  * Middleware that measures the response time and prints it to the console.
  * The response time is analyzed and warnings/errors are printed to the console
+ * if the time exceeds certain limits.
  *
  * @param req request
  * @param res response
@@ -31,7 +28,7 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
 }
 
 /**
- * logs information about the request and the passed parameters
+ * Logs information about the request and the passed query-parameters.
  * e.g.: [DATETIME] (GET|PUT|POST|DELETE) http://localhost/images/
  *
  * @param req request
@@ -44,8 +41,8 @@ export function logRequest(req: Request, res: Response, next: any): void {
 }
 
 /**
- * logs rateLimit {limit, current, remaining number of requests} property that is added to the request by req.rateLimit
- * logs slowDown {limit, current, remaining, resetTime, delay} property that is added to the request by req.slowDown
+ * Logs rateLimit {limit, current, remaining number of requests} property that is added to the request by req.rateLimit.
+ * Logs slowDown {limit, current, remaining, resetTime, delay} property that is added to the request by req.slowDown.
  *
  * @param req request
  * @param res response

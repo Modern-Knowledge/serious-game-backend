@@ -15,15 +15,15 @@ import { JWTHelper } from "../JWTHelper";
 import logger from "../log/logger";
 
 /**
- * This file provides authentication middleware for express
- * - checkAuthentication: validates jwt token
- * - checkAuthenticationToken: checks token and refreshes it, if needed
+ * This file provides authentication middleware for express:
+ *
+ * - checkAuthentication: Validates jwt-token.
+ * - checkAuthenticationToken: Checks token and refreshes it, if the token expires soon.
  */
 
 /**
- * Middleware that validates the authorization (checks if user is logged in)
- * returns 401 if authentication is erroneous
- * continues request handling if request is valid
+ * Middleware that validates the authorization (checks if user is logged in), before requesting an endpoint.
+ * Returns 401 if authentication can't be validated.
  *
  * @param req request
  * @param res response
@@ -51,9 +51,9 @@ export async function checkAuthentication(req: Request, res: Response, next: any
 }
 
 /**
- * Middleware that retrieves the authorization token and refreshes it, if it expires in less than 15 minutes
- * Token gets not refreshed if it is already expired
- * add authorizationToken to request variables
+ * Middleware that retrieves the authorization token and refreshes it, if it expires in less than 15 minutes.
+ * Token gets not refreshed if it is already expired.
+ * Add the authorization-token to the request.
  *
  * @param req request
  * @param res response
@@ -82,10 +82,10 @@ export async function checkAuthenticationToken(req: Request, res: Response, next
 }
 
 /**
- * checks is passed jwt-token is valid
- * if token is already expired -> if expired return passed token
- * if token expires in less than 15 minutes -> refresh token for another hour
- * if token expires in more than 15 minutes -> return passed token
+ * Checks is passed jwt-token is valid.
+ * If token is already expired, do not refresh token.
+ * If token expires in less than 15 minutes, refresh token for another hour.
+ * If token expires in more than 15 minutes, token do not need to be refreshed.
  */
 export async function refreshToken(token: string): Promise<string> {
     const decodedToken = jwt.decode(token, {complete: true});
