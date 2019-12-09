@@ -6,7 +6,8 @@ import { AbstractModel } from "../lib/models/AbstractModel";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 
 /**
- * Creates a string for logging that can be used in the winston logger.
+ * Creates a string for logging that can be used with the winston logger.
+ * e.g.: [DATETIME] ((DIRECTORY/CLASS_NAME.METHOD_NAME) | FILE_NAME)
  *
  * @param directory directory where the method is located
  * @param className class where the method is located
@@ -29,10 +30,11 @@ export function loggerString(directory?: string, className?: string, methodName?
 }
 
 /**
- * Searches for a key in a values-array.
+ * Searches for a key in a values-array. If the key is found the method returns true.
+ * Otherwise false is returned.
  *
- * @param search model to search for
- * @param values array to search in
+ * @param search model that should be searched
+ * @param values haystack for searching
  */
 export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values: T[]): boolean {
     if (!search) { // value is undefined
@@ -49,9 +51,10 @@ export function arrayContainsModel<T extends AbstractModel<T>>(search: T, values
 }
 
 /**
- * Load image from file system and
+ * Loads an image from the file-system. If an error occurs while reading the
+ * image an error is thrown.
  *
- * @param filename image filename to read
+ * @param filename name of the image to load
  */
 export function getImage(filename: string): Promise<Buffer> {
     const appDir = path.dirname(require.main.filename);
@@ -69,21 +72,22 @@ export function getImage(filename: string): Promise<Buffer> {
 }
 
 /**
- * returns if app is in production mode
+ * Returns true if the app is running in production-mode.
  */
 export function inProduction(): boolean {
     return process.env.NODE_ENV === "production";
 }
 
 /**
- * returns if app runs in test mode
+ * Returns true if the app is running in test-mode.
  */
 export function inTestMode(): boolean {
     return process.env.NODE_ENV === "test";
 }
 
 /**
- * returns the current request url + parameters formatted as string
+ * Returns the current request url + parameters formatted as string.
+ *
  * e.g.: http://localhost/home
  * @param req request
  */

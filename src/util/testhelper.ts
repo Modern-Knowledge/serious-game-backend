@@ -5,15 +5,11 @@ import { HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import logger from "./log/logger";
 
 /**
- * file contains functions that are helpful for testing
- */
-
-/**
- * checks if the given http-response message array contains the given message type with the specified count
+ * Checks if the given http-response message array contains the given message severity.
  *
- * @param messages messages to check
- * @param messageType messageType to find
- * @param amount amount of messages that should have the type messageType
+ * @param messages array of http-messages to check
+ * @param messageType message-severity that should be included in the array
+ * @param amount determines how often the given severity should be included in the array.
  */
 export function containsMessage(messages: any, messageType: HttpResponseMessageSeverity, amount: number): boolean {
     let i = 0;
@@ -28,13 +24,11 @@ export function containsMessage(messages: any, messageType: HttpResponseMessageS
 }
 
 /**
- * function that authenticates the given user
- * if authentication was successful, the jwt-token is returned
+ * Authenticates a given user. If a error occurs while authenticating, an error is thrown.
  *
- * @param user user to authenticate
+ * @param user user that should be authenticated
  */
 export async function authenticate(user: User): Promise<string> {
-
     logger.info("Running authentication for tests");
 
     const res = await request(app).post("/login")

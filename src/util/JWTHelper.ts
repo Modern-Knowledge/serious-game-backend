@@ -4,7 +4,7 @@ import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { User } from "../lib/models/User";
 
 /**
- * Helper for using jwt functions
+ * Helper for jwt-functions.
  */
 export class JWTHelper {
 
@@ -12,9 +12,9 @@ export class JWTHelper {
     private _expiresIn: number = Number(process.env.TOKEN_EXPIRE_TIME) || 3600;
 
     /**
-     * creates jwt token for user
+     * Creates the jwt-token for the given user. Checks if the user is a therapist.
      *
-     * @param user user to generate token for
+     * @param user user that should be authenticated
      */
     public async generateJWT(user: User): Promise<string> {
         const therapistFacade = new TherapistFacade();
