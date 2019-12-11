@@ -1,5 +1,4 @@
 import { Errortext } from "../../../lib/models/Errortext";
-import { Helptext } from "../../../lib/models/Helptext";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
@@ -14,7 +13,8 @@ import { SeverityFacade } from "../enum/SeverityFacade";
 import { TextFacade } from "./TextFacade";
 
 /**
- * handles CRUD operations with the errortext-entity
+ * Handles CRUD operations with the errortext-entity.
+ *
  * contained Facades:
  * - TextFacade
  * - SeverityFacade
@@ -49,7 +49,9 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * Returns sql attributes that should be retrieved from the database.
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -71,8 +73,9 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * Inserts a new user and returns the created user
-     * @param errortext errortext to insert
+     * Inserts a new error-text and returns the created error-text.
+     *
+     * @param errortext error-text to insert
      */
     public async insert(errortext: Errortext): Promise<Errortext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortext);
@@ -98,8 +101,9 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the error-text-ingredient-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Errortext {
         if (!result[this.name("error_id")]) {
@@ -127,8 +131,9 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param errortext entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, errortext: Errortext): SQLValueAttributes {
@@ -141,7 +146,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * creates the joins for the errortext facade and returns them as a list
+     * Creates the joins for the errortext-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -168,7 +173,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -186,7 +191,7 @@ export class ErrortextFacade extends CompositeFacade<Errortext> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [

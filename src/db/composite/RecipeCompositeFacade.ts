@@ -15,7 +15,8 @@ import { SQLJoin } from "../sql/SQLJoin";
 import { CompositeFacade } from "./CompositeFacade";
 
 /**
- * retrieves composite recipes
+ * Retrieves recipes with ingredients.
+ *
  * contained Facades:
  * - RecipeFacade
  * - RecipeIngredientFacade
@@ -57,7 +58,9 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -74,8 +77,10 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the recipe-entity from the result. Joined entities are added to
+     * the recipe.
+     *
+     * @param result database-results
      */
     protected fillEntity(result: any): Recipe {
         if (!result[this.name("id")]) {
@@ -95,7 +100,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * creates the joins for the composite games facade and returns them as a list
+     * Creates the joins for the recipe-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -128,8 +133,9 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * post process the results of the select query
-     * e.g.: handle joins
+     * Post process the results of the select-query.
+     * e.g.: Handle joined result set.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Recipe[]): Recipe[] {
@@ -151,7 +157,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -174,7 +180,7 @@ export class RecipeCompositeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [

@@ -15,7 +15,8 @@ import { CompositeFacade } from "./CompositeFacade";
 import { SessionCompositeFacade } from "./SessionCompositeFacade";
 
 /**
- * retrieves composite patients
+ * Retrieve patients with patient-settings, sessions and therapists.
+ *
  * contained Facades:
  * - PatientFacade
  * - PatientSettingFacade
@@ -40,7 +41,7 @@ import { SessionCompositeFacade } from "./SessionCompositeFacade";
 export class PatientCompositeFacade extends CompositeFacade<Patient> {
 
     /**
-     * creates the joins for the composite patients facade and returns them as a list
+     * Creates the joins for the composite patients-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -77,7 +78,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -104,7 +105,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [
@@ -284,7 +285,9 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -303,8 +306,10 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the patient-entity from the result. Joined entities are added to
+     * the patient.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Patient {
         if (!result[this.name("patient_id")]) {
@@ -331,7 +336,8 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * delete the patient, the user, the patient settings, the session and the connection to the patients
+     * Delete the patient, the user, the patient-settings,
+     * the session and the relationship with the therapists.
      */
     public async delete(): Promise<number> {
         return await this.deleteStatement([
@@ -341,8 +347,9 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * post process the results of the select query
-     * e.g.: handle joins
+     * Post process the results of the select-query.
+     * e.g.: Handle joined result set.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Patient[]): Patient[] {

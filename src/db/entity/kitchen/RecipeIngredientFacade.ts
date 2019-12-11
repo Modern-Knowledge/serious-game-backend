@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the recipes-ingredients-entity
+ * Handles CRUD operations with the recipes-ingredients-entity.
  */
 export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
 
@@ -22,7 +22,9 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -37,8 +39,9 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     }
 
     /**
-     * inserts a new recipeIngredient and returns the created recipeIngredient
-     * @param recipeIngredient recipeIngredient to insert
+     * Inserts a new recipe-ingredient and returns the created recipe-ingredient.
+     *
+     * @param recipeIngredient recipe-ingredient to insert
      */
     public async insert(recipeIngredient: RecipeIngredient): Promise<RecipeIngredient> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(recipeIngredient);
@@ -52,8 +55,9 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the recipe-ingredient-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): RecipeIngredient {
         if (!result[this.name("id")]) {
@@ -76,8 +80,9 @@ export class RecipeIngredientFacade extends EntityFacade<RecipeIngredient> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param recipeIngredient entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, recipeIngredient: RecipeIngredient): SQLValueAttributes {

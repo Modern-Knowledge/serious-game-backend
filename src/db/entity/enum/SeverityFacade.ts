@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the severity-entity
+ * Handles CRUD operations with the severity-entity.
  */
 export class SeverityFacade extends EntityFacade<Severity> {
 
@@ -22,7 +22,9 @@ export class SeverityFacade extends EntityFacade<Severity> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -32,7 +34,8 @@ export class SeverityFacade extends EntityFacade<Severity> {
     }
 
     /**
-     * inserts a new severity and returns the created severity
+     * Inserts a new severity and returns the created severity.
+     *
      * @param severity severity to insert
      */
     public async insert(severity: Severity): Promise<Severity> {
@@ -47,8 +50,9 @@ export class SeverityFacade extends EntityFacade<Severity> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the severity-entity from the result.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Severity {
         if (!result[this.name("id")]) {
@@ -67,8 +71,9 @@ export class SeverityFacade extends EntityFacade<Severity> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param severity entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, severity: Severity): SQLValueAttributes {

@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the session-entity
+ * Handles CRUD operations with the session-entity.
  */
 export class SessionFacade extends EntityFacade<Session> {
 
@@ -21,7 +21,9 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * Returns sql attributes that should be retrieved from the database.
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -37,8 +39,9 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * Fills the entity.
-     * @param result result for filling
+     * Fills the session-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Session {
         if (!result[this.name("id")]) {
@@ -73,7 +76,8 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * inserts a new session and returns the created session
+     * Inserts a new session and returns the created session.
+     *
      * @param session session to insert
      */
     public async insert(session: Session): Promise<Session> {
@@ -89,8 +93,9 @@ export class SessionFacade extends EntityFacade<Session> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param session entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, session: Session): SQLValueAttributes {

@@ -16,7 +16,8 @@ import { CompositeFacade } from "./CompositeFacade";
 import { StatisticCompositeFacade } from "./StatisticCompositeFacade";
 
 /**
- * retrieves composite sessions
+ * Retrieve sessions, patients, statistics, games and game-settings.
+ *
  * contained Facades:
  * - SessionFacade
  * - PatientFacade
@@ -39,7 +40,7 @@ import { StatisticCompositeFacade } from "./StatisticCompositeFacade";
 export class SessionCompositeFacade extends CompositeFacade<Session> {
 
     /**
-     * creates the joins for the composite sessions facade and returns them as a list
+     * Creates the joins for the session-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -90,7 +91,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -148,7 +149,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [
@@ -328,7 +329,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -356,8 +359,10 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the session-entity from the result. Joined entities are added to
+     * the session.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Session {
         if (!result[this.name("id")]) {
@@ -398,7 +403,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * deletes the session, the statistic and the errortextStatistic
+     * Deletes the session, the statistic and the errortext-statistics.
      */
     public async delete(): Promise<number> {
         return await this.deleteStatement([
@@ -409,8 +414,9 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
     }
 
     /**
-     * post process the results of the select query
-     * e.g.: handle joins
+     * Post process the results of the select-query.
+     * e.g.: Handle joined result set.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Session[]): Session[] {

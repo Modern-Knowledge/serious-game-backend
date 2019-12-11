@@ -12,7 +12,8 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { DifficultyFacade } from "../enum/DifficultyFacade";
 
 /**
- * handles CRUD operations with the recipe-entity
+ * Handles CRUD operations with the recipe-entity.
+ *
  * contained Facades:
  * - DifficultyFacade
  *
@@ -40,7 +41,9 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -67,7 +70,8 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * inserts a new recipe and returns the created recipe
+     * Inserts a new recipe and returns the created recipe.
+     *
      * @param recipe recipe to insert
      */
     public async insert(recipe: Recipe): Promise<Recipe> {
@@ -84,8 +88,9 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the recipe-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Recipe {
         if (!result[this.name("id")]) {
@@ -123,14 +128,12 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param recipe entity to take values from
      */
-    protected getSQLValueAttributes(
-        prefix: string,
-        recipe: Recipe
-    ): SQLValueAttributes {
+    protected getSQLValueAttributes(prefix: string, recipe: Recipe): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
         const nameAttribute: SQLValueAttribute = new SQLValueAttribute(
@@ -165,7 +168,7 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * creates the joins for the recipe facade and returns them as a list
+     * Creates the joins for the recipe-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -190,7 +193,7 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [this.difficultyFacadeFilter];
@@ -201,7 +204,7 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [this.difficultyFacadeOrderBy];

@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the food-category-entity
+ * Handles CRUD operations with the food-category-entity.
  */
 export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
 
@@ -22,7 +22,9 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -32,7 +34,8 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
     }
 
     /**
-     * inserts a new food-category and returns the created food-category
+     * Inserts a new food-category and returns the created food-category.
+     *
      * @param foodCategory food-category to insert
      */
     public async insert(foodCategory: FoodCategory): Promise<FoodCategory> {
@@ -47,8 +50,9 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the food-category-entity from the result.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): FoodCategory {
         if (!result[this.name("id")]) {
@@ -67,8 +71,9 @@ export class FoodCategoryFacade extends EntityFacade<FoodCategory> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param foodCategory entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, foodCategory: FoodCategory): SQLValueAttributes {

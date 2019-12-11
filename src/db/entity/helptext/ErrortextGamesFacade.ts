@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with errortext-games-entity
+ * Handles CRUD operations with errortext-games-entity.
  */
 export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
 
@@ -21,7 +21,9 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -36,8 +38,9 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
     }
 
     /**
-     * inserts a new errortextGame and returns the created errortextGame
-     * @param errortextGame errortextGame to insert
+     * Inserts a new error-text-game and returns the created error-text-game.
+     *
+     * @param errortextGame error-text-game to insert
      */
     public async insert(errortextGame: ErrortextGame): Promise<ErrortextGame> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(errortextGame);
@@ -51,8 +54,9 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the error-text-games-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): ErrortextGame {
         const errortextGame: ErrortextGame = new ErrortextGame();
@@ -69,8 +73,9 @@ export class ErrortextGamesFacade extends EntityFacade<ErrortextGame> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param errortextGame entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, errortextGame: ErrortextGame): SQLValueAttributes {

@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the user-entity
+ * Handles CRUD operations with the user-entity.
  */
 export class UserFacade extends EntityFacade<User> {
 
@@ -21,7 +21,9 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -35,7 +37,8 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * inserts a new user and returns the created user
+     * Inserts a new user and returns the created user.
+     *
      * @param user user that should be inserted
      */
     public async insert(user: User): Promise<User> {
@@ -50,7 +53,8 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * updates the given user in the database and returns the number of affected rows
+     * Updates the user in the database and returns the number of affected rows.
+     *
      * @param user user that should be updated
      */
     public update(user: User): Promise<number> {
@@ -59,14 +63,15 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * deletes the specified user in the database and returns the number of affected rows
+     * Deletes the specified user in the database and returns the number of deleted rows.
      */
     public delete(): Promise<number> {
         return this.deleteStatement([this]);
     }
 
     /**
-     * assigns the retrieved values to the newly created user and returns the user
+     * Assigns the retrieved result to the newly created user and returns the user.
+     *
      * @param result retrieved result
      * @param u entity to fill
      */
@@ -121,8 +126,9 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the user-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): User {
         if (!result[this.name("id")]) {
@@ -136,8 +142,9 @@ export class UserFacade extends EntityFacade<User> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param user entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, user: User): SQLValueAttributes {

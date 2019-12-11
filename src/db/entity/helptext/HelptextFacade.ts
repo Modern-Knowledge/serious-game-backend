@@ -13,7 +13,8 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { TextFacade } from "./TextFacade";
 
 /**
- * handles CRUD operations with the helptext-entity
+ * Handles CRUD operations with the helptext-entity.
+ *
  * contained Facades:
  * - TextFacade
  *
@@ -42,7 +43,9 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -59,8 +62,8 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * inserts a new user and returns the created user
-     * @param helptext helptext to insert
+     * Inserts a new help-text and returns the created help-text.
+     * @param helptext help-text to insert
      */
     public async insert(helptext: Helptext): Promise<Helptext> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(helptext);
@@ -86,8 +89,9 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the help-text-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Helptext {
         if (!result[this.name("helptext_id")]) {
@@ -104,8 +108,9 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param helptext entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, helptext: Helptext): SQLValueAttributes {
@@ -113,7 +118,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * creates the joins for the helptext facade and returns them as a list
+     * Creates the joins for the helptext-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -131,7 +136,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -144,7 +149,7 @@ export class HelptextFacade extends CompositeFacade<Helptext> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [

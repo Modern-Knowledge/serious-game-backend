@@ -7,7 +7,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with therapists-patients-entity
+ * Handles CRUD operations with therapists-patients-entity.
  */
 export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
 
@@ -23,7 +23,9 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -38,7 +40,8 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * inserts a new therapist-patient and returns the created therapist-patient
+     * Inserts a new therapist-patient and returns the created therapist-patient.
+     *
      * @param therapistPatient TherapistPatient to insert
      */
     public async insert(therapistPatient: TherapistPatient): Promise<TherapistPatient> {
@@ -53,7 +56,8 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * delete all patients from therapist
+     * Delete all patients from a therapist.
+     *
      * @param therapistPatient entities to take the ids values from
      */
     public async syncPatients(therapistPatient: TherapistPatient) {
@@ -67,8 +71,9 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the therapist-patient-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): TherapistPatient {
         const therapistPatient: TherapistPatient = new TherapistPatient();
@@ -85,8 +90,9 @@ export class TherapistsPatientsFacade extends EntityFacade<TherapistPatient> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param therapistPatient entity to take values from
      */
     protected getSQLValueAttributes(

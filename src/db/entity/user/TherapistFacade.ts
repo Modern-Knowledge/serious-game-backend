@@ -13,7 +13,8 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { UserFacade } from "./UserFacade";
 
 /**
- * handles CRUD operations with the therapist-entity
+ * Handles CRUD operations with the therapist-entity.
+ *
  * contained Facades:
  * - UserFacade
  *
@@ -41,7 +42,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -63,14 +66,15 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * inserts a new therapist and returns the created therapist
+     * Inserts a new therapist and returns the created therapist.
+     *
      * @param therapist therapist that should be inserted
      */
     public async insert(therapist: Therapist): Promise<Therapist> {
         const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(therapist);
 
         /**
-         * callback that is called after a user was inserted
+         * Callback that is executed after a user was inserted.
          * @param insertId user id that was inserted before
          * @param sqlValueAttributes attributes to append to
          */
@@ -90,7 +94,8 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * updates the patient and the associated user in a transaction
+     * Updates therapists and the associated users in a transaction.
+     *
      * @param therapist therapist that should be updated
      */
     public async updateUserTherapist(therapist: Therapist): Promise<number> {
@@ -102,7 +107,8 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * updates the therapists and returns the number of affected rows
+     * Updates therapists and returns the number of affected rows.
+     *
      * @param therapist therapist that should be updated
      */
     public async update(therapist: Therapist): Promise<number> {
@@ -111,14 +117,16 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * deletes the specified therapist in the database and returns the number of affected rows
+     * Deletes the specified therapist and user in the database and
+     * returns the number of affected rows.
      */
     public async delete(): Promise<number> {
         return await this.deleteStatement([this, this._userFacade]);
     }
 
     /**
-     * checks if the given id belongs to a therapist
+     * Checks if the given id belongs to a therapist.
+     *
      * @param id id of the user to check
      */
     public async isTherapist(id: number): Promise<boolean> {
@@ -127,8 +135,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the therapist-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Therapist {
         if (!result[this.name("therapist_id")]) {
@@ -153,8 +162,9 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param therapist entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, therapist: Therapist): SQLValueAttributes {
@@ -170,7 +180,7 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
     }
 
     /**
-     * creates the joins for the therapist facade and returns them as a list
+     * Creates the joins for the therapist facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -191,29 +201,23 @@ export class TherapistFacade extends CompositeFacade<Therapist> {
         return joins;
     }
 
-    /**
-     * returns the facade filter that can be used for filtering model with id
-     */
     get idFilter(): Filter {
         return this._userFacade.idFilter;
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [this.userFacadeFilter];
     }
 
-    /**
-     * returns the userFacadeFilter
-     */
     get userFacadeFilter(): Filter {
         return this._userFacade.filter;
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [this.userFacadeOrderBy];

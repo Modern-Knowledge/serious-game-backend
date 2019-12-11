@@ -13,7 +13,8 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { FoodCategoryFacade } from "../enum/FoodCategoryFacade";
 
 /**
- * handles CRUD operations with the ingredient-entity
+ * Handles CRUD operations with the ingredient-entity.
+ *
  * contained Facades:
  * - FoodCategoryFacade
  *
@@ -42,7 +43,9 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -60,7 +63,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * inserts a new ingredient and returns the created ingredient
+     * Inserts a new ingredient and returns the created ingredient.
      * @param ingredient ingredient to insert
      */
     public async insert(ingredient: Ingredient): Promise<Ingredient> {
@@ -75,8 +78,9 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the ingredient-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Ingredient {
         if (!result[this.name("id")]) {
@@ -110,8 +114,9 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param ingredient entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, ingredient: Ingredient): SQLValueAttributes {
@@ -131,7 +136,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * creates the joins for the ingredient facade and returns them as a list
+     * Creates the joins for the ingredient-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];
@@ -151,7 +156,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -164,7 +169,7 @@ export class IngredientFacade extends CompositeFacade<Ingredient> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [

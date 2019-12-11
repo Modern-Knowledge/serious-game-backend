@@ -13,8 +13,9 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { DifficultyFacade } from "../enum/DifficultyFacade";
 
 /**
- * handles CRUD operations with game-settings-entity
- * contained Facades:
+ * Handles CRUD operations with game-settings-entity.
+ *
+ * contained Facades:smtp
  * - DifficultyFacade
  *
  * contained Joins:
@@ -41,7 +42,9 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -58,7 +61,8 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     }
 
     /**
-     * inserts a new gameSetting and returns the created gameSetting
+     * Inserts a new game-setting and returns the created game-setting.
+     *
      * @param gameSetting gameSetting to insert
      */
     public async insert(gameSetting: GameSetting): Promise<GameSetting> {
@@ -73,8 +77,9 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the game-setting-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): GameSetting {
         if (!result[this.name("id")]) {
@@ -104,8 +109,9 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param gameSetting entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, gameSetting: GameSetting): SQLValueAttributes {
@@ -122,7 +128,7 @@ export class GameSettingFacade extends CompositeFacade<GameSetting> {
     }
 
     /**
-     * creates the joins for the game-settings facade and returns them as a list
+     * Creates the joins for the game-settings facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         const joins: SQLJoin[] = [];

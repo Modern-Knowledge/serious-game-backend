@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the log-entity
+ * Handles CRUD operations with the log-entity.
  */
 export class LogFacade extends EntityFacade<Log> {
 
@@ -21,7 +21,9 @@ export class LogFacade extends EntityFacade<Log> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -30,7 +32,8 @@ export class LogFacade extends EntityFacade<Log> {
     }
 
     /**
-     * inserts a new log and returns the id of the created log
+     * Inserts a new log and returns the created log.
+     *
      * @param log log that should be inserted
      */
     public async insert(log: Log): Promise<Log> {
@@ -40,15 +43,16 @@ export class LogFacade extends EntityFacade<Log> {
     }
 
     /**
-     * deletes the specified logs and returns the number of affected rows
+     * Deletes the specified logs and returns the number of deleted rows.
      */
     public delete(): Promise<number> {
         return this.deleteStatement();
     }
 
     /**
-     * fills the entity
-     * @param result retrieved result
+     * Fills the log-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Log {
         if (!result[this.name("id")]) {
@@ -87,8 +91,9 @@ export class LogFacade extends EntityFacade<Log> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param log entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, log: Log): SQLValueAttributes {

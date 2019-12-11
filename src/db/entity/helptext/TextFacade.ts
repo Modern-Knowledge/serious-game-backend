@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the text-entity
+ * Handles CRUD operations with the text-entity.
  */
 export class TextFacade extends EntityFacade<Text> {
 
@@ -22,7 +22,9 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -31,9 +33,10 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * assigns the retrieved common values to the newly created text and returns the text
+     * Assigns common values to the created text and returns the text.
+     *
      * @param result retrieved result
-     * @param text entity to fill
+     * @param text entity that should be filled
      */
     public fillTextEntity(result: any, text: Text): Text {
         this.fillDefaultAttributes(result, text);
@@ -50,8 +53,9 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the text-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): Text {
         if (!result[this.name("id")]) {
@@ -65,8 +69,9 @@ export class TextFacade extends EntityFacade<Text> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param text entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, text: Text): SQLValueAttributes {

@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the difficulty-entity
+ * Handles CRUD operations with the difficulty-entity.
  */
 export class DifficultyFacade extends EntityFacade<Difficulty> {
 
@@ -22,7 +22,9 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -32,7 +34,8 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
     }
 
     /**
-     * inserts a new difficulty and returns the created difficulty
+     * Inserts a new difficulty and returns the created difficulty.
+     *
      * @param difficulty difficulty to insert
      */
     public async insert(difficulty: Difficulty): Promise<Difficulty> {
@@ -47,8 +50,9 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the difficulty-entity from the result.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Difficulty {
         if (!result[this.name("id")]) {
@@ -67,7 +71,8 @@ export class DifficultyFacade extends EntityFacade<Difficulty> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
      * @param prefix prefix before the sql attribute
      * @param difficulty entity to take values from
      */

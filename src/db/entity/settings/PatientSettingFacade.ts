@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with patient-settings-entity
+ * Handles CRUD operations with patient-settings-entity.
  */
 export class PatientSettingFacade extends EntityFacade<PatientSetting> {
 
@@ -22,7 +22,9 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -32,8 +34,9 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the patient-setting-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): PatientSetting {
         if (!result[this.name("id")]) {
@@ -56,7 +59,8 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
-     * inserts a new session and returns the created session
+     * Inserts a new patient-setting and returns the created patient-setting.
+     *
      * @param patientSetting patientSetting that should be inserted
      */
     public async insert(patientSetting: PatientSetting): Promise<PatientSetting> {
@@ -72,8 +76,9 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param patientSetting entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, patientSetting: PatientSetting): SQLValueAttributes {

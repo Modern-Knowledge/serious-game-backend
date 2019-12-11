@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the word-entity
+ * Handles CRUD operations with the word-entity.
  */
 export class WordFacade extends EntityFacade<Word> {
 
@@ -21,7 +21,9 @@ export class WordFacade extends EntityFacade<Word> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -31,7 +33,8 @@ export class WordFacade extends EntityFacade<Word> {
     }
 
     /**
-     * inserts a new word and returns the created word
+     * Inserts a new word and returns the created word.
+     *
      * @param word word that should be inserted
      */
     public async insert(word: Word): Promise<Word> {
@@ -46,8 +49,9 @@ export class WordFacade extends EntityFacade<Word> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the word-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): Word {
         if (!result[this.name("id")]) {
@@ -66,8 +70,9 @@ export class WordFacade extends EntityFacade<Word> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param word entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, word: Word): SQLValueAttributes {

@@ -19,7 +19,8 @@ import { SQLJoin } from "../sql/SQLJoin";
 import { CompositeFacade } from "./CompositeFacade";
 
 /**
- * retrieves composite games
+ * Retrieve games with game-settings, help-texts, error-texts and difficulties.
+ *
  * contained Facades:
  * - GameFacade
  * - GameSettingFacade
@@ -78,7 +79,9 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -102,8 +105,10 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the game-entity from the result. Joined entities are added to
+     * the game.
+     *
+     * @param result database-results
      */
     protected fillEntity(result: any): Game {
         if (!result[this.name("id")]) {
@@ -137,7 +142,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * creates the joins for the composite games facade and returns them as a list
+     * Creates the joins for the composite games-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -196,8 +201,9 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * post process the results of the select query
-     * e.g.: handle joins
+     * Post process the results of the select-query.
+     * e.g.: Handle joined result set.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Game[]): Game[] {
@@ -227,7 +233,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -265,7 +271,7 @@ export class GameCompositeFacade extends CompositeFacade<Game> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [

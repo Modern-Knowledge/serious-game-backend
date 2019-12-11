@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the image-entity
+ * Handles CRUD operations with the image-entity.
  */
 export class ImageFacade extends EntityFacade<Image> {
 
@@ -21,7 +21,9 @@ export class ImageFacade extends EntityFacade<Image> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -31,7 +33,8 @@ export class ImageFacade extends EntityFacade<Image> {
     }
 
     /**
-     * inserts a new word and returns the created word
+     * Inserts a new image and returns the created image.
+     *
      * @param image image to insert
      */
     public async insert(image: Image): Promise<Image> {
@@ -46,8 +49,9 @@ export class ImageFacade extends EntityFacade<Image> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the image-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): Image {
         if (!result[this.name("id")]) {
@@ -66,8 +70,9 @@ export class ImageFacade extends EntityFacade<Image> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param image entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, image: Image): SQLValueAttributes {

@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the smtp-logs
+ * Handles CRUD operations with the smtp-logs.
  */
 export class SmtpLogFacade extends EntityFacade<SmtpLog> {
 
@@ -22,7 +22,9 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -31,7 +33,8 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * inserts a new smtp-log and sets the id of the created smtp-log
+     * Inserts a new smtp-log and returns the created smtp-log.
+     *
      * @param smtpLog log to insert
      */
     public async insert(smtpLog: SmtpLog): Promise<SmtpLog> {
@@ -41,15 +44,16 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * deletes the specified smtp-logs and returns the number of affected rows
+     * Deletes the specified smtp-logs and returns the number of deleted rows.
      */
     public delete(): Promise<number> {
         return this.deleteStatement();
     }
 
     /**
-     * fills the entity
-     * @param result retrieved result
+     * Fills the smtp-log-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): SmtpLog {
         if (!result[this.name("id")]) {
@@ -84,8 +88,9 @@ export class SmtpLogFacade extends EntityFacade<SmtpLog> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param smtpLog entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, smtpLog: SmtpLog): SQLValueAttributes {

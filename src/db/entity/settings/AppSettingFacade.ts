@@ -3,7 +3,7 @@ import { SQLAttributes } from "../../sql/SQLAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with app-setting-entity
+ * Handles CRUD operations with app-setting-entity.
  */
 export class AppSettingFacade extends EntityFacade<AppSetting> {
 
@@ -19,7 +19,9 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -29,8 +31,9 @@ export class AppSettingFacade extends EntityFacade<AppSetting> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the app-setting-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): AppSetting {
         if (!result[this.name("id")]) {

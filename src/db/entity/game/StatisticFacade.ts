@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the statistic-entity
+ * Handles CRUD operations with the statistic-entity.
  */
 export class StatisticFacade extends EntityFacade<Statistic> {
 
@@ -21,7 +21,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -30,8 +32,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the statistic-entity from the result.
+     *
+     * @param result database results
      */
     public fillEntity(result: any): Statistic {
         if (!result[this.name("id")]) {
@@ -54,7 +57,8 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * inserts a new statistic and returns the created user
+     * Inserts a new statistic and returns the created statistic.
+     *
      * @param statistic Statistic to insert
      */
     public async insert(statistic: Statistic): Promise<Statistic> {
@@ -70,8 +74,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * updates the given statistic in the database and returns the number of affected rows
-     * @param statistic user that should be updated
+     * Updates the given statistic in the database and returns the number of affected rows.
+     *
+     * @param statistic statistic that should be updated
      */
     public async update(statistic: Statistic): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(statistic);
@@ -79,8 +84,9 @@ export class StatisticFacade extends EntityFacade<Statistic> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param statistic entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, statistic: Statistic): SQLValueAttributes {

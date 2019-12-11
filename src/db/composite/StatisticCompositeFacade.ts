@@ -14,7 +14,8 @@ import { SQLJoin } from "../sql/SQLJoin";
 import { CompositeFacade } from "./CompositeFacade";
 
 /**
- * retrieves composite statistics
+ * Retrieve statistics with the error-texts.
+ *
  * contained Facades:
  * - StatisticFacade
  * - ErrortextFacade
@@ -29,7 +30,7 @@ import { CompositeFacade } from "./CompositeFacade";
 export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
 
     /**
-     * creates the joins for the composite statistics facade and returns them as a list
+     * Creates the joins for the statistics-facade and returns them as a list.
      */
     get joins(): SQLJoin[] {
         let joins: SQLJoin[] = [];
@@ -61,7 +62,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * returns all sub facade filters of the facade as an array
+     * Returns all sub-facade filters of the facade as an array.
      */
     protected get filters(): Filter[] {
         return [
@@ -89,7 +90,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * returns all sub facade order-bys of the facade as an array
+     * Returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [
@@ -178,7 +179,9 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -195,8 +198,10 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the statistic-entity from the result. Joined entities are added to
+     * the statistic.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Statistic {
         if (!result[this.name("id")]) {
@@ -216,15 +221,16 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
     }
 
     /**
-     * delete the statistic and the errortextStatistic
+     * Deletes the statistic and the errortext-statistic.
      */
     public async delete(): Promise<number> {
         return await this.deleteStatement([this._errortextStatisticFacade, this]);
     }
 
     /**
-     * post process the results of the select query
-     * e.g.: handle joins
+     * Post process the results of the select-query.
+     * e.g.: Handle joined result set.
+     *
      * @param entities entities that where returned from the database
      */
     protected postProcessSelect(entities: Statistic[]): Statistic[] {

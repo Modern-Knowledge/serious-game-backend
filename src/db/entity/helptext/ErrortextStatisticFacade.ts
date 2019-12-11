@@ -5,7 +5,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with errortext-statistic-entity
+ * Handles CRUD operations with errortext-statistic-entity.
  */
 export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
 
@@ -21,7 +21,9 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * Returns sql attributes that should be retrieved from the database.
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -36,6 +38,7 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
 
     /**
      * Inserts a new errortext-statistic and returns the created errortext-statistic.
+     *
      * @param errortextStatistic errortext-statistic to insert
      */
     public async insert(errortextStatistic: ErrortextStatistic): Promise<ErrortextStatistic> {
@@ -50,8 +53,9 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * Fills the entity.
-     * @param result result for filling
+     * Fills the error-text-statistic-entity from the result.
+     *
+     * @param result database results
      */
     protected fillEntity(result: any): ErrortextStatistic {
         if (!result[this.name("id")]) {
@@ -74,8 +78,9 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
     }
 
     /**
-     * Return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param errortextStatistic entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, errortextStatistic: ErrortextStatistic): SQLValueAttributes {

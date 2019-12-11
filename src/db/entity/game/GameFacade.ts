@@ -6,7 +6,7 @@ import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
 
 /**
- * handles CRUD operations with the game-entity
+ * Handles CRUD operations with the game-entity.
  */
 export class GameFacade extends EntityFacade<Game> {
     /**
@@ -21,7 +21,9 @@ export class GameFacade extends EntityFacade<Game> {
     }
 
     /**
-     * returns sql attributes that should be retrieved from the database
+     * Returns sql-attributes that should be retrieved from the database.
+     * Combines the attributes from the joined facades.
+     *
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
@@ -30,7 +32,8 @@ export class GameFacade extends EntityFacade<Game> {
     }
 
     /**
-     * inserts a new game and returns the created game
+     * Inserts a new game and returns the created game.
+     *
      * @param game game that should be inserted
      */
     public async insert(game: Game): Promise<Game> {
@@ -45,8 +48,9 @@ export class GameFacade extends EntityFacade<Game> {
     }
 
     /**
-     * fills the entity
-     * @param result result for filling
+     * Fills the game-entity from the result.
+     *
+     * @param result database-results
      */
     public fillEntity(result: any): Game {
         if (!result[this.name("id")]) {
@@ -73,8 +77,9 @@ export class GameFacade extends EntityFacade<Game> {
     }
 
     /**
-     * return common sql attributes for insert and update statement
-     * @param prefix prefix before the sql attribute
+     * Returns common sql-attributes for inserts- and updates-statement.
+     *
+     * @param prefix prefix before the sql-attribute
      * @param game entity to take values from
      */
     protected getSQLValueAttributes(prefix: string, game: Game): SQLValueAttributes {
