@@ -45,7 +45,17 @@ import {
     shoppingCartErrorTextGamesStatistic,
     shoppingListErrorTextGamesStatistic,
 } from "./seeds/errortextStatistic";
-import { bread, care, chilledGoods, deepFrozen, drinks, household, sweets, vegetables } from "./seeds/foodCategories";
+import {
+    bread,
+    care,
+    chilledGoods,
+    deepFrozen,
+    drinks,
+    household,
+    stapleFood,
+    sweets,
+    vegetables
+} from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
 import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
 import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
@@ -480,7 +490,8 @@ export async function seedFoodCategories() {
         deepFrozen,
         sweets,
         care,
-        household
+        household,
+        stapleFood
     ];
     for (const item of foodCategories) {
         await foodCategoryFacade.insert(item);
