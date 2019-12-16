@@ -10,4 +10,6 @@ const recipeIngredient2 = new RecipeIngredient();
 recipeIngredient2.recipeId = scrambledEgg.id;
 recipeIngredient2.ingredientId = oil.id;
 
-export { recipeIngredient1, recipeIngredient2 };
+export {
+    recipeIngredient1, recipeIngredient2
+};

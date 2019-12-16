@@ -61,11 +61,33 @@ import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./see
 import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
 import { helptext, helptext1 } from "./seeds/helptexts";
 import { loadImages } from "./seeds/images";
-import { egg, oil } from "./seeds/ingredients";
+import {
+    beef, bun,
+    cheese, dough,
+    egg,
+    ham,
+    noodle,
+    oil, onion,
+    paprika,
+    porkMeat,
+    potato, salad,
+    sauerkraut, spaetzle,
+    spinach, tomatoSauce
+} from "./seeds/ingredients";
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
 import { recipeIngredient1, recipeIngredient2 } from "./seeds/recipeIngredients";
-import { proteinShake, roastPork, scrambledEgg } from "./seeds/recipes";
+import {
+    burger,
+    cheeseNoodles,
+    goulash,
+    pastaSalad, pizza,
+    roastPork,
+    schnitzel,
+    scrambledEgg,
+    spaghetti,
+    tafelspitz
+} from "./seeds/recipes";
 import { session } from "./seeds/sessions";
 import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
 import { notSentSmtpLog, sentSmtpLog, simulatedSmtpLog } from "./seeds/smtpLogs";
@@ -449,7 +471,12 @@ export async function seedGames() {
  */
 export async function seedIngredients() {
     const ingredientFacade = new IngredientFacade();
-    const ingredients = [egg, oil];
+    const ingredients = [
+        egg, oil, spinach, porkMeat, potato, sauerkraut,
+        beef, noodle, ham, cheese, paprika, dough,
+        tomatoSauce, salad, bun, onion, spaetzle
+    ];
+
     for (const item of ingredients) {
         await ingredientFacade.insert(item);
     }
@@ -471,7 +498,11 @@ export async function seedRecipeIngredientFacade() {
  */
 export async function seedRecipes() {
     const recipeFacade = new RecipeFacade();
-    const recipes = [scrambledEgg, roastPork, proteinShake];
+    const recipes = [
+        scrambledEgg, roastPork, schnitzel, pastaSalad,
+        pizza, spaghetti, goulash, cheeseNoodles, tafelspitz,
+        burger
+    ];
     for (const item of recipes) {
         await recipeFacade.insert(item);
     }
