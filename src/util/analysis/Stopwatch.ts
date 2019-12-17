@@ -1,7 +1,7 @@
 
 /**
  * Simple stopwatch to measure execution times.
- * Thee Stopwatch is autostarted, if an instance is created.
+ * The Stopwatch is autostarted, if an instance is created.
  */
 export class Stopwatch {
     private readonly _name: string;

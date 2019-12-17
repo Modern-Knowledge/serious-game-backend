@@ -22,7 +22,7 @@ function checkEnvVariables(variables: string[]): string[] {
 }
 
 /**
- * check if all required environment variables are set
+ * Check if all required environment variables are set.
  */
 export function checkEnvFunction(): void {
 

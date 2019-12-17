@@ -4,15 +4,20 @@ import { TherapistCompositeFacade } from "../../db/composite/TherapistCompositeF
 import { loggerString } from "../Helper";
 import logger from "../log/logger";
 
+/**
+ * Options for jwt-strategy.
+ */
 const options: StrategyOptions = {
     jwtFromRequest:  ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.SECRET_KEY
 };
 
 /**
- * https://github.com/mikenicholson/passport-jwt
+ * Gets the token from the authorization header. Checks if the token is valid.
+ * Checks if the user that is contained in the token exists. Returns an error
+ * if one of the errors occur.
  *
- * passport for verifying jwt token in request header
+ * https://github.com/mikenicholson/passport-jwt
  */
 export const jwtStrategy =  new Strategy(options, (payload, done) => {
     const userFacade = payload.therapist ? new TherapistCompositeFacade() : new PatientCompositeFacade();
