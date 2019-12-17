@@ -12,6 +12,15 @@ const router = express.Router();
 
 const controllerName = "VersionController";
 
+/**
+ * GET /
+ *
+ * Retrieve information about the current version.
+ *
+ * response:
+ * - authors: authors of the application
+ * - version: version string
+ */
 router.get("/", (req: Request, res: Response) => {
     logEndpoint(controllerName, `Version requested!`, req);
 

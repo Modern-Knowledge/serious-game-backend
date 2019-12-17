@@ -75,7 +75,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission, [
 /**
  * DELETE /
  *
- * deletes smtp-logs older than 3 months
+ * Deletes smtp-logs older than 3 months.
  *
  * response:
  * - affectedRows: amount of deleted smtp-logs

@@ -34,6 +34,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 
 /**
  * GET /
+ *
  * Get all patients.
  *
  * response:
@@ -67,7 +68,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 /**
  * POST /
  *
- * Inserts a patient and inserts patient settings
+ * Inserts a patient and inserts patient-settings.
  *
  * body:
  * - email
@@ -150,7 +151,7 @@ router.post("/", [
  *
  * DELETE /:id
  *
- * deletes the given patient, the user, the sessions, patient_settings and the connection to the therapists
+ * Deletes the given patient, the user, the sessions, patient_settings and the connection to the therapists.
  *
  * params:
  * - id: id of the patient
@@ -193,7 +194,7 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 /**
  * PUT :/id
  *
- * Update a patient by id
+ * Update a patient by id.
  *
  * params:
  * - id: id of the patient

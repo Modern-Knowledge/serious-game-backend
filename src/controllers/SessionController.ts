@@ -42,7 +42,8 @@ const authenticationMiddleware = [
 
 /**
  * GET /:id
- * retrieve the session by id
+ *
+ * Retrieve a session by id.
  *
  * params:
  * - id: id of the session
@@ -110,7 +111,7 @@ router.get(
 /**
  * GET /patient/:id
  *
- * retrieve sessions for given patient
+ * Retrieve all sessions for the given patient.
  *
  * params:
  * - id: id of the patient
@@ -168,7 +169,7 @@ router.get(
 /**
  * DELETE /:id
  *
- * delete the given session
+ * Delete the session with the given id.
  *
  * params:
  * - id: id of the session
@@ -253,16 +254,16 @@ router.delete(
 /**
  * POST /
  *
- * creates a new session and a statistic
+ * Creates a new session and statistic.
  *
- * session.date is set to [now]
- * statistic.starttime is set to [now]
+ * session.date is set to [now].
+ * statistic.starttime is set to [now].
  *
  * body:
- * - _gameId: id of the patient
- * - _patientId: id of the patient
- * - _gameSettingId: id of the game_setting
- * - _elapsedTime: the time it took to complete the session (in ms)
+ * - gameId: id of the patient
+ * - patientId: id of the patient
+ * - gameSettingId: id of the game_setting
+ * - elapsedTime: the time it took to complete the session (in ms)
  *
  * response:
  * - session: created session

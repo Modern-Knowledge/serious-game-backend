@@ -16,7 +16,8 @@ const controllerName = "ImageController";
 
 /**
  * GET /:id
- * returns image by id
+ *
+ * Returns an image by id.
  *
  * params:
  * - id: id of the image

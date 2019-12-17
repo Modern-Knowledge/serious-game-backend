@@ -56,6 +56,8 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
 /**
  * PUT /change-password/:id
  *
+ * Changes the password of the user.
+ *
  * params:
  * - id
  *
@@ -147,7 +149,8 @@ router.put("/change-password/:id", authenticationMiddleware, checkUserPermission
 /**
  * PUT /:id
  *
- * Update a user by id. Updates attributes that therapists and patients have in common.
+ * Update a user by id.
+ * Updates attributes that therapists and patients have in common.
  *
  * params:
  * - id: user id

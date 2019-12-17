@@ -82,7 +82,6 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission,
 });
 
 /**
- *
  * POST /create
  *
  * Insert a log message.
@@ -146,7 +145,7 @@ router.post("/", async (req: Request, res: Response, next: any) => {
 /**
  * DELETE /
  *
- * deletes logs older than 3 months
+ * Deletes logs older than 3 months.
  *
  * response:
  * - amount of deleted logs

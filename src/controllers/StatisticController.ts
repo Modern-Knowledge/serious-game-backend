@@ -28,7 +28,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 /**
  * GET /:id
  *
- * retrieve statistic by id
+ * Retrieve a statistic by id.
  *
  * params:
  * - id: id of the statistic
@@ -81,7 +81,7 @@ router.get("/:id", authenticationMiddleware, [
 /**
  * PUT /
  *
- * updates the given statistic
+ * Updates the given statistic.
  *
  * body:
  * - _id: id of statistic

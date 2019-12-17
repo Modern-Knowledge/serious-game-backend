@@ -23,7 +23,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 /**
  * GET /
  *
- * Get all helptexts.
+ * Get all help-texts.
  *
  * response:
  * - helptexts: all helptexts of the application
@@ -51,7 +51,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 /**
  * GET /:id
  *
- * Get a helptext by id.
+ * Get a help-text by id.
  *
  * params:
  * - id: id of the helptext

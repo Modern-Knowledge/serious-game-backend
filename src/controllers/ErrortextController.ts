@@ -138,7 +138,7 @@ router.get(
 /**
  * POST /
  *
- * Insert an errortext
+ * Inserts an errortext.
  *
  * - errortext: {
  *   - createdAt:
@@ -262,7 +262,7 @@ router.post("/", authenticationMiddleware, [
 /**
  * POST /bulk
  *
- * Insert multiple errortexts at once
+ * Insert multiple errortexts at once.
  *
  * body:
  * - errortexts: [{

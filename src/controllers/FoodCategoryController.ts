@@ -22,7 +22,8 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 
 /**
  * GET /
- * Get all food categories.
+ *
+ * Get all food-categories.
  *
  * response:
  * - food-categories: all food-categories of the application

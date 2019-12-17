@@ -22,6 +22,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 
 /**
  * GET /
+ *
  * Get all games.
  *
  * response:

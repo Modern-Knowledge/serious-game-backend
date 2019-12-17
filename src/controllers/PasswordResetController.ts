@@ -32,7 +32,7 @@ const controllerName = "PasswordResetController";
  *      post:
  *          description: Checks if the requesting email exists.
  *          Generates a new reset token if none is set or the current one has expired.
- *          Sends an email with the token to the user
+ *          Sends an email with the token to the user.
  *          produces:
  *              - application/json
  *          parameters:
@@ -115,10 +115,9 @@ router.post("/reset", [
 /**
  * POST /reset-password
  *
- * checks if the passed email exists
- * validates reset token
- * resets passwords
- * sends email to user that his/her password was resettet
+ * Checks if the passed email exists. Validates the reset-token
+ * and resets the password. Sends an email to user that
+ * his/her password was changed.
  *
  * body:
  * - password: new password for the user

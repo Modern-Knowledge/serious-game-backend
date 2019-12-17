@@ -38,6 +38,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication,
 
 /**
  * GET /
+ *
  * Get all therapists.
  *
  * response:
@@ -68,6 +69,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
 /**
  * POST /
+ *
  * Insert a therapist.
  *
  * body:
@@ -141,9 +143,9 @@ router.post("/", [
 /**
  * PUT /:id
  *
- * Update a therapist by id.
- * removes all old patients from therapist
- * add all new patients to therapist
+ * Updates a therapist by id.
+ * Removes all patients from therapist and adds
+ * new patients to therapist.
  *
  * params:
  * - id: therapist id
@@ -229,7 +231,8 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
  *
  * DELETE /:id
  *
- * deletes the given therapist, the user and removes the connection to the patients
+ * Deletes the given therapist, the user and
+ * removes the connection to the patients.
  *
  * params:
  * - id: id of the therapist
@@ -270,8 +273,8 @@ router.delete("/:id", authenticationMiddleware, checkUserPermission, [
 /**
  * PUT /toggle-accepted/:id
  *
- * accepts / disallows therapist
- * therapist needs to be accepted before the login is allowed
+ * Accepts / Disallows therapist.
+ * Therapists need to be accepted before loggin in is allowed.
  *
  * params:
  * - id: id of the therapist
