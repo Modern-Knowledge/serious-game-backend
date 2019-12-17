@@ -76,7 +76,22 @@ import {
 } from "./seeds/ingredients";
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
-import { recipeIngredient1, recipeIngredient2 } from "./seeds/recipeIngredients";
+import {
+    recipeIngredient1, recipeIngredient10, recipeIngredient11,
+    recipeIngredient12, recipeIngredient13, recipeIngredient14,
+    recipeIngredient15, recipeIngredient16, recipeIngredient17,
+    recipeIngredient18, recipeIngredient19,
+    recipeIngredient2, recipeIngredient20,
+    recipeIngredient21, recipeIngredient22, recipeIngredient23,
+    recipeIngredient24, recipeIngredient25,
+    recipeIngredient26,
+    recipeIngredient27, recipeIngredient28,
+    recipeIngredient29,
+    recipeIngredient3,
+    recipeIngredient30, recipeIngredient4, recipeIngredient5,
+    recipeIngredient6, recipeIngredient7, recipeIngredient8,
+    recipeIngredient9
+} from "./seeds/recipeIngredients";
 import {
     burger,
     cheeseNoodles,
@@ -487,7 +502,18 @@ export async function seedIngredients() {
  */
 export async function seedRecipeIngredientFacade() {
     const recipeIngredientFacade = new RecipeIngredientFacade();
-    const recipeIngredients = [recipeIngredient1, recipeIngredient2];
+    const recipeIngredients = [
+        recipeIngredient1, recipeIngredient2, recipeIngredient3,
+        recipeIngredient4, recipeIngredient5, recipeIngredient6,
+        recipeIngredient7, recipeIngredient8, recipeIngredient9,
+        recipeIngredient10, recipeIngredient11, recipeIngredient12,
+        recipeIngredient13, recipeIngredient14, recipeIngredient15,
+        recipeIngredient16, recipeIngredient17, recipeIngredient18,
+        recipeIngredient19, recipeIngredient20, recipeIngredient21,
+        recipeIngredient22, recipeIngredient23, recipeIngredient24,
+        recipeIngredient25, recipeIngredient26, recipeIngredient27,
+        recipeIngredient28, recipeIngredient29, recipeIngredient30
+    ];
     for (const item of recipeIngredients) {
         await recipeIngredientFacade.insert(item);
     }
