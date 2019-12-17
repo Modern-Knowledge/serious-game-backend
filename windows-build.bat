@@ -1,6 +1,9 @@
 @echo off
 SETLOCAL
 
+echo delete dist folder
+if exist dist rmdir /s /q dist
+
 echo delete lib folder
 if exist src\lib rmdir /s /q src\lib
 
@@ -13,5 +16,4 @@ robocopy "../serious-game-library/src" "src/lib" /E >nul
 echo delete docs folder
 if exist docs rmdir /s /q docs
 
-echo build docs
-npm install && npm run watch
+npm run build-ts && npm run tslint
