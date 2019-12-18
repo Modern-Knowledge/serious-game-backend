@@ -3,7 +3,7 @@ import { SQLParam } from "./SQLParam";
 import { SQLValueAttribute } from "./SQLValueAttribute";
 
 /**
- * handles interaction with the sql value attributes collection
+ * Handles interaction with the sql-value-attributes collection.
  */
 export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute> {
 
@@ -12,7 +12,7 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
     }
 
     /**
-     * returns string of comma separated parameter names
+     * Returns string of comma separated parameter names.
      * e.g.: ::id::, ::name::
      */
     public getCommaSeparatedParameterName(): string {
@@ -30,7 +30,7 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
     }
 
     /**
-     * returns every sql param in the collection
+     * Returns every sql-param in the collection.
      */
     public getSqlParams(): SQLParam[] {
         const returnParams: SQLParam[] = [];
@@ -43,7 +43,8 @@ export class SQLValueAttributes extends SQLAttributeCollection<SQLValueAttribute
     }
 
     /**
-     * returns a string with name = value pairs.
+     * Returns a string with "name = value" pairs.
+     *
      * e.g.: name = "name", age = "12"
      */
     public getNameParamNamePairs(): string {

@@ -2,7 +2,7 @@ import { SQLElementType } from "./enums/SQLElementType";
 import { SQLElement } from "./SQLElement";
 
 /**
- * represents a simple sql keyword like AND, OR
+ * Class that represents a simple sql-keyword like AND, OR.
  */
 export class SQLKeyword extends SQLElement {
     private readonly _keyword: string;
@@ -16,14 +16,14 @@ export class SQLKeyword extends SQLElement {
     }
 
     /**
-     * Returns the element type for the sql keyword
+     * Returns the element type for the sql-keyword.
      */
     public getElementType(): number {
         return SQLElementType.SQLKeyword;
     }
 
     /**
-     * Returns the sql
+     * Returns the sql-keyword.
      */
     public getSQL(): string {
         return " " + this._keyword + " ";

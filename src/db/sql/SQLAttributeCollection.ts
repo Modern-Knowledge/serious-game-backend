@@ -2,14 +2,15 @@ import { SQLAttribute } from "./SQLAttribute";
 import { SQLValueAttribute } from "./SQLValueAttribute";
 
 /**
- * represents a collection of sql attributes
+ * Class that represents a collection of sql-attributes.
  */
 export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
 
     protected _attributes: AttributeType[] = [];
 
     /**
-     * adds an attribute to the collection
+     * Adds an attribute to the collection.
+     *
      * @param attribute attribute that should be added to the collection
      */
     public addAttribute(attribute: AttributeType): void {
@@ -21,7 +22,8 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
     }
 
     /**
-     * returns a string of comma separated names
+     * Returns all attributes of this collection separated by comma.
+     *
      * e.g.: id, name, ..
      */
     public getCommaSeparatedNamesUnaliased(): string {
@@ -39,7 +41,8 @@ export class SQLAttributeCollection<AttributeType extends SQLAttribute> {
     }
 
     /**
-     * returns a string of comma separated names with aliased name
+     * Returns all attributes of this collection with the aliased name separated by comma.
+     *
      * e.g.: id as idu, name as nameu
      */
     public getCommaSeparatedNames(): string {

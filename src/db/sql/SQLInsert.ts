@@ -5,7 +5,7 @@ import { SQLParam } from "./SQLParam";
 import { SQLValueAttributes } from "./SQLValueAttributes";
 
 /**
- * represents the insert part of a sql query
+ * Class that represents the insert-part of a sql-query.
  */
 export class SQLInsert extends SQLElement {
     private readonly _tableName: string;
@@ -20,7 +20,7 @@ export class SQLInsert extends SQLElement {
     }
 
     /**
-     * Returns the name-value parameters for the insert
+     * Returns the name-value parameters for the insert.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];

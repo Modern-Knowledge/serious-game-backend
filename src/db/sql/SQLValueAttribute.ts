@@ -2,7 +2,7 @@ import { SQLAttribute } from "./SQLAttribute";
 import { SQLParam } from "./SQLParam";
 
 /**
- * represents a sql attribute that can hold a value
+ * Class that represents a sql-attribute which has a value.
  */
 export class SQLValueAttribute extends SQLAttribute {
     private readonly _value: any;
@@ -18,14 +18,14 @@ export class SQLValueAttribute extends SQLAttribute {
     }
 
     /**
-     * returns the placeholder for the value used in the query
+     * Returns the placeholder for the value used in the query.
      */
     public getParamName(): string {
         return "__attr_" + this.name + "";
     }
 
     /**
-     * returns name-value pair of the sql value attribute
+     * Returns the name-value pair of the sql-value-attribute.
      */
     public getSQLParam(): SQLParam {
         return new SQLParam(this.getParamName(), this._value, false);

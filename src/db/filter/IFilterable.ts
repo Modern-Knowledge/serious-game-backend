@@ -1,11 +1,12 @@
 import { SQLBlock } from "../sql/SQLBlock";
 
 /**
- * defines classes that can be used in the where filter
+ * Defines classes that can be used as a filter-attribute.
  */
 export interface IFilterable {
+
     /**
-     * returns the sql block
+     * Returns the sql-block.
      */
     getBlock(): SQLBlock;
 }

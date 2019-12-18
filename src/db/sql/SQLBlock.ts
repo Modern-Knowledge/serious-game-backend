@@ -5,14 +5,14 @@ import { SQLParam } from "./SQLParam";
 import { SQLText } from "./SQLText";
 
 /**
- * sql block that can hold from, select, ... parts of a query
+ * Sql-block that can contain from, select, ... parts of a query.
  */
 export class SQLBlock extends SQLElement {
 
     private _elements: SQLElement[] = [];
 
     /**
-     *  Returns the parameters of the sql block
+     * Returns the parameters of the sql-block.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -27,7 +27,8 @@ export class SQLBlock extends SQLElement {
     }
 
     /**
-     * Adds a keyword to the sql block.
+     * Adds a keyword to the sql-block.
+     *
      * @param keyword keyword that should be added
      */
     public addKeyword(keyword: string): void {
@@ -36,7 +37,8 @@ export class SQLBlock extends SQLElement {
     }
 
     /**
-     * Adds text to the sql block.
+     * Adds text to the sql-block.
+     *
      * @param text text that should be added
      */
     public addText(text: string): void {
@@ -45,7 +47,8 @@ export class SQLBlock extends SQLElement {
     }
 
     /**
-     * Adds an element to the sql block.
+     * Adds an element to the sql-block.
+     *
      * @param element element that should be added
      */
     public addElement(element: SQLElement): void {
@@ -53,7 +56,7 @@ export class SQLBlock extends SQLElement {
     }
 
     /**
-     * Returns the sql for the sql block.
+     * Returns the sql for the sql-block.
      */
     public getSQL(): string {
         this.invalidate();
@@ -70,7 +73,7 @@ export class SQLBlock extends SQLElement {
     }
 
     /**
-     * returns the element type of a sql block
+     * Returns the element-type of a sql-block.
      */
     public getElementType(): number {
         return SQLElementType.SQLBlock;

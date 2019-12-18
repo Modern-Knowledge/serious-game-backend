@@ -2,7 +2,7 @@ import { SQLElementType } from "./enums/SQLElementType";
 import { SQLElement } from "./SQLElement";
 
 /**
- * represents the delete part of a sql query
+ * Class that represents the delete-part of a sql-query.
  */
 export class SQLDelete extends SQLElement {
 
@@ -19,12 +19,15 @@ export class SQLDelete extends SQLElement {
         this._tableAlias = tableAlias;
     }
 
+    /**
+     * Returns the element-type.
+     */
     public getElementType(): number {
         return SQLElementType.SQLDelete;
     }
 
     /**
-     * Returns the sql for the delete query.
+     * Returns the sql for the delete-query.
      */
     public getSQL(): string {
         return "DELETE FROM " + this._tableName;

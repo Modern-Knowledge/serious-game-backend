@@ -4,7 +4,8 @@ import { SQLParam } from "../sql/SQLParam";
 import { IFilterable } from "./IFilterable";
 
 /**
- * filterAttribute in the where part of a query
+ * Filter-attribute in the where part of a query.
+ *
  * e.g.: %tableAlias%.%name% (=|!=|<|>, ...) %value%
  */
 export class FilterAttribute implements IFilterable {
@@ -25,7 +26,7 @@ export class FilterAttribute implements IFilterable {
     }
 
     /**
-     * Returns the sql block for the filterAttribute.
+     * Returns the sql- block for the filter-attribute.
      */
     public getBlock(): SQLBlock {
         const block: SQLBlock = new SQLBlock();

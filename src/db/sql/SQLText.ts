@@ -2,7 +2,7 @@ import { SQLElementType } from "./enums/SQLElementType";
 import { SQLElement } from "./SQLElement";
 
 /**
- * represents a simple text in sql
+ * Class that represents a simple text in sql.
  */
 export class SQLText extends SQLElement {
     private readonly _text: string;
@@ -16,14 +16,14 @@ export class SQLText extends SQLElement {
     }
 
     /**
-     * returns the element type for sql text
+     * Returns the element-type for sql-text.
      */
     public getElementType(): number {
         return SQLElementType.SQLText;
     }
 
     /**
-     * returns the sql type
+     * Returns the sql-text.
      */
     public getSQL(): string {
         return " " + this._text + " ";

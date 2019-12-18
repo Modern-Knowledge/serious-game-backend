@@ -3,7 +3,7 @@ import { SQLInsert } from "./SQLInsert";
 import { SQLParam } from "./SQLParam";
 
 /**
- * represents a sql insert query
+ * Class that represents a sql-insert-statement.
  *
  * e.g.: INSERT INTO %tablename% (%attributes%) VALUES (%values%)
  */
@@ -20,7 +20,7 @@ export class InsertQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the sql parameters (name-value pairs) for the insert query
+     * Returns the sql-parameters (name-value pairs) for the insert query.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -33,7 +33,7 @@ export class InsertQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the sql for the insert query
+     * Returns the sql-statement for the insert query.
      */
     public getSql(): string {
         let returnSql = "";

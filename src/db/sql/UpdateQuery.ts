@@ -4,7 +4,7 @@ import { SQLUpdate } from "./SQLUpdate";
 import { SQLWhere } from "./SQLWhere";
 
 /**
- * represents a sql update query
+ * Class that represents a sql-update-query.
  *
  * syntax: UPDATE %tablename% SET (%attr% = %value%, ...) (WHERE condition)?
  */
@@ -18,7 +18,7 @@ export class UpdateQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the sql parameters (name-value pairs) for the update query
+     * Returns the sql-parameters (name-value pairs) for the update query.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -35,7 +35,7 @@ export class UpdateQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the sql for the update query
+     * Returns the sql for the update-query.
      */
     public getSql(): string {
         let returnStr = "";

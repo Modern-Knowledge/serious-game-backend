@@ -1,8 +1,8 @@
 import { SQLParam } from "./SQLParam";
 
 /**
- * base class for all sql elements
- * every sql element has a list of parameters that have values
+ * Base class for all sql-elements (where, from, ...).
+ * Every sql element has a list of parameters.
  */
 export abstract class SQLElement {
     protected _parameters: SQLParam[] = [];

@@ -2,7 +2,7 @@ import { NamedParameterizedQuery } from "./NamedParameterizedQuery";
 import { SQLParam } from "./SQLParam";
 
 /**
- * convert a prepared statement to a query that is supported by node/mysql
+ * Parse a prepared statement to a query that is supported by node/mysql.
  */
 export class BakedQuery {
 
@@ -19,7 +19,8 @@ export class BakedQuery {
     }
 
     /**
-     * returns the parameters of a prepared statement as a list
+     * Retrieves the values of the parameters that should be replaced as a list.
+     * Get the values that are later injected into the query.
      */
     public fillParameters(): any[] {
         const returnArr: any[] = [];
@@ -32,7 +33,7 @@ export class BakedQuery {
     }
 
     /**
-     * Returns the sql, where parameters are replaced with questionmarks
+     * Returns the sql, where parameters the parameters are replaced with questionmarks.
      */
     public getBakedSQL(): string {
         return this._sql;

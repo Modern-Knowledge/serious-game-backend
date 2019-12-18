@@ -5,7 +5,7 @@ import { FilterAttribute } from "./FilterAttribute";
 import { IFilterable } from "./IFilterable";
 
 /**
- * filter for sql statements
+ * Class for filtering results from an sql query.
  */
 export class Filter implements IFilterable {
     private _root: SQLBlock = new SQLBlock();
@@ -17,7 +17,7 @@ export class Filter implements IFilterable {
     }
 
     /**
-     * Adds a filter condition to the sql-statement.
+     * Adds a filter-condition.
      *
      * @param name name of the filter condition
      * @param value value of the filter condition
@@ -43,8 +43,7 @@ export class Filter implements IFilterable {
     }
 
     /**
-     * Adds a subFilter to the filter.
-     * SubFilter is encapsulated in brackets.
+     * Adds a sub-filter to the filter. Sub-filter is encapsulated in brackets in the filter.
      *
      * @param filter filter that should be added to the current filter
      */
@@ -56,6 +55,7 @@ export class Filter implements IFilterable {
 
     /**
      * Adds an operator to the filter (and, ...).
+     *
      * @param operator SQLOperator like AND, OR
      */
     public addOperator(operator: SQLOperator): Filter {
@@ -65,21 +65,21 @@ export class Filter implements IFilterable {
     }
 
     /**
-     * Returns the sql block for the filter
+     * Returns the sql-block for the filter.
      */
     public getBlock(): SQLBlock {
         return this._root;
     }
 
     /**
-     * Returns if the filter is empty.
+     * Returns true if the filter is empty.
      */
     get isEmpty() {
         return this._empty;
     }
 
     /**
-     * clear the filter
+     * Clear the filter.
      */
     public clear() {
         this._root = new SQLBlock();

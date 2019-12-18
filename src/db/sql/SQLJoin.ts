@@ -6,7 +6,7 @@ import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 
 /**
- * represents the join part of a sql query
+ * Class that represents the join-part of a sql-query.
  */
 export class SQLJoin extends SQLElement {
     private readonly _joinTableName: string;
@@ -48,7 +48,7 @@ export class SQLJoin extends SQLElement {
     }
 
     /**
-     * Returns the element-type
+     * Returns the element-type.
      */
     public getElementType(): number {
         return SQLElementType.SQLJoin;

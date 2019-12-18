@@ -3,7 +3,7 @@ import { SQLElement } from "./SQLElement";
 import { SQLParam } from "./SQLParam";
 
 /**
- * represents the where part of a sql query
+ * Class that represents the where part of a sql-query.
  */
 export class SQLWhere extends SQLElement {
     private readonly _condition: SQLElement;
@@ -19,7 +19,7 @@ export class SQLWhere extends SQLElement {
     }
 
     /**
-     * returns the sql params (name-value pairs) for the where part
+     * Returns the sql-params (name-value pairs) for the where-part.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -38,7 +38,7 @@ export class SQLWhere extends SQLElement {
     }
 
     /**
-     * returns the sql string for the where part
+     * Returns the string for the where part of a sql-query.
      */
     public getSQL(): string {
         return "WHERE " + this._condition.getSQL();

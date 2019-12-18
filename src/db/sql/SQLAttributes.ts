@@ -2,7 +2,8 @@ import { SQLAttribute } from "./SQLAttribute";
 import { SQLAttributeCollection } from "./SQLAttributeCollection";
 
 /**
- * handles interaction with sql attribute collection
+ * Handles interaction with the class SQLAttributeCollection. Provides
+ * functionality to add attributes.
  */
 export class SQLAttributes extends SQLAttributeCollection<SQLAttribute> {
 
@@ -21,7 +22,8 @@ export class SQLAttributes extends SQLAttributeCollection<SQLAttribute> {
     }
 
     /**
-     * adds a collection of sql attributes
+     * Adds a collection of sql attributes of the current collection.
+     *
      * @param sqlAttributes sql-attributes that should be added
      */
     public addSqlAttributes(sqlAttributes: SQLAttributes): void {

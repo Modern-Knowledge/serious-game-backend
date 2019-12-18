@@ -4,7 +4,7 @@ import { SQLParam } from "./SQLParam";
 import { SQLValueAttributes } from "./SQLValueAttributes";
 
 /**
- * represents the update part of a sql query
+ * Class that represents the update part of a sql-query.
  */
 export class SQLUpdate extends SQLElement {
 
@@ -23,7 +23,7 @@ export class SQLUpdate extends SQLElement {
     }
 
     /**
-     * Returns the parameters (name-value pairs) for the update
+     * Returns the parameters (name-value pairs) for the update.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -43,7 +43,7 @@ export class SQLUpdate extends SQLElement {
     }
 
     /**
-     * Returns the sql for the update part of the query
+     * Returns the sql for the update part of the query.
      */
     public getSQL(): string {
         let returnStr: string = "UPDATE " + this._tableName + " " + this._tableAlias + " SET ";

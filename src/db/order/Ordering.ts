@@ -2,6 +2,9 @@
 import { SQLOrder } from "../sql/enums/SQLOrder";
 import { SQLOrderBy } from "../sql/SQLOrderBy";
 
+/**
+ * Class for ordering results of a sql-query.
+ */
 export class Ordering {
     protected _tableAlias: string;
     private _orderBys: SQLOrderBy[] = [];

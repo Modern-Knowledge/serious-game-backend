@@ -4,7 +4,7 @@ import { SQLParam } from "./SQLParam";
 import { SQLWhere } from "./SQLWhere";
 
 /**
- * represents a sql delete statement
+ * Class that represents a sql-delete-statement.
  *
  * e.g.: DELETE FROM %tablename% (WHERE condition)?
  */
@@ -30,7 +30,7 @@ export class DeleteQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * Returns the sql for delete query.
+     * Returns the sql-statement for delete query.
      */
     public getSql(): string {
         let returnStr = "";

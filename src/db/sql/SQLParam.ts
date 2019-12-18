@@ -1,5 +1,5 @@
 /**
- * represents a sql parameter with a name and a value
+ * Class that represents a sql-parameter with a name and a value.
  * e.g.: name = value
  */
 export class SQLParam {

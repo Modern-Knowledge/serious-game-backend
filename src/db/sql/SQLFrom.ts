@@ -2,7 +2,7 @@ import { SQLElementType } from "./enums/SQLElementType";
 import { SQLElement } from "./SQLElement";
 
 /**
- * represents the from part of an sql query
+ * Represents the from-part of an sql-query.
  */
 export class SQLFrom extends SQLElement {
 
@@ -27,7 +27,7 @@ export class SQLFrom extends SQLElement {
     }
 
     /**
-     * Returns the sql for the from element.
+     * Returns the sql for the from-element.
      */
     public getSQL(): string {
         let returnSQL = "";

@@ -1,5 +1,6 @@
 /**
- * represents a sql attribute with tableAlias and name
+ * Class that represents a sql-attribute with the table-alias and name.
+ *
  * e.g.: tableAlias.name
  */
 export class SQLAttribute {
@@ -19,7 +20,8 @@ export class SQLAttribute {
     }
 
     /**
-     * Return name prefixed with tableAlias.
+     * Return name prefixed with table-alias and separated by a dot.
+     *
      * @param withHighComas should the value of the attribute be encapsulated in quotes
      */
     public getPrefixedName(withHighComas: boolean): string {
@@ -41,7 +43,8 @@ export class SQLAttribute {
     }
 
     /**
-     * Returns the alias name
+     * Returns the aliased name.
+     *
      * e.g.: name + tableAlias
      */
     public getAliasName(): string {

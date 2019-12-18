@@ -7,7 +7,7 @@ import { SQLSelect } from "./SQLSelect";
 import { SQLWhere } from "./SQLWhere";
 
 /**
- * Represents a sql select statement
+ * Class that represents a sql-select-statement.
  *
  * e.g.: select %attributes% FROM %tablename% %tablealias% (%join%)? (WHERE %condition)? (ORDER BY %name% ASC|DESC)
  */
@@ -23,7 +23,7 @@ export class SelectQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the parameters (name-value pairs) for the select query
+     * Returns the parameters (name-value pairs) for the select query.
      */
     public getParameters(): SQLParam[] {
         let returnParams: SQLParam[] = [];
@@ -48,7 +48,8 @@ export class SelectQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * adds a list of new joins to the list
+     * Adds a list of joins for the statement to the list.
+     *
      * @param joins array of joins that should be added
      */
     public addJoins(joins: SQLJoin[]): void {
@@ -58,7 +59,7 @@ export class SelectQuery extends NamedParameterizedQuery {
     }
 
     /**
-     * returns the sql for the select query
+     * Returns the sql-statement for the select query.
      */
     public getSql(): string {
         let returnSQL = "";
