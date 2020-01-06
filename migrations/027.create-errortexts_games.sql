@@ -1,4 +1,9 @@
-CREATE TABLE IF NOT EXISTS `serious-game`.`errortexts_games`
+/*
+ * Copyright (c) 2020 Florian Mold
+ * All rights reserved.
+ */
+
+CREATE TABLE IF NOT EXISTS `errortexts_games`
 (
     `error_id` INT(11) NOT NULL,
     `game_id`            INT(11) NOT NULL,
@@ -9,12 +14,12 @@ CREATE TABLE IF NOT EXISTS `serious-game`.`errortexts_games`
     INDEX `fk_errortexts_games_errortexts1_idx` (`error_id` ASC),
     CONSTRAINT `fk_errortexts_games_errortexts1`
         FOREIGN KEY (`error_id`)
-            REFERENCES `serious-game`.`errortexts` (`error_id`)
+            REFERENCES `errortexts` (`error_id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT `fk_errortexts_games_games1`
         FOREIGN KEY (`game_id`)
-            REFERENCES `serious-game`.`games` (`id`)
+            REFERENCES `games` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )
