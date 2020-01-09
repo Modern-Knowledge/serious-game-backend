@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Florian Mold
+ * All rights reserved.
+ */
+
 import * as path from "path";
 
 import { DifficultyFacade } from "./db/entity/enum/DifficultyFacade";
@@ -47,11 +52,9 @@ import {
 } from "./seeds/errortextStatistic";
 import {
     bread,
-    care,
     chilledGoods,
     deepFrozen,
     drinks,
-    household,
     stapleFood,
     sweets,
     vegetables
@@ -546,8 +549,6 @@ export async function seedFoodCategories() {
         chilledGoods,
         deepFrozen,
         sweets,
-        care,
-        household,
         stapleFood
     ];
     for (const item of foodCategories) {

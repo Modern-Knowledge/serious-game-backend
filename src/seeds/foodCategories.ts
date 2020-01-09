@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Florian Mold
+ * All rights reserved.
+ */
+
 import { FoodCategory } from "../lib/models/FoodCategory";
 
 const vegetables = new FoodCategory();
@@ -24,16 +29,8 @@ const sweets = new FoodCategory();
 sweets.id = 6;
 sweets.name = "Süßes & Salziges";
 
-const care = new FoodCategory();
-care.id = 7;
-care.name = "Pflege";
-
-const household = new FoodCategory();
-household.id = 8;
-household.name = "Haushalt";
-
 const stapleFood = new FoodCategory();
-stapleFood.id = 9;
+stapleFood.id = 7;
 stapleFood.name = "Grundnahrungsmittel";
 
-export { vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, care, household, stapleFood };
+export { vegetables, bread, drinks, chilledGoods, deepFrozen, sweets, stapleFood };
