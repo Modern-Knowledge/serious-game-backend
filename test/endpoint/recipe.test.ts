@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Florian Mold
+ * All rights reserved.
+ */
+
 import request from "supertest";
 import app from "../../src/app";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
@@ -7,7 +12,7 @@ import {
     seedUsers,
     truncateTables
 } from "../../src/migrationHelper";
-import { proteinShake } from "../../src/seeds/recipes";
+import {scrambledEgg} from "../../src/seeds/recipes";
 import { validTherapist } from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";
 
@@ -96,7 +101,7 @@ describe("RecipeController Tests", () => {
         it("fetch recipe with specific id", async () => {
             authenticationToken = await authenticate(validTherapist);
 
-            const res = await request(app).get(endpoint + "/" + proteinShake.id)
+            const res = await request(app).get(endpoint + "/" + scrambledEgg.id)
                 .set("Authorization", "Bearer " + authenticationToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -107,12 +112,12 @@ describe("RecipeController Tests", () => {
             expect(res.body._data).toHaveProperty("recipe");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
-            expect(res.body._data.recipe._id).toEqual(proteinShake.id);
+            expect(res.body._data.recipe._id).toEqual(scrambledEgg.id);
         }, timeout);
 
         // SGBRC05
         it("try to fetch recipe with id without authentication", async () => {
-            const res = await request(app).get(endpoint + "/" + proteinShake.id)
+            const res = await request(app).get(endpoint + "/" + scrambledEgg.id)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
                 .expect(401);
@@ -120,7 +125,7 @@ describe("RecipeController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
 
-            const res1 = await request(app).get(endpoint + "/" + proteinShake.id)
+            const res1 = await request(app).get(endpoint + "/" + scrambledEgg.id)
                 .set("Authorization", "")
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
@@ -133,7 +138,7 @@ describe("RecipeController Tests", () => {
 
         // SGBRC06
         it("try to fetch recipe with an expired token", async () => {
-            const res = await request(app).get(endpoint + "/" + proteinShake.id)
+            const res = await request(app).get(endpoint + "/" + scrambledEgg.id)
                 .set("Authorization", "Bearer " + expiredToken)
                 .set("Accept", "application/json")
                 .expect("Content-Type", /json/)
