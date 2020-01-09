@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Florian Mold
+ * Copyright (c) 2020 Florian Mold
  * All rights reserved.
  */
 
@@ -58,6 +58,21 @@ async function loadImages(): Promise<Image[]> {
     const image16 = new Image();
     image16.id = 17;
 
+    const image17 = new Image();
+    image17.id = 18;
+
+    const image18 = new Image();
+    image18.id = 19;
+
+    const image19 = new Image();
+    image19.id = 20;
+
+    const image20 = new Image();
+    image20.id = 21;
+
+    const image21 = new Image();
+    image21.id = 22;
+
     if (!inTestMode()) {
         image.image = await getImage("egg.png");
         image1.image = await getImage("oil.png");
@@ -76,10 +91,15 @@ async function loadImages(): Promise<Image[]> {
         image14.image = await getImage("bun.png");
         image15.image = await getImage("onion.png");
         image16.image = await getImage("spaetzle.png");
+        image17.image = await getImage("chips.png");
+        image18.image = await getImage("chocolate.png");
+        image19.image = await getImage("pistachios.png");
+        image20.image = await getImage("pommes.png");
+        image21.image = await getImage("wok.png");
     }
 
     return [image, image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12,
-        image13, image14, image15, image16];
+        image13, image14, image15, image16, image17, image18, image19, image20, image21];
 }
 
 export {loadImages};

@@ -1,5 +1,10 @@
+/*
+ * Copyright (c) 2020 Florian Mold
+ * All rights reserved.
+ */
+
 import { Ingredient } from "../lib/models/Ingredient";
-import { bread, chilledGoods, deepFrozen, stapleFood, vegetables } from "./foodCategories";
+import {bread, chilledGoods, deepFrozen, stapleFood, sweets, vegetables} from "./foodCategories";
 
 const egg = new Ingredient();
 egg.id = 1;
@@ -103,8 +108,38 @@ spaetzle.name = "Spätzle";
 spaetzle.foodCategoryId = stapleFood.id;
 spaetzle.imageId = 17;
 
+const chips = new Ingredient();
+chips.id = 18;
+chips.name = "Chips";
+chips.foodCategoryId = sweets.id;
+chips.imageId = 18;
+
+const chocolate = new Ingredient();
+chocolate.id = 19;
+chocolate.name = "Schokolade";
+chocolate.foodCategoryId = sweets.id;
+chocolate.imageId = 19;
+
+const pistachios = new Ingredient();
+pistachios.id = 20;
+pistachios.name = "Pistazien";
+pistachios.foodCategoryId = sweets.id;
+pistachios.imageId = 20;
+
+const pommes = new Ingredient();
+pommes.id = 21;
+pommes.name = "Pommes Frites";
+pommes.foodCategoryId = deepFrozen.id;
+pommes.imageId = 21;
+
+const wok = new Ingredient();
+wok.id = 22;
+wok.name = "Gemüse";
+wok.foodCategoryId = deepFrozen.id;
+wok.imageId = 22;
+
 export {
     egg, oil, spinach, porkMeat, potato, sauerkraut, beef,
     noodle, ham, cheese, paprika, dough, tomatoSauce, salad,
-    bun, onion, spaetzle
+    bun, onion, spaetzle, chips, chocolate, pistachios, pommes, wok
 };
