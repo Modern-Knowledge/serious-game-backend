@@ -73,6 +73,21 @@ async function loadImages(): Promise<Image[]> {
     const image21 = new Image();
     image21.id = 22;
 
+    const image22 = new Image();
+    image22.id = 22;
+
+    const image23 = new Image();
+    image23.id = 23;
+
+    const image24 = new Image();
+    image24.id = 24;
+
+    const image25 = new Image();
+    image25.id = 25;
+
+    const image26 = new Image();
+    image26.id = 26;
+
     if (!inTestMode()) {
         image.image = await getImage("egg.png");
         image1.image = await getImage("oil.png");
@@ -96,10 +111,16 @@ async function loadImages(): Promise<Image[]> {
         image19.image = await getImage("pistachios.png");
         image20.image = await getImage("pommes.png");
         image21.image = await getImage("wok.png");
+        image22.image = await getImage("bread.png");
+        image23.image = await getImage("icetea.png");
+        image24.image = await getImage("orangejuice.png");
+        image25.image = await getImage("water.png");
+        image26.image = await getImage("zwieback.png");
     }
 
     return [image, image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12,
-        image13, image14, image15, image16, image17, image18, image19, image20, image21];
+        image13, image14, image15, image16, image17, image18, image19, image20, image21,
+        image22, image23, image24, image25, image26];
 }
 
 export {loadImages};

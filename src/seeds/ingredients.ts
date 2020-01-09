@@ -4,7 +4,7 @@
  */
 
 import { Ingredient } from "../lib/models/Ingredient";
-import {bread, chilledGoods, deepFrozen, stapleFood, sweets, vegetables} from "./foodCategories";
+import {bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables} from "./foodCategories";
 
 const egg = new Ingredient();
 egg.id = 1;
@@ -138,8 +138,39 @@ wok.name = "Gemüse";
 wok.foodCategoryId = deepFrozen.id;
 wok.imageId = 22;
 
+const blackbread = new Ingredient();
+blackbread.id = 23;
+blackbread.name = "Brot";
+blackbread.foodCategoryId = bread.id;
+blackbread.imageId = 23;
+
+const icetea = new Ingredient();
+icetea.id = 24;
+icetea.name = "Eistee";
+icetea.foodCategoryId = drinks.id;
+icetea.imageId = 24;
+
+const orangejuice = new Ingredient();
+orangejuice.id = 25;
+orangejuice.name = "Orangensaft";
+orangejuice.foodCategoryId = drinks.id;
+orangejuice.imageId = 25;
+
+const water = new Ingredient();
+water.id = 26;
+water.name = "Mineralwasser";
+water.foodCategoryId = drinks.id;
+water.imageId = 26;
+
+const zwieback = new Ingredient();
+zwieback.id = 27;
+zwieback.name = "Zwieback";
+zwieback.foodCategoryId = bread.id;
+zwieback.imageId = 27;
+
 export {
     egg, oil, spinach, porkMeat, potato, sauerkraut, beef,
     noodle, ham, cheese, paprika, dough, tomatoSauce, salad,
-    bun, onion, spaetzle, chips, chocolate, pistachios, pommes, wok
+    bun, onion, spaetzle, chips, chocolate, pistachios, pommes, wok,
+    blackbread, icetea, orangejuice, water, zwieback
 };

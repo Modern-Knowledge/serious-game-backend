@@ -65,17 +65,17 @@ import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
 import { helptext, helptext1 } from "./seeds/helptexts";
 import { loadImages } from "./seeds/images";
 import {
-    beef, bun,
+    beef, blackbread, bun,
     cheese, chips, chocolate, dough,
     egg,
-    ham,
+    ham, icetea,
     noodle,
-    oil, onion,
+    oil, onion, orangejuice,
     paprika, pistachios, pommes,
     porkMeat,
     potato, salad,
     sauerkraut, spaetzle,
-    spinach, tomatoSauce, wok
+    spinach, tomatoSauce, water, wok, zwieback
 } from "./seeds/ingredients";
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
@@ -493,7 +493,7 @@ export async function seedIngredients() {
         egg, oil, spinach, porkMeat, potato, sauerkraut,
         beef, noodle, ham, cheese, paprika, dough,
         tomatoSauce, salad, bun, onion, spaetzle, chips, chocolate,
-        pistachios, pommes, wok
+        pistachios, pommes, wok, blackbread, icetea, orangejuice, water, zwieback
     ];
 
     for (const item of ingredients) {
