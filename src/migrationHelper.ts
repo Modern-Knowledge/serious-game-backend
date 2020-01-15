@@ -530,8 +530,8 @@ export async function seedRecipes() {
     const recipeFacade = new RecipeFacade();
     const recipes = [
         scrambledEgg, roastPork, schnitzel, pastaSalad,
-        pizza, spaghetti, goulash, cheeseNoodles, tafelspitz,
-        burger
+        pizza, spaghetti, burger, goulash, cheeseNoodles,
+        tafelspitz,
     ];
     for (const item of recipes) {
         await recipeFacade.insert(item);
