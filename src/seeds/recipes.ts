@@ -53,21 +53,21 @@ burger.difficultyId = difficultyEasy.id;
 burger.mealtime = Mealtimes.LUNCH;
 
 const goulash = new Recipe();
-goulash.id = 7;
+goulash.id = 8;
 goulash.name = "Gulasch";
 goulash.description = "";
 goulash.difficultyId = difficultyEasy.id;
 goulash.mealtime = Mealtimes.LUNCH;
 
 const cheeseNoodles = new Recipe();
-cheeseNoodles.id = 8;
+cheeseNoodles.id = 9;
 cheeseNoodles.name = "Käsespätzle";
 cheeseNoodles.description = "";
 cheeseNoodles.difficultyId = difficultyEasy.id;
 cheeseNoodles.mealtime = Mealtimes.LUNCH;
 
 const tafelspitz = new Recipe();
-tafelspitz.id = 9;
+tafelspitz.id = 10;
 tafelspitz.name = "Tafelspitz";
 tafelspitz.description = "";
 tafelspitz.difficultyId = difficultyEasy.id;
