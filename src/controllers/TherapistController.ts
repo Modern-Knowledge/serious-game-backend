@@ -6,6 +6,7 @@ import { check } from "express-validator";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
+import {Roles} from "../lib/enums/Roles";
 import { Status } from "../lib/enums/Status";
 import { Therapist } from "../lib/models/Therapist";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
@@ -16,9 +17,12 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+import {register} from "../mail-texts/register";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import {Mail} from "../util/mail/Mail";
+import {mailTransport} from "../util/mail/mailTransport";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import {
     checkTherapistAdminPermission,
@@ -118,6 +122,7 @@ router.post("/", [
     therapist.failedLoginAttempts = 0;
     therapist.password = bcrypt.hashSync(therapist.password, 12);
     therapist.accepted = false;
+    therapist.role = Roles.USER;
 
     try {
         const response = await therapistFacade.insert(therapist);
@@ -126,6 +131,13 @@ router.post("/", [
         const token = await jwtHelper.generateJWT(response);
 
         logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
+
+        const m = new Mail(
+            [response.recipient],
+            register,
+            [response.fullNameWithSirOrMadam]
+        );
+        mailTransport.sendMail(m);
 
         return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,

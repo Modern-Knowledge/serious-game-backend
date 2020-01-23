@@ -1,7 +1,7 @@
 
 import * as bcrypt from "bcryptjs";
-import { Request, Response } from "express";
 import express from "express";
+import { Request, Response } from "express";
 import { check } from "express-validator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
@@ -9,6 +9,7 @@ import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { Status } from "../lib/enums/Status";
 import { Patient } from "../lib/models/Patient";
 import { PatientSetting } from "../lib/models/PatientSetting";
+import {formatDate} from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -16,9 +17,13 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+import {passwordReset} from "../mail-texts/passwordReset";
+import {register} from "../mail-texts/register";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";
+import {Mail} from "../util/mail/Mail";
+import {mailTransport} from "../util/mail/mailTransport";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkPatientPermission, checkUserPermission } from "../util/middleware/permissionMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
@@ -130,6 +135,13 @@ router.post("/", [
 
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.generateJWT(createdPatient);
+
+        const m = new Mail(
+            [createdPatient.recipient],
+            register,
+            [createdPatient.fullNameWithSirOrMadam]
+        );
+        mailTransport.sendMail(m);
 
         logEndpoint(controllerName, `Patient with id ${createdPatient.id} was successfully created!`, req);
 
