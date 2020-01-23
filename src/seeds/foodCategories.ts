@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020 Florian Mold
- * All rights reserved.
- */
-
 import { FoodCategory } from "../lib/models/FoodCategory";
 
 const vegetables = new FoodCategory();

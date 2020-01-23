@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020 Florian Mold
- * All rights reserved.
- */
-
 import request from "supertest";
 import app from "../../src/app";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";

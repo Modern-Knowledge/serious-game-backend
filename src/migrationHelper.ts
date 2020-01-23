@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020 Florian Mold
- * All rights reserved.
- */
-
 import * as path from "path";
 
 import { DifficultyFacade } from "./db/entity/enum/DifficultyFacade";

@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020 Florian Mold
- * All rights reserved.
- */
-
 import {Image} from "../lib/models/Image";
 import {getImage, inTestMode} from "../util/Helper";
 

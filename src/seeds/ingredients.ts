@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020 Florian Mold
- * All rights reserved.
- */
-
 import { Ingredient } from "../lib/models/Ingredient";
 import {bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables} from "./foodCategories";
 
