@@ -6,7 +6,7 @@ import momentDurationFormatSetup from "moment-duration-format";
 
 import os from "os";
 import {
-    HttpResponse,
+    HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
@@ -55,7 +55,12 @@ router.get("/", async (req: Request, res: Response) => {
                 os: `${os.type} ${os.arch()} ${os.release()}`,
                 uptime: duration,
                 version: process.env.VERSION,
-            }
+            }, [
+                new HttpResponseMessage(
+                    HttpResponseMessageSeverity.SUCCESS,
+                    `Versionsinformationen erfolgreich geladen!`
+                )
+            ]
         )
     );
 });
