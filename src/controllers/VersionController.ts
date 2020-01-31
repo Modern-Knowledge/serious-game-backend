@@ -37,6 +37,10 @@ router.get("/", async (req: Request, res: Response) => {
 
     const duration = moment.duration(process.uptime(), "seconds").format("hh:mm:ss");
 
+    const revision = require("child_process")
+        .execSync("git rev-parse HEAD")
+        .toString().trim();
+
     return res.status(HTTPStatusCode.OK).json(
         new HttpResponse(HttpResponseStatus.SUCCESS,
             {
@@ -44,6 +48,7 @@ router.get("/", async (req: Request, res: Response) => {
                     {name: "Daniel Kaufmann"},
                     {name: "Florian Mold"},
                 ],
+                commit: revision,
                 lastBuildDate: process.env.LAST_APP_BUILD_DATE,
                 mysql: mysqlVer,
                 nodejs: process.version,
