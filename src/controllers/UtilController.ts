@@ -14,46 +14,37 @@ const router = express.Router();
 const controllerName = "UtilController";
 
 /**
- * GET /mail
+ * GET /mail-server
  *
- * Returns if the
+ * Returns true if the mail-server is reachable.
  *
  * response:
  * - connectable: Returns true, if the mail-server is reachable
  */
-router.get("/mail-server", async (req: Request, res: Response) => {
+router.get("/mail-server", async (req: Request, res: Response, next: any) => {
     logEndpoint(controllerName, `Check if the mail-server is reachable!`, req);
 
     mailTransport.transporter.verify((error: Error | null, success: true) => {
         if (error) {
-            return res.status(HTTPStatusCode.INTERNAL_SERVER_ERROR).json(
-                new HttpResponse(HttpResponseStatus.SUCCESS,
-                    {connectable: false},
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                            `Mail-Server konnte nicht erreicht werden!`)
-                    ]
-                )
-            );
+            return next(error);
         } else {
             return res.status(HTTPStatusCode.OK).json(
-                new HttpResponse(HttpResponseStatus.SUCCESS,
+                new HttpResponse(HttpResponseStatus.ERROR,
                     {connectable: true},
                     [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
                             `Mail-Server konnte erreicht werden!`)
                     ]
                 )
             );
         }
     });
-
 });
 
 /**
  * GET /database
  *
- * Checks if the database is reachable
+ * Checks if the database is reachable.
  *
  * response:
  * - connectable: Returns true, if the database is reachable
@@ -74,15 +65,36 @@ router.get("/database", async (req: Request, res: Response, next: any) => {
             )
         );
     } catch (e) {
-        return res.status(HTTPStatusCode.INTERNAL_SERVER_ERROR).json(
+        return next(e);
+    }
+});
+
+/**
+ * GET /database-version
+ *
+ * Returns the database version, if the server is reachable.
+ *
+ * response:
+ * - version: database version
+ */
+router.get("/database-version", async (req: Request, res: Response, next: any) => {
+    logEndpoint(controllerName, `Return mysql-version`, req);
+
+    try {
+        const versionArr = await databaseConnection.query("SELECT VERSION() as version;");
+        const mysqlVer = versionArr.length === 1 ? versionArr[0].version : "Not found!";
+
+        return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {connectable: false},
+                {version: mysqlVer},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Datenbank konnte nicht erreicht werden!`)
+                        `Version der Datenbank erfolgreich geladen!`)
                 ]
             )
         );
+    } catch (e) {
+        return next(e);
     }
 });
 

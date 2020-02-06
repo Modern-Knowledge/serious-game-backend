@@ -33,43 +33,45 @@ const controllerName = "VersionController";
  * - uptime: time since the application started
  * - version: application version
  */
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response, next: any) => {
     // @ts-ignore
     momentDurationFormatSetup(moment);
 
     logEndpoint(controllerName, `Version requested!`, req);
 
-    const versionArr = await databaseConnection.query("SELECT VERSION() as version;");
-    const mysqlVer = versionArr.length === 1 ? versionArr[0].version : "Not found!";
+    try {
+        const duration = moment.duration(process.uptime(), "seconds").format("hh:mm:ss");
 
-    const duration = moment.duration(process.uptime(), "seconds").format("hh:mm:ss");
+        const revision = require("child_process")
+            .execSync("git rev-parse HEAD")
+            .toString().trim();
 
-    const revision = require("child_process")
-        .execSync("git rev-parse HEAD")
-        .toString().trim();
-
-    return res.status(HTTPStatusCode.OK).json(
-        new HttpResponse(HttpResponseStatus.SUCCESS,
-            {
-                authors: [
-                    {name: "Daniel Kaufmann"},
-                    {name: "Florian Mold"},
-                ],
-                commit: revision,
-                lastBuildDate: process.env.LAST_APP_BUILD_DATE,
-                mysql: mysqlVer,
-                nodejs: process.version,
-                os: `${os.type} ${os.arch()} ${os.release()}`,
-                uptime: duration,
-                version: process.env.VERSION,
-            }, [
-                new HttpResponseMessage(
-                    HttpResponseMessageSeverity.SUCCESS,
-                    `Versionsinformationen erfolgreich geladen!`
-                )
-            ]
-        )
-    );
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {
+                    authors: [
+                        {name: "Daniel Kaufmann"},
+                        {name: "Florian Mold"},
+                    ],
+                    commit: revision,
+                    database: process.env.DB_HOST,
+                    lastBuildDate: process.env.LAST_APP_BUILD_DATE,
+                    mailServer: process.env.MAIL_HOST,
+                    nodejs: process.version,
+                    os: `${os.type} ${os.arch()} ${os.release()}`,
+                    uptime: duration,
+                    version: process.env.VERSION,
+                }, [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.SUCCESS,
+                        `Versionsinformationen erfolgreich geladen!`
+                    )
+                ]
+            )
+        );
+    } catch (e) {
+        return next(e);
+    }
 });
 
 export default router;
