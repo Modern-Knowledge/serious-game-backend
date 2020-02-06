@@ -86,7 +86,7 @@ router.post("/reset", [
         const m = new Mail(
             [user.recipient],
             passwordReset,
-            [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDate(user.resetcodeValidUntil)]
+            [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDateTime(user.resetcodeValidUntil)]
         );
         mailTransport.sendMail(m);
 
