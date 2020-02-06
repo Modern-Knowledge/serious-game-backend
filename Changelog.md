@@ -1,3 +1,7 @@
+## Unreleased
+ - Fix date format in forgot password mail.
+ - Fix 'password' typo in password-reset controller
+
 ## [1.1.0] - 2020-02-06
 ### Added
  - Add information about the application to the VersionController (os, node.js-version, commit).

@@ -222,7 +222,7 @@ router.post("/reset-password",  [
                 undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Ihr Password wurde erfolgreich geändert!`, true)
+                        `Ihr Passwort wurde erfolgreich geändert!`, true)
                 ]
             )
         );
