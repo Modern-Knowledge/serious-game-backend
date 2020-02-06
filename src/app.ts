@@ -43,17 +43,6 @@ if (config.error) {
     throw new Error(message);
 }
 
-import { databaseConnection } from "./util/db/databaseConnection";
-
-let connectable;
-databaseConnection.ping().then(() => {
-    logger.info(
-        `${loggerString(__dirname, "", "", __filename)} ` +
-        `Successfully pinged database!`);
-}).catch((reason) => {
-    connectable = reason;
-});
-
 import { migrate } from "./migrationHelper";
 import { checkEnvFunction } from "./util/analysis/checkEnvVariables";
 import { jwtStrategy } from "./util/authentication/jwtStrategy";
@@ -145,6 +134,7 @@ import TherapistController from "./controllers/TherapistController";
 import UserController from "./controllers/UserController";
 import VersionController from "./controllers/VersionController";
 import WordController from "./controllers/WordController";
+import UtilController from "./controllers/UtilController";
 import { supportMail } from "./mail-texts/supportMail";
 import { Mail } from "./util/mail/Mail";
 import { mailTransport } from "./util/mail/mailTransport";
@@ -198,6 +188,7 @@ app.use("/food-categories", FoodCategoryController);
 app.use("/game-settings", GameSettingController);
 app.use("/smtp-logs", SmtpLoggingController);
 app.use("/patient-settings", PatientSettingController);
+app.use("/util", UtilController);
 
 /**
  * swagger api routes
