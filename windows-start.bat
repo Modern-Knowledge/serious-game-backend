@@ -8,4 +8,4 @@ echo create images folder
 mkdir dist/images
 
 robocopy "src/images" "dist/images" /E >nul
-npm run start
+npm run watch-debug
