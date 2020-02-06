@@ -24,6 +24,9 @@ class MailTransport {
         pool: true,
         port: Number(process.env.MAIL_PORT),
         secure: process.env.MAIL_SECURE === "1",
+        tls: {
+            rejectUnauthorized: false
+        },
     };
 
     public constructor() {
