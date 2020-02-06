@@ -1,6 +1,7 @@
 ## Unreleased
  - Fix date format in forgot password mail.
- - Fix 'password' typo in password-reset controller
+ - Fix 'password' typo in password-reset controller.
+ - Add success message after a user has registered.
 
 ## [1.1.0] - 2020-02-06
 ### Added
