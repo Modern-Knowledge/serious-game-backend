@@ -149,7 +149,8 @@ router.post("/", [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 { token, user: createdPatient, patient_setting: createdPatientSetting },
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`,
+                        true)
                 ]
             )
         );

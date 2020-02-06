@@ -132,6 +132,7 @@ router.post("/", [
 
         logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
 
+        console.log(response.gender);
         const m = new Mail(
             [response.recipient],
             register,
@@ -143,7 +144,8 @@ router.post("/", [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 { user: response, token},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`,
+                        true)
                 ]
             )
         );
