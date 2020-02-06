@@ -1,0 +1,34 @@
+{
+    "rules": {
+        "deprecation": {
+            "severity": "warn"
+        },
+        "max-classes-per-file": false,
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-whitespace"
+        ],
+        "semicolon": [
+            true,
+            "always",
+            "ignore-bound-class-methods"
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore"
+        ],
+        "no-non-null-assertion": true,
+        "no-redundant-jsdoc": true,
+        "ordered-imports": true,
+        "trailing-comma": false
+    },
+    "extends": ["tslint:recommended", "tslint-sonarts"]
+}

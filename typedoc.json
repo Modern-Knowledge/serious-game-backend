@@ -1,0 +1,14 @@
+{
+  "out": "docs",
+  "mode": "modules",
+  "name": "Serious-Game-Backend",
+  "readme": "README.md",
+  "theme": "minimal",
+  "includeDeclarations": true,
+  "hideGenerator": true,
+  "logger": "console",
+  "src": ["./src"],
+  "tsconfig": "./tsconfig.json",
+  "excludeExternals": true,
+  "categorizeByGroup": true
+}
