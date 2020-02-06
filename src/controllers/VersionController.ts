@@ -25,6 +25,13 @@ const controllerName = "VersionController";
  * response:
  * - authors: authors of the application
  * - version: version string
+ * - commit: last commit hash
+ * - lastBuildDate: last date when the application was built
+ * - mysql: mysql version
+ * - nodejs: node.js version
+ * - os: information about the os, the application is currently running
+ * - uptime: time since the application started
+ * - version: application version
  */
 router.get("/", async (req: Request, res: Response) => {
     // @ts-ignore
