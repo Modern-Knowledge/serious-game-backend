@@ -113,6 +113,10 @@ class MailTransport {
                 `${dbError.message}!`);
         });
     }
+
+    get transporter(): any {
+        return this._transporter;
+    }
 }
 
 const mailTransport: MailTransport = new MailTransport();
