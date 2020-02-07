@@ -132,7 +132,7 @@ router.get("/:mealtime/:difficulty", authenticationMiddleware, [
         const recipes = await recipeFacade.get();
 
         logEndpoint(controllerName,
-            `Recipe with mealtime '${mealtime}' and difficulty '${difficultyId}' was not found!`, req);
+            `Recipes with mealtime '${mealtime}' and difficulty '${difficultyId}' was found!`, req);
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {recipes, token: res.locals.authorizationToken}, [
