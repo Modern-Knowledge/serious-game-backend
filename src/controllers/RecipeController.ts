@@ -1,8 +1,6 @@
-
-import express from "express";
-import { Request, Response } from "express";
-import { check } from "express-validator";
-import { RecipeCompositeFacade } from "../db/composite/RecipeCompositeFacade";
+import express, {Request, Response} from "express";
+import {check} from "express-validator";
+import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -10,11 +8,12 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { logEndpoint } from "../util/log/endpointLogger";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { rVM } from "../util/validation/validationMessages";
+import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
+import {logEndpoint} from "../util/log/endpointLogger";
+import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
+import {checkRouteValidation} from "../util/validation/validationHelper";
+import {rVM} from "../util/validation/validationMessages";
+import {SQLOperator} from "../db/sql/enums/SQLOperator";
 
 const router = express.Router();
 
@@ -88,6 +87,56 @@ router.get("/:id", authenticationMiddleware, [
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {recipe, token: res.locals.authorizationToken}, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Rezept wurde erfolgreich geladen!`)
+            ]
+        ));
+    } catch (e) {
+        return next(e);
+    }
+});
+
+/**
+ * GET /:mealtime/:difficulty
+ *
+ * Retrieves recipes with mealtime and difficulty
+ *
+ * params:
+ * - mealtime: mealtime
+ * - difficulty: id of the difficulty
+ *
+ * response:
+ * - recipe: recipe that was loaded
+ * - token: authentication token
+ */
+router.get("/:mealtime/:difficulty", authenticationMiddleware, [
+    check("difficulty").isNumeric().withMessage(rVM("id", "numeric"))
+], async (req: Request, res: Response, next: any) => {
+
+    if (!checkRouteValidation(controllerName, req, res)) {
+        return failedValidation400Response(req, res);
+    }
+
+    const mealtime = req.params.mealtime;
+    const difficultyId = Number(req.params.difficulty);
+
+    const recipeFacade = new RecipeCompositeFacade();
+    if (mealtime !== "all") {
+        recipeFacade.filter.addFilterCondition("mealtime", mealtime);
+        recipeFacade.filter.addOperator(SQLOperator.AND);
+    }
+
+    if (difficultyId !== 0) {
+        recipeFacade.filter.addFilterCondition("difficulty_id", difficultyId);
+    }
+
+    try {
+        const recipes = await recipeFacade.get();
+
+        logEndpoint(controllerName,
+            `Recipe with mealtime '${mealtime}' and difficulty '${difficultyId}' was not found!`, req);
+
+        return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
+            {recipes, token: res.locals.authorizationToken}, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Rezepte wurde erfolgreich geladen!`)
             ]
         ));
     } catch (e) {
