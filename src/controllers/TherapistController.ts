@@ -132,7 +132,6 @@ router.post("/", [
 
         logEndpoint(controllerName, `Therapist with id ${response.id} was successfully created!`, req);
 
-        console.log(response.gender);
         const m = new Mail(
             [response.recipient],
             register,
