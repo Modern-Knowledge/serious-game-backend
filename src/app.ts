@@ -114,6 +114,7 @@ const speedLimiter = slowDown({
 });
 
 // Controllers (route handlers)
+import DifficultyController from "./controllers/DifficultyController";
 import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
 import GameController from "./controllers/GameController";
@@ -123,6 +124,7 @@ import ImageController from "./controllers/ImageController";
 import IngredientController from "./controllers/IngredientController";
 import LoggingController from "./controllers/LoggingController";
 import LoginController from "./controllers/LoginController";
+import MealtimesController from "./controllers/MealtimesController";
 import PasswordResetController from "./controllers/PasswordResetController";
 import PatientController from "./controllers/PatientController";
 import PatientSettingController from "./controllers/PatientSettingController";
@@ -189,6 +191,8 @@ app.use("/game-settings", GameSettingController);
 app.use("/smtp-logs", SmtpLoggingController);
 app.use("/patient-settings", PatientSettingController);
 app.use("/util", UtilController);
+app.use("/difficulties", DifficultyController);
+app.use("/mealtimes", MealtimesController);
 
 /**
  * swagger api routes
