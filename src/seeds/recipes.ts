@@ -36,7 +36,7 @@ pizza.id = 5;
 pizza.name = "Pizza";
 pizza.description = "";
 pizza.difficultyId = difficultyMedium.id;
-pizza.mealtime = Mealtimes.LUNCH;
+pizza.mealtime = Mealtimes.DINNER;
 
 const spaghetti = new Recipe();
 spaghetti.id = 6;
@@ -50,7 +50,7 @@ burger.id = 7;
 burger.name = "Burger";
 burger.description = "";
 burger.difficultyId = difficultyMedium.id;
-burger.mealtime = Mealtimes.LUNCH;
+burger.mealtime = Mealtimes.DINNER;
 
 const goulash = new Recipe();
 goulash.id = 8;
