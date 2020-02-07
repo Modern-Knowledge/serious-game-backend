@@ -1,6 +1,7 @@
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
+import {SQLOperator} from "../db/sql/enums/SQLOperator";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -13,7 +14,6 @@ import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
 import {rVM} from "../util/validation/validationMessages";
-import {SQLOperator} from "../db/sql/enums/SQLOperator";
 
 const router = express.Router();
 

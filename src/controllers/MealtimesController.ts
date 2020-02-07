@@ -1,4 +1,5 @@
 import express, {Request, Response} from "express";
+import {Mealtimes} from "../lib/enums/Mealtimes";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -8,7 +9,6 @@ import {
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
-import {Mealtimes} from "../lib/enums/Mealtimes";
 
 const router = express.Router();
 
