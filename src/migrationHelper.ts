@@ -60,11 +60,11 @@ import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
 import { helptext, helptext1 } from "./seeds/helptexts";
 import { loadImages } from "./seeds/images";
 import {
-    beef, blackbread, bun,
+    beef, blackbread, bun, butter,
     cheese, chips, chocolate, dough,
     egg,
-    ham, icetea,
-    noodle,
+    ham, icetea, jam, milk,
+    noodle, oatmeal,
     oil, onion, orangejuice,
     paprika, pistachios, pommes,
     porkMeat,
@@ -75,25 +75,44 @@ import {
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
 import {
-    recipeIngredient1, recipeIngredient10, recipeIngredient11,
-    recipeIngredient12, recipeIngredient13, recipeIngredient14,
-    recipeIngredient15, recipeIngredient16, recipeIngredient17,
-    recipeIngredient18, recipeIngredient19,
-    recipeIngredient2, recipeIngredient20,
-    recipeIngredient21, recipeIngredient22, recipeIngredient23,
-    recipeIngredient24, recipeIngredient25,
+    recipeIngredient1,
+    recipeIngredient10,
+    recipeIngredient11,
+    recipeIngredient12,
+    recipeIngredient13,
+    recipeIngredient14,
+    recipeIngredient15,
+    recipeIngredient16,
+    recipeIngredient17,
+    recipeIngredient18,
+    recipeIngredient19,
+    recipeIngredient2,
+    recipeIngredient20,
+    recipeIngredient21,
+    recipeIngredient22,
+    recipeIngredient23,
+    recipeIngredient24,
+    recipeIngredient25,
     recipeIngredient26,
-    recipeIngredient27, recipeIngredient28,
+    recipeIngredient27,
+    recipeIngredient28,
     recipeIngredient29,
     recipeIngredient3,
-    recipeIngredient30, recipeIngredient4, recipeIngredient5,
-    recipeIngredient6, recipeIngredient7, recipeIngredient8,
+    recipeIngredient30, recipeIngredient31,
+    recipeIngredient32,
+    recipeIngredient33, recipeIngredient34,
+    recipeIngredient35,
+    recipeIngredient4,
+    recipeIngredient5,
+    recipeIngredient6,
+    recipeIngredient7,
+    recipeIngredient8,
     recipeIngredient9
 } from "./seeds/recipeIngredients";
 import {
     burger,
     cheeseNoodles,
-    goulash,
+    goulash, jamBread, musli,
     pastaSalad, pizza,
     roastPork,
     schnitzel,
@@ -488,7 +507,8 @@ export async function seedIngredients() {
         egg, oil, spinach, porkMeat, potato, sauerkraut,
         beef, noodle, ham, cheese, paprika, dough,
         tomatoSauce, salad, bun, onion, spaetzle, chips, chocolate,
-        pistachios, pommes, wok, blackbread, icetea, orangejuice, water, zwieback
+        pistachios, pommes, wok, blackbread, icetea, orangejuice, water, zwieback,
+        oatmeal, jam, butter, milk
     ];
 
     for (const item of ingredients) {
@@ -511,7 +531,9 @@ export async function seedRecipeIngredientFacade() {
         recipeIngredient19, recipeIngredient20, recipeIngredient21,
         recipeIngredient22, recipeIngredient23, recipeIngredient24,
         recipeIngredient25, recipeIngredient26, recipeIngredient27,
-        recipeIngredient28, recipeIngredient29, recipeIngredient30
+        recipeIngredient28, recipeIngredient29, recipeIngredient30,
+        recipeIngredient31, recipeIngredient32, recipeIngredient33,
+        recipeIngredient34, recipeIngredient35
     ];
     for (const item of recipeIngredients) {
         await recipeIngredientFacade.insert(item);
@@ -526,7 +548,7 @@ export async function seedRecipes() {
     const recipes = [
         scrambledEgg, roastPork, schnitzel, pastaSalad,
         pizza, spaghetti, burger, goulash, cheeseNoodles,
-        tafelspitz,
+        tafelspitz, musli, jamBread
     ];
     for (const item of recipes) {
         await recipeFacade.insert(item);

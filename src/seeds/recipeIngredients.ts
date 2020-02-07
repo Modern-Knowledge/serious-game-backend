@@ -1,11 +1,11 @@
 import { RecipeIngredient } from "../lib/models/RecipeIngredient";
 import {
-    beef, bun,
+    beef, blackbread, bun, butter,
     cheese,
     dough,
     egg,
-    ham,
-    noodle,
+    ham, jam, milk,
+    noodle, oatmeal,
     oil, onion,
     paprika,
     porkMeat,
@@ -16,7 +16,7 @@ import {
 import {
     burger,
     cheeseNoodles,
-    goulash,
+    goulash, jamBread, musli,
     pastaSalad,
     pizza,
     roastPork,
@@ -163,6 +163,32 @@ const recipeIngredient30 = new RecipeIngredient();
 recipeIngredient30.recipeId = tafelspitz.id;
 recipeIngredient30.ingredientId = beef.id;
 
+// --------------------------------------------------
+
+const recipeIngredient31 = new RecipeIngredient();
+recipeIngredient31.recipeId = musli.id;
+recipeIngredient31.ingredientId = milk.id;
+
+const recipeIngredient32 = new RecipeIngredient();
+recipeIngredient32.recipeId = musli.id;
+recipeIngredient32.ingredientId = oatmeal.id;
+
+// --------------------------------------------------
+
+const recipeIngredient33 = new RecipeIngredient();
+recipeIngredient33.recipeId = jamBread.id;
+recipeIngredient33.ingredientId = blackbread.id;
+
+const recipeIngredient34 = new RecipeIngredient();
+recipeIngredient34.recipeId = jamBread.id;
+recipeIngredient34.ingredientId = butter.id;
+
+const recipeIngredient35 = new RecipeIngredient();
+recipeIngredient35.recipeId = jamBread.id;
+recipeIngredient35.ingredientId = jam.id;
+
+// --------------------------------------------------
+
 export {
     recipeIngredient1, recipeIngredient2, recipeIngredient3,
     recipeIngredient4, recipeIngredient5, recipeIngredient6,
@@ -173,5 +199,7 @@ export {
     recipeIngredient19, recipeIngredient20, recipeIngredient21,
     recipeIngredient22, recipeIngredient23, recipeIngredient24,
     recipeIngredient25, recipeIngredient26, recipeIngredient27,
-    recipeIngredient28, recipeIngredient29, recipeIngredient30
+    recipeIngredient28, recipeIngredient29, recipeIngredient30,
+    recipeIngredient31, recipeIngredient32, recipeIngredient33,
+    recipeIngredient34, recipeIngredient35,
 };

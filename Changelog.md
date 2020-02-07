@@ -2,6 +2,7 @@
  - Fix date format in forgot password mail.
  - Fix 'password' typo in password-reset controller.
  - Add success message after a user has registered.
+ - Add musli and jam-bread recipe.
 
 ## [1.1.0] - 2020-02-06
 ### Added

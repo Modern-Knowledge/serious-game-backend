@@ -6,7 +6,7 @@ difficultyEasy.id = 1;
 difficultyEasy.difficulty = Difficulties.EASY;
 
 const difficultyMedium = new Difficulty();
-difficultyEasy.id = 2;
+difficultyMedium.id = 2;
 difficultyMedium.difficulty = Difficulties.MEDIUM;
 
 const difficultyHard = new Difficulty();
