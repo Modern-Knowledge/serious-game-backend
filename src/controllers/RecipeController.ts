@@ -190,7 +190,8 @@ router.put("/:id", authenticationMiddleware, checkTherapistPermission, [
  * - token: authentication token
  */
 router.get("/:mealtime/:difficulty", authenticationMiddleware, [
-    check("difficulty").isNumeric().withMessage(rVM("id", "numeric"))
+    check("difficulty").isNumeric().withMessage(rVM("id", "numeric")),
+    check("mealtime").escape().trim().not().isEmpty().withMessage(rVM("mealtime", "empty")),
 ], async (req: Request, res: Response, next: any) => {
 
     if (!checkRouteValidation(controllerName, req, res)) {
