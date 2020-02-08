@@ -1,5 +1,5 @@
-import { formatDate, formatDateTime, formatTime } from "../../src/lib/utils/dateFormatter";
 import moment from "moment";
+import { formatDate, formatDateTime, formatTime } from "../../src/lib/utils/dateFormatter";
 
 describe("lib/utils/dateFormatter Tests", () => {
 
