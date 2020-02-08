@@ -93,9 +93,9 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
      *
      * @param recipe user that should be updated
      */
-    public update(recipe: Recipe): Promise<number> {
+    public async update(recipe: Recipe): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(recipe);
-        return this.updateStatement(attributes);
+        return await this.updateStatement(attributes);
     }
 
     /**

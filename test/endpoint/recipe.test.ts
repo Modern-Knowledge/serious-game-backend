@@ -9,7 +9,7 @@ import {
     truncateTables
 } from "../../src/migrationHelper";
 import {scrambledEgg} from "../../src/seeds/recipes";
-import { validTherapist } from "../../src/seeds/users";
+import {validPatient, validTherapist} from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";
 
 const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
@@ -171,6 +171,293 @@ describe("RecipeController Tests", () => {
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
+    });
+
+    describe("PUT /recipes/:id", () => {
+        const endpoint = "/recipes";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        beforeAll(async () => {
+            await truncateTables();
+            await seedUsers();
+            await seedDifficulties();
+            await seedRecipes();
+        });
+
+        // SGBRC09
+        it("update with specific id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("recipe");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            expect(res.body._data.recipe._id).toEqual(scrambledEgg.id);
+            expect(res.body._data.recipe._name).toEqual("Rührei2");
+            expect(res.body._data.recipe._mealtime).toEqual("Abendessen");
+            expect(res.body._data.recipe._difficultyId).toEqual(3);
+        }, timeout);
+
+        // SGBRC10
+        it("try to update recipe without authentication", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + expiredToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC11
+        it("try to update recipe with an expired token", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2",
+                })
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC12
+        it("try to fetch recipe with an invalid id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/invalid")
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC13
+        it("try to fetch recipe with a not existing id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + 99)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2",
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC14
+        it("try to fetch recipe without a id", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/")
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(404);
+
+            expect(res.body._status).toEqual("error");
+        }, timeout);
+
+        // SGBRC15
+        it("try to fetch recipe with no name", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                    _name: ""
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+            const res1 = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "Abendessen",
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res1.body._status).toEqual("fail");
+            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC16
+        it("try to fetch recipe with no mealtime", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + 99)
+                .send({
+                    _difficultyId: 3,
+                    _mealtime: "",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+            authenticationToken = await authenticate(validTherapist);
+
+            const res1 = await request(app).put(endpoint + "/" + 99)
+                .send({
+                    _difficultyId: 3,
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res1.body._status).toEqual("fail");
+            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC17
+        it("try to fetch recipe without difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: "",
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2",
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+            const res1 = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2",
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res1.body._status).toEqual("fail");
+            expect(containsMessage(res1.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        // SGBRC18
+        it("try to fetch recipe with an invalid difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: "invalid",
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+        }, timeout);
+
+        // SGBRC19
+        // it("try to fetch recipe with a not existing difficulty", async () => {
+        //     authenticationToken = await authenticate(validTherapist);
+        //
+        //     const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+        //         .send({
+        //             _difficultyId: 99,
+        //             _mealtime: "Abendessen",
+        //             _name: "Rührei2"
+        //         })
+        //         .set("Authorization", "Bearer " + authenticationToken)
+        //         .set("Accept", "application/json")
+        //         .expect("Content-Type", /json/)
+        //         .expect(400);
+        //
+        //     expect(res.body._status).toEqual("fail");
+        // }, timeout);
+
+        // SGBRC20
+        it("try to fetch recipe with a patient", async () => {
+            authenticationToken = await authenticate(validPatient);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 2,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(403);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
     });
 
     describe("GET /:mealtime/:difficulty", () => {
