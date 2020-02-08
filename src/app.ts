@@ -53,12 +53,14 @@ import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middlew
 logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 checkEnvFunction();
 
-migrate().then(() => {
-    logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
-        `Successfully migrated!`);
-}).catch((error) => {
-    logger.error(`Running migrations failed! (${error.message})`);
-});
+if (!inTestMode()) {
+    migrate().then(() => {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
+            `Successfully migrated!`);
+    }).catch((error) => {
+        logger.error(`Running migrations failed! (${error.message})`);
+    });
+}
 
 // Create Express server
 const app = express();
