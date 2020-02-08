@@ -1,4 +1,5 @@
 import { Recipe } from "../../../lib/models/Recipe";
+import {User} from "../../../lib/models/User";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";
@@ -10,7 +11,6 @@ import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { DifficultyFacade } from "../enum/DifficultyFacade";
-import {User} from "../../../lib/models/User";
 
 /**
  * Handles CRUD operations with the recipe-entity.
