@@ -10,7 +10,7 @@ const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwi" +
     "zZSwiaWF0IjoxNTcxNTE4OTM2LCJleHAiOjE1NzE1MTg5Mzd9.7cZxI_6qv" +
     "VSL3xhSl0q54vc9QH7JPB_E1OyrAuk1eiI";
 
-describe("DifficulyController Tests", () => {
+describe("DifficultyController Tests", () => {
 
     describe("GET /difficulties", () => {
         const endpoint = "/difficulties/";

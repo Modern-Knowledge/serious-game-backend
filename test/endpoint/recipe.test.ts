@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../../src/app";
+import {Recipe} from "../../src/lib/models/Recipe";
 import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedDifficulties,
@@ -169,6 +170,111 @@ describe("RecipeController Tests", () => {
 
             expect(res.body._status).toEqual("fail");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+    });
+
+    describe("GET /:mealtime/:difficulty", () => {
+        const endpoint = "/recipes/";
+        const timeout = 10000;
+        let authenticationToken: string;
+
+        beforeAll(async () => {
+            await truncateTables();
+            await seedUsers();
+            await seedDifficulties();
+            await seedRecipes();
+        });
+
+        // SGBRC21
+        it("fetch all recipes for the given mealtime and difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).get(endpoint + "Abendessen/2")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("recipes");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            res.body._data.recipes.forEach((value: any) => {
+                expect(value._mealtime).toEqual("Abendessen");
+                expect(value._difficultyId).toEqual(2);
+            });
+
+        }, timeout);
+
+        // SGBRC22
+        it("try to fetch all recipes without authentication", async () => {
+            const res = await request(app).get(endpoint + "Abendessen/2")
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC23
+        it("try to fetch all recipes with an expired token", async () => {
+            const res = await request(app).get(endpoint + "Abendessen/2")
+                .set("Authorization", "Bearer " + expiredToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(401);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC24
+        it("try to fetch all recipes without a difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).get(endpoint + "Abendessen/")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+
+        }, timeout);
+
+        // SGBRC25
+        it("try to fetch all recipes with an invalid difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).get(endpoint + "Abendessen/invalid")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(400);
+
+            expect(res.body._status).toEqual("fail");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
+        }, timeout);
+
+        // SGBRC26
+        it("try to fetch all recipes with an invalid mealtime", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).get(endpoint + "invalid/2")
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(200);
+
+            expect(res.body._status).toEqual("success");
+            expect(res.body._data).toHaveProperty("token");
+            expect(res.body._data).toHaveProperty("recipes");
+            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
+
+            expect(res.body._data.recipes).toEqual([]);
         }, timeout);
     });
 });
