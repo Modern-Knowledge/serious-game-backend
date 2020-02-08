@@ -5,6 +5,7 @@
  - Add musli and jam-bread recipe.
  - Add mealtime- and difficulty controller.
  - Add route to filter recipes in recipe-controller.
+ - Add route to update a recipe.
 
 ## [1.1.0] - 2020-02-06
 ### Added

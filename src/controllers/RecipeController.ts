@@ -1,7 +1,9 @@
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
+import {RecipeFacade} from "../db/entity/kitchen/RecipeFacade";
 import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {Recipe} from "../lib/models/Recipe";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -12,6 +14,7 @@ import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
+import {checkTherapistPermission} from "../util/middleware/permissionMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
 import {rVM} from "../util/validation/validationMessages";
 
@@ -89,6 +92,85 @@ router.get("/:id", authenticationMiddleware, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Das Rezept wurde erfolgreich geladen!`)
             ]
         ));
+    } catch (e) {
+        return next(e);
+    }
+});
+
+/**
+ * PUT :/id
+ *
+ * Update a recipe by id
+ *
+ * params:
+ * - id: id of the recipe
+ *
+ * body:
+ * - name: name of the recipe
+ * - description: description of the recipe
+ * - mealtime: mealtime of the recipe
+ * - difficulty_id: difficulty of the recipe
+ *
+ * response:
+ * - recipe: updated recipe
+ * - token: authentication token
+ */
+router.put("/:id", authenticationMiddleware, checkTherapistPermission, [
+    check("id").isNumeric().withMessage(rVM("id", "numeric")),
+
+    check("_name").escape().trim()
+        .not().isEmpty().withMessage(rVM("recipeName", "empty")),
+
+    // not required
+    // check("_description").escape().trim()
+    //     .not().isEmpty().withMessage(rVM("lastname", "empty")),
+
+    check("_mealtime").escape().trim()
+        .not().isEmpty().withMessage(rVM("mealtime", "empty")),
+
+    check("_difficultyId").isNumeric().withMessage(rVM("id", "numeric")),
+
+], async (req: Request, res: Response, next: any) => {
+
+    if (!checkRouteValidation(controllerName, req, res)) {
+        return failedValidation400Response(req, res);
+    }
+
+    const id = Number(req.params.id);
+
+    const recipeFacade = new RecipeFacade();
+
+    const recipe = new Recipe().deserialize(req.body);
+    try {
+        const dbRecipe = await recipeFacade.getById(id);
+
+        if (!dbRecipe) {
+            logEndpoint(controllerName, `Recipe with id ${id} was not found!`, req);
+
+            return http4xxResponse(res, [
+                new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
+                    `Rezept mit ID ${id} wurde nicht gefunden!`)
+            ]);
+        }
+
+        recipe.id = id;
+
+        const filter = recipeFacade.filter;
+        filter.addFilterCondition("id", recipe.id);
+
+        await recipeFacade.update(recipe);
+
+        logEndpoint(controllerName, `Recipe with id ${id} was successfully updated!`, req);
+
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {recipe, token: res.locals.authorizationToken},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                        `Rezept mit ID ${id} wurde erfolgreich aktualisiert!`)
+                ]
+            )
+        );
     } catch (e) {
         return next(e);
     }

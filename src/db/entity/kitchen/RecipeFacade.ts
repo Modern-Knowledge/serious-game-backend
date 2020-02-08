@@ -10,6 +10,7 @@ import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { DifficultyFacade } from "../enum/DifficultyFacade";
+import {User} from "../../../lib/models/User";
 
 /**
  * Handles CRUD operations with the recipe-entity.
@@ -85,6 +86,16 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
         }
 
         return recipe;
+    }
+
+    /**
+     * Updates the recipe in the database and returns the number of affected rows.
+     *
+     * @param recipe user that should be updated
+     */
+    public update(recipe: Recipe): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(recipe);
+        return this.updateStatement(attributes);
     }
 
     /**
