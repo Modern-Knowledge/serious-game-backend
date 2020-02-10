@@ -1,6 +1,7 @@
 
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import {Roles} from "../lib/enums/Roles";
 import { User } from "../lib/models/User";
 
 /**
@@ -18,10 +19,12 @@ export class JWTHelper {
      */
     public async generateJWT(user: User): Promise<string> {
         const therapistFacade = new TherapistFacade();
-        const isTherapist = await therapistFacade.isTherapist(user.id);
+        const therapist = await therapistFacade.getById(user.id);
+        const isTherapist = therapist !== undefined;
+        const isAdmin = therapist !== undefined && therapist.role === Roles.ADMIN;
 
         return jwt.sign(
-            { id: user.id, email: user.email, therapist: isTherapist},
+            { id: user.id, email: user.email, therapist: isTherapist, admin: isAdmin},
             this._secretKey,
             {
                 expiresIn: this._expiresIn
