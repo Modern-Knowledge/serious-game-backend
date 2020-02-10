@@ -9,6 +9,7 @@
  - Add tests to recipe-, mealtimes- and difficulty-controller.
  - Fix running tests with test database.
  - Change data, that is seeding in production.
+ - Add route to display logs.
 
 ## [1.1.0] - 2020-02-06
 ### Added

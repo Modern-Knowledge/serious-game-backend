@@ -124,6 +124,7 @@ import GameSettingController from "./controllers/GameSettingController";
 import HelptextController from "./controllers/HelptextController";
 import ImageController from "./controllers/ImageController";
 import IngredientController from "./controllers/IngredientController";
+import LogController from "./controllers/LogController";
 import LoggingController from "./controllers/LoggingController";
 import LoginController from "./controllers/LoginController";
 import MealtimesController from "./controllers/MealtimesController";
@@ -195,6 +196,7 @@ app.use("/patient-settings", PatientSettingController);
 app.use("/util", UtilController);
 app.use("/difficulties", DifficultyController);
 app.use("/mealtimes", MealtimesController);
+app.use("/logs", LogController);
 
 /**
  * swagger api routes
