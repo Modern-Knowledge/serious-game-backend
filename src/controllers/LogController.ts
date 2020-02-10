@@ -33,7 +33,9 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
     const filePath = path.join("logs");
 
     try {
-        const files = fs.readdirSync(filePath).map((value: string) => value.split(".")[0]);
+        const files = fs.readdirSync(filePath)
+            .map((value: string) => value.split(".")[0])
+            .filter((value: string) => !value.includes("request"));
 
         logEndpoint(controllerName, `All logs-files loaded successfully!`, req);
 
