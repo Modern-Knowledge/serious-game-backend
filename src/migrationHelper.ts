@@ -154,10 +154,6 @@ const driver = require("marv-mysql-driver");
  * - seedTables: Seed tables with test data.
  */
 export async function migrate(): Promise<void> {
-    if (inProduction()) {
-        return;
-    }
-
     const runTruncateTable = Number(process.env.RUN_TRUNCATE_TABLE) || 0;
     const runDropTable = Number(process.env.RUN_DROP_TABLE) || 0;
     const runMigration = Number(process.env.RUN_MIGRATIONS) || 0;
@@ -348,7 +344,11 @@ export async function seedTables(): Promise<number> {
 /**
  * Inserts example patient-settings into the database.
  */
-export async function seedPatientSettings() {
+export async function seedPatientSettings(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const patientSettingFacade = new PatientSettingFacade();
     await patientSettingFacade.insert(pSettings);
 }
@@ -356,7 +356,7 @@ export async function seedPatientSettings() {
 /**
  * Inserts example images into the database.
  */
-export async function seedImages() {
+export async function seedImages(): Promise<void> {
     const imageFacade = new ImageFacade();
     const imageArr = await loadImages();
     for (const item of imageArr) {
@@ -367,7 +367,11 @@ export async function seedImages() {
 /**
  * Inserts example sessions into the database.
  */
-export async function seedSessions() {
+export async function seedSessions(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const sessionFacade = new SessionFacade();
     const sessionsArr = [session];
     for (const item of sessionsArr) {
@@ -378,7 +382,11 @@ export async function seedSessions() {
 /**
  * Inserts example statistics into the database.
  */
-export async function seedStatistics() {
+export async function seedStatistics(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const statisticFacade = new StatisticFacade();
     const statisticsArr = [statistic, statistic1];
     for (const item of statisticsArr) {
@@ -389,7 +397,7 @@ export async function seedStatistics() {
 /**
  * Inserts example words into the database.
  */
-export async function seedWords() {
+export async function seedWords(): Promise<void> {
     const wordFacade = new WordFacade();
     await wordFacade.insert(word);
 }
@@ -397,7 +405,7 @@ export async function seedWords() {
 /**
  * Inserts example errortexts into the database.
  */
-export async function seedErrortexts() {
+export async function seedErrortexts(): Promise<void> {
     const errorTextFacade = new ErrortextFacade();
     const errortextArr = [
         mealtimeError,
@@ -414,7 +422,7 @@ export async function seedErrortexts() {
 /**
  * Inserts example errortext-game relationships into the database.
  */
-export async function seedErrortextGames() {
+export async function seedErrortextGames(): Promise<void> {
     const errortextGameFacade = new ErrortextGamesFacade();
     const errortextGamesArr = [
         mealtimeErrorTextGames,
@@ -432,7 +440,11 @@ export async function seedErrortextGames() {
 /**
  * Inserts example errortext-statistic relationships into the database.
  */
-export async function seedErrortextStatistics() {
+export async function seedErrortextStatistics(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const errortextStatisticFacade = new ErrortextStatisticFacade();
     const errortextStatisticArr = [
         mealtimeErrorTextGamesStatistic,
@@ -450,7 +462,7 @@ export async function seedErrortextStatistics() {
 /**
  * Inserts example helptext-game relationships into the database.
  */
-export async function seedHelptextGames() {
+export async function seedHelptextGames(): Promise<void> {
     const helptextGameFacade = new HelptextsGamesFacade();
     const helptextGameArr = [helptextGames, helptextGames1];
 
@@ -462,7 +474,7 @@ export async function seedHelptextGames() {
 /**
  * Inserts example help-texts into the database.
  */
-export async function seedHelptexts() {
+export async function seedHelptexts(): Promise<void> {
     const helptextFacade = new HelptextFacade();
     const helptextArr = [helptext, helptext1];
 
@@ -474,7 +486,7 @@ export async function seedHelptexts() {
 /**
  * Inserts example game-settings into the database.
  */
-export async function seedGameSettings() {
+export async function seedGameSettings(): Promise<void> {
     const gameSettingFacade = new GameSettingFacade();
     const gameSettingsArr = [
         gameSettings,
@@ -490,7 +502,7 @@ export async function seedGameSettings() {
 /**
  * Inserts example games into the database.
  */
-export async function seedGames() {
+export async function seedGames(): Promise<void> {
     const gameFacade = new GameFacade();
     const games = [game, game2, game3, game4];
     for (const item of games) {
@@ -501,7 +513,7 @@ export async function seedGames() {
 /**
  * Inserts example ingredients into the database.
  */
-export async function seedIngredients() {
+export async function seedIngredients(): Promise<void> {
     const ingredientFacade = new IngredientFacade();
     const ingredients = [
         egg, oil, spinach, porkMeat, potato, sauerkraut,
@@ -519,7 +531,7 @@ export async function seedIngredients() {
 /**
  * Inserts example recipe-ingredient relationships into the database.
  */
-export async function seedRecipeIngredientFacade() {
+export async function seedRecipeIngredientFacade(): Promise<void> {
     const recipeIngredientFacade = new RecipeIngredientFacade();
     const recipeIngredients = [
         recipeIngredient1, recipeIngredient2, recipeIngredient3,
@@ -543,7 +555,7 @@ export async function seedRecipeIngredientFacade() {
 /**
  * Inserts example recipes into the database.
  */
-export async function seedRecipes() {
+export async function seedRecipes(): Promise<void> {
     const recipeFacade = new RecipeFacade();
     const recipes = [
         scrambledEgg, roastPork, schnitzel, pastaSalad,
@@ -558,7 +570,7 @@ export async function seedRecipes() {
 /**
  * Inserts example food-categories into the database.
  */
-export async function seedFoodCategories() {
+export async function seedFoodCategories(): Promise<void> {
     const foodCategoryFacade = new FoodCategoryFacade();
     const foodCategories = [
         vegetables,
@@ -577,7 +589,7 @@ export async function seedFoodCategories() {
 /**
  * Inserts example severities into the database.
  */
-export async function seedSeverities() {
+export async function seedSeverities(): Promise<void> {
     const severityFacade = new SeverityFacade();
     const severities = [severityEasy, severityMedium, severityHard];
     for (const item of severities) {
@@ -588,7 +600,7 @@ export async function seedSeverities() {
 /**
  * Inserts example difficulties into the database.
  */
-export async function seedDifficulties() {
+export async function seedDifficulties(): Promise<void> {
     const difficultyFacade = new DifficultyFacade();
     const difficulties = [difficultyEasy, difficultyMedium, difficultyHard];
     for (const item of difficulties) {
@@ -600,6 +612,10 @@ export async function seedDifficulties() {
  * Inserts example users (therapists, patients) into the database.
  */
 export async function seedUsers(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const therapistFacade = new TherapistFacade();
     const therapists = [
         validAdminTherapist,
@@ -624,6 +640,10 @@ export async function seedUsers(): Promise<void> {
  * inserts example smtp-logs into the database.
  */
 export async function seedSmtpLogs(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const smtpLogFacade = new SmtpLogFacade();
     const smtpLogsArr = [sentSmtpLog, simulatedSmtpLog, notSentSmtpLog];
     for (const item of smtpLogsArr) {
@@ -635,6 +655,10 @@ export async function seedSmtpLogs(): Promise<void> {
  * Inserts example logs into the database.
  */
 export async function seedLogs(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const logFacade = new LogFacade();
     const logArr = [
         debugLog,
@@ -651,6 +675,10 @@ export async function seedLogs(): Promise<void> {
  * Inserts example therapist-patient relationships into the database.
  */
 export async function seedTherapistPatients(): Promise<void> {
+    if (inProduction()) {
+        return;
+    }
+
     const therapistsPatientsFacade = new TherapistsPatientsFacade();
     const therapistPatientArr = [therapistPatient1, therapistPatient2];
     for (const item of therapistPatientArr) {

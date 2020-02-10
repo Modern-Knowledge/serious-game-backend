@@ -1,9 +1,11 @@
 
 import errorHandler from "errorhandler";
 
+import moment from "moment";
 import app from "./app";
 import { inProduction, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
+moment.locale("de");
 
 /**
  * Error Handler. Provides full stack - remove for production
