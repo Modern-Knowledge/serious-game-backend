@@ -201,9 +201,23 @@ app.use("/mealtimes", MealtimesController);
 app.use("/logs", LogController);
 
 app.use("/", async (req: Request, res: Response) => {
-    const file = fs.readFileSync("Changelog.md");
-    res.contentType("text/plain");
-    return res.send(file.toString());
+    let content;
+    try {
+        content = fs.readFileSync("Changelog.md");
+    } catch (e) {
+        logger.error(`${loggerString(__dirname, "", "", __filename)} ${e.message}`);
+        content = {};
+    }
+
+    return res.status(HTTPStatusCode.OK).json(
+        new HttpResponse(HttpResponseStatus.SUCCESS,
+            {content: content.toString(), token: res.locals.authorizationToken},
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Changelog konnt nicht geladen werden`)
+            ]
+        )
+    );
 });
 
 /**
