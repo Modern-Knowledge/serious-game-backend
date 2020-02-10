@@ -2,6 +2,12 @@ import express, {Request, Response} from "express";
 import fs from "fs";
 import {EOL} from "os";
 import path from "path";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus
+} from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import {loggerString} from "../util/Helper";
 import {logEndpoint} from "../util/log/endpointLogger";
@@ -21,7 +27,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication,
  * Retrieve all log.files
  *
  * response:
- * - logs: Retrieves content of the log folder
+ * - files: Retrieves content of the log folder
  */
 router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     const filePath = path.join("logs");
@@ -31,9 +37,19 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `All logs-files loaded successfully!`, req);
 
-        return res.status(HTTPStatusCode.OK).json(files);
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {files, token: res.locals.authorizationToken},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
+                ]
+            )
+        );
     } catch (error) {
-        return res.status(HTTPStatusCode.OK).json({});
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS, {token: res.locals.authorizationToken}, []
+            )
+        );
     }
 });
 
@@ -49,7 +65,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
  * - level: level of the log
  *
  * response:
- * - logs: contents of the selected file
+ * - content: contents of the selected file
  */
 router.get("/:name", authenticationMiddleware, async (req: Request, res: Response) => {
     const name = req.params.name + ".log";
@@ -59,10 +75,10 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
         const file = fs.readFileSync(filePath);
 
         logEndpoint(controllerName, `Log ${name} loaded successfully!`, req);
-        let fileContent;
+        let content;
 
         try {
-            fileContent = JSON.parse("[" + file.toString()
+            content = JSON.parse("[" + file.toString()
                 .split(EOL)
                 .filter((value: string) => value.length > 0)
                 .join(",") + "]")
@@ -74,14 +90,24 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
                     return true;
                 });
         } catch (e) {
-            fileContent = {};
+            content = {};
         }
 
-        return res.status(HTTPStatusCode.OK).json(fileContent);
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {content, token: res.locals.authorizationToken},
+                [
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
+                ]
+            )
+        );
     } catch (error) {
         logger.error(`${loggerString(__dirname, "", "", __filename)} ${error.message}`);
         res.contentType("application/json");
-        return res.status(HTTPStatusCode.OK).json({});
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS, {token: res.locals.authorizationToken}, []
+            )
+        );
     }
 });
 
