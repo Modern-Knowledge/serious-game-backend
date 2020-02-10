@@ -167,7 +167,7 @@ router.put("/:id", authenticationMiddleware, checkTherapistPermission, [
                 {recipe, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Rezept mit ID ${id} wurde erfolgreich aktualisiert!`)
+                        `Rezept mit ID ${id} wurde erfolgreich aktualisiert!`, true)
                 ]
             )
         );
