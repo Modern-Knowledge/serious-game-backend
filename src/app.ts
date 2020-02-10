@@ -11,12 +11,14 @@ import * as dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import slowDown from "express-slow-down";
+import fs from "fs";
 import helmet from "helmet";
 import lusca from "lusca";
 import methodOverride from "method-override";
 import moment from "moment";
 import morgan from "morgan";
 import passport from "passport";
+import path from "path";
 import swaggerUi from "swagger-ui-express";
 import {
     HttpResponse,
@@ -197,6 +199,12 @@ app.use("/util", UtilController);
 app.use("/difficulties", DifficultyController);
 app.use("/mealtimes", MealtimesController);
 app.use("/logs", LogController);
+
+app.use("/", async (req: Request, res: Response) => {
+    const file = fs.readFileSync("Changelog.md");
+    res.contentType("text/plain");
+    return res.send(file.toString());
+});
 
 /**
  * swagger api routes
