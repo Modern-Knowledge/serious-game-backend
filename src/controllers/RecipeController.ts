@@ -3,6 +3,7 @@ import {check} from "express-validator";
 import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
 import {RecipeFacade} from "../db/entity/kitchen/RecipeFacade";
 import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {SQLOrder} from "../db/sql/enums/SQLOrder";
 import {Recipe} from "../lib/models/Recipe";
 import {
     HttpResponse,
@@ -166,8 +167,10 @@ router.put("/:id", authenticationMiddleware, checkTherapistPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {recipe, token: res.locals.authorizationToken},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Rezept mit ID ${id} wurde erfolgreich aktualisiert!`, true)
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.SUCCESS,
+                        `Rezept "${recipe.name}" wurde erfolgreich aktualisiert!`,
+                        true)
                 ]
             )
         );
@@ -211,6 +214,8 @@ router.get("/:mealtime/:difficulty", authenticationMiddleware, [
         recipeFacade.filter.addFilterCondition("difficulty_id", difficultyId);
     }
 
+    recipeFacade.ordering.addOrderBy("mealtime", SQLOrder.ASC);
+
     try {
         const recipes = await recipeFacade.get();
 
@@ -219,7 +224,10 @@ router.get("/:mealtime/:difficulty", authenticationMiddleware, [
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {recipes, token: res.locals.authorizationToken}, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Die Rezepte wurde erfolgreich geladen!`)
+                new HttpResponseMessage(
+                    HttpResponseMessageSeverity.SUCCESS,
+                    `Das Rezept wurde erfolgreich aktualisiert!`
+                )
             ]
         ));
     } catch (e) {
