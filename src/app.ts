@@ -200,7 +200,7 @@ app.use("/difficulties", DifficultyController);
 app.use("/mealtimes", MealtimesController);
 app.use("/logs", LogController);
 
-app.use("/", async (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
     let content;
     try {
         content = fs.readFileSync("Changelog.md");

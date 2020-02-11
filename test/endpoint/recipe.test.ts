@@ -178,7 +178,7 @@ describe("RecipeController Tests", () => {
         const timeout = 10000;
         let authenticationToken: string;
 
-        beforeAll(async () => {
+        beforeEach(async () => {
             await truncateTables();
             await seedUsers();
             await seedDifficulties();
@@ -422,22 +422,22 @@ describe("RecipeController Tests", () => {
         }, timeout);
 
         // SGBRC19
-        // it("try to fetch recipe with a not existing difficulty", async () => {
-        //     authenticationToken = await authenticate(validTherapist);
-        //
-        //     const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
-        //         .send({
-        //             _difficultyId: 99,
-        //             _mealtime: "Abendessen",
-        //             _name: "Rührei2"
-        //         })
-        //         .set("Authorization", "Bearer " + authenticationToken)
-        //         .set("Accept", "application/json")
-        //         .expect("Content-Type", /json/)
-        //         .expect(400);
-        //
-        //     expect(res.body._status).toEqual("fail");
-        // }, timeout);
+        it("try to fetch recipe with a not existing difficulty", async () => {
+            authenticationToken = await authenticate(validTherapist);
+
+            const res = await request(app).put(endpoint + "/" + scrambledEgg.id)
+                .send({
+                    _difficultyId: 99,
+                    _mealtime: "Abendessen",
+                    _name: "Rührei2"
+                })
+                .set("Authorization", "Bearer " + authenticationToken)
+                .set("Accept", "application/json")
+                .expect("Content-Type", /json/)
+                .expect(500);
+
+            expect(res.body._status).toEqual("error");
+        }, timeout);
 
         // SGBRC20
         it("try to fetch recipe with a patient", async () => {
