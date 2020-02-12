@@ -1,6 +1,7 @@
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
+import { check } from "express-validator";
 import fs from "fs";
-import {EOL} from "os";
+import { EOL } from "os";
 import path from "path";
 import {
     HttpResponse,
@@ -8,14 +9,13 @@ import {
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import {loggerString} from "../util/Helper";
-import {logEndpoint} from "../util/log/endpointLogger";
+import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
+import { loggerString } from "../util/Helper";
+import { logEndpoint } from "../util/log/endpointLogger";
 import logger from "../util/log/logger";
-import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
-import {checkTherapistAdminPermission} from "../util/middleware/permissionMiddleware";
-import {check} from "express-validator";
-import {rVM} from "../util/validation/validationMessages";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {files, token: res.locals.authorizationToken},
+                { files, token: res.locals.authorizationToken },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
                 ]
@@ -51,7 +51,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         );
     } catch (error) {
         return res.status(HTTPStatusCode.OK).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS, {token: res.locals.authorizationToken}, []
+            new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
             )
         );
     }
@@ -77,7 +77,7 @@ router.delete("/:name", authenticationMiddleware, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {token: res.locals.authorizationToken},
+                { token: res.locals.authorizationToken },
                 [
                     new HttpResponseMessage(
                         HttpResponseMessageSeverity.SUCCESS,
@@ -133,7 +133,7 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {content, token: res.locals.authorizationToken},
+                { content, token: res.locals.authorizationToken },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
                 ]
@@ -143,7 +143,7 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
         logger.error(`${loggerString(__dirname, "", "", __filename)} ${error.message}`);
         res.contentType("application/json");
         return res.status(HTTPStatusCode.OK).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS, {token: res.locals.authorizationToken}, []
+            new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
             )
         );
     }
