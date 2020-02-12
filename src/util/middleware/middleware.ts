@@ -36,11 +36,12 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
  * @param next next middleware
  */
 export function logRequest(req: Request, res: Response, next: any): void {
-    if (req.body.password !== undefined) {
-        delete req.body.password;
+    const body = {...req.body};
+    if (body.password !== undefined) {
+        delete body.password;
     }
 
-    logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
+    logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(body)}`);
     return next();
 }
 
