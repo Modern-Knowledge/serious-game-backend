@@ -36,6 +36,10 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
  * @param next next middleware
  */
 export function logRequest(req: Request, res: Response, next: any): void {
+    if (req.body.password !== undefined) {
+        delete req.body;
+    }
+
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
     return next();
 }
