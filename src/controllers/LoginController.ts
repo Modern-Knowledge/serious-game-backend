@@ -148,7 +148,7 @@ router.post("/login", [
 
         await userFacade.update(reqUser);
 
-        const token = await jwtHelper.generateJWT(reqUser);
+        const token = await jwtHelper.generateJWT(reqUser, req.params.loggedIn);
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {user: reqUser, token},
