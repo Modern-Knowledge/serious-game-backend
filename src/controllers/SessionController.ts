@@ -3,12 +3,13 @@ import { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { GameFacade } from "../db/entity/game/GameFacade";
 import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { SQLOperator } from "../db/sql/enums/SQLOperator";
 import { Session } from "../lib/models/Session";
 import { Statistic } from "../lib/models/Statistic";
 import {
@@ -23,6 +24,7 @@ import {
     http4xxResponse
 } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
+import logger from "../util/log/logger";
 import {
     checkAuthentication,
     checkAuthenticationToken
@@ -32,8 +34,6 @@ import {
 } from "../util/middleware/permissionMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { rVM } from "../util/validation/validationMessages";
-import logger from '../util/log/logger';
-import { SQLOperator } from '../db/sql/enums/SQLOperator';
 const router = express.Router();
 
 const controllerName = "SessionController";
@@ -195,7 +195,7 @@ router.get(
         }
 
         const id = Number(req.params.id);
-        
+
         const therapistCompositeFacade = new TherapistCompositeFacade();
         try {
             const therapist = await therapistCompositeFacade.getById(id);
@@ -206,7 +206,6 @@ router.get(
                 const patientSessions: Session[] = await sessionCompositeFacade.get();
                 sessions.push(...patientSessions);
             }
-            
 
             return res
                 .status(HTTPStatusCode.OK)

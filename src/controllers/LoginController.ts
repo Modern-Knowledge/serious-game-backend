@@ -54,7 +54,7 @@ router.post("/login", [
     const userFacade = new UserFacade();
     const jwtHelper = new JWTHelper();
 
-    const {email, password} = req.body;
+    const {email, password, loggedIn} = req.body;
 
     const filter = userFacade.filter;
     filter.addFilterCondition("email", email);
@@ -148,7 +148,7 @@ router.post("/login", [
 
         await userFacade.update(reqUser);
 
-        const token = await jwtHelper.generateJWT(reqUser, req.params.loggedIn);
+        const token = await jwtHelper.generateJWT(reqUser, loggedIn);
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {user: reqUser, token},
