@@ -60,7 +60,8 @@ if (!inTestMode()) {
         logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
             `Successfully migrated!`);
     }).catch((error) => {
-        logger.error(`Running migrations failed! (${error.message})`);
+        logger.error(`${loggerString(__dirname, "", "", __filename)} `
+            + `Running migrations failed! (${error.message})`);
     });
 }
 
