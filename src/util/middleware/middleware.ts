@@ -37,7 +37,7 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
  */
 export function logRequest(req: Request, res: Response, next: any): void {
     if (req.body.password !== undefined) {
-        delete req.body;
+        delete req.body.password;
     }
 
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
