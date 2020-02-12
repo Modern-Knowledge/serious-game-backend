@@ -8,6 +8,7 @@ import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { Session } from "../lib/models/Session";
 import { Statistic } from "../lib/models/Statistic";
 import {
@@ -31,6 +32,8 @@ import {
 } from "../util/middleware/permissionMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { rVM } from "../util/validation/validationMessages";
+import logger from '../util/log/logger';
+import { SQLOperator } from '../db/sql/enums/SQLOperator';
 const router = express.Router();
 
 const controllerName = "SessionController";
@@ -145,6 +148,65 @@ router.get(
                 `Sessions for patient with id ${id} were successfully loaded! (${sessions.length})`,
                 req
             );
+
+            return res
+                .status(HTTPStatusCode.OK)
+                .json(
+                    new HttpResponse(
+                        HttpResponseStatus.SUCCESS,
+                        { sessions, token: res.locals.authorizationToken },
+                        [
+                            new HttpResponseMessage(
+                                HttpResponseMessageSeverity.SUCCESS,
+                                `Die Spielsitzungen wurden erfolgreich geladen!`
+                            )
+                        ]
+                    )
+                );
+        } catch (error) {
+            return next(error);
+        }
+    }
+);
+
+/**
+ * GET /therapist/:id
+ *
+ * Retrieve all sessions for the given therapist.
+ *
+ * params:
+ * - id: id of the therapist
+ *
+ * response:
+ * - sessions[]: array of sessions by the patients of the therapist
+ * - token: authentication token
+ */
+router.get(
+    "/therapist/:id",
+    authenticationMiddleware,
+    [
+        check("id")
+            .isNumeric()
+            .withMessage(rVM("id", "numeric"))
+    ],
+    async (req: Request, res: Response, next: any) => {
+        if (!checkRouteValidation(controllerName, req, res)) {
+            return failedValidation400Response(req, res);
+        }
+
+        const id = Number(req.params.id);
+        
+        const therapistCompositeFacade = new TherapistCompositeFacade();
+        try {
+            const therapist = await therapistCompositeFacade.getById(id);
+            const sessions = [];
+            for (const patient of therapist.patients) {
+                const sessionCompositeFacade = new SessionCompositeFacade();
+                sessionCompositeFacade.filter.addFilterCondition("patient_id", patient.id);
+                const patientSessions: Session[] = await sessionCompositeFacade.get();
+                sessions.push(...patientSessions);
+            }
+            
 
             return res
                 .status(HTTPStatusCode.OK)
