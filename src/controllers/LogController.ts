@@ -15,7 +15,6 @@ import { logEndpoint } from "../util/log/endpointLogger";
 import logger from "../util/log/logger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";
-import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -36,8 +35,12 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
     try {
         const files = fs.readdirSync(filePath)
-            .map((value: string) => value.split(".")[0])
-            .filter((value: string) => !value.includes("request"));
+            .filter((value: string) => !value.includes("request"))
+            .map((value: string) => {
+                const stat = fs.statSync(path.join("logs", value));
+                const sizeMb = stat.size / 1000;
+                return {file: value.split(".")[0], size: Math.floor(sizeMb)};
+            });
 
         logEndpoint(controllerName, `All logs-files loaded successfully!`, req);
 
@@ -50,6 +53,8 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
             )
         );
     } catch (error) {
+        logger.error(`${loggerString(__dirname, "", "", __filename)} ${error.message}`);
+        console.log(error);
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
             )
