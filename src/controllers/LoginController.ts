@@ -153,7 +153,8 @@ router.post("/login", [
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {user: reqUser, token},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Sie haben sich erfolgreich eingeloggt!`, true)
             ]
         ));
 
