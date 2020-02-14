@@ -54,7 +54,6 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
         );
     } catch (error) {
         logger.error(`${loggerString(__dirname, "", "", __filename)} ${error.message}`);
-        console.log(error);
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
             )
