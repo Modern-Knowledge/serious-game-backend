@@ -9,6 +9,7 @@ import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
+import { Patient } from "../lib/models/Patient";
 import { Session } from "../lib/models/Session";
 import { Statistic } from "../lib/models/Statistic";
 import {
@@ -20,7 +21,6 @@ import {
 import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
-import logger from "../util/log/logger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistPermission } from "../util/middleware/permissionMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
@@ -195,7 +195,10 @@ router.get(
         const therapistCompositeFacade = new TherapistCompositeFacade();
         try {
             const therapist = await therapistCompositeFacade.getById(id);
-            const sessions: Map<number, string> = new Map<number, string>();
+            const sessions: Map<Patient, Session[]> = new Map<
+                Patient,
+                Session[]
+            >();
             for (const patient of therapist.patients) {
                 const sessionCompositeFacade = new SessionCompositeFacade();
                 sessionCompositeFacade.filter.addFilterCondition(
@@ -204,25 +207,24 @@ router.get(
                 );
                 const patientSessions: Session[] = await sessionCompositeFacade.get();
                 if (patientSessions.length > 0) {
-                    logger.info("SESSIONS" + JSON.stringify(patientSessions));
-                    sessions.set(patient.id, "test");
+                    sessions.set(patient, patientSessions);
                 }
             }
-            logger.info("SESSIONS OF PATIENTS:" + JSON.stringify(sessions));
-            return res
-                .status(HTTPStatusCode.OK)
-                .json(
-                    new HttpResponse(
-                        HttpResponseStatus.SUCCESS,
-                        { sessions, token: res.locals.authorizationToken },
-                        [
-                            new HttpResponseMessage(
-                                HttpResponseMessageSeverity.SUCCESS,
-                                `Die Spielsitzungen wurden erfolgreich geladen!`
-                            )
-                        ]
-                    )
-                );
+            return res.status(HTTPStatusCode.OK).json(
+                new HttpResponse(
+                    HttpResponseStatus.SUCCESS,
+                    {
+                        sessions: [...sessions],
+                        token: res.locals.authorizationToken
+                    },
+                    [
+                        new HttpResponseMessage(
+                            HttpResponseMessageSeverity.SUCCESS,
+                            `Die Spielsitzungen wurden erfolgreich geladen!`
+                        )
+                    ]
+                )
+            );
         } catch (error) {
             return next(error);
         }
