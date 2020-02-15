@@ -2,6 +2,8 @@ import * as bcrypt from "bcryptjs";
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import {UserFacade} from "../db/entity/user/UserFacade";
+import {SQLComparisonOperator} from "../db/sql/enums/SQLComparisonOperator";
+import {SQLOperator} from "../db/sql/enums/SQLOperator";
 import {User} from "../lib/models/User";
 import {formatDateTime} from "../lib/utils/dateFormatter";
 import {
@@ -19,7 +21,7 @@ import {mailTransport} from "../util/mail/mailTransport";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
 import {checkUserPermission} from "../util/middleware/permissionMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
-import {rVM} from "../util/validation/validationMessages";
+import {retrieveValidationMessage, rVM} from "../util/validation/validationMessages";
 import {emailValidator} from "../util/validation/validators/emailValidator";
 
 const router = express.Router();
@@ -169,8 +171,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
     check("_email").normalizeEmail()
         .not().isEmpty().withMessage(rVM("email", "empty"))
-        .isEmail().withMessage(rVM("email", "invalid"))
-        .custom(emailValidator),
+        .isEmail().withMessage(rVM("email", "invalid")),
 
     check("_forename").escape().trim()
         .not().isEmpty().withMessage(rVM("forename", "empty")),
@@ -188,6 +189,14 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const user = new User().deserialize(req.body);
     user.id = req.params.id;
     userFacade.filter.addFilterCondition("id", user.id);
+
+    const userFacade1 = new UserFacade();
+    userFacade1.filter.addFilterCondition("email", user.email);
+    const fUser = await userFacade1.getOne();
+
+    if (fUser && fUser.email !== res.locals.user.email) {
+        return http4xxResponse(res, [rVM("email", "duplicate")]);
+    }
 
     try {
         const affectedRows = await userFacade.update(user);
