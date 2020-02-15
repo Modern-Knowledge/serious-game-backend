@@ -40,6 +40,12 @@ export function logRequest(req: Request, res: Response, next: any): void {
     if (body.password !== undefined) {
         delete body.password;
     }
+    if (body._password !== undefined) {
+        delete body._password;
+    }
+    if (body.password_confirmation !== undefined) {
+        delete body.password_confirmation;
+    }
 
     logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(body)}`);
     return next();

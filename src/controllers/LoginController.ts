@@ -54,7 +54,7 @@ router.post("/login", [
     const userFacade = new UserFacade();
     const jwtHelper = new JWTHelper();
 
-    const {email, password} = req.body;
+    const {email, password, loggedIn} = req.body;
 
     const filter = userFacade.filter;
     filter.addFilterCondition("email", email);
@@ -148,12 +148,13 @@ router.post("/login", [
 
         await userFacade.update(reqUser);
 
-        const token = await jwtHelper.generateJWT(reqUser);
+        const token = await jwtHelper.generateJWT(reqUser, loggedIn);
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
             {user: reqUser, token},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Sie haben sich erfolgreich eingeloggt!`, true)
             ]
         ));
 

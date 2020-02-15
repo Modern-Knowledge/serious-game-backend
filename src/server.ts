@@ -3,6 +3,7 @@ import errorHandler from "errorhandler";
 
 import moment from "moment";
 import app from "./app";
+import {formatDate} from "./lib/utils/dateFormatter";
 import { inProduction, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 moment.locale("de");
@@ -19,7 +20,8 @@ if (!inProduction()) {
  */
 const server = app.listen(app.get("port"), () => {
   logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
-      `App is running at http://localhost:${app.get("port")} in ${app.get("env")} mode`);
+      `App (${process.env.VERSION}) build at ${formatDate(moment(process.env.LAST_APP_BUILD_DATE).toDate())} ` +
+      `is running at Port ${app.get("port")} in ${app.get("env")} mode`);
   logger.info(`${loggerString(__dirname, "", "", __filename)} Press CTRL-C to stop`);
 });
 
