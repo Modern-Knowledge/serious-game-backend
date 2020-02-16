@@ -40,7 +40,7 @@ describe("DifficultyController Tests", () => {
 
         }, timeout);
 
-        // SGBDC01
+        // SGBDC02
         it("try to fetch difficulties without authentication", async () => {
             const res = await request(app).get(endpoint)
                 .set("Accept", "application/json")
@@ -51,7 +51,7 @@ describe("DifficultyController Tests", () => {
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.DANGER, 1)).toBeTruthy();
         }, timeout);
 
-        // SGBDC01
+        // SGBDC03
         it("try to fetch difficulties with an expired token", async () => {
             const res = await request(app).get(endpoint)
                 .set("Authorization", "Bearer " + expiredToken)

@@ -62,40 +62,6 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 });
 
 /**
- * DELETE /:name
- *
- * Delete the log-file with the specified name.
- *
- * response:
- *  - token: authentication token
- */
-router.delete("/:name", authenticationMiddleware, [
-    check("name").escape().trim().not().isEmpty(),
-], async (req: Request, res: Response, next: any) => {
-    const filePath = path.join("logs", req.params.name + ".log");
-
-    try {
-        fs.truncateSync(filePath, 1);
-
-        logEndpoint(controllerName, `Log file ${req.params.name} was deleted!`, req);
-
-        return res.status(HTTPStatusCode.OK).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS,
-                { token: res.locals.authorizationToken },
-                [
-                    new HttpResponseMessage(
-                        HttpResponseMessageSeverity.SUCCESS,
-                        `Log Datei "${req.params.name}" wurde geleert!`,
-                        true)
-                ]
-            )
-        );
-    } catch (error) {
-        return next(error);
-    }
-});
-
-/**
  * GET /:name
  *
  * Retrieve specified log-file.
@@ -150,6 +116,40 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
             new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
             )
         );
+    }
+});
+
+/**
+ * DELETE /:name
+ *
+ * Delete the log-file with the specified name.
+ *
+ * response:
+ *  - token: authentication token
+ */
+router.delete("/:name", authenticationMiddleware, [
+    check("name").escape().trim().not().isEmpty(),
+], async (req: Request, res: Response, next: any) => {
+    const filePath = path.join("logs", req.params.name + ".log");
+
+    try {
+        fs.truncateSync(filePath, 1);
+
+        logEndpoint(controllerName, `Log file ${req.params.name} was deleted!`, req);
+
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                { token: res.locals.authorizationToken },
+                [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.SUCCESS,
+                        `Log Datei "${req.params.name}" wurde geleert!`,
+                        true)
+                ]
+            )
+        );
+    } catch (error) {
+        return next(error);
     }
 });
 
