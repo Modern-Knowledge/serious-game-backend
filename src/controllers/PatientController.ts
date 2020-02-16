@@ -7,6 +7,7 @@ import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
 import { Status } from "../lib/enums/Status";
+import {PatientDto} from "../lib/models/Dto/PatientDto";
 import { Patient } from "../lib/models/Patient";
 import { PatientSetting } from "../lib/models/PatientSetting";
 import {formatDate} from "../lib/utils/dateFormatter";
@@ -54,9 +55,11 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all patients!`, req);
 
+        const patientsDto = patients.map((value: Patient) => new PatientDto(value));
+
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {patients, token: res.locals.authorizationToken} ,
+                {patients: patientsDto, token: res.locals.authorizationToken} ,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `Alle PatientInnen wurden erfolgreich geladen!`)
@@ -147,7 +150,7 @@ router.post("/", [
 
         return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { token, user: createdPatient, patient_setting: createdPatientSetting },
+                { token, user: new PatientDto(createdPatient), patient_setting: createdPatientSetting },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`,
                         true)
@@ -274,7 +277,7 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {patient, token: res.locals.authorizationToken},
+                {patient: new PatientDto(patient), token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`)

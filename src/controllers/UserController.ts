@@ -2,8 +2,7 @@ import * as bcrypt from "bcryptjs";
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import {UserFacade} from "../db/entity/user/UserFacade";
-import {SQLComparisonOperator} from "../db/sql/enums/SQLComparisonOperator";
-import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {UserDto} from "../lib/models/Dto/UserDto";
 import {User} from "../lib/models/User";
 import {formatDateTime} from "../lib/utils/dateFormatter";
 import {
@@ -21,8 +20,7 @@ import {mailTransport} from "../util/mail/mailTransport";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
 import {checkUserPermission} from "../util/middleware/permissionMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
-import {retrieveValidationMessage, rVM} from "../util/validation/validationMessages";
-import {emailValidator} from "../util/validation/validators/emailValidator";
+import {rVM} from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -45,7 +43,7 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user: res.locals.user, token: res.locals.authorizationToken}, [
+                {user: new UserDto(res.locals.user), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Benutzer/in erfolgreich geladen!")
                 ]
             )
@@ -214,7 +212,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user, token: res.locals.authorizationToken}, [
+                {user: new UserDto(user), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `BenutzerIn wurde erfolgreich aktualisiert!`, true)
                 ]

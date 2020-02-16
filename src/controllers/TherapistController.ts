@@ -8,6 +8,7 @@ import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
 import {Roles} from "../lib/enums/Roles";
 import { Status } from "../lib/enums/Status";
+import {TherapistDto} from "../lib/models/Dto/TherapistDto";
 import { Therapist } from "../lib/models/Therapist";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
 import {
@@ -57,9 +58,11 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all therapists!`, req);
 
+        const therapistsDto = therapists.map((value: Therapist) => new TherapistDto(value));
+
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapists, token: res.locals.authorizationToken},
+                {therapists: therapistsDto, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `Alle TherapeutInnen wurden erfolgreich geladen!`)
@@ -141,7 +144,7 @@ router.post("/", [
 
         return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { user: response, token},
+                { user: new TherapistDto(response), token},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`,
                         true)
@@ -229,7 +232,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapist, token: res.locals.authorizationToken}, [
+                {therapist: new TherapistDto(therapist), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `TherapeutIn wurde erfolgreich aktualisiert!`)
                 ]
