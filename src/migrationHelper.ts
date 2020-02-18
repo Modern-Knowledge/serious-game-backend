@@ -56,8 +56,8 @@ import {
 } from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
 import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
-import { helptextGames, helptextGames1 } from "./seeds/helptextGames";
-import { helptext, helptext1 } from "./seeds/helptexts";
+import {helptextGames, helptextGames1, helptextGames2, helptextGames3} from "./seeds/helptextGames";
+import {helptext, helptext1, helptext2, helptext3} from "./seeds/helptexts";
 import { loadImages } from "./seeds/images";
 import {
     beef, blackbread, bun, butter,
@@ -464,7 +464,7 @@ export async function seedErrortextStatistics(): Promise<void> {
  */
 export async function seedHelptextGames(): Promise<void> {
     const helptextGameFacade = new HelptextsGamesFacade();
-    const helptextGameArr = [helptextGames, helptextGames1];
+    const helptextGameArr = [helptextGames, helptextGames1, helptextGames2, helptextGames3];
 
     for (const item of helptextGameArr) {
         await helptextGameFacade.insert(item);
@@ -476,7 +476,7 @@ export async function seedHelptextGames(): Promise<void> {
  */
 export async function seedHelptexts(): Promise<void> {
     const helptextFacade = new HelptextFacade();
-    const helptextArr = [helptext, helptext1];
+    const helptextArr = [helptext, helptext1, helptext2, helptext3];
 
     for (const item of helptextArr) {
         await helptextFacade.insert(item);
