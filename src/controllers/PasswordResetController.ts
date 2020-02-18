@@ -3,7 +3,7 @@ import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import moment from "moment";
 import {UserFacade} from "../db/entity/user/UserFacade";
-import {formatDate, formatDateTime} from "../lib/utils/dateFormatter";
+import {formatDateTime} from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -20,7 +20,6 @@ import {mailTransport} from "../util/mail/mailTransport";
 import {setPasswordResetToken} from "../util/password/passwordHelper";
 import {checkRouteValidation} from "../util/validation/validationHelper";
 import {rVM} from "../util/validation/validationMessages";
-import {passwordValidator} from "../util/validation/validators/passwordValidator";
 
 const router = express.Router();
 

@@ -326,7 +326,7 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
         // toggle therapist accepted
         therapist.accepted = !therapist.accepted;
 
-        const affectedRows = await therapistFacade.update(therapist);
+        await therapistFacade.update(therapist);
 
         logEndpoint(
             controllerName,

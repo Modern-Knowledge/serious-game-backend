@@ -279,22 +279,6 @@ class DatabaseConnection {
         });
     }
 
-    /**
-     * Closes the pool and disconnects every connection.
-     */
-    private disconnect(): void {
-        this._pool.end((err: MysqlError) => {
-            if (err) {
-                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
-                    `${err.message} ${this}`);
-                throw err;
-            } else {
-                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
-                    `Disconnected from database! ${this}`);
-            }
-        });
-    }
-
 }
 
 const databaseConnection = new DatabaseConnection();

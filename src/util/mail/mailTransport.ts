@@ -11,7 +11,7 @@ import { inTestMode, loggerString } from "../Helper";
  * handle mail-sending with node-mailer.
  */
 class MailTransport {
-    private _transporter: any;
+    private readonly _transporter: any;
 
     private _configVariables = {
         auth: {

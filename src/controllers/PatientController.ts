@@ -10,7 +10,6 @@ import { Status } from "../lib/enums/Status";
 import {PatientDto} from "../lib/models/Dto/PatientDto";
 import { Patient } from "../lib/models/Patient";
 import { PatientSetting } from "../lib/models/PatientSetting";
-import {formatDate} from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -18,7 +17,6 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import {passwordReset} from "../mail-texts/passwordReset";
 import {register} from "../mail-texts/register";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
@@ -271,7 +269,7 @@ router.put("/:id", authenticationMiddleware, checkPatientPermission, [
         filter.addFilterCondition("patient_id", patient.id);
         patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
 
-        const affectedRows = await patientFacade.updateUserPatient(patient);
+        await patientFacade.updateUserPatient(patient);
 
         logEndpoint(controllerName, `Patient with id ${id} was successfully updated!`, req);
 

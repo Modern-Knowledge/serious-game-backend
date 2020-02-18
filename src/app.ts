@@ -18,7 +18,6 @@ import methodOverride from "method-override";
 import moment from "moment";
 import morgan from "morgan";
 import passport from "passport";
-import path from "path";
 import swaggerUi from "swagger-ui-express";
 import {
     HttpResponse,

@@ -1,5 +1,4 @@
 import { Recipe } from "../../../lib/models/Recipe";
-import {User} from "../../../lib/models/User";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

@@ -27,7 +27,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 router.get("/mail-server", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     logEndpoint(controllerName, `Check if the mail-server is reachable!`, req);
 
-    mailTransport.transporter.verify((error: Error | null, success: true) => {
+    mailTransport.transporter.verify((error: Error | null) => {
         if (error) {
             return next(error);
         } else {

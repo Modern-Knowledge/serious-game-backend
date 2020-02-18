@@ -121,7 +121,7 @@ describe("LogController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(200);
 
-            const filename = logs.body._data.files[2].file;
+            const filename = logs.body._data.files[0].file;
 
             const res = await request(app).get(endpoint + "/" + filename + "?level=error")
                 .set("Authorization", "Bearer " + authenticationToken)
@@ -132,9 +132,11 @@ describe("LogController Tests", () => {
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
             expect(res.body._data).toHaveProperty("content");
-            res.body._data.content.forEach((value: any) => {
-                expect(value.level).toEqual("error");
-            });
+            if(res.body._data.content.length > 0) {
+                res.body._data.content.forEach((value: any) => {
+                    expect(value.level).toEqual("error");
+                });
+            }
 
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);

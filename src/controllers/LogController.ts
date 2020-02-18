@@ -30,7 +30,7 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication,
  * response:
  * - files: Retrieves content of the log folder
  */
-router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
+router.get("/", authenticationMiddleware, async (req: Request, res: Response) => {
     const filePath = path.join("logs");
 
     try {
