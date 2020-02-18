@@ -90,7 +90,7 @@ router.get("/", authenticationMiddleware, checkTherapistAdminPermission,
  * [
  *  - logger
  *  - level
- *  - message = [method, message, ...params]
+ *  - message = [method, message, userId, ...params]
  * ]
  *
  */
@@ -114,7 +114,7 @@ router.post("/", async (req: Request, res: Response, next: any) => {
                 log.method = method;
                 log.message = message;
                 log.params = item.message.length === 0 ? [] : item.message;
-                log.userId = userId !== "null" ? Number(userId) : null;
+                log.userId = userId !== "null" && userId !== undefined ? Number(userId) : null;
 
                 if (item.logger && item.level) {
                     await facade.insert(log);

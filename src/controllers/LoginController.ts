@@ -146,6 +146,8 @@ router.post("/login", [
         reqUser.lastLogin = new Date();
         reqUser.failedLoginAttempts = 0;
         reqUser.loginCoolDown = null;
+        reqUser.resetcode = null;
+        reqUser.resetcodeValidUntil = null;
 
         await userFacade.update(reqUser);
 
