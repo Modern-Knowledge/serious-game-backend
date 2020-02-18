@@ -86,10 +86,10 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
         let content;
 
         try {
-            content = JSON.parse("[" + file.toString()
+            content = file.toString()
                 .split(EOL)
                 .filter((value: string) => value.length > 0)
-                .join(",") + "]")
+                .map((value: any) => JSON.parse(value))
                 .filter((value: any) => {
                     if (req.query.level) {
                         return value.level === req.query.level;
@@ -98,6 +98,7 @@ router.get("/:name", authenticationMiddleware, async (req: Request, res: Respons
                     return true;
                 });
         } catch (e) {
+            logger.error(`${loggerString(__dirname, "", "", __filename)} ${e.message}`, e);
             content = {};
         }
 
