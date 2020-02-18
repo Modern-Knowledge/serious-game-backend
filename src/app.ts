@@ -200,7 +200,7 @@ app.use("/difficulties", DifficultyController);
 app.use("/mealtimes", MealtimesController);
 app.use("/logs", LogController);
 
-app.get("/", async (req: Request, res: Response) => {
+app.get("/changelog", async (req: Request, res: Response) => {
     let content;
     try {
         content = fs.readFileSync("Changelog.md");
@@ -214,7 +214,7 @@ app.get("/", async (req: Request, res: Response) => {
             {content: content.toString(), token: res.locals.authorizationToken},
             [
                 new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                    `Changelog konnt nicht geladen werden`)
+                    `Changelog wurde erfolgreich geladen!`)
             ]
         )
     );
