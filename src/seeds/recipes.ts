@@ -41,7 +41,7 @@ pizza.mealtime = Mealtimes.DINNER;
 const spaghetti = new Recipe();
 spaghetti.id = 6;
 spaghetti.name = "Spagetthi";
-spaghetti.description = "";
+spaghetti.description = "Die Nudeln im Topf kochen und mit der Tomatensauce anrichten.";
 spaghetti.difficultyId = difficultyEasy.id;
 spaghetti.mealtime = Mealtimes.LUNCH;
 
@@ -76,14 +76,14 @@ tafelspitz.mealtime = Mealtimes.LUNCH;
 const musli = new Recipe();
 musli.id = 11;
 musli.name = "Müsli";
-musli.description = "";
+musli.description = "Das Müsli in die Schüssel geben und die Milch daraufgießen.";
 musli.difficultyId = difficultyEasy.id;
 musli.mealtime = Mealtimes.BREAKFAST;
 
 const jamBread = new Recipe();
 jamBread.id = 12;
 jamBread.name = "Marmeladenbrot";
-jamBread.description = "";
+jamBread.description = "Das Brot mit Butter und Marmelade beschmieren.";
 jamBread.difficultyId = difficultyMedium.id;
 jamBread.mealtime = Mealtimes.BREAKFAST;
 
