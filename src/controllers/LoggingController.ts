@@ -107,12 +107,14 @@ router.post("/", async (req: Request, res: Response, next: any) => {
             if (messages && messages.length >= 2) {
                 const method = messages.shift();
                 const message = messages.shift();
+                const userId = messages.shift();
 
                 log.logger = item.logger;
                 log.level = item.level;
                 log.method = method;
                 log.message = message;
                 log.params = item.message.length === 0 ? [] : item.message;
+                log.userId = userId !== "null" ? Number(userId) : null;
 
                 if (item.logger && item.level) {
                     await facade.insert(log);
