@@ -4,6 +4,8 @@ import {check} from "express-validator";
 import {PatientCompositeFacade} from "../db/composite/PatientCompositeFacade";
 import {TherapistFacade} from "../db/entity/user/TherapistFacade";
 import {UserFacade} from "../db/entity/user/UserFacade";
+import {PatientDto} from "../lib/models/Dto/PatientDto";
+import {TherapistDto} from "../lib/models/Dto/TherapistDto";
 import {UserDto} from "../lib/models/Dto/UserDto";
 import {Patient} from "../lib/models/Patient";
 import {User} from "../lib/models/User";
@@ -24,8 +26,6 @@ import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/
 import {checkUserPermission} from "../util/middleware/permissionMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
 import {rVM} from "../util/validation/validationMessages";
-import {PatientDto} from "../lib/models/Dto/PatientDto";
-import {TherapistDto} from "../lib/models/Dto/TherapistDto";
 
 const router = express.Router();
 
@@ -58,8 +58,6 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
             facade = new TherapistFacade();
             user = new TherapistDto(await facade.getById(res.locals.user.id));
         }
-
-        console.log(user)
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
