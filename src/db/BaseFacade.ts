@@ -685,14 +685,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
             }
         }
 
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
-        `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
-        `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+        if (this.joins.length > 0) {
+            logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+                `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
+                `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ` +
+                `${oneToOneJoinAmount} one-to-one)!`);
 
-        const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
-        if (oneToManyJoinAmount >= warnToManyJoins) {
-            logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
-            `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+            const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
+            if (oneToManyJoinAmount >= warnToManyJoins) {
+                logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+                    `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+            }
         }
     }
 }
