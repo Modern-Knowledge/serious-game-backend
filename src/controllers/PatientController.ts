@@ -134,6 +134,8 @@ router.post("/", [
         // insert patient settings
         const createdPatientSetting = await patientSettingFacade.insert(patientSetting);
 
+        createdPatient.patientSetting = createdPatientSetting;
+
         const jwtHelper: JWTHelper = new JWTHelper();
         const token = await jwtHelper.generateJWT(createdPatient);
 
