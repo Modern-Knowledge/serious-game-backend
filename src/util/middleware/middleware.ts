@@ -21,7 +21,7 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
 
     res.on("finish", () => {
         logger.info(`${loggerString()} ${req.method} "${url}" ${stopwatch.timeElapsed}`);
-        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, url);
+        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, req.method + " " + url);
     });
 
     return next();
