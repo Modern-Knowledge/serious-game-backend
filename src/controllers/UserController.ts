@@ -1,8 +1,11 @@
 import * as bcrypt from "bcryptjs";
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
+import {PatientCompositeFacade} from "../db/composite/PatientCompositeFacade";
+import {TherapistFacade} from "../db/entity/user/TherapistFacade";
 import {UserFacade} from "../db/entity/user/UserFacade";
 import {UserDto} from "../lib/models/Dto/UserDto";
+import {Patient} from "../lib/models/Patient";
 import {User} from "../lib/models/User";
 import {formatDateTime} from "../lib/utils/dateFormatter";
 import {
@@ -21,6 +24,8 @@ import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/
 import {checkUserPermission} from "../util/middleware/permissionMiddleware";
 import {checkRouteValidation} from "../util/validation/validationHelper";
 import {rVM} from "../util/validation/validationMessages";
+import {PatientDto} from "../lib/models/Dto/PatientDto";
+import {TherapistDto} from "../lib/models/Dto/TherapistDto";
 
 const router = express.Router();
 
@@ -41,9 +46,24 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
     try {
         logEndpoint(controllerName, `Retrieved related user with id ${res.locals.user.id}`, req);
 
+        const patient = res.locals.user instanceof Patient;
+        let user;
+
+        let facade;
+        if (patient === true) {
+            facade = new PatientCompositeFacade();
+            facade.withSessionCompositeJoin = false;
+            user = new PatientDto(await facade.getById(res.locals.user.id));
+        } else {
+            facade = new TherapistFacade();
+            user = new TherapistDto(await facade.getById(res.locals.user.id));
+        }
+
+        console.log(user)
+
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user: new UserDto(res.locals.user), token: res.locals.authorizationToken}, [
+                {user, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Benutzer/in erfolgreich geladen!")
                 ]
             )
