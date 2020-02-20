@@ -87,6 +87,16 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
+     * Updates the patient-setting in the database and returns the number of affected rows.
+     *
+     * @param patientSetting user that should be updated
+     */
+    public async update(patientSetting: PatientSetting): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patientSetting);
+        return await this.updateStatement(attributes);
+    }
+
+    /**
      * Returns common sql-attributes for inserts- and updates-statement.
      *
      * @param prefix prefix before the sql-attribute
