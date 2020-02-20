@@ -5,6 +5,6 @@ const pSettings = new PatientSetting();
 pSettings.id = 1;
 pSettings.neglect = true;
 pSettings.patientId = validPatient.id;
-pSettings.skipIntroduction = true;
+pSettings.skipIntroduction = false;
 
 export { pSettings };
