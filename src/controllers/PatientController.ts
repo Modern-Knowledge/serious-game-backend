@@ -348,8 +348,11 @@ router.put(
         const id = Number(req.params.id);
 
         const patientFacade = new PatientFacade();
-
+        const patientSettingFacade = new PatientSettingFacade();
         const patient = new Patient().deserialize(req.body);
+        const patientSetting = new PatientSetting().deserialize(
+            req.body._patientSetting
+        );
         try {
             const dbPatient = await patientFacade.isPatient(id);
 
@@ -374,14 +377,20 @@ router.put(
             filter.addFilterCondition("patient_id", patient.id);
             patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
 
+            patientSettingFacade.filter.addFilterCondition(
+                "id",
+                patientSetting.id
+            );
+
             await patientFacade.updateUserPatient(patient);
+
+            await patientSettingFacade.update(patientSetting);
 
             logEndpoint(
                 controllerName,
                 `Patient with id ${id} was successfully updated!`,
                 req
             );
-
             return res.status(HTTPStatusCode.OK).json(
                 new HttpResponse(
                     HttpResponseStatus.SUCCESS,
