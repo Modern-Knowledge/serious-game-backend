@@ -83,7 +83,7 @@ musli.mealtime = Mealtimes.BREAKFAST;
 const jamBread = new Recipe();
 jamBread.id = 12;
 jamBread.name = "Marmeladenbrot";
-jamBread.description = "Das Brot mit Butter und Marmelade beschmieren.";
+jamBread.description = "Das Brot mit Butter und Marmelade bestreichen.";
 jamBread.difficultyId = difficultyMedium.id;
 jamBread.mealtime = Mealtimes.BREAKFAST;
 

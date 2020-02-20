@@ -13,14 +13,14 @@ const helptext1 = new Helptext();
 helptext1.id = 2;
 helptext1.name = "recipe";
 helptext1.text = `Bitte prägen Sie sich das unten stehende Rezept gut ein! ` +
-    `Sie werden es in den nächsten Schritten benötigen. Klicken Sie auf 'Weiter', wenn Sie bereit sind`;
+    `Sie werden es in den nächsten Schritten benötigen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.`;
 
 const helptext2 = new Helptext();
 helptext2.id = 3;
 helptext2.name = "shopping-list";
 helptext2.text = `Sehen Sie zuerst im Kühlschrank nach, welche Zutaten Sie bereits zu Hause haben. Wenn Sie ` +
-    `bereits eine Zutat aus der Einkaufsliste besitzen, müssen Sie diese nicht mehr kaufen. Ziehen Sie mit dem ` +
-    `Finger die fehlenden Zutaten für Ihr Rezept in das Feld 'Einkaufsliste'. Wenn Sie denken, dass Sie ` +
+    `schon eine Zutat aus der Einkaufsliste besitzen, müssen Sie diese nicht mehr kaufen. Ziehen Sie mit dem ` +
+    `Finger die fehlenden Zutaten für Ihr Rezept in das Feld 'Einkaufsliste'. Wenn Sie denken, dass die ` +
     `Einkaufsliste vollständig ist, dann klicken Sie auf 'Weiter'.`;
 
 const helptext3 = new Helptext();

@@ -87,7 +87,7 @@ salad.imageId = 14;
 
 const bun = new Ingredient();
 bun.id = 15;
-bun.name = "Brot";
+bun.name = "Brötchen";
 bun.foodCategoryId = bread.id;
 bun.imageId = 15;
 
