@@ -211,7 +211,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const fUser = await userFacade1.getOne();
 
     if (fUser && fUser.email !== res.locals.user.email) {
-        return http4xxResponse(res, [rVM("email", "duplicate")]);
+        return http4xxResponse(res, [rVM("email", "duplicate")], 400);
     }
 
     try {

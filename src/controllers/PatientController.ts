@@ -313,8 +313,7 @@ router.put(
             .isEmpty()
             .withMessage(rVM("email", "empty"))
             .isEmail()
-            .withMessage(rVM("email", "invalid"))
-            .custom(emailValidator),
+            .withMessage(rVM("email", "invalid")),
 
         check("_forename")
             .escape()
@@ -361,7 +360,7 @@ router.put(
         const fUser = await userFacade1.getOne();
 
         if (fUser && fUser.email !== res.locals.user.email) {
-            return http4xxResponse(res, [rVM("email", "duplicate")]);
+            return http4xxResponse(res, [rVM("email", "duplicate")], 400);
         }
 
         try {
