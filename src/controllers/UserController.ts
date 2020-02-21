@@ -1,37 +1,41 @@
 import * as bcrypt from "bcryptjs";
-import express, {Request, Response} from "express";
-import {check} from "express-validator";
-import {PatientCompositeFacade} from "../db/composite/PatientCompositeFacade";
-import {TherapistFacade} from "../db/entity/user/TherapistFacade";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import {PatientDto} from "../lib/models/Dto/PatientDto";
-import {TherapistDto} from "../lib/models/Dto/TherapistDto";
-import {UserDto} from "../lib/models/Dto/UserDto";
-import {Patient} from "../lib/models/Patient";
-import {User} from "../lib/models/User";
-import {formatDateTime} from "../lib/utils/dateFormatter";
+import express, { Request, Response } from "express";
+import { check } from "express-validator";
+
+import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { UserFacade } from "../db/entity/user/UserFacade";
+import { PatientDto } from "../lib/models/Dto/PatientDto";
+import { TherapistDto } from "../lib/models/Dto/TherapistDto";
+import { UserDto } from "../lib/models/Dto/UserDto";
+import { Patient } from "../lib/models/Patient";
+import { User } from "../lib/models/User";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
-    HttpResponseStatus
+    HttpResponseStatus,
 } from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import {passwordResettet} from "../mail-texts/passwordResettet";
-import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
-import {logEndpoint} from "../util/log/endpointLogger";
-import {Mail} from "../util/mail/Mail";
-import {mailTransport} from "../util/mail/mailTransport";
-import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
-import {checkUserPermission} from "../util/middleware/permissionMiddleware";
-import {checkRouteValidation} from "../util/validation/validationHelper";
-import {rVM} from "../util/validation/validationMessages";
+import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
+import { passwordResettet } from "../mail-texts/passwordResettet";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { Mail } from "../util/mail/Mail";
+import { mailTransport } from "../util/mail/mailTransport";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
 const controllerName = "UserController";
 
-const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+const authenticationMiddleware = [
+    checkAuthenticationToken,
+    checkAuthentication
+];
 
 /**
  * GET /related
@@ -55,7 +59,7 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
             facade.withSessionCompositeJoin = false;
             user = new PatientDto(await facade.getById(res.locals.user.id));
         } else {
-            facade = new TherapistFacade();
+                facade = new TherapistCompositeFacade();
             user = new TherapistDto(await facade.getById(res.locals.user.id));
         }
 
