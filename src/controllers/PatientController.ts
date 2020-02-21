@@ -5,6 +5,7 @@ import { check } from "express-validator";
 import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
 import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
+import {UserFacade} from "../db/entity/user/UserFacade";
 import { Status } from "../lib/enums/Status";
 import { PatientDto } from "../lib/models/Dto/PatientDto";
 import { Patient } from "../lib/models/Patient";
@@ -312,7 +313,8 @@ router.put(
             .isEmpty()
             .withMessage(rVM("email", "empty"))
             .isEmail()
-            .withMessage(rVM("email", "invalid")),
+            .withMessage(rVM("email", "invalid"))
+            .custom(emailValidator),
 
         check("_forename")
             .escape()
@@ -353,6 +355,15 @@ router.put(
         const patientSetting = new PatientSetting().deserialize(
             req.body._patientSetting
         );
+
+        const userFacade1 = new UserFacade();
+        userFacade1.filter.addFilterCondition("email", patient.email);
+        const fUser = await userFacade1.getOne();
+
+        if (fUser && fUser.email !== res.locals.user.email) {
+            return http4xxResponse(res, [rVM("email", "duplicate")]);
+        }
+
         try {
             const dbPatient = await patientFacade.isPatient(id);
 
