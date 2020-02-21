@@ -6,7 +6,7 @@ IF NOT EXISTS `patient_settings`
     `neglect`     TINYINT
 (4) NULL     DEFAULT '0',
     `skip_introduction` TINYINT
-(4) NULL DEFAULT '1',
+(4) NULL DEFAULT '0',
     `patient_id`  INT
 (11)    NOT NULL,
     `created_at`  TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
