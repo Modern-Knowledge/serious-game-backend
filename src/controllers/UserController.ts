@@ -60,7 +60,9 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
             user = new PatientDto(await facade.getById(res.locals.user.id));
         } else {
                 facade = new TherapistCompositeFacade();
-            user = new TherapistDto(await facade.getById(res.locals.user.id));
+                user = new TherapistDto(
+                    await facade.getById(res.locals.user.id)
+                );
         }
 
         return res.status(HTTPStatusCode.OK).json(
