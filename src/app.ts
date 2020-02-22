@@ -11,6 +11,7 @@ import * as dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import slowDown from "express-slow-down";
+import fs from "fs";
 import helmet from "helmet";
 import lusca from "lusca";
 import methodOverride from "method-override";
@@ -53,12 +54,15 @@ import { logLimitSlowDown, logRequest, measureRequestTime } from "./util/middlew
 logger.info(`${loggerString(__dirname, "", "", __filename)} .env successfully loaded!`);
 checkEnvFunction();
 
-migrate().then(() => {
-    logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
-        `Successfully migrated!`);
-}).catch((error) => {
-    logger.error(`Running migrations failed! (${error.message})`);
-});
+if (!inTestMode()) {
+    migrate().then(() => {
+        logger.info(`${loggerString(__dirname, "", "", __filename)} ` +
+            `Successfully migrated!`);
+    }).catch((error) => {
+        logger.error(`${loggerString(__dirname, "", "", __filename)} `
+            + `Running migrations failed! (${error.message})`);
+    });
+}
 
 // Create Express server
 const app = express();
@@ -114,6 +118,7 @@ const speedLimiter = slowDown({
 });
 
 // Controllers (route handlers)
+import DifficultyController from "./controllers/DifficultyController";
 import ErrortextController from "./controllers/ErrortextController";
 import FoodCategoryController from "./controllers/FoodCategoryController";
 import GameController from "./controllers/GameController";
@@ -121,8 +126,10 @@ import GameSettingController from "./controllers/GameSettingController";
 import HelptextController from "./controllers/HelptextController";
 import ImageController from "./controllers/ImageController";
 import IngredientController from "./controllers/IngredientController";
+import LogController from "./controllers/LogController";
 import LoggingController from "./controllers/LoggingController";
 import LoginController from "./controllers/LoginController";
+import MealtimesController from "./controllers/MealtimesController";
 import PasswordResetController from "./controllers/PasswordResetController";
 import PatientController from "./controllers/PatientController";
 import PatientSettingController from "./controllers/PatientSettingController";
@@ -132,9 +139,9 @@ import SmtpLoggingController from "./controllers/SmtpLoggingController";
 import StatisticController from "./controllers/StatisticController";
 import TherapistController from "./controllers/TherapistController";
 import UserController from "./controllers/UserController";
+import UtilController from "./controllers/UtilController";
 import VersionController from "./controllers/VersionController";
 import WordController from "./controllers/WordController";
-import UtilController from "./controllers/UtilController";
 import { supportMail } from "./mail-texts/supportMail";
 import { Mail } from "./util/mail/Mail";
 import { mailTransport } from "./util/mail/mailTransport";
@@ -189,6 +196,29 @@ app.use("/game-settings", GameSettingController);
 app.use("/smtp-logs", SmtpLoggingController);
 app.use("/patient-settings", PatientSettingController);
 app.use("/util", UtilController);
+app.use("/difficulties", DifficultyController);
+app.use("/mealtimes", MealtimesController);
+app.use("/logs", LogController);
+
+app.get("/changelog", async (req: Request, res: Response) => {
+    let content;
+    try {
+        content = fs.readFileSync("Changelog.md");
+    } catch (e) {
+        logger.error(`${loggerString(__dirname, "", "", __filename)} ${e.message}`);
+        content = {};
+    }
+
+    return res.status(HTTPStatusCode.OK).json(
+        new HttpResponse(HttpResponseStatus.SUCCESS,
+            {content: content.toString(), token: res.locals.authorizationToken},
+            [
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Changelog wurde erfolgreich geladen!`)
+            ]
+        )
+    );
+});
 
 /**
  * swagger api routes

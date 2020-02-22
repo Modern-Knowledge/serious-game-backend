@@ -17,17 +17,18 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/util
  * - info
  * - patient
  * - errortext
+ * - recipeName
+ * - mealtime
  */
 const validationMessages = new Map<string, Map<string, HttpResponseMessage>>();
 
 const categories = [
     "email", "gender", "forename", "lastname", "password", "token", "id", "therapist", "date", "info", "patient",
-    "errortext"
+    "errortext", "recipeName", "mealtime"
 ];
 
 for (const category of categories) {
     validationMessages.set(category, new Map());
-
 }
 
 /**
@@ -44,6 +45,20 @@ validationMessages.get("email").set(
 validationMessages.get("email").set(
     "duplicate",
     new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Die E-Mail ist bereits vergeben!"));
+
+/**
+ * Validation messages for recipe-name.
+ */
+validationMessages.get("recipeName").set(
+    "empty",
+    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Kein Rezeptname übergeben!"));
+
+/**
+ * Validation messages for recipe-name.
+ */
+validationMessages.get("mealtime").set(
+    "empty",
+    new HttpResponseMessage(HttpResponseMessageSeverity.DANGER, "Keine Tageszeit übergeben!"));
 
 /**
  * Validation messages for gender.

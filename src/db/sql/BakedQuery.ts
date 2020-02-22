@@ -57,7 +57,7 @@ export class BakedQuery {
 
                 this._sql = this._sql.replace("::" + item + "::", "?");
 
-                let value: SQLParam;
+                let value: SQLParam = null;
                 for (const currParam of params) {
                     if (currParam.name === item) {
                         value = currParam;

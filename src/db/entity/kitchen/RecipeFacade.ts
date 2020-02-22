@@ -88,6 +88,16 @@ export class RecipeFacade extends CompositeFacade<Recipe> {
     }
 
     /**
+     * Updates the recipe in the database and returns the number of affected rows.
+     *
+     * @param recipe user that should be updated
+     */
+    public async update(recipe: Recipe): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(recipe);
+        return await this.updateStatement(attributes);
+    }
+
+    /**
      * Fills the recipe-entity from the result.
      *
      * @param result database results

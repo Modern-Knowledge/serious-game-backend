@@ -6,7 +6,6 @@ import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/h
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkRouteValidation } from "../util/validation/validationHelper";
 import { rVM } from "../util/validation/validationMessages";
 

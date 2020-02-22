@@ -21,7 +21,7 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
 
     res.on("finish", () => {
         logger.info(`${loggerString()} ${req.method} "${url}" ${stopwatch.timeElapsed}`);
-        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, url);
+        new ExecutionTimeAnalyser().analyse(stopwatch.measuredTime, req.method + " " + url);
     });
 
     return next();
@@ -36,7 +36,18 @@ export function measureRequestTime(req: Request, res: Response, next: any): void
  * @param next next middleware
  */
 export function logRequest(req: Request, res: Response, next: any): void {
-    logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(req.body)}`);
+    const body = {...req.body};
+    if (body.password !== undefined) {
+        delete body.password;
+    }
+    if (body._password !== undefined) {
+        delete body._password;
+    }
+    if (body.password_confirmation !== undefined) {
+        delete body.password_confirmation;
+    }
+
+    logger.info(`${loggerString()} ${req.method} "${getRequestUrl(req)}" called! ${JSON.stringify(body)}`);
     return next();
 }
 

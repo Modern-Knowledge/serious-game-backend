@@ -1,32 +1,41 @@
 import * as bcrypt from "bcryptjs";
-import express, {Request, Response} from "express";
-import {check} from "express-validator";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import {User} from "../lib/models/User";
-import {formatDateTime} from "../lib/utils/dateFormatter";
+import express, { Request, Response } from "express";
+import { check } from "express-validator";
+
+import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { UserFacade } from "../db/entity/user/UserFacade";
+import { PatientDto } from "../lib/models/Dto/PatientDto";
+import { TherapistDto } from "../lib/models/Dto/TherapistDto";
+import { UserDto } from "../lib/models/Dto/UserDto";
+import { Patient } from "../lib/models/Patient";
+import { User } from "../lib/models/User";
+import { formatDateTime } from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
-    HttpResponseStatus
+    HttpResponseStatus,
 } from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import {passwordResettet} from "../mail-texts/passwordResettet";
-import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
-import {logEndpoint} from "../util/log/endpointLogger";
-import {Mail} from "../util/mail/Mail";
-import {mailTransport} from "../util/mail/mailTransport";
-import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
-import {checkUserPermission} from "../util/middleware/permissionMiddleware";
-import {checkRouteValidation} from "../util/validation/validationHelper";
-import {rVM} from "../util/validation/validationMessages";
-import {emailValidator} from "../util/validation/validators/emailValidator";
+import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
+import { passwordResettet } from "../mail-texts/passwordResettet";
+import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
+import { logEndpoint } from "../util/log/endpointLogger";
+import { Mail } from "../util/mail/Mail";
+import { mailTransport } from "../util/mail/mailTransport";
+import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
+import { checkUserPermission } from "../util/middleware/permissionMiddleware";
+import { checkRouteValidation } from "../util/validation/validationHelper";
+import { rVM } from "../util/validation/validationMessages";
 
 const router = express.Router();
 
 const controllerName = "UserController";
 
-const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication];
+const authenticationMiddleware = [
+    checkAuthenticationToken,
+    checkAuthentication
+];
 
 /**
  * GET /related
@@ -41,9 +50,24 @@ router.get("/related", authenticationMiddleware, async (req: Request, res: Respo
     try {
         logEndpoint(controllerName, `Retrieved related user with id ${res.locals.user.id}`, req);
 
+        const patient = res.locals.user instanceof Patient;
+        let user;
+
+        let facade;
+        if (patient === true) {
+            facade = new PatientCompositeFacade();
+            facade.withSessionCompositeJoin = false;
+            user = new PatientDto(await facade.getById(res.locals.user.id));
+        } else {
+                facade = new TherapistCompositeFacade();
+                user = new TherapistDto(
+                    await facade.getById(res.locals.user.id)
+                );
+        }
+
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user: res.locals.user, token: res.locals.authorizationToken}, [
+                {user, token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, "Benutzer/in erfolgreich geladen!")
                 ]
             )
@@ -169,8 +193,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
     check("_email").normalizeEmail()
         .not().isEmpty().withMessage(rVM("email", "empty"))
-        .isEmail().withMessage(rVM("email", "invalid"))
-        .custom(emailValidator),
+        .isEmail().withMessage(rVM("email", "invalid")),
 
     check("_forename").escape().trim()
         .not().isEmpty().withMessage(rVM("forename", "empty")),
@@ -189,6 +212,14 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     user.id = req.params.id;
     userFacade.filter.addFilterCondition("id", user.id);
 
+    const userFacade1 = new UserFacade();
+    userFacade1.filter.addFilterCondition("email", user.email);
+    const fUser = await userFacade1.getOne();
+
+    if (fUser && fUser.email !== res.locals.user.email) {
+        return http4xxResponse(res, [rVM("email", "duplicate")], 400);
+    }
+
     try {
         const affectedRows = await userFacade.update(user);
 
@@ -205,7 +236,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {user, token: res.locals.authorizationToken}, [
+                {user: new UserDto(user), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `BenutzerIn wurde erfolgreich aktualisiert!`, true)
                 ]

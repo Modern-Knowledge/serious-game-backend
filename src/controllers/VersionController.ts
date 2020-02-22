@@ -1,16 +1,12 @@
 
 import express from "express";
 import { Request, Response } from "express";
-import moment from "moment";
-import momentDurationFormatSetup from "moment-duration-format";
-
 import os from "os";
 import {
     HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import {databaseConnection} from "../util/db/databaseConnection";
 import { logEndpoint } from "../util/log/endpointLogger";
 
 const router = express.Router();
@@ -34,13 +30,19 @@ const controllerName = "VersionController";
  * - version: application version
  */
 router.get("/", async (req: Request, res: Response, next: any) => {
-    // @ts-ignore
-    momentDurationFormatSetup(moment);
-
     logEndpoint(controllerName, `Version requested!`, req);
 
     try {
-        const duration = moment.duration(process.uptime(), "seconds").format("hh:mm:ss");
+        const runtime = process.uptime();
+        const r = (runtime % 3600);
+        const hours = Math.floor(runtime / 3600);
+        const minutes = Math.floor(r / 60);
+        const seconds = Math.floor(r % 60);
+
+        const duration =
+            (hours < 10 ? "0" + hours : hours) + ":" +
+            (minutes < 10 ? "0" + minutes : minutes) + ":" +
+            (seconds < 10 ? "0" + seconds : seconds);
 
         const revision = require("child_process")
             .execSync("git rev-parse HEAD")

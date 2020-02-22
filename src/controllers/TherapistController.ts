@@ -6,8 +6,10 @@ import { check } from "express-validator";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
+import {UserFacade} from "../db/entity/user/UserFacade";
 import {Roles} from "../lib/enums/Roles";
 import { Status } from "../lib/enums/Status";
+import {TherapistDto} from "../lib/models/Dto/TherapistDto";
 import { Therapist } from "../lib/models/Therapist";
 import { TherapistPatient } from "../lib/models/TherapistPatient";
 import {
@@ -57,9 +59,11 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response, ne
 
         logEndpoint(controllerName, `Return all therapists!`, req);
 
+        const therapistsDto = therapists.map((value: Therapist) => new TherapistDto(value));
+
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapists, token: res.locals.authorizationToken},
+                {therapists: therapistsDto, token: res.locals.authorizationToken},
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `Alle TherapeutInnen wurden erfolgreich geladen!`)
@@ -141,9 +145,10 @@ router.post("/", [
 
         return res.status(HTTPStatusCode.CREATED).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { user: response, token},
+                { user: new TherapistDto(response), token},
                 [
-                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`)
+                    new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Account wurde erfolgreich angelegt!`,
+                        true)
                 ]
             )
         );
@@ -177,8 +182,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
     check("_email").normalizeEmail()
         .not().isEmpty().withMessage(rVM("email", "empty"))
-        .isEmail().withMessage(rVM("email", "invalid"))
-        .custom(emailValidator),
+        .isEmail().withMessage(rVM("email", "invalid")),
 
     check("_forename").escape().trim()
         .not().isEmpty().withMessage(rVM("forename", "empty")),
@@ -199,6 +203,15 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
     const therapistPatientsFacade = new TherapistsPatientsFacade();
 
     const therapist = new Therapist().deserialize(req.body);
+
+    const userFacade1 = new UserFacade();
+    userFacade1.filter.addFilterCondition("email", therapist.email);
+    const fUser = await userFacade1.getOne();
+
+    if (fUser && fUser.email !== res.locals.user.email) {
+        return http4xxResponse(res, [rVM("email", "duplicate")], 400);
+    }
+
     try {
         therapist.id = req.params.id;
 
@@ -228,7 +241,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                {therapist, token: res.locals.authorizationToken}, [
+                {therapist: new TherapistDto(therapist), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
                         `TherapeutIn wurde erfolgreich aktualisiert!`)
                 ]
@@ -322,7 +335,7 @@ router.put("/toggle-accepted/:id", authenticationMiddleware, checkTherapistAdmin
         // toggle therapist accepted
         therapist.accepted = !therapist.accepted;
 
-        const affectedRows = await therapistFacade.update(therapist);
+        await therapistFacade.update(therapist);
 
         logEndpoint(
             controllerName,

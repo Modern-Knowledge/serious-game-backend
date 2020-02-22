@@ -111,7 +111,7 @@ describe("PasswordResetController Tests", () => {
                 .expect("Content-Type", /json/)
                 .expect(200);
 
-            expect(res.body._status).toEqual("fail");
+            expect(res.body._status).toEqual("success");
             expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
 
         }, timeout);

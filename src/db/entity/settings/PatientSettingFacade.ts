@@ -1,4 +1,3 @@
-
 import { PatientSetting } from "../../../lib/models/PatientSetting";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
@@ -9,7 +8,6 @@ import { EntityFacade } from "../EntityFacade";
  * Handles CRUD operations with patient-settings-entity.
  */
 export class PatientSettingFacade extends EntityFacade<PatientSetting> {
-
     /**
      * @param tableAlias table-alias of the facade
      */
@@ -28,7 +26,11 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
      * @param excludedSQLAttributes attributes that should not be selected
      */
     public getSQLAttributes(excludedSQLAttributes?: string[]): SQLAttributes {
-        const sqlAttributes: string[] = ["neglect", "patient_id"];
+        const sqlAttributes: string[] = [
+            "neglect",
+            "patient_id",
+            "skip_introduction"
+        ];
 
         return super.getSQLAttributes(excludedSQLAttributes, sqlAttributes);
     }
@@ -51,6 +53,11 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
             patientSetting.neglect = result[this.name("neglect")];
         }
 
+        if (result[this.name("skip_introduction")] !== undefined) {
+            patientSetting.skipIntroduction =
+                result[this.name("skip_introduction")];
+        }
+
         if (result[this.name("patient_id")]) {
             patientSetting.patientId = result[this.name("patient_id")];
         }
@@ -63,8 +70,12 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
      *
      * @param patientSetting patientSetting that should be inserted
      */
-    public async insert(patientSetting: PatientSetting): Promise<PatientSetting> {
-        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(patientSetting);
+    public async insert(
+        patientSetting: PatientSetting
+    ): Promise<PatientSetting> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(
+            patientSetting
+        );
 
         const result = await this.insertStatement(attributes);
 
@@ -76,23 +87,48 @@ export class PatientSettingFacade extends EntityFacade<PatientSetting> {
     }
 
     /**
+     * Updates the patient-setting in the database and returns the number of affected rows.
+     *
+     * @param patientSetting user that should be updated
+     */
+    public async update(patientSetting: PatientSetting): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patientSetting);
+        return await this.updateStatement(attributes);
+    }
+
+    /**
      * Returns common sql-attributes for inserts- and updates-statement.
      *
      * @param prefix prefix before the sql-attribute
      * @param patientSetting entity to take values from
      */
-    protected getSQLValueAttributes(prefix: string, patientSetting: PatientSetting): SQLValueAttributes {
+    protected getSQLValueAttributes(
+        prefix: string,
+        patientSetting: PatientSetting
+    ): SQLValueAttributes {
         const attributes: SQLValueAttributes = new SQLValueAttributes();
 
-        const patientIdAttribute: SQLValueAttribute
-            = new SQLValueAttribute("patient_id", prefix, patientSetting.patientId);
+        const patientIdAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "patient_id",
+            prefix,
+            patientSetting.patientId
+        );
         attributes.addAttribute(patientIdAttribute);
 
-        const neglectAttribute: SQLValueAttribute
-            = new SQLValueAttribute("neglect", prefix, patientSetting.neglect);
+        const neglectAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "neglect",
+            prefix,
+            patientSetting.neglect
+        );
         attributes.addAttribute(neglectAttribute);
+
+        const skipIntroductionAttribute: SQLValueAttribute = new SQLValueAttribute(
+            "skip_introduction",
+            prefix,
+            patientSetting.skipIntroduction
+        );
+        attributes.addAttribute(skipIntroductionAttribute);
 
         return attributes;
     }
-
 }

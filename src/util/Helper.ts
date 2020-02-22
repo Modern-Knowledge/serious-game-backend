@@ -63,7 +63,7 @@ export function getImage(filename: string): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
         fs.readFile(filePath, (err, data: Buffer) => {
             if (err) {
-                reject(err);
+                return reject(err);
             }
 
             resolve(data);

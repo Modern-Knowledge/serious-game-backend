@@ -5,6 +5,7 @@ import { check } from "express-validator";
 import moment from "moment";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
 import { UserFacade } from "../db/entity/user/UserFacade";
+import {UserDto} from "../lib/models/Dto/UserDto";
 import { User } from "../lib/models/User";
 import { formatDateTime } from "../lib/utils/dateFormatter";
 import {
@@ -54,7 +55,7 @@ router.post("/login", [
     const userFacade = new UserFacade();
     const jwtHelper = new JWTHelper();
 
-    const {email, password} = req.body;
+    const {email, password, loggedIn} = req.body;
 
     const filter = userFacade.filter;
     filter.addFilterCondition("email", email);
@@ -145,15 +146,18 @@ router.post("/login", [
         reqUser.lastLogin = new Date();
         reqUser.failedLoginAttempts = 0;
         reqUser.loginCoolDown = null;
+        reqUser.resetcode = null;
+        reqUser.resetcodeValidUntil = null;
 
         await userFacade.update(reqUser);
 
-        const token = await jwtHelper.generateJWT(reqUser);
+        const token = await jwtHelper.generateJWT(reqUser, loggedIn);
 
         return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {user: reqUser, token},
+            {user: new UserDto(reqUser), token},
             [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Sie haben sich erfolgreich eingeloggt!`)
+                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                    `Sie haben sich erfolgreich eingeloggt!`, true)
             ]
         ));
 

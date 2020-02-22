@@ -32,7 +32,7 @@ import logger from "../log/logger";
 export async function checkAuthentication(req: Request, res: Response, next: any): Promise<void> {
     logger.debug(`${loggerString(__dirname, "authenticationMiddleware", "checkAuthentication")}`);
 
-    passport.authenticate("jwt", { session: false}, (err, user, info) => {
+    passport.authenticate("jwt", { session: false}, (err, user) => {
         if (err) {
             return next(err);
         }

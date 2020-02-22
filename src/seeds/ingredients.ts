@@ -87,7 +87,7 @@ salad.imageId = 14;
 
 const bun = new Ingredient();
 bun.id = 15;
-bun.name = "Brot";
+bun.name = "Brötchen";
 bun.foodCategoryId = bread.id;
 bun.imageId = 15;
 
@@ -163,9 +163,33 @@ zwieback.name = "Zwieback";
 zwieback.foodCategoryId = bread.id;
 zwieback.imageId = 27;
 
+const oatmeal = new Ingredient();
+oatmeal.id = 28;
+oatmeal.name = "Haferflocken";
+oatmeal.foodCategoryId = stapleFood.id;
+oatmeal.imageId = 28;
+
+const jam = new Ingredient();
+jam.id = 29;
+jam.name = "Marmelade";
+jam.foodCategoryId = stapleFood.id;
+jam.imageId = 29;
+
+const butter = new Ingredient();
+butter.id = 30;
+butter.name = "Butter";
+butter.foodCategoryId = chilledGoods.id;
+butter.imageId = 30;
+
+const milk = new Ingredient();
+milk.id = 31;
+milk.name = "Milch";
+milk.foodCategoryId = chilledGoods.id;
+milk.imageId = 31;
+
 export {
     egg, oil, spinach, porkMeat, potato, sauerkraut, beef,
     noodle, ham, cheese, paprika, dough, tomatoSauce, salad,
     bun, onion, spaetzle, chips, chocolate, pistachios, pommes, wok,
-    blackbread, icetea, orangejuice, water, zwieback
+    blackbread, icetea, orangejuice, water, zwieback, oatmeal, jam, butter, milk
 };

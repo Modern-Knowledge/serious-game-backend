@@ -1,5 +1,5 @@
 
-import { FieldInfo, MysqlError, PoolConnection } from "mysql";
+import { MysqlError, PoolConnection } from "mysql";
 import { Error } from "tslint/lib/error";
 import { AbstractModel } from "../lib/models/AbstractModel";
 import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
@@ -218,7 +218,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
                 }
 
                 const query = connection.query(npq.query, npq.params,
-                    (mysqlError: MysqlError, results: any, fields: FieldInfo[]) => {
+                    (mysqlError: MysqlError, results: any) => {
                     connection.release(); // release pool connection
 
                     logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
@@ -312,7 +312,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
         const npq: IQuery = this.getInsertQuery(attributes);
 
         return new Promise<any>((resolve, reject) => {
-            const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
+            const query = connection.query(npq.query, npq.params, (error: MysqlError, results) => {
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "insert")} ${query.sql}`);
 
                 if (error) {
@@ -399,7 +399,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
         const npq = this.getUpdateQuery(attributes);
 
         return new Promise<any>((resolve, reject) => {
-            const query = connection.query(npq.query, npq.params, (error: MysqlError, results, fields: FieldInfo[]) => {
+            const query = connection.query(npq.query, npq.params, (error: MysqlError, results) => {
 
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "update")} ${query.sql}`);
 
@@ -479,7 +479,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
 
         return new Promise<any>((resolve, reject) => {
             const query = connection.query(npq.query, npq.params,
-                (error: MysqlError, results: any, fields: FieldInfo[]) => {
+                (error: MysqlError, results: any) => {
 
                 logger.debug(`${loggerString(__dirname, BaseFacade.name, "delete")} ${query.sql}`);
 
@@ -685,14 +685,17 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
             }
         }
 
-        logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
-        `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
-        `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ${oneToOneJoinAmount} one-to-one)!`);
+        if (this.joins.length > 0) {
+            logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+                `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
+                `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ` +
+                `${oneToOneJoinAmount} one-to-one)!`);
 
-        const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
-        if (oneToManyJoinAmount >= warnToManyJoins) {
-            logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
-            `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+            const warnToManyJoins: number = Number(process.env.WARN_ONE_TO_MANY_JOINS) || 5;
+            if (oneToManyJoinAmount >= warnToManyJoins) {
+                logger.warn(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+                    `Safe amount of one-to-many joins (${oneToManyJoinAmount}) exceeded!`);
+            }
         }
     }
 }

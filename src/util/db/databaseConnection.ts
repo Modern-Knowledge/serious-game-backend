@@ -51,13 +51,13 @@ class DatabaseConnection {
      * @param queryCallbacks array of queries that are executed in the transaction
      */
     // tslint:disable-next-line:cognitive-complexity
-    public transaction(queryCallbacks: ITransactionQuery[]): Promise<any[]> {
+    public async transaction(queryCallbacks: ITransactionQuery[]): Promise<any[]> {
         logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} ` +
             `${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} ` +
             `going to be executed in a transaction!`);
 
         return new Promise<any[]>((resolve, reject) => {
-            this.poolQuery((error: MysqlError, connection: PoolConnection) => {
+            this.poolQuery(async (error: MysqlError, connection: PoolConnection) => {
                 if (error) { // error with pool
                     if (connection) {
                         connection.release();
@@ -90,18 +90,24 @@ class DatabaseConnection {
                      * execute the queries in a transaction
                      */
                     for (let i = 0; i < queryCallbacks.length; i++) {
-                        response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
+                        try {
+                            response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
 
-                        if (response && response.insertedId &&
-                            i < queryCallbacks.length - 1 && queryCallbacks[i].callBackOnInsert) { // insert query
+                            if (response && response.insertedId &&
+                                i < queryCallbacks.length - 1 && queryCallbacks[i].callBackOnInsert) { // insert query
 
                                 queryCallbacks[i].callBackOnInsert(
                                     response.insertedId,
                                     queryCallbacks[i + 1].attributes
                                 ); // execute callback with attributes of next element
-                        }
+                            }
 
-                        result.push(response);
+                            result.push(response);
+                        } catch (e) {
+                            logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transaction")} `
+                                + `${e.message}`);
+                            reject(e);
+                        }
                     }
 
                     /**
@@ -270,22 +276,6 @@ class DatabaseConnection {
         this._pool.on("release", (connection) => {
             logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "createPoolEvents")} ` +
                 `Connection ${connection.threadId} released!`);
-        });
-    }
-
-    /**
-     * Closes the pool and disconnects every connection.
-     */
-    private disconnect(): void {
-        this._pool.end((err: MysqlError) => {
-            if (err) {
-                logger.error(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
-                    `${err.message} ${this}`);
-                throw err;
-            } else {
-                logger.info(`${loggerString(__dirname, DatabaseConnection.name, "disconnect")} ` +
-                    `Disconnected from database! ${this}`);
-            }
         });
     }
 

@@ -1,6 +1,7 @@
 
 import * as jwt from "jsonwebtoken";
 import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import {Roles} from "../lib/enums/Roles";
 import { User } from "../lib/models/User";
 
 /**
@@ -15,16 +16,21 @@ export class JWTHelper {
      * Creates the jwt-token for the given user. Checks if the user is a therapist.
      *
      * @param user user that should be authenticated
+     * @param loggedIn signals that the user wants to stay signed in
      */
-    public async generateJWT(user: User): Promise<string> {
+    public async generateJWT(user: User, loggedIn: boolean = false): Promise<string> {
         const therapistFacade = new TherapistFacade();
-        const isTherapist = await therapistFacade.isTherapist(user.id);
+        const therapist = await therapistFacade.getById(user.id);
+        const isTherapist = therapist !== undefined;
+        const isAdmin = therapist !== undefined && therapist.role === Roles.ADMIN;
+
+        const expiresIn = loggedIn ? 31536000 : this._expiresIn;
 
         return jwt.sign(
-            { id: user.id, email: user.email, therapist: isTherapist},
+            { id: user.id, email: user.email, therapist: isTherapist, admin: isAdmin},
             this._secretKey,
             {
-                expiresIn: this._expiresIn
+                expiresIn
             }
         );
     }

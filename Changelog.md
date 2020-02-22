@@ -1,3 +1,37 @@
+# "Plan your Day"-Backend Changelog 
+
+## Unreleased
+
+## [1.2.0] - 2020-02-21
+### Added
+ - Add route to display logs.
+ - Add option to stay logged in.
+ - Add musli and jam-bread recipe.
+ - Add mealtime- and difficulty controller.
+ - Add route to filter recipes in recipe-controller.
+ - Add route to update a recipe.
+ - Add tests to recipe-, mealtimes- and difficulty-controller.
+ - Add success message after a user has registered.
+ - Add route to show changelog.
+ - Add info about the current build to the log.
+ - Add User-Dtos to transfer only the important data.
+ - Add tests to log- and util-controller.
+ - Add user-id to logs.
+ - Add helptexts to game.
+ - Add short description to some recipes.
+ 
+## Changed
+ - Fix date format in forgot password mail.
+ - Fix 'password' typo in password-reset controller.
+ - Fix running tests with test database.
+ - Change data, that is seeded in production.
+ - Fix wrong response in password-reset controller.
+ - Remove sensitive data from request bodies.
+ - Remove sensitive data from being logged.
+ - Fix duplicate email error when updating profile.
+ - Fix invalid json in response.
+ - Load therapist or patient instead of user if user-information is requested.
+ 
 ## [1.1.0] - 2020-02-06
 ### Added
  - Add information about the application to the VersionController (os, node.js-version, commit).

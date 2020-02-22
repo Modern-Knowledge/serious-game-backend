@@ -192,7 +192,7 @@ describe("LoggingController Tests", () => {
                 {
                     logger: "logger",
                     level: "debug",
-                    message: ["method", "message", "param1 param2"]
+                    message: ["method", "message", 1, "param1 param2"]
                 }
             ];
 

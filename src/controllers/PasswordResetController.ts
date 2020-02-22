@@ -1,27 +1,25 @@
-
 import * as bcrypt from "bcryptjs";
-import express, { Request, Response } from "express";
-import { check } from "express-validator";
+import express, {Request, Response} from "express";
+import {check} from "express-validator";
 import moment from "moment";
-import { UserFacade } from "../db/entity/user/UserFacade";
-import { formatDate, formatDateTime } from "../lib/utils/dateFormatter";
+import {UserFacade} from "../db/entity/user/UserFacade";
+import {formatDateTime} from "../lib/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
-import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
-import { passwordReset } from "../mail-texts/passwordReset";
-import { passwordResettet } from "../mail-texts/passwordResettet";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { logEndpoint } from "../util/log/endpointLogger";
-import { Mail } from "../util/mail/Mail";
-import { mailTransport } from "../util/mail/mailTransport";
-import { setPasswordResetToken } from "../util/password/passwordHelper";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { rVM } from "../util/validation/validationMessages";
-import {passwordValidator} from "../util/validation/validators/passwordValidator";
+import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+import {passwordReset} from "../mail-texts/passwordReset";
+import {passwordResettet} from "../mail-texts/passwordResettet";
+import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
+import {logEndpoint} from "../util/log/endpointLogger";
+import {Mail} from "../util/mail/Mail";
+import {mailTransport} from "../util/mail/mailTransport";
+import {setPasswordResetToken} from "../util/password/passwordHelper";
+import {checkRouteValidation} from "../util/validation/validationHelper";
+import {rVM} from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -63,10 +61,16 @@ router.post("/reset", [
         if (!user) {
             logEndpoint(controllerName, `User with e-mail ${email} was not found!`, req);
 
-            return http4xxResponse(res, [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                    `An Ihre E-Mail Adresse ${email} wurde ein Code zum Zurücksetzen des Passworts gesendet!`)
-            ], HTTPStatusCode.OK);
+            return res.status(HTTPStatusCode.OK).json(
+                new HttpResponse(HttpResponseStatus.SUCCESS,
+                    {},
+                    [
+                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                            `An Ihre E-Mail Adresse ${email} wurde ein Code zum Zurücksetzen des Passworts gesendet!`,
+                            true)
+                    ]
+                )
+            );
         }
 
         // check if token exists
@@ -86,7 +90,7 @@ router.post("/reset", [
         const m = new Mail(
             [user.recipient],
             passwordReset,
-            [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDate(user.resetcodeValidUntil)]
+            [user.fullNameWithSirOrMadam, user.resetcode.toString(), formatDateTime(user.resetcodeValidUntil)]
         );
         mailTransport.sendMail(m);
 
@@ -124,7 +128,7 @@ router.post("/reset", [
  * - email: email of the user that wants to change his/her password
  * - token: token for resetting the password
  */
-router.post("/reset-password",  [
+router.post("/reset-password", [
     check("password").trim()
         .isLength({min: Number(process.env.PASSWORD_LENGTH)})
         .withMessage(rVM("password", "length")),
@@ -166,7 +170,7 @@ router.post("/reset-password",  [
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
-                    `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`)
+                    `Ihre E-Mail Adresse "${email}" wurde nicht gefunden!`, true)
             ]);
         }
 
@@ -198,7 +202,7 @@ router.post("/reset-password",  [
 
             return http4xxResponse(res, [
                 new HttpResponseMessage(HttpResponseMessageSeverity.DANGER,
-                    `Für ihren Account wurde keine Passwort Rücketzung angefordert!`)
+                    `Für ihren Account wurde keine Passwort Rücketzung angefordert!`, true)
             ], HTTPStatusCode.BAD_REQUEST);
         }
 
@@ -222,7 +226,7 @@ router.post("/reset-password",  [
                 undefined,
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `Ihr Password wurde erfolgreich geändert!`, true)
+                        `Ihr Passwort wurde erfolgreich geändert!`, true)
                 ]
             )
         );
