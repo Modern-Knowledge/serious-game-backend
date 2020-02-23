@@ -27,21 +27,34 @@ const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication]
 router.get("/mail-server", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
     logEndpoint(controllerName, `Check if the mail-server is reachable!`, req);
 
-    mailTransport.transporter.verify((error: Error | null) => {
-        if (error) {
-            return next(error);
-        } else {
-            return res.status(HTTPStatusCode.OK).json(
-                new HttpResponse(HttpResponseStatus.SUCCESS,
-                    {connectable: true},
-                    [
-                        new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                            `Mail-Server konnte erreicht werden!`)
-                    ]
-                )
-            );
-        }
-    });
+    if (!mailTransport.transporter) {
+        return res.status(HTTPStatusCode.OK).json(
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                {connectable: false},
+                []
+            )
+        );
+    }
+
+    try {
+        mailTransport.transporter.verify((error: Error | null) => {
+            if (error) {
+                return next(error);
+            } else {
+                return res.status(HTTPStatusCode.OK).json(
+                    new HttpResponse(HttpResponseStatus.SUCCESS,
+                        {connectable: true},
+                        [
+                            new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
+                                `Mail-Server konnte erreicht werden!`)
+                        ]
+                    )
+                );
+            }
+        });
+    } catch (e) {
+        return next(e);
+    }
 });
 
 /**

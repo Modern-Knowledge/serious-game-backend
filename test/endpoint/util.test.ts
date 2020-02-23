@@ -28,8 +28,6 @@ describe("UtilController Tests", () => {
 
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("connectable");
-
-            expect(containsMessage(res.body._messages, HttpResponseMessageSeverity.SUCCESS, 1)).toBeTruthy();
         }, timeout);
 
         // SGBUCA02
