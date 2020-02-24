@@ -40,7 +40,7 @@ pizza.mealtime = Mealtimes.DINNER;
 
 const spaghetti = new Recipe();
 spaghetti.id = 6;
-spaghetti.name = "Spagetthi";
+spaghetti.name = "Spaghetti";
 spaghetti.description = "Die Nudeln im Topf kochen und mit der Tomatensauce anrichten.";
 spaghetti.difficultyId = difficultyEasy.id;
 spaghetti.mealtime = Mealtimes.LUNCH;
