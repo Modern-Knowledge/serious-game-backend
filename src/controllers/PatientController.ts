@@ -333,13 +333,6 @@ router.put(
             .escape()
             .trim()
             .toDate(),
-
-        check("_info")
-            .escape()
-            .trim()
-            .not()
-            .isEmpty()
-            .withMessage(rVM("info", "empty"))
     ],
     async (req: Request, res: Response, next: any) => {
         if (!checkRouteValidation(controllerName, req, res)) {
