@@ -404,7 +404,8 @@ router.put(
                     [
                         new HttpResponseMessage(
                             HttpResponseMessageSeverity.SUCCESS,
-                            `PatientIn mit ID ${id} wurde erfolgreich aktualisiert!`
+                            `PatientIn wurde erfolgreich aktualisiert!`,
+                            true
                         )
                     ]
                 )

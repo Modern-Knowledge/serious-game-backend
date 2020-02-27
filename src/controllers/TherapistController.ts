@@ -243,7 +243,7 @@ router.put("/:id", authenticationMiddleware, checkUserPermission, [
             new HttpResponse(HttpResponseStatus.SUCCESS,
                 {therapist: new TherapistDto(therapist), token: res.locals.authorizationToken}, [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                        `TherapeutIn wurde erfolgreich aktualisiert!`)
+                        `TherapeutIn wurde erfolgreich aktualisiert!`, true)
                 ]
             )
         );
