@@ -240,7 +240,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
                     returnEntities = this.postProcessSelect(returnEntities);
                     returnEntities = this._postProcessFilter(returnEntities);
 
-                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} `
+                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} `
                         + `${returnEntities.length} result(s) returned!`);
 
                     if (returnEntities.length > 100) {
@@ -250,7 +250,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
                     }
 
                     const elapsedTime = s.timeElapsed;
-                    logger.info(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
+                    logger.debug(`${loggerString(__dirname, BaseFacade.name, "select")} ` +
                     `Results computed in ${elapsedTime}!`);
 
                     const eta: ExecutionTimeAnalyser = new ExecutionTimeAnalyser();
@@ -686,7 +686,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
         }
 
         if (this.joins.length > 0) {
-            logger.info(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
+            logger.debug(`${loggerString(__dirname, BaseFacade.name, "joinAnalyzer")} ` +
                 `Statement contains ${this.joins.length} joins! (${leftJoinAmount} left-joins, ` +
                 `${innerJoinAmount} inner-joins, ${oneToManyJoinAmount} one-to-many, ` +
                 `${oneToOneJoinAmount} one-to-one)!`);
