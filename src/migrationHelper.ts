@@ -28,6 +28,7 @@ import {
     fridgeNotCheckedErrorTextGames,
     itemAlreadyInFridgeErrorTextGames,
     mealtimeErrorTextGames,
+    mealtimeFilledErrorTextGames,
     shoppingCartErrorTextGames,
     shoppingListErrorTextGames,
 } from "./seeds/errortextGames";
@@ -35,6 +36,7 @@ import {
     fridgeNotCheckedError,
     itemAlreadyInFridgeError,
     mealtimeError,
+    mealtimeFilledError,
     shoppingCartError,
     shoppingListError,
 } from "./seeds/errortexts";
@@ -42,35 +44,48 @@ import {
     fridgeNotCheckedErrorTextGamesStatistic,
     itemAlreadyInFridgeErrorTextGamesStatistic,
     mealtimeErrorTextGamesStatistic,
+    mealtimeFilledErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
     shoppingListErrorTextGamesStatistic,
 } from "./seeds/errortextStatistic";
-import {
-    bread,
-    chilledGoods,
-    deepFrozen,
-    drinks,
-    stapleFood,
-    sweets,
-    vegetables
-} from "./seeds/foodCategories";
+import { bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables } from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
 import { gameSettings, gameSettings1, gameSettings2, gameSettings3 } from "./seeds/gameSettings";
-import {helptextGames, helptextGames1, helptextGames2, helptextGames3} from "./seeds/helptextGames";
-import {helptext, helptext1, helptext2, helptext3} from "./seeds/helptexts";
+import { helptextGames, helptextGames1, helptextGames2, helptextGames3 } from "./seeds/helptextGames";
+import { helptext, helptext1, helptext2, helptext3 } from "./seeds/helptexts";
 import { loadImages } from "./seeds/images";
 import {
-    beef, blackbread, bun, butter,
-    cheese, chips, chocolate, dough,
+    beef,
+    blackbread,
+    bun,
+    butter,
+    cheese,
+    chips,
+    chocolate,
+    dough,
     egg,
-    ham, icetea, jam, milk,
-    noodle, oatmeal,
-    oil, onion, orangejuice,
-    paprika, pistachios, pommes,
+    ham,
+    icetea,
+    jam,
+    milk,
+    noodle,
+    oatmeal,
+    oil,
+    onion,
+    orangejuice,
+    paprika,
+    pistachios,
+    pommes,
     porkMeat,
-    potato, salad,
-    sauerkraut, spaetzle,
-    spinach, tomatoSauce, water, wok, zwieback
+    potato,
+    salad,
+    sauerkraut,
+    spaetzle,
+    spinach,
+    tomatoSauce,
+    water,
+    wok,
+    zwieback,
 } from "./seeds/ingredients";
 import { debugLog, errorLogWithUser, infoLogWithUser, verboseLogWithUser } from "./seeds/logs";
 import { pSettings } from "./seeds/patientSettings";
@@ -98,27 +113,32 @@ import {
     recipeIngredient28,
     recipeIngredient29,
     recipeIngredient3,
-    recipeIngredient30, recipeIngredient31,
+    recipeIngredient30,
+    recipeIngredient31,
     recipeIngredient32,
-    recipeIngredient33, recipeIngredient34,
+    recipeIngredient33,
+    recipeIngredient34,
     recipeIngredient35,
     recipeIngredient4,
     recipeIngredient5,
     recipeIngredient6,
     recipeIngredient7,
     recipeIngredient8,
-    recipeIngredient9
+    recipeIngredient9,
 } from "./seeds/recipeIngredients";
 import {
     burger,
     cheeseNoodles,
-    goulash, jamBread, musli,
-    pastaSalad, pizza,
+    goulash,
+    jamBread,
+    musli,
+    pastaSalad,
+    pizza,
     roastPork,
     schnitzel,
     scrambledEgg,
     spaghetti,
-    tafelspitz
+    tafelspitz,
 } from "./seeds/recipes";
 import { session } from "./seeds/sessions";
 import { severityEasy, severityHard, severityMedium } from "./seeds/severities";
@@ -166,7 +186,12 @@ export async function migrate(): Promise<void> {
         await truncateTables();
     } else {
         logger.warn(
-            `${loggerString(__dirname, "", "", __filename)} Running truncate tables is skipped!`
+            `${loggerString(
+                __dirname,
+                "",
+                "",
+                __filename
+            )} Running truncate tables is skipped!`
         );
     }
 
@@ -177,7 +202,12 @@ export async function migrate(): Promise<void> {
         await dropTables();
     } else {
         logger.warn(
-            `${loggerString(__dirname, "", "", __filename)} Running drop tables is skipped!`
+            `${loggerString(
+                __dirname,
+                "",
+                "",
+                __filename
+            )} Running drop tables is skipped!`
         );
     }
 
@@ -188,7 +218,12 @@ export async function migrate(): Promise<void> {
         await runMigrations();
     } else {
         logger.warn(
-            `${loggerString(__dirname, "", "", __filename)} Running migrations is skipped!`
+            `${loggerString(
+                __dirname,
+                "",
+                "",
+                __filename
+            )} Running migrations is skipped!`
         );
     }
 
@@ -212,7 +247,12 @@ export async function runMigrations(): Promise<void> {
     const directory = path.resolve("migrations");
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Running migrations from ${directory}!`
+        `${loggerString(
+            __dirname,
+            "",
+            "",
+            __filename
+        )} Running migrations from ${directory}!`
     );
 
     const options = {
@@ -237,7 +277,12 @@ export async function runMigrations(): Promise<void> {
     await marv.migrate(migrations, driver(options));
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Completed running migrations!`
+        `${loggerString(
+            __dirname,
+            "",
+            "",
+            __filename
+        )} Completed running migrations!`
     );
 }
 
@@ -250,13 +295,20 @@ export async function truncateTables(): Promise<number> {
 
     if (results.length === 0) {
         logger.info(
-            `${loggerString(__dirname, "", "", __filename)} No tables to truncate!`
+            `${loggerString(
+                __dirname,
+                "",
+                "",
+                __filename
+            )} No tables to truncate!`
         );
         return 0;
     }
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Truncate ${results.length} tables!`
+        `${loggerString(__dirname, "", "", __filename)} Truncate ${
+            results.length
+        } tables!`
     );
 
     let stmt = "";
@@ -286,7 +338,9 @@ export async function dropTables(): Promise<number> {
     }
 
     logger.info(
-        `${loggerString(__dirname, "", "", __filename)} Drop ${results.length} tables!`
+        `${loggerString(__dirname, "", "", __filename)} Drop ${
+            results.length
+        } tables!`
     );
 
     let stmt = "";
@@ -409,6 +463,7 @@ export async function seedErrortexts(): Promise<void> {
     const errorTextFacade = new ErrortextFacade();
     const errortextArr = [
         mealtimeError,
+        mealtimeFilledError,
         shoppingCartError,
         fridgeNotCheckedError,
         itemAlreadyInFridgeError,
@@ -426,6 +481,7 @@ export async function seedErrortextGames(): Promise<void> {
     const errortextGameFacade = new ErrortextGamesFacade();
     const errortextGamesArr = [
         mealtimeErrorTextGames,
+        mealtimeFilledErrorTextGames,
         shoppingCartErrorTextGames,
         fridgeNotCheckedErrorTextGames,
         itemAlreadyInFridgeErrorTextGames,
@@ -448,6 +504,7 @@ export async function seedErrortextStatistics(): Promise<void> {
     const errortextStatisticFacade = new ErrortextStatisticFacade();
     const errortextStatisticArr = [
         mealtimeErrorTextGamesStatistic,
+        mealtimeFilledErrorTextGamesStatistic,
         shoppingCartErrorTextGamesStatistic,
         fridgeNotCheckedErrorTextGamesStatistic,
         itemAlreadyInFridgeErrorTextGamesStatistic,
@@ -464,7 +521,12 @@ export async function seedErrortextStatistics(): Promise<void> {
  */
 export async function seedHelptextGames(): Promise<void> {
     const helptextGameFacade = new HelptextsGamesFacade();
-    const helptextGameArr = [helptextGames, helptextGames1, helptextGames2, helptextGames3];
+    const helptextGameArr = [
+        helptextGames,
+        helptextGames1,
+        helptextGames2,
+        helptextGames3
+    ];
 
     for (const item of helptextGameArr) {
         await helptextGameFacade.insert(item);
@@ -516,11 +578,37 @@ export async function seedGames(): Promise<void> {
 export async function seedIngredients(): Promise<void> {
     const ingredientFacade = new IngredientFacade();
     const ingredients = [
-        egg, oil, spinach, porkMeat, potato, sauerkraut,
-        beef, noodle, ham, cheese, paprika, dough,
-        tomatoSauce, salad, bun, onion, spaetzle, chips, chocolate,
-        pistachios, pommes, wok, blackbread, icetea, orangejuice, water, zwieback,
-        oatmeal, jam, butter, milk
+        egg,
+        oil,
+        spinach,
+        porkMeat,
+        potato,
+        sauerkraut,
+        beef,
+        noodle,
+        ham,
+        cheese,
+        paprika,
+        dough,
+        tomatoSauce,
+        salad,
+        bun,
+        onion,
+        spaetzle,
+        chips,
+        chocolate,
+        pistachios,
+        pommes,
+        wok,
+        blackbread,
+        icetea,
+        orangejuice,
+        water,
+        zwieback,
+        oatmeal,
+        jam,
+        butter,
+        milk
     ];
 
     for (const item of ingredients) {
@@ -534,18 +622,41 @@ export async function seedIngredients(): Promise<void> {
 export async function seedRecipeIngredientFacade(): Promise<void> {
     const recipeIngredientFacade = new RecipeIngredientFacade();
     const recipeIngredients = [
-        recipeIngredient1, recipeIngredient2, recipeIngredient3,
-        recipeIngredient4, recipeIngredient5, recipeIngredient6,
-        recipeIngredient7, recipeIngredient8, recipeIngredient9,
-        recipeIngredient10, recipeIngredient11, recipeIngredient12,
-        recipeIngredient13, recipeIngredient14, recipeIngredient15,
-        recipeIngredient16, recipeIngredient17, recipeIngredient18,
-        recipeIngredient19, recipeIngredient20, recipeIngredient21,
-        recipeIngredient22, recipeIngredient23, recipeIngredient24,
-        recipeIngredient25, recipeIngredient26, recipeIngredient27,
-        recipeIngredient28, recipeIngredient29, recipeIngredient30,
-        recipeIngredient31, recipeIngredient32, recipeIngredient33,
-        recipeIngredient34, recipeIngredient35
+        recipeIngredient1,
+        recipeIngredient2,
+        recipeIngredient3,
+        recipeIngredient4,
+        recipeIngredient5,
+        recipeIngredient6,
+        recipeIngredient7,
+        recipeIngredient8,
+        recipeIngredient9,
+        recipeIngredient10,
+        recipeIngredient11,
+        recipeIngredient12,
+        recipeIngredient13,
+        recipeIngredient14,
+        recipeIngredient15,
+        recipeIngredient16,
+        recipeIngredient17,
+        recipeIngredient18,
+        recipeIngredient19,
+        recipeIngredient20,
+        recipeIngredient21,
+        recipeIngredient22,
+        recipeIngredient23,
+        recipeIngredient24,
+        recipeIngredient25,
+        recipeIngredient26,
+        recipeIngredient27,
+        recipeIngredient28,
+        recipeIngredient29,
+        recipeIngredient30,
+        recipeIngredient31,
+        recipeIngredient32,
+        recipeIngredient33,
+        recipeIngredient34,
+        recipeIngredient35
     ];
     for (const item of recipeIngredients) {
         await recipeIngredientFacade.insert(item);
@@ -558,9 +669,18 @@ export async function seedRecipeIngredientFacade(): Promise<void> {
 export async function seedRecipes(): Promise<void> {
     const recipeFacade = new RecipeFacade();
     const recipes = [
-        scrambledEgg, roastPork, schnitzel, pastaSalad,
-        pizza, spaghetti, burger, goulash, cheeseNoodles,
-        tafelspitz, musli, jamBread
+        scrambledEgg,
+        roastPork,
+        schnitzel,
+        pastaSalad,
+        pizza,
+        spaghetti,
+        burger,
+        goulash,
+        cheeseNoodles,
+        tafelspitz,
+        musli,
+        jamBread
     ];
     for (const item of recipes) {
         await recipeFacade.insert(item);
@@ -691,7 +811,12 @@ export async function seedTherapistPatients(): Promise<void> {
  */
 async function getTables(): Promise<string[]> {
     logger.debug(
-        `${loggerString(__dirname, "", "", __filename)} Retrieve all tables of the application!`
+        `${loggerString(
+            __dirname,
+            "",
+            "",
+            __filename
+        )} Retrieve all tables of the application!`
     );
 
     const results = await databaseConnection.query(

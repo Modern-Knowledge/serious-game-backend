@@ -3,6 +3,7 @@ import {
   fridgeNotCheckedError,
   itemAlreadyInFridgeError,
   mealtimeError,
+  mealtimeFilledError,
   shoppingCartError,
   shoppingListError,
 } from "./errortexts";
@@ -11,6 +12,10 @@ import { statistic } from "./statistics";
 const mealtimeErrorTextGamesStatistic = new ErrortextStatistic();
 mealtimeErrorTextGamesStatistic.statisticId = statistic.id;
 mealtimeErrorTextGamesStatistic.errortextId = mealtimeError.id;
+
+const mealtimeFilledErrorTextGamesStatistic = new ErrortextStatistic();
+mealtimeFilledErrorTextGamesStatistic.statisticId = statistic.id;
+mealtimeFilledErrorTextGamesStatistic.errortextId = mealtimeFilledError.id;
 
 const shoppingCartErrorTextGamesStatistic = new ErrortextStatistic();
 shoppingCartErrorTextGamesStatistic.statisticId = statistic.id;
@@ -31,6 +36,7 @@ shoppingListErrorTextGamesStatistic.errortextId = shoppingListError.id;
 
 export {
     mealtimeErrorTextGamesStatistic,
+    mealtimeFilledErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
     fridgeNotCheckedErrorTextGamesStatistic,
     itemAlreadyInFridgeErrorTextGamesStatistic,

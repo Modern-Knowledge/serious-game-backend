@@ -3,6 +3,7 @@ import {
   fridgeNotCheckedError,
   itemAlreadyInFridgeError,
   mealtimeError,
+  mealtimeFilledError,
   shoppingCartError,
   shoppingListError,
 } from "./errortexts";
@@ -11,6 +12,10 @@ import { game, game3, game4 } from "./games";
 const mealtimeErrorTextGames = new ErrortextGame();
 mealtimeErrorTextGames.gameId = game.id;
 mealtimeErrorTextGames.errorId = mealtimeError.id;
+
+const mealtimeFilledErrorTextGames = new ErrortextGame();
+mealtimeFilledErrorTextGames.gameId = game.id;
+mealtimeFilledErrorTextGames.errorId = mealtimeFilledError.id;
 
 const shoppingCartErrorTextGames = new ErrortextGame();
 shoppingCartErrorTextGames.gameId = game4.id;
@@ -30,6 +35,7 @@ shoppingListErrorTextGames.errorId = shoppingListError.id;
 
 export {
     mealtimeErrorTextGames,
+    mealtimeFilledErrorTextGames,
     shoppingCartErrorTextGames,
     fridgeNotCheckedErrorTextGames,
     itemAlreadyInFridgeErrorTextGames,
