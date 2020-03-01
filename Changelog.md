@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added
+- Add an error-text for a full mealtime.
+- Add commit hooks.
+
+### Changed
+- Fix typo in Spaghetti
+- Change log-levels of some messages.
+- Fix test of mail-server. 
+
+### Removed
+
 ## [1.2.0] - 2020-02-21
 ### Added
  - Add route to display logs.
