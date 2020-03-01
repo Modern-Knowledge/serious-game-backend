@@ -113,6 +113,7 @@
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
     "cross-env": "^6.0.3",
+    "husky": "^4.2.3",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "shelljs": "^0.8.3",
@@ -123,5 +124,10 @@
     "tslint-sonarts": "^1.9.0",
     "typedoc": "^0.15.0",
     "typescript": "~3.5.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build"
+    }
   }
 }
