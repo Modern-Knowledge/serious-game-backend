@@ -46,7 +46,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response) =>
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { files, token: res.locals.authorizationToken },
+                { files, level: process.env.level, token: res.locals.authorizationToken },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
                 ]
