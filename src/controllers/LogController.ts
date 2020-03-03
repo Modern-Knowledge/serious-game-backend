@@ -46,7 +46,7 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response) =>
 
         return res.status(HTTPStatusCode.OK).json(
             new HttpResponse(HttpResponseStatus.SUCCESS,
-                { files, level: process.env.level, token: res.locals.authorizationToken },
+                { files, level: process.env.LOG_LEVEL, token: res.locals.authorizationToken },
                 [
                     new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS, `Log Dateien erfolgreich geladen!`)
                 ]
@@ -55,7 +55,9 @@ router.get("/", authenticationMiddleware, async (req: Request, res: Response) =>
     } catch (error) {
         logger.error(`${loggerString(__dirname, "", "", __filename)} ${error.message}`);
         return res.status(HTTPStatusCode.OK).json(
-            new HttpResponse(HttpResponseStatus.SUCCESS, { token: res.locals.authorizationToken }, []
+            new HttpResponse(HttpResponseStatus.SUCCESS,
+                { level: process.env.LOG_LEVEL, token: res.locals.authorizationToken },
+                []
             )
         );
     }
