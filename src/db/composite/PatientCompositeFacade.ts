@@ -321,7 +321,7 @@ export class PatientCompositeFacade extends CompositeFacade<Patient> {
         if (this._withPatientSettingJoin) {
             const patientSetting = this._patientSettingsFacade.fillEntity(result);
             if (patientSetting) {
-                p.patientSetting = this._patientSettingsFacade.fillEntity(result);
+                p.patientSetting = patientSetting;
             }
         }
 

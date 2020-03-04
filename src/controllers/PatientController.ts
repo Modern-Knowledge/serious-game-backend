@@ -379,15 +379,10 @@ router.put(
             const filter = patientFacade.filter;
             filter.addFilterCondition("patient_id", patient.id);
             patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
+            patientFacade.patientSettingsFilter.addFilterCondition("patient_id", patient.id);
 
-            patientSettingFacade.filter.addFilterCondition(
-                "id",
-                patientSetting.id
-            );
-
-            await patientFacade.updateUserPatient(patient);
-
-            await patientSettingFacade.update(patientSetting);
+            patient.patientSetting = patientSetting;
+            await patientFacade.updateUserPatientSetting(patient);
 
             logEndpoint(
                 controllerName,
