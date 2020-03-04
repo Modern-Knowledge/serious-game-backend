@@ -278,7 +278,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
      */
     protected async insertStatement(
         attributes: SQLValueAttributes,
-        additionalInserts?: Array<{facade: any, entity: EntityType, callBackOnInsert?: any}>):
+        additionalInserts?: Array<{facade: any, entity: any, callBackOnInsert?: any}>):
         Promise<any[]> {
 
         // array of queries

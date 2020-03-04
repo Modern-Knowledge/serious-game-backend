@@ -432,19 +432,7 @@ router.post(
             }
 
             // insert statistic
-            const insertedStatistic = await statisticFacade.insert(statistic);
-
-            logEndpoint(
-                controllerName,
-                `Statistic with id ${insertedStatistic.id} for new session was successfully created!`,
-                req
-            );
-
-            session.statisticId = insertedStatistic.id;
-            session.statistic = insertedStatistic;
-
-            // insert statistic
-            const insertedSession = await sessionFacade.insert(session);
+            const insertedSession = await statisticFacade.insertStatisticSession(statistic, session);
 
             logEndpoint(
                 controllerName,

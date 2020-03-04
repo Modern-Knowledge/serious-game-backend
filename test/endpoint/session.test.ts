@@ -387,14 +387,14 @@ describe("SessionController Tests", () => {
             const sessionId = res.body._data.session._id;
 
             const sessionFacade = new SessionFacade();
-            const session = await sessionFacade.getById(sessionId);
+            const fSession = await sessionFacade.getById(sessionId);
 
-            expect(session).not.toBeUndefined();
+            expect(fSession).not.toBeUndefined();
 
             if (session) {
-                expect(session.gameId).toEqual(game.id);
-                expect(session.patientId).toEqual(validPatient.id);
-                expect(session.gameSettingId).toEqual(gameSettings.id);
+                expect(fSession.gameId).toEqual(game.id);
+                expect(fSession.patientId).toEqual(validPatient.id);
+                expect(fSession.gameSettingId).toEqual(gameSettings.id);
             }
 
         }, timeout);

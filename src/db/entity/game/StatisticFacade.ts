@@ -1,8 +1,10 @@
+import {Session} from "../../../lib/models/Session";
 import { Statistic } from "../../../lib/models/Statistic";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
 import { EntityFacade } from "../EntityFacade";
+import {SessionFacade} from "./SessionFacade";
 
 /**
  * Handles CRUD operations with the statistic-entity.
@@ -71,6 +73,37 @@ export class StatisticFacade extends EntityFacade<Statistic> {
         }
 
         return statistic;
+    }
+
+    /**
+     * Inserts a new statistic and session.
+     *
+     * @param statistic statistic to insert
+     * @param session session to insert
+     */
+    public async insertStatisticSession(statistic: Statistic, session: Session): Promise<Session> {
+        const attributes: SQLValueAttributes = this.getSQLInsertValueAttributes(statistic);
+
+        const callBackOnInsert = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
+            session.statisticId = insertId;
+            statistic.id = insertId;
+            session.statistic = statistic;
+
+            const patientIdAttribute =
+                new SQLValueAttribute("statistic_id", new SessionFacade().tableName, insertId);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
+        };
+
+        const result = await this.insertStatement(attributes, [
+            {facade: this, entity: statistic, callBackOnInsert},
+            {facade: new SessionFacade(), entity: session},
+        ]);
+
+        if (result.length > 0) {
+            session.id = result[result.length - 1].insertedId;
+        }
+
+        return session;
     }
 
     /**
