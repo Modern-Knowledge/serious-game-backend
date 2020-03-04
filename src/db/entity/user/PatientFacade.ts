@@ -105,11 +105,18 @@ export class PatientFacade extends CompositeFacade<Patient> {
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insertStatement(attributes, [
+        const result = await this.insertStatement(attributes, [
                 {facade: this._userFacade, entity: patient, callBackOnInsert},
                 {facade: this, entity: patient, callBackOnInsert: onInsert},
                 {facade: this._patientSettingsFacade, entity: patient},
         ]);
+
+        if (result.length > 0) {
+            // tslint:disable-next-line:no-collapsible-if
+            if (patient.patientSetting) {
+                patient.patientSetting.id = result[result.length - 1].insertedId;
+            }
+        }
 
         return patient;
     }

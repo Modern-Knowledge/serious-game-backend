@@ -160,21 +160,20 @@ router.post(
 
         try {
             patient.patientSetting = patientSetting;
-            const createdPatient = await patientFacade.insert(patient);
-            createdPatient.patientSetting = patientSetting;
-            patientSetting.patientId = createdPatient.id;
+            await patientFacade.insert(patient);
+            patientSetting.patientId = patient.id;
 
             const jwtHelper: JWTHelper = new JWTHelper();
-            const token = await jwtHelper.generateJWT(createdPatient);
+            const token = await jwtHelper.generateJWT(patient);
 
-            const m = new Mail([createdPatient.recipient], register, [
-                createdPatient.fullNameWithSirOrMadam
+            const m = new Mail([patient.recipient], register, [
+                patient.fullNameWithSirOrMadam
             ]);
             mailTransport.sendMail(m);
 
             logEndpoint(
                 controllerName,
-                `Patient with id ${createdPatient.id} was successfully created!`,
+                `Patient with id ${patient.id} was successfully created!`,
                 req
             );
 
@@ -184,7 +183,7 @@ router.post(
                     {
                         patient_setting: patientSetting,
                         token,
-                        user: new PatientDto(createdPatient)
+                        user: new PatientDto(patient)
                     },
                     [
                         new HttpResponseMessage(
