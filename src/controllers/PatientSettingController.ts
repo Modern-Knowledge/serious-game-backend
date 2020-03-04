@@ -24,36 +24,6 @@ const controllerName = "PatientSettingController";
 const authenticationMiddleware = [checkAuthenticationToken, checkAuthentication, checkPatientPermission];
 
 /**
- * todo: do we need this endpoint
- * GET /
- *
- * Get all patient-settings.
- *
- * response:
- * - patientSettings: all patient-settings of the application
- * - token: authentication token
- */
-router.get("/", authenticationMiddleware, async (req: Request, res: Response, next: any) => {
-    const patientSettingFacade = new PatientSettingFacade();
-
-    try {
-        const patientSettings = await patientSettingFacade.get();
-
-        logEndpoint(controllerName, `Return all patient-settings!`, req);
-
-        return res.status(HTTPStatusCode.OK).json(new HttpResponse(HttpResponseStatus.SUCCESS,
-            {patientSettings, token: res.locals.authorizationToken},
-            [
-                new HttpResponseMessage(HttpResponseMessageSeverity.SUCCESS,
-                    "Alle Patienten-Einstellungen erfolgreich geladen!")
-            ]
-        ));
-    } catch (e) {
-        return next(e);
-    }
-});
-
-/**
  * GET /:id
  *
  * Get a patient-setting by id.
