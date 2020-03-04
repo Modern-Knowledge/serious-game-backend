@@ -56,6 +56,8 @@ class DatabaseConnection {
             `${queryCallbacks.length} ${queryCallbacks.length === 1 ? "query is" : "queries are"} ` +
             `going to be executed in a transaction!`);
 
+        let insertedId: number;
+
         return new Promise<any[]>((resolve, reject) => {
             this.poolQuery(async (error: MysqlError, connection: PoolConnection) => {
                 if (error) { // error with pool
@@ -93,11 +95,16 @@ class DatabaseConnection {
                         try {
                             response = await queryCallbacks[i].function(connection, queryCallbacks[i].attributes);
 
-                            if (response && response.insertedId &&
-                                i < queryCallbacks.length - 1 && queryCallbacks[i].callBackOnInsert) { // insert query
+                            if (response.insertedId > 0) {
+                                insertedId = response.insertedId;
+                            }
+
+                            if (response &&
+                                i < queryCallbacks.length - 1 &&
+                                queryCallbacks[i].callBackOnInsert) { // insert query
 
                                 queryCallbacks[i].callBackOnInsert(
-                                    response.insertedId,
+                                    insertedId,
                                     queryCallbacks[i + 1].attributes
                                 ); // execute callback with attributes of next element
                             }

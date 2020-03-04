@@ -94,14 +94,22 @@ export class PatientFacade extends CompositeFacade<Patient> {
         const callBackOnInsert = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             patient.id = insertId;
 
-            const patientIdAttribute = new SQLValueAttribute("patient_id", this.tableName, patient.id);
+            const patientIdAttribute =
+                new SQLValueAttribute("patient_id", this.tableName, patient.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
+        };
+
+        const onInsert = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
+            const patientIdAttribute =
+                new SQLValueAttribute("patient_id", this._patientSettingsFacade.tableName, patient.id);
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
         await this.insertStatement(attributes, [
                 {facade: this._userFacade, entity: patient, callBackOnInsert},
-                {facade: this, entity: patient},
-            ]);
+                {facade: this, entity: patient, callBackOnInsert: onInsert},
+                {facade: this._patientSettingsFacade, entity: patient},
+        ]);
 
         return patient;
     }

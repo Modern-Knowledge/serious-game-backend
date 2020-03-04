@@ -156,20 +156,13 @@ router.post(
         patient.failedLoginAttempts = 0;
         patient.password = bcrypt.hashSync(patient.password, 12);
 
-        const patientSettingFacade = new PatientSettingFacade();
         const patientSetting = new PatientSetting();
 
         try {
+            patient.patientSetting = patientSetting;
             const createdPatient = await patientFacade.insert(patient);
-
+            createdPatient.patientSetting = patientSetting;
             patientSetting.patientId = createdPatient.id;
-
-            // insert patient settings
-            const createdPatientSetting = await patientSettingFacade.insert(
-                patientSetting
-            );
-
-            createdPatient.patientSetting = createdPatientSetting;
 
             const jwtHelper: JWTHelper = new JWTHelper();
             const token = await jwtHelper.generateJWT(createdPatient);
@@ -189,7 +182,7 @@ router.post(
                 new HttpResponse(
                     HttpResponseStatus.SUCCESS,
                     {
-                        patient_setting: createdPatientSetting,
+                        patient_setting: patientSetting,
                         token,
                         user: new PatientDto(createdPatient)
                     },
@@ -342,7 +335,6 @@ router.put(
         const id = Number(req.params.id);
 
         const patientFacade = new PatientFacade();
-        const patientSettingFacade = new PatientSettingFacade();
         const patient = new Patient().deserialize(req.body);
         const patientSetting = new PatientSetting().deserialize(
             req.body._patientSetting
