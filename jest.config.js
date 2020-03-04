@@ -14,9 +14,6 @@ module.exports = {
 	testMatch: [
 		'**/test/**/*.test.(ts|js)'
 	],
-	setupFiles: [
-		"./src/migrater.js"
-	],
 	testEnvironment: 'node',
 	coveragePathIgnorePatterns: [
 		'/node_modules/',
@@ -24,6 +21,5 @@ module.exports = {
 		'/src/migrationHelper.ts',
 		'/src/util/db/databaseConnection.ts',
 		'/src/util/mail/mailTransport.ts',
-		"./src/migrater.js"
 	]
 };
