@@ -29,10 +29,15 @@ export class FilterAttribute implements IFilterable {
      * Returns the sql- block for the filter-attribute.
      */
     public getBlock(): SQLBlock {
+        const paramName = this._tableAlias + "_" + this._name;
+        let val = `::${paramName}::`;
+        if (this._comparisonOperator === SQLComparisonOperator.IN) {
+            val = "(" + val + ")";
+        }
+
         const block: SQLBlock = new SQLBlock();
-        block.addText(`${this._tableAlias + "."}${this._name} ${this._comparisonOperator} ` +
-            `::${this._tableAlias + "_" + this._name}::`);
-        block.addParameter(new SQLParam(`${this._tableAlias + "_" + this._name}`, this._value, false));
+        block.addText(`${this._tableAlias + "."}${this._name} ${this._comparisonOperator} ` + val);
+        block.addParameter(new SQLParam(paramName, this._value, false));
 
         return block;
     }
