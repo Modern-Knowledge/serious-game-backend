@@ -4,7 +4,7 @@ import {check} from "express-validator";
 import {StatisticFacade} from "../db/entity/game/StatisticFacade";
 import {ErrortextFacade} from "../db/entity/helptext/ErrortextFacade";
 import {ErrortextStatisticFacade} from "../db/entity/helptext/ErrortextStatisticFacade";
-import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {SQLComparisonOperator} from "../db/sql/enums/SQLComparisonOperator";
 import {Errortext} from "../lib/models/Errortext";
 import {ErrortextStatistic} from "../lib/models/ErrortextStatistic";
 import {
@@ -358,30 +358,34 @@ router.post("/bulk", authenticationMiddleware, [
             const errorTextStatistic = new ErrortextStatistic();
             const errortexts = [];
 
+            // remove duplicate error-texts
             const searchIds = errortextsData
                 .map((value) => value._id)
                 .filter((v, i: number, arr) => arr.indexOf(v) === i);
 
-            for (const id of searchIds) {
-                errortextFacade.filter.addFilterCondition("error_id", id);
-                errortextFacade.filter.addOperator(SQLOperator.OR);
-            }
+            errortextFacade.filter.addFilterCondition("error_id", searchIds, SQLComparisonOperator.IN);
+
             const foundErrortexts = await errortextFacade.get();
 
             const foundIds = foundErrortexts.map((value: Errortext) => value.id);
+            const falseIds: number[] = [];
+            const valid = searchIds.every((value: number) => {
+                if (foundIds.includes(value)) {
+                    return true;
+                }
 
-            // compare the two arrays
-            const difference = foundIds
-                .filter((x) => !searchIds.includes(x))
-                .concat(searchIds.filter((x) => !foundIds.includes(x)));
+                falseIds.push(value);
 
-            if (difference.length > 0) {
-                logEndpoint(controllerName, `Errortext was not found!`, req);
+                return false;
+            });
+
+            if (!valid) {
+                logEndpoint(controllerName, `Errortexts ${falseIds.join(", ")} were not found!`, req);
 
                 return http4xxResponse(res, [
                     new HttpResponseMessage(
                         HttpResponseMessageSeverity.DANGER,
-                        `Fehlertext ${difference.join(", ")} wurde nicht gefunden!`
+                        `Fehlertexte ${falseIds.join(", ")} wurde nicht gefunden!`
                     )
                 ]);
             }
@@ -389,10 +393,10 @@ router.post("/bulk", authenticationMiddleware, [
             for (const errortextData of errortextsData) {
                 errorTextStatistic.errortextId = errortextData._id;
                 errorTextStatistic.statisticId = statisticId;
-                errortexts.push(
-                    await errortextStatisticFacade.insert(errorTextStatistic)
-                );
+                errortexts.push(errorTextStatistic);
             }
+
+            await errortextStatisticFacade.insertBatch(errortexts);
 
             logEndpoint(controllerName, `Errortexts were successfully created!`, req);
 
