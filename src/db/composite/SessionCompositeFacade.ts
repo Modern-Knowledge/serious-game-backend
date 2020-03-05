@@ -430,10 +430,7 @@ export class SessionCompositeFacade extends CompositeFacade<Session> {
                 const existingStatistic: Statistic = existingSession.statistic;
 
                 const statistic: Statistic = session.statistic;
-
-                if (!arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
-                    existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
-                }
+                existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
             }
         }
 

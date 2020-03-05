@@ -398,8 +398,9 @@ router.post("/bulk", authenticationMiddleware, [
                 errortexts.push(errorTextStatistic);
             }
 
-            await errortextStatisticFacade.insertBatch(errortexts);
-
+            if (errortexts.length > 0) {
+                await errortextStatisticFacade.insertBatch(errortexts);
+            }
             logEndpoint(controllerName, `Errortexts were successfully created!`, req);
 
             return res.status(HTTPStatusCode.OK)

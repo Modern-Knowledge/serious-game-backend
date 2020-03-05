@@ -242,9 +242,7 @@ export class StatisticCompositeFacade extends CompositeFacade<Statistic> {
             } else {
                 const existingStatistic: Statistic = statisticMap.get(statistic.id);
 
-                if (!arrayContainsModel(statistic.errortexts[0], existingStatistic.errortexts)) {
-                    existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
-                }
+                existingStatistic.errortexts = existingStatistic.errortexts.concat(statistic.errortexts);
             }
         }
 
