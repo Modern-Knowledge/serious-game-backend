@@ -73,7 +73,7 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
             queries.push(query);
         }
 
-        await databaseConnection.query(queries.join("; "));
+        await databaseConnection.transactionQuery(queries.join("; "));
 
         return errortextStatistics;
     }

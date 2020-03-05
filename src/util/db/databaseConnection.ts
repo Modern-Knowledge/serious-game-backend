@@ -188,6 +188,80 @@ class DatabaseConnection {
     }
 
     /**
+     * Execute a sql-query in a transaction and returns the results as an array. Takes a connection
+     * from the pool and releases it afterwards. If an error occurs while executing the
+     * query the function throws an error.
+     *
+     * @param sql sql query to be executed
+     * @param params params for the query
+     */
+    // tslint:disable-next-line:cognitive-complexity
+    public transactionQuery(sql: string, params: any[] = []): Promise<any[]> {
+        return new Promise<any[]>((resolve, reject) => {
+            databaseConnection.poolQuery((error: MysqlError, connection: PoolConnection) => {
+                if (error) {
+                    if (connection) {
+                        connection.release();
+                    }
+                    logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} `
+                        + `${error.message}`);
+                    return reject(error);
+                }
+
+                connection.beginTransaction((transactionError: MysqlError) =>  {
+                    logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} `
+                        + `Begin transaction!`);
+
+                    if (transactionError) { // error with starting transaction
+                        connection.release();
+                        logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} `
+                            + `${transactionError.message}`);
+
+                        return reject(transactionError);
+                    }
+
+                    const query = connection.query(sql, params, (mysqlError: MysqlError, results) => {
+                        logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} ` +
+                            `${query.sql} [${query.values}]`);
+
+                        if (mysqlError) {
+                            logger.error(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} `
+                                + `${mysqlError.message}`);
+                            return reject(mysqlError);
+                        }
+
+                        connection.commit((commitError: MysqlError) => {
+                            if (commitError) { // error when committing
+                                return connection.rollback(() => {
+                                    connection.release();
+
+                                    logger.error(`${loggerString(
+                                        __dirname,
+                                        DatabaseConnection.name,
+                                        "transactionQuery")} Transaction changes are rollbacked!`);
+
+                                    logger.error(`${loggerString(
+                                        __dirname,
+                                        DatabaseConnection.name,
+                                        "transactionQuery")} ${commitError.message}`);
+
+                                    return reject(commitError);
+                                });
+                            }
+                            connection.release();
+                            logger.debug(`${loggerString(__dirname, DatabaseConnection.name, "transactionQuery")} `
+                                + `Transaction was executed successful!`);
+
+                            return resolve(results);
+                        });
+                    });
+                });
+
+            });
+        });
+    }
+
+    /**
      * Pings the database and checks if it îs reachable. If the database
      * responds the function returns true. Otherwise it returns false.
      */
