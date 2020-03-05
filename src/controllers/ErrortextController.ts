@@ -363,7 +363,9 @@ router.post("/bulk", authenticationMiddleware, [
                 .map((value) => value._id)
                 .filter((v, i: number, arr) => arr.indexOf(v) === i);
 
-            errortextFacade.filter.addFilterCondition("error_id", searchIds, SQLComparisonOperator.IN);
+            if (searchIds.length > 0) {
+                errortextFacade.filter.addFilterCondition("error_id", searchIds, SQLComparisonOperator.IN);
+            }
 
             const foundErrortexts = await errortextFacade.get();
 
