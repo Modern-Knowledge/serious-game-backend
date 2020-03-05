@@ -1,10 +1,12 @@
-import express, { Request, Response } from "express";
-import { check } from "express-validator";
+import express, {Request, Response} from "express";
+import {check} from "express-validator";
 
 import {StatisticFacade} from "../db/entity/game/StatisticFacade";
-import { ErrortextFacade } from "../db/entity/helptext/ErrortextFacade";
-import { ErrortextStatisticFacade } from "../db/entity/helptext/ErrortextStatisticFacade";
-import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
+import {ErrortextFacade} from "../db/entity/helptext/ErrortextFacade";
+import {ErrortextStatisticFacade} from "../db/entity/helptext/ErrortextStatisticFacade";
+import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {Errortext} from "../lib/models/Errortext";
+import {ErrortextStatistic} from "../lib/models/ErrortextStatistic";
 import {
     HttpResponse,
     HttpResponseMessage,
@@ -12,11 +14,11 @@ import {
     HttpResponseStatus
 } from "../lib/utils/http/HttpResponse";
 import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
-import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
-import { logEndpoint } from "../util/log/endpointLogger";
-import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
-import { checkRouteValidation } from "../util/validation/validationHelper";
-import { rVM } from "../util/validation/validationMessages";
+import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
+import {logEndpoint} from "../util/log/endpointLogger";
+import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
+import {checkRouteValidation} from "../util/validation/validationHelper";
+import {rVM} from "../util/validation/validationMessages";
 
 const router = express.Router();
 
@@ -52,7 +54,7 @@ router.get(
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
-                        { errortexts, token: res.locals.authorizationToken },
+                        {errortexts, token: res.locals.authorizationToken},
                         [
                             new HttpResponseMessage(
                                 HttpResponseMessageSeverity.SUCCESS,
@@ -120,7 +122,7 @@ router.get(
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
-                        { errortext, token: res.locals.authorizationToken },
+                        {errortext, token: res.locals.authorizationToken},
                         [
                             new HttpResponseMessage(
                                 HttpResponseMessageSeverity.SUCCESS,
@@ -188,10 +190,10 @@ router.get(
  * - token: authentication token
  */
 router.post("/", authenticationMiddleware, [
-    check("errortext._id").isNumeric().withMessage(rVM("errortext", "errortext_id")),
+        check("errortext._id").isNumeric().withMessage(rVM("errortext", "errortext_id")),
 
-    check("session._statisticId").isNumeric().withMessage(rVM("errortext", "statistic_id"))
-], async (req: Request, res: Response, next: any) => {
+        check("session._statisticId").isNumeric().withMessage(rVM("errortext", "statistic_id"))
+    ], async (req: Request, res: Response, next: any) => {
         if (!checkRouteValidation(controllerName, req, res)) {
             return failedValidation400Response(req, res);
         }
@@ -244,7 +246,7 @@ router.post("/", authenticationMiddleware, [
                 .json(
                     new HttpResponse(
                         HttpResponseStatus.SUCCESS,
-                        { errortext, token: res.locals.authorizationToken },
+                        {errortext, token: res.locals.authorizationToken},
                         [
                             new HttpResponseMessage(
                                 HttpResponseMessageSeverity.SUCCESS,
@@ -317,7 +319,7 @@ router.post("/bulk", authenticationMiddleware, [
 
         check("session._statisticId").isNumeric().withMessage(rVM("errortext", "statistic_id"))
 
-], async (req: Request, res: Response, next: any) => {
+    ], async (req: Request, res: Response, next: any) => {
         if (!checkRouteValidation(controllerName, req, res)) {
             return failedValidation400Response(req, res);
         }
@@ -356,20 +358,32 @@ router.post("/bulk", authenticationMiddleware, [
             const errorTextStatistic = new ErrortextStatistic();
             const errortexts = [];
 
-            for (const item of errortextsData) {
-                const errortextId = item._id;
+            const searchIds = errortextsData
+                .map((value) => value._id)
+                .filter((v, i: number, arr) => arr.indexOf(v) === i);
 
-                const foundErrortext = await errortextFacade.getById(errortextId);
-                if (!foundErrortext) {
-                    logEndpoint(controllerName, `Errortext was not found!`, req);
+            for (const id of searchIds) {
+                errortextFacade.filter.addFilterCondition("error_id", id);
+                errortextFacade.filter.addOperator(SQLOperator.OR);
+            }
+            const foundErrortexts = await errortextFacade.get();
 
-                    return http4xxResponse(res, [
-                        new HttpResponseMessage(
-                            HttpResponseMessageSeverity.DANGER,
-                            `Fehlertext ${errortextId} wurde nicht gefunden!`
-                        )
-                    ]);
-                }
+            const foundIds = foundErrortexts.map((value: Errortext) => value.id);
+
+            // compare the two arrays
+            const difference = foundIds
+                .filter((x) => !searchIds.includes(x))
+                .concat(searchIds.filter((x) => !foundIds.includes(x)));
+
+            if (difference.length > 0) {
+                logEndpoint(controllerName, `Errortext was not found!`, req);
+
+                return http4xxResponse(res, [
+                    new HttpResponseMessage(
+                        HttpResponseMessageSeverity.DANGER,
+                        `Fehlertext ${difference.join(", ")} wurde nicht gefunden!`
+                    )
+                ]);
             }
 
             for (const errortextData of errortextsData) {
@@ -385,7 +399,7 @@ router.post("/bulk", authenticationMiddleware, [
             return res.status(HTTPStatusCode.OK)
                 .json(
                     new HttpResponse(HttpResponseStatus.SUCCESS,
-                        { errortexts, token: res.locals.authorizationToken },
+                        {errortexts, token: res.locals.authorizationToken},
                         [
                             new HttpResponseMessage(
                                 HttpResponseMessageSeverity.SUCCESS,
