@@ -112,9 +112,10 @@ describe("PatientController Tests", () => {
                 expect(compPasswords).toBeTruthy();
             }
 
-            const settingId = res.body._data.patient_setting._id;
+            const pId = res.body._data.user._id;
             const patientSettingFacade = new PatientSettingFacade();
-            const patientSetting = await patientSettingFacade.getById(settingId);
+            patientSettingFacade.filter.addFilterCondition("patient_id", pId);
+            const patientSetting = await patientSettingFacade.getOne();
 
             expect(patientSetting).not.toBeUndefined();
 

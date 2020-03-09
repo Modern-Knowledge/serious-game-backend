@@ -7,5 +7,7 @@ export enum SQLComparisonOperator {
   GREATER_THAN_EQUALS = ">=",
   LESS_THAN_EQUALS = "<=",
   IS = "IS",
-  IS_NOT = "IS NOT"
+  IS_NOT = "IS NOT",
+  IN = "IN",
+  NOT_IN = "NOT IN"
 }

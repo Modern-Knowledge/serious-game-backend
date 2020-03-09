@@ -156,32 +156,24 @@ router.post(
         patient.failedLoginAttempts = 0;
         patient.password = bcrypt.hashSync(patient.password, 12);
 
-        const patientSettingFacade = new PatientSettingFacade();
         const patientSetting = new PatientSetting();
 
         try {
-            const createdPatient = await patientFacade.insert(patient);
-
-            patientSetting.patientId = createdPatient.id;
-
-            // insert patient settings
-            const createdPatientSetting = await patientSettingFacade.insert(
-                patientSetting
-            );
-
-            createdPatient.patientSetting = createdPatientSetting;
+            patient.patientSetting = patientSetting;
+            await patientFacade.insert(patient);
+            patientSetting.patientId = patient.id;
 
             const jwtHelper: JWTHelper = new JWTHelper();
-            const token = await jwtHelper.generateJWT(createdPatient);
+            const token = await jwtHelper.generateJWT(patient);
 
-            const m = new Mail([createdPatient.recipient], register, [
-                createdPatient.fullNameWithSirOrMadam
+            const m = new Mail([patient.recipient], register, [
+                patient.fullNameWithSirOrMadam
             ]);
             mailTransport.sendMail(m);
 
             logEndpoint(
                 controllerName,
-                `Patient with id ${createdPatient.id} was successfully created!`,
+                `Patient with id ${patient.id} was successfully created!`,
                 req
             );
 
@@ -189,9 +181,9 @@ router.post(
                 new HttpResponse(
                     HttpResponseStatus.SUCCESS,
                     {
-                        patient_setting: createdPatientSetting,
+                        patient_setting: patientSetting,
                         token,
-                        user: new PatientDto(createdPatient)
+                        user: new PatientDto(patient)
                     },
                     [
                         new HttpResponseMessage(
@@ -342,7 +334,6 @@ router.put(
         const id = Number(req.params.id);
 
         const patientFacade = new PatientFacade();
-        const patientSettingFacade = new PatientSettingFacade();
         const patient = new Patient().deserialize(req.body);
         const patientSetting = new PatientSetting().deserialize(
             req.body._patientSetting
@@ -379,15 +370,10 @@ router.put(
             const filter = patientFacade.filter;
             filter.addFilterCondition("patient_id", patient.id);
             patientFacade.userFacadeFilter.addFilterCondition("id", patient.id);
+            patientFacade.patientSettingsFilter.addFilterCondition("patient_id", patient.id);
 
-            patientSettingFacade.filter.addFilterCondition(
-                "id",
-                patientSetting.id
-            );
-
-            await patientFacade.updateUserPatient(patient);
-
-            await patientSettingFacade.update(patientSetting);
+            patient.patientSetting = patientSetting;
+            await patientFacade.updateUserPatientSetting(patient);
 
             logEndpoint(
                 controllerName,

@@ -9,6 +9,7 @@ import { SQLBlock } from "../../sql/SQLBlock";
 import { SQLJoin } from "../../sql/SQLJoin";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
+import {PatientSettingFacade} from "../settings/PatientSettingFacade";
 import { UserFacade } from "./UserFacade";
 
 /**
@@ -16,6 +17,7 @@ import { UserFacade } from "./UserFacade";
  *
  * contained Facade:
  * - UserFacade
+ * - PatientSettingsFacade
  *
  * contained Joins:
  * - users (1:1)
@@ -23,8 +25,10 @@ import { UserFacade } from "./UserFacade";
 export class PatientFacade extends CompositeFacade<Patient> {
 
     private readonly _userFacade: UserFacade;
+    private readonly _patientSettingsFacade: PatientSettingFacade;
 
     private _withUserJoin: boolean;
+    private _withPatientSettingsJoin: boolean;
 
     /**
      * @param tableAlias table-alias of the facade
@@ -37,7 +41,9 @@ export class PatientFacade extends CompositeFacade<Patient> {
         }
 
         this._userFacade = new UserFacade("up");
+        this._patientSettingsFacade = new PatientSettingFacade("psf");
         this._withUserJoin = true;
+        this._withPatientSettingsJoin = false;
     }
 
     /**
@@ -61,6 +67,13 @@ export class PatientFacade extends CompositeFacade<Patient> {
             patientsAttributes.addSqlAttributes(userAttributes);
         }
 
+        if (this._withPatientSettingsJoin) {
+            const patientSettingsAttributes: SQLAttributes =
+                this._patientSettingsFacade.getSQLAttributes(excludedSQLAttributes);
+
+            patientsAttributes.addSqlAttributes(patientSettingsAttributes);
+        }
+
         return patientsAttributes;
     }
 
@@ -78,17 +91,32 @@ export class PatientFacade extends CompositeFacade<Patient> {
          * @param insertId user id that was inserted before
          * @param sqlValueAttributes to append to
          */
-        const onInsertUser = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
+        const callBackOnInsert = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
             patient.id = insertId;
-            const patientIdAttribute: SQLValueAttribute =
+
+            const patientIdAttribute =
                 new SQLValueAttribute("patient_id", this.tableName, patient.id);
             sqlValueAttributes.addAttribute(patientIdAttribute);
         };
 
-        await this.insertStatement(attributes, [
-                {facade: this._userFacade, entity: patient, callBackOnInsert: onInsertUser},
-                {facade: this, entity: patient}
-            ]);
+        const onInsert = (insertId: number, sqlValueAttributes: SQLValueAttributes) => {
+            const patientIdAttribute =
+                new SQLValueAttribute("patient_id", this._patientSettingsFacade.tableName, patient.id);
+            sqlValueAttributes.addAttribute(patientIdAttribute);
+        };
+
+        const result = await this.insertStatement(attributes, [
+                {facade: this._userFacade, entity: patient, callBackOnInsert},
+                {facade: this, entity: patient, callBackOnInsert: onInsert},
+                {facade: this._patientSettingsFacade, entity: patient},
+        ]);
+
+        if (result.length > 0) {
+            // tslint:disable-next-line:no-collapsible-if
+            if (patient.patientSetting) {
+                patient.patientSetting.id = result[result.length - 1].insertedId;
+            }
+        }
 
         return patient;
     }
@@ -101,8 +129,10 @@ export class PatientFacade extends CompositeFacade<Patient> {
      */
     public updateUserPatient(patient: Patient): Promise<number> {
         const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
-        return this.updateStatement(attributes,
-            [{facade: this, entity: patient}, {facade: this._userFacade, entity: patient}]);
+        return this.updateStatement(attributes, [
+                {facade: this, entity: patient},
+                {facade: this._userFacade, entity: patient}
+            ]);
     }
 
     /**
@@ -116,10 +146,15 @@ export class PatientFacade extends CompositeFacade<Patient> {
     }
 
     /**
-     * Deletes the patient and the associated user.
+     * Updates the user, patient and the patient-settings.
      */
-    public delete(): Promise<number> {
-        return this.deleteStatement([this, this._userFacade]);
+    public async updateUserPatientSetting(patient: Patient): Promise<number> {
+        const attributes: SQLValueAttributes = this.getSQLUpdateValueAttributes(patient);
+        return this.updateStatement(attributes, [
+                {facade: this, entity: patient},
+                {facade: this._userFacade, entity: patient},
+                {facade: this._patientSettingsFacade, entity: patient}
+            ]);
     }
 
     /**
@@ -146,6 +181,13 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
         if (this._withUserJoin) {
             this._userFacade.fillUserEntity(result, p);
+        }
+
+        if (this._withPatientSettingsJoin) {
+            const patientSetting = this._patientSettingsFacade.fillEntity(result);
+            if (patientSetting) {
+                p.patientSetting = patientSetting;
+            }
         }
 
         if (result[this.name("birthday")]) {
@@ -192,6 +234,18 @@ export class PatientFacade extends CompositeFacade<Patient> {
             );
         }
 
+        if (this._withPatientSettingsJoin) {
+            const patientSettingsJoin: SQLBlock = new SQLBlock();
+            patientSettingsJoin.addText(`${this.tableAlias}.id = ${this._patientSettingsFacade.tableAlias}.patient_id`);
+            joins.push(
+                new SQLJoin(
+                    this._patientSettingsFacade.tableName,
+                    this._patientSettingsFacade.tableAlias,
+                    patientSettingsJoin,
+                    JoinType.LEFT_JOIN, JoinCardinality.ONE_TO_ONE)
+            );
+        }
+
         return joins;
     }
 
@@ -200,7 +254,8 @@ export class PatientFacade extends CompositeFacade<Patient> {
      */
     protected get filters(): Filter[] {
         return [
-            this.userFacadeFilter
+            this.userFacadeFilter,
+            this.patientSettingsFilter
         ];
     }
 
@@ -208,17 +263,26 @@ export class PatientFacade extends CompositeFacade<Patient> {
         return this._userFacade.filter;
     }
 
+    get patientSettingsFilter(): Filter {
+        return this._patientSettingsFacade.filter;
+    }
+
     /**
      * returns all sub-facade order-bys of the facade as an array.
      */
     protected get orderBys(): Ordering[] {
         return [
-            this.userFacadeOrderBy
+            this.userFacadeOrderBy,
+            this.patientSettingsFacadeOrderBy
         ];
     }
 
     get userFacadeOrderBy(): Ordering {
         return this._userFacade.ordering;
+    }
+
+    get patientSettingsFacadeOrderBy(): Ordering {
+        return this._patientSettingsFacade.ordering;
     }
 
     get withUserJoin(): boolean {
@@ -227,6 +291,14 @@ export class PatientFacade extends CompositeFacade<Patient> {
 
     set withUserJoin(value: boolean) {
         this._withUserJoin = value;
+    }
+
+    get withPatientSettingsJoin(): boolean {
+        return this._withPatientSettingsJoin;
+    }
+
+    set withPatientSettingsJoin(value: boolean) {
+        this._withPatientSettingsJoin = value;
     }
 
     /**

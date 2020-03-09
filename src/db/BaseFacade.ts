@@ -278,7 +278,7 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
      */
     protected async insertStatement(
         attributes: SQLValueAttributes,
-        additionalInserts?: Array<{facade: any, entity: EntityType, callBackOnInsert?: any}>):
+        additionalInserts?: Array<{facade: any, entity: any, callBackOnInsert?: any}>):
         Promise<any[]> {
 
         // array of queries
@@ -548,6 +548,27 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
     }
 
     /**
+     * Creates and returns an insert-query.
+     * Converts the filter of the facade to a sql-where clause and appends
+     * it the query. Returns an object of IQuery, which contains the query
+     * and the replacement variables as an array.
+     *
+     * @param attributes columns that should be inserted
+     */
+    protected getInsertQuery(attributes: SQLValueAttributes): IQuery {
+        const npq: InsertQuery = new InsertQuery();
+        const insert: SQLInsert = new SQLInsert(this._tableName);
+
+        insert.attributes = attributes;
+        npq.insert = insert;
+
+        const insertQuery: BakedQuery = npq.bake();
+        const params: any[] = insertQuery.fillParameters();
+
+        return {query: insertQuery.getBakedSQL(), params};
+    }
+
+    /**
      * Post filtering of results that were fetched from the database.
      * Additional filtering can be applied, which not be easy to describe
      * in sql.
@@ -584,27 +605,6 @@ export abstract class BaseFacade<EntityType extends AbstractModel<EntityType>> e
         const params: any[] = selectQuery.fillParameters();
 
         return {query: selectQuery.getBakedSQL(), params};
-    }
-
-    /**
-     * Creates and returns an insert-query.
-     * Converts the filter of the facade to a sql-where clause and appends
-     * it the query. Returns an object of IQuery, which contains the query
-     * and the replacement variables as an array.
-     *
-     * @param attributes columns that should be inserted
-     */
-    private getInsertQuery(attributes: SQLValueAttributes): IQuery {
-        const npq: InsertQuery = new InsertQuery();
-        const insert: SQLInsert = new SQLInsert(this._tableName);
-
-        insert.attributes = attributes;
-        npq.insert = insert;
-
-        const insertQuery: BakedQuery = npq.bake();
-        const params: any[] = insertQuery.fillParameters();
-
-        return {query: insertQuery.getBakedSQL(), params};
     }
 
     /**

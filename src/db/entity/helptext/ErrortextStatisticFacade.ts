@@ -1,4 +1,7 @@
+import moment from "moment";
 import { ErrortextStatistic } from "../../../lib/models/ErrortextStatistic";
+import {formatDateTime} from "../../../lib/utils/dateFormatter";
+import {databaseConnection} from "../../../util/db/databaseConnection";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";
@@ -50,6 +53,29 @@ export class ErrortextStatisticFacade extends EntityFacade<ErrortextStatistic> {
         }
 
         return errortextStatistic;
+    }
+
+    /**
+     * Inserts multiple errortext-statistics and returns the created errortext-statistics.
+     *
+     * @param errortextStatistics errortext-statistic[] to insert
+     */
+    public async insertBatch(errortextStatistics: ErrortextStatistic[]): Promise<ErrortextStatistic[]> {
+        const toReplace = Array(3).fill("\\?");
+        const queries = [];
+        for (const item of errortextStatistics) {
+            const insertQuery = this.getInsertQuery(this.getSQLInsertValueAttributes(item));
+            const params = insertQuery.params;
+            params[params.length - 1] = moment(params[params.length - 1]).format("YYYY-MM-DD hh:mm::ss");
+            let query = insertQuery.query;
+
+            toReplace.forEach((tag, i: number) => query = query.replace(new RegExp(tag), "'" + params[i] + "'"));
+            queries.push(query);
+        }
+
+        await databaseConnection.transactionQuery(queries.join("; "));
+
+        return errortextStatistics;
     }
 
     /**
