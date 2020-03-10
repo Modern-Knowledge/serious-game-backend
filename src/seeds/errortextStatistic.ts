@@ -1,12 +1,12 @@
 import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
 import {
+  dayPlanningError,
   fridgeNotCheckedError,
   itemAlreadyInFridgeError,
   mealtimeError,
   mealtimeFilledError,
   shoppingCartError,
   shoppingListError,
-  dayPlanningError,
 } from "./errortexts";
 import { statistic } from "./statistics";
 

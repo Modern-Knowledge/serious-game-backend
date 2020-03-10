@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `sessions`
     `patient_id`      INT(11)   NOT NULL,
     `statistic_id`    INT(11)   NOT NULL,
     `game_setting_id` INT(11)   NOT NULL,
-    `date`            DATETIME  NOT NULL,
+    `date`            TIMESTAMP  NOT NULL,
     `created_at`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modified_at`     TIMESTAMP NULL     DEFAULT NULL,
     PRIMARY KEY (`id`, `game_id`, `patient_id`, `statistic_id`),

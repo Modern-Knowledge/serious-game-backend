@@ -25,31 +25,31 @@ import { TherapistsPatientsFacade } from "./db/entity/user/TherapistsPatientsFac
 import { WordFacade } from "./db/entity/word/WordFacade";
 import { difficultyEasy, difficultyHard, difficultyMedium } from "./seeds/difficulties";
 import {
+    dayPlanningErrorTextGames,
     fridgeNotCheckedErrorTextGames,
     itemAlreadyInFridgeErrorTextGames,
     mealtimeErrorTextGames,
     mealtimeFilledErrorTextGames,
     shoppingCartErrorTextGames,
     shoppingListErrorTextGames,
-    dayPlanningErrorTextGames,
 } from "./seeds/errortextGames";
 import {
+    dayPlanningError,
     fridgeNotCheckedError,
     itemAlreadyInFridgeError,
     mealtimeError,
     mealtimeFilledError,
     shoppingCartError,
     shoppingListError,
-    dayPlanningError,
 } from "./seeds/errortexts";
 import {
+    dayPlanningErrorTextGamesStatistic,
     fridgeNotCheckedErrorTextGamesStatistic,
     itemAlreadyInFridgeErrorTextGamesStatistic,
     mealtimeErrorTextGamesStatistic,
     mealtimeFilledErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
     shoppingListErrorTextGamesStatistic,
-    dayPlanningErrorTextGamesStatistic,
 } from "./seeds/errortextStatistic";
 import { bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables } from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
