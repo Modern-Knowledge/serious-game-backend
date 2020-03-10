@@ -6,6 +6,7 @@ import {
   mealtimeFilledError,
   shoppingCartError,
   shoppingListError,
+  dayPlanningError,
 } from "./errortexts";
 import { statistic } from "./statistics";
 
@@ -34,11 +35,16 @@ const shoppingListErrorTextGamesStatistic = new ErrortextStatistic();
 shoppingListErrorTextGamesStatistic.statisticId = statistic.id;
 shoppingListErrorTextGamesStatistic.errortextId = shoppingListError.id;
 
+const dayPlanningErrorTextGamesStatistic = new ErrortextStatistic();
+dayPlanningErrorTextGamesStatistic.statisticId = statistic.id;
+dayPlanningErrorTextGamesStatistic.errortextId = dayPlanningError.id;
+
 export {
     mealtimeErrorTextGamesStatistic,
     mealtimeFilledErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
     fridgeNotCheckedErrorTextGamesStatistic,
     itemAlreadyInFridgeErrorTextGamesStatistic,
-    shoppingListErrorTextGamesStatistic
+    shoppingListErrorTextGamesStatistic,
+    dayPlanningErrorTextGamesStatistic
 };
