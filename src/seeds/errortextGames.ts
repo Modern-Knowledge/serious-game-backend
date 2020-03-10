@@ -1,5 +1,6 @@
 import { ErrortextGame } from "../lib/models/ErrortextGame";
 import {
+  dayPlanningError,
   fridgeNotCheckedError,
   itemAlreadyInFridgeError,
   mealtimeError,
@@ -33,11 +34,16 @@ const shoppingListErrorTextGames = new ErrortextGame();
 shoppingListErrorTextGames.gameId = game3.id;
 shoppingListErrorTextGames.errorId = shoppingListError.id;
 
+const dayPlanningErrorTextGames = new ErrortextGame();
+dayPlanningErrorTextGames.gameId = game.id;
+dayPlanningErrorTextGames.errorId = dayPlanningError.id;
+
 export {
     mealtimeErrorTextGames,
     mealtimeFilledErrorTextGames,
     shoppingCartErrorTextGames,
     fridgeNotCheckedErrorTextGames,
     itemAlreadyInFridgeErrorTextGames,
-    shoppingListErrorTextGames
+    shoppingListErrorTextGames,
+    dayPlanningErrorTextGames
 };

@@ -40,11 +40,18 @@ shoppingListError.name = "shopping-list";
 shoppingListError.text = "Die Einkaufsliste ist nicht gültig!";
 shoppingListError.severityId = severityEasy.id;
 
+const dayPlanningError = new Errortext();
+dayPlanningError.id = 11;
+dayPlanningError.name = "day-planning";
+dayPlanningError.text = "Der Tagesplan ist nicht gültig!";
+dayPlanningError.severityId = severityEasy.id;
+
 export {
     mealtimeError,
     mealtimeFilledError,
     shoppingCartError,
     fridgeNotCheckedError,
     itemAlreadyInFridgeError,
-    shoppingListError
+    shoppingListError,
+    dayPlanningError
 };

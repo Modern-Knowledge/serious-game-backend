@@ -31,6 +31,7 @@ import {
     mealtimeFilledErrorTextGames,
     shoppingCartErrorTextGames,
     shoppingListErrorTextGames,
+    dayPlanningErrorTextGames,
 } from "./seeds/errortextGames";
 import {
     fridgeNotCheckedError,
@@ -39,6 +40,7 @@ import {
     mealtimeFilledError,
     shoppingCartError,
     shoppingListError,
+    dayPlanningError,
 } from "./seeds/errortexts";
 import {
     fridgeNotCheckedErrorTextGamesStatistic,
@@ -47,6 +49,7 @@ import {
     mealtimeFilledErrorTextGamesStatistic,
     shoppingCartErrorTextGamesStatistic,
     shoppingListErrorTextGamesStatistic,
+    dayPlanningErrorTextGamesStatistic,
 } from "./seeds/errortextStatistic";
 import { bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables } from "./seeds/foodCategories";
 import { game, game2, game3, game4 } from "./seeds/games";
@@ -467,7 +470,8 @@ export async function seedErrortexts(): Promise<void> {
         shoppingCartError,
         fridgeNotCheckedError,
         itemAlreadyInFridgeError,
-        shoppingListError
+        shoppingListError,
+        dayPlanningError
     ];
     for (const item of errortextArr) {
         await errorTextFacade.insert(item);
@@ -485,7 +489,8 @@ export async function seedErrortextGames(): Promise<void> {
         shoppingCartErrorTextGames,
         fridgeNotCheckedErrorTextGames,
         itemAlreadyInFridgeErrorTextGames,
-        shoppingListErrorTextGames
+        shoppingListErrorTextGames,
+        dayPlanningErrorTextGames
     ];
 
     for (const item of errortextGamesArr) {
@@ -508,7 +513,8 @@ export async function seedErrortextStatistics(): Promise<void> {
         shoppingCartErrorTextGamesStatistic,
         fridgeNotCheckedErrorTextGamesStatistic,
         itemAlreadyInFridgeErrorTextGamesStatistic,
-        shoppingListErrorTextGamesStatistic
+        shoppingListErrorTextGamesStatistic,
+        dayPlanningErrorTextGamesStatistic
     ];
 
     for (const item of errortextStatisticArr) {
