@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `users`
     `login_cooldown`        TIMESTAMP    NULL     DEFAULT NULL,
     `status`                TINYINT(4)   NOT NULL,
     `resetcode`             INT(11)      NULL,
-    `resetcode_validuntil`  DATETIME        NULL     DEFAULT NULL,
+    `resetcode_validuntil`  TIMESTAMP        NULL     DEFAULT NULL,
     `created_at`            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modified_at`           TIMESTAMP    NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
