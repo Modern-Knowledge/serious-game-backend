@@ -1,6 +1,6 @@
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedSmtpLogs, seedUsers, truncateTables } from "../../src/migrationHelper";
 import { validAdminTherapist, validPatient, validTherapist } from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";

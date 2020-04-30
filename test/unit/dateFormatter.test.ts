@@ -1,5 +1,5 @@
 import moment from "moment";
-import { formatDate, formatDateTime, formatTime } from "../../src/lib/utils/dateFormatter";
+import { formatDate, formatDateTime, formatTime } from "serious-game-library/dist/utils/dateFormatter";
 
 describe("lib/utils/dateFormatter Tests", () => {
 

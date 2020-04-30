@@ -1,10 +1,10 @@
 import * as bcrypt from "bcryptjs";
+import { Roles } from "serious-game-library/dist/enums/Roles";
+import { Status } from "serious-game-library/dist/enums/Status";
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { TherapistFacade } from "../../src/db/entity/user/TherapistFacade";
-import { Roles } from "../../src/lib/enums/Roles";
-import { Status } from "../../src/lib/enums/Status";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import {
     unacceptedTherapist,

@@ -1,7 +1,7 @@
+import {Recipe} from "serious-game-library/dist/models/Recipe";
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
-import {Recipe} from "../../src/lib/models/Recipe";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedDifficulties,
     seedRecipes,

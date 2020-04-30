@@ -3,7 +3,7 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../../src/lib/utils/http/HttpResponse";
+} from "serious-game-library/dist/utils/http/HttpResponse";
 
 describe("lib/utils/http/HttpResponse Tests", () => {
 

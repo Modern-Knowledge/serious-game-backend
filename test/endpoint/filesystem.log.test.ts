@@ -1,6 +1,7 @@
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
+
 import request from "supertest";
 import app from "../../src/app";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { validAdminTherapist, validTherapist } from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";
 
@@ -132,7 +133,7 @@ describe("LogController Tests", () => {
             expect(res.body._status).toEqual("success");
             expect(res.body._data).toHaveProperty("token");
             expect(res.body._data).toHaveProperty("content");
-            if(res.body._data.content.length > 0) {
+            if (res.body._data.content.length > 0) {
                 res.body._data.content.forEach((value: any) => {
                     expect(value.level).toEqual("error");
                 });

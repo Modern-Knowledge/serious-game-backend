@@ -1,10 +1,10 @@
 import * as bcrypt from "bcryptjs";
+import { Status } from "serious-game-library/dist/enums/Status";
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { PatientSettingFacade } from "../../src/db/entity/settings/PatientSettingFacade";
 import { PatientFacade } from "../../src/db/entity/user/PatientFacade";
-import { Status } from "../../src/lib/enums/Status";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import { validPatient, validPatient1, validTherapist } from "../../src/seeds/users";
 import { authenticate, containsMessage } from "../../src/util/testhelper";

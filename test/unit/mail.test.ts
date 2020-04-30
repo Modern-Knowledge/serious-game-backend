@@ -1,4 +1,4 @@
-import { TemplateParser } from "../../src/lib/utils/TemplateParser";
+import { TemplateParser } from "serious-game-library/dist/utils/TemplateParser";
 import { passwordResettet } from "../../src/mail-texts/passwordResettet";
 import { SmtpMessage } from "../../src/mail-texts/SmtpMessage";
 import { Mail } from "../../src/util/mail/Mail";

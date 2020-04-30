@@ -1,8 +1,8 @@
 
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { UserFacade } from "../../src/db/entity/user/UserFacade";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import {
     lockedTherapist,

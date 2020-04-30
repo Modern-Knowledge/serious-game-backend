@@ -1,11 +1,11 @@
 import * as bcrypt from "bcryptjs";
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { SmtpLogFacade } from "../../src/db/entity/log/SmtpLogFacade";
 import { UserFacade } from "../../src/db/entity/user/UserFacade";
 import { SQLComparisonOperator } from "../../src/db/sql/enums/SQLComparisonOperator";
 import { SQLOperator } from "../../src/db/sql/enums/SQLOperator";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedUsers, truncateTables } from "../../src/migrationHelper";
 import {
     unacceptedTherapist,

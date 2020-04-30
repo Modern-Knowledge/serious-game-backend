@@ -1,8 +1,8 @@
 import moment = require("moment");
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { StatisticFacade } from "../../src/db/entity/game/StatisticFacade";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import { seedStatistics, seedUsers, truncateTables } from "../../src/migrationHelper";
 import { statistic } from "../../src/seeds/statistics";
 import { validTherapist } from "../../src/seeds/users";

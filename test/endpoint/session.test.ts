@@ -1,7 +1,7 @@
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../../src/app";
 import { SessionFacade } from "../../src/db/entity/game/SessionFacade";
-import { HttpResponseMessageSeverity } from "../../src/lib/utils/http/HttpResponse";
 import {
     seedDifficulties, seedGames,
     seedGameSettings,
