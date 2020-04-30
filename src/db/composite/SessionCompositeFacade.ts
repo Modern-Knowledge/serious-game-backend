@@ -1,5 +1,5 @@
-import { Session } from "../../lib/models/Session";
-import { Statistic } from "../../lib/models/Statistic";
+import { Session } from "serious-game-library/dist/models/Session";
+import { Statistic } from "serious-game-library/dist/models/Statistic";
 import { arrayContainsModel } from "../../util/Helper";
 import { GameFacade } from "../entity/game/GameFacade";
 import { SessionFacade } from "../entity/game/SessionFacade";

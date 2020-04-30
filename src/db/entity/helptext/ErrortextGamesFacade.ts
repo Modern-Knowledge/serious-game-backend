@@ -1,4 +1,4 @@
-import { ErrortextGame } from "../../../lib/models/ErrortextGame";
+import { ErrortextGame } from "serious-game-library/dist/models/ErrortextGame";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

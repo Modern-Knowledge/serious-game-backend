@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Statistic } from "../lib/models/Statistic";
+import { Statistic } from "serious-game-library/dist/models/Statistic";
 
 const statistic = new Statistic();
 statistic.id = 1;

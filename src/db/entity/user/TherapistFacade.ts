@@ -1,5 +1,5 @@
 
-import { Therapist } from "../../../lib/models/Therapist";
+import { Therapist } from "serious-game-library/dist/models/Therapist";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

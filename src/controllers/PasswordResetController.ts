@@ -2,15 +2,15 @@ import * as bcrypt from "bcryptjs";
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 import moment from "moment";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import {formatDateTime} from "../lib/utils/dateFormatter";
+import {formatDateTime} from "serious-game-library/dist/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import {UserFacade} from "../db/entity/user/UserFacade";
 import {passwordReset} from "../mail-texts/passwordReset";
 import {passwordResettet} from "../mail-texts/passwordResettet";
 import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";

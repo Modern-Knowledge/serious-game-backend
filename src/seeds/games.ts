@@ -1,4 +1,4 @@
-import { Game } from "../lib/models/Game";
+import { Game } from "serious-game-library/dist/models/Game";
 
 const game = new Game();
 game.id = 1;

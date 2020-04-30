@@ -3,8 +3,8 @@ import {Request, Response} from "express";
 import {
     HttpResponse, HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
 import {databaseConnection} from "../util/db/databaseConnection";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {mailTransport} from "../util/mail/mailTransport";

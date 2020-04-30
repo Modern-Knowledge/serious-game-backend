@@ -1,5 +1,5 @@
 
-import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 
 /**
  * Map contains categorized validation messages.

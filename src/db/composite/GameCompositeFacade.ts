@@ -1,7 +1,7 @@
-import { Errortext } from "../../lib/models/Errortext";
-import { Game } from "../../lib/models/Game";
-import { GameSetting } from "../../lib/models/GameSetting";
-import { Helptext } from "../../lib/models/Helptext";
+import { Errortext } from "serious-game-library/dist/models/Errortext";
+import { Game } from "serious-game-library/dist/models/Game";
+import { GameSetting } from "serious-game-library/dist/models/GameSetting";
+import { Helptext } from "serious-game-library/dist/models/Helptext";
 import { arrayContainsModel } from "../../util/Helper";
 import { GameFacade } from "../entity/game/GameFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";

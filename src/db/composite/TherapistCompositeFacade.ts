@@ -1,5 +1,5 @@
-import { Patient } from "../../lib/models/Patient";
-import { Therapist } from "../../lib/models/Therapist";
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { Therapist } from "serious-game-library/dist/models/Therapist";
 import { arrayContainsModel } from "../../util/Helper";
 import { PatientFacade } from "../entity/user/PatientFacade";
 import { TherapistFacade } from "../entity/user/TherapistFacade";

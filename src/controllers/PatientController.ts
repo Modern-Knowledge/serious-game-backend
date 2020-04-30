@@ -2,21 +2,21 @@ import * as bcrypt from "bcryptjs";
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
 
-import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
-import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
-import { PatientFacade } from "../db/entity/user/PatientFacade";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import { Status } from "../lib/enums/Status";
-import { PatientDto } from "../lib/models/Dto/PatientDto";
-import { Patient } from "../lib/models/Patient";
-import { PatientSetting } from "../lib/models/PatientSetting";
+import { Status } from "serious-game-library/dist/enums/Status";
+import { PatientDto } from "serious-game-library/dist/models/Dto/PatientDto";
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { PatientSetting } from "serious-game-library/dist/models/PatientSetting";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus,
-} from "../lib/utils/http/HttpResponse";
-import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import { HTTPStatusCode } from "serious-game-library/dist/utils/httpStatusCode";
+import { PatientCompositeFacade } from "../db/composite/PatientCompositeFacade";
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
+import { PatientFacade } from "../db/entity/user/PatientFacade";
+import {UserFacade} from "../db/entity/user/UserFacade";
 import { register } from "../mail-texts/register";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";

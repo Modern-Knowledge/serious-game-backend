@@ -1,4 +1,4 @@
-import { ErrortextStatistic } from "../lib/models/ErrortextStatistic";
+import { ErrortextStatistic } from "serious-game-library/dist/models/ErrortextStatistic";
 import {
   dayPlanningError,
   fridgeNotCheckedError,

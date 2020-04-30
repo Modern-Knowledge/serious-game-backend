@@ -1,4 +1,4 @@
-import { Log } from "../../../lib/models/Log";
+import { Log } from "serious-game-library/dist/models/Log";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

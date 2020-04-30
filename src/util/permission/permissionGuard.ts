@@ -1,5 +1,5 @@
-import { IUserInterface } from "../../lib/interfaces/IUserInterface";
-import { User } from "../../lib/models/User";
+import { IUserInterface } from "serious-game-library/dist/interfaces/IUserInterface";
+import { User } from "serious-game-library/dist/models/User";
 import { loggerString } from "../Helper";
 import logger from "../log/logger";
 

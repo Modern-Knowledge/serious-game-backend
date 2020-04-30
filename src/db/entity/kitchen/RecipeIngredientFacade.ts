@@ -1,5 +1,5 @@
 
-import { RecipeIngredient } from "../../../lib/models/RecipeIngredient";
+import { RecipeIngredient } from "serious-game-library/dist/models/RecipeIngredient";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

@@ -1,7 +1,7 @@
 /**
  * Priority of a mail.
  */
-export const enum MailPriority {
+export enum MailPriority {
     LOW = "low",
     NORMAL = "normal",
     HIGH = "high"

@@ -1,4 +1,4 @@
-import { SmtpLog } from "../lib/models/SmtpLog";
+import { SmtpLog } from "serious-game-library/dist/models/SmtpLog";
 
 const email = "example@mail.com";
 

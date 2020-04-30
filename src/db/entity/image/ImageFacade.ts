@@ -1,4 +1,4 @@
-import { Image } from "../../../lib/models/Image";
+import { Image } from "serious-game-library/dist/models/Image";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

@@ -20,6 +20,8 @@
         "noUnusedParameters": false,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
+        "declarationMap": true,
+        "noImplicitAny": false,
 
         "moduleResolution": "node",
         "baseUrl": ".",

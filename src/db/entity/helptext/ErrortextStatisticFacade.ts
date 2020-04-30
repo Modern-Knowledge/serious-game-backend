@@ -1,6 +1,6 @@
 import moment from "moment";
-import { ErrortextStatistic } from "../../../lib/models/ErrortextStatistic";
-import {formatDateTime} from "../../../lib/utils/dateFormatter";
+import { ErrortextStatistic } from "serious-game-library/dist/models/ErrortextStatistic";
+import {formatDateTime} from "serious-game-library/dist/utils/dateFormatter";
 import {databaseConnection} from "../../../util/db/databaseConnection";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";

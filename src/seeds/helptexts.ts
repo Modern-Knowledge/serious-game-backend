@@ -1,4 +1,4 @@
-import { Helptext } from "../lib/models/Helptext";
+import { Helptext } from "serious-game-library/dist/models/Helptext";
 
 const helptext = new Helptext();
 helptext.id = 1;

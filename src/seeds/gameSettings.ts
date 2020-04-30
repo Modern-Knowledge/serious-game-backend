@@ -1,4 +1,4 @@
-import { GameSetting } from "../lib/models/GameSetting";
+import { GameSetting } from "serious-game-library/dist/models/GameSetting";
 import { difficultyEasy } from "./difficulties";
 import { game, game2, game3, game4 } from "./games";
 

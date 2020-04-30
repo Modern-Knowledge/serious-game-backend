@@ -3,18 +3,18 @@ import * as bcrypt from "bcryptjs";
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
-import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import { UserFacade } from "../db/entity/user/UserFacade";
-import {UserDto} from "../lib/models/Dto/UserDto";
-import { User } from "../lib/models/User";
-import { formatDateTime } from "../lib/utils/dateFormatter";
+import {UserDto} from "serious-game-library/dist/models/Dto/UserDto";
+import { User } from "serious-game-library/dist/models/User";
+import { formatDateTime } from "serious-game-library/dist/utils/dateFormatter";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import { UserFacade } from "../db/entity/user/UserFacade";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";
 import { logEndpoint } from "../util/log/endpointLogger";

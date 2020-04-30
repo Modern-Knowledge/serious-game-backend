@@ -1,5 +1,5 @@
 
-import { Severity } from "../../../lib/models/Severity";
+import { Severity } from "serious-game-library/dist/models/Severity";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { Roles } from "../../lib/enums/Roles";
-import { Patient } from "../../lib/models/Patient";
-import { Therapist } from "../../lib/models/Therapist";
-import { HttpResponseMessage, HttpResponseMessageSeverity } from "../../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../../lib/utils/httpStatusCode";
+import { Roles } from "serious-game-library/dist/enums/Roles";
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { Therapist } from "serious-game-library/dist/models/Therapist";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
 import { getRequestUrl, loggerString } from "../Helper";
 import { http4xxResponse } from "../http/httpResponses";
 import logger from "../log/logger";

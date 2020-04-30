@@ -1,5 +1,5 @@
-import { Severities } from "../lib/enums/Severities";
-import { Severity } from "../lib/models/Severity";
+import { Severities } from "serious-game-library/dist/enums/Severities";
+import { Severity } from "serious-game-library/dist/models/Severity";
 
 const severityEasy = new Severity();
 severityEasy.id = 1;

@@ -3,16 +3,16 @@ import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
-import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
-import { StatisticFacade } from "../db/entity/game/StatisticFacade";
-import { Statistic } from "../lib/models/Statistic";
+import { Statistic } from "serious-game-library/dist/models/Statistic";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import { StatisticCompositeFacade } from "../db/composite/StatisticCompositeFacade";
+import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";

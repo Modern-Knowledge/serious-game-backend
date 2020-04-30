@@ -1,5 +1,5 @@
 
-import { AbstractModel } from "../../lib/models/AbstractModel";
+import { AbstractModel } from "serious-game-library/dist/models/AbstractModel";
 import { loggerString } from "../../util/Helper";
 import logger from "../../util/log/logger";
 import { BaseFacade } from "../BaseFacade";

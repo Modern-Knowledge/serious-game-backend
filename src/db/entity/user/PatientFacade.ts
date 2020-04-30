@@ -1,4 +1,4 @@
-import { Patient } from "../../../lib/models/Patient";
+import { Patient } from "serious-game-library/dist/models/Patient";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

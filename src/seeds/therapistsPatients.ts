@@ -1,4 +1,4 @@
-import { TherapistPatient } from "../lib/models/TherapistPatient";
+import { TherapistPatient } from "serious-game-library/dist/models/TherapistPatient";
 import { validPatient, validPatient1, validTherapist } from "./users";
 
 const therapistPatient1 = new TherapistPatient();

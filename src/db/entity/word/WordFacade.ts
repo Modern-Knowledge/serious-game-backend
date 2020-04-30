@@ -1,4 +1,4 @@
-import { Word } from "../../../lib/models/Word";
+import { Word } from "serious-game-library/dist/models/Word";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

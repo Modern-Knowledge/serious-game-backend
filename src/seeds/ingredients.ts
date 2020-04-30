@@ -1,4 +1,4 @@
-import { Ingredient } from "../lib/models/Ingredient";
+import { Ingredient } from "serious-game-library/dist/models/Ingredient";
 import {bread, chilledGoods, deepFrozen, drinks, stapleFood, sweets, vegetables} from "./foodCategories";
 
 const egg = new Ingredient();

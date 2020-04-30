@@ -1,7 +1,7 @@
 
 import { MysqlError, PoolConnection } from "mysql";
+import { AbstractModel } from "serious-game-library/dist/models/AbstractModel";
 import { Error } from "tslint/lib/error";
-import { AbstractModel } from "../lib/models/AbstractModel";
 import { ExecutionTimeAnalyser } from "../util/analysis/ExecutionTimeAnalyser";
 import { Stopwatch } from "../util/analysis/Stopwatch";
 import { databaseConnection, ITransactionQuery } from "../util/db/databaseConnection";

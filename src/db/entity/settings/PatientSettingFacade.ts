@@ -1,4 +1,4 @@
-import { PatientSetting } from "../../../lib/models/PatientSetting";
+import { PatientSetting } from "serious-game-library/dist/models/PatientSetting";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

@@ -1,17 +1,17 @@
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
-import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
-import {RecipeFacade} from "../db/entity/kitchen/RecipeFacade";
-import {SQLOperator} from "../db/sql/enums/SQLOperator";
-import {SQLOrder} from "../db/sql/enums/SQLOrder";
-import {Recipe} from "../lib/models/Recipe";
+import {Recipe} from "serious-game-library/dist/models/Recipe";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import {RecipeCompositeFacade} from "../db/composite/RecipeCompositeFacade";
+import {RecipeFacade} from "../db/entity/kitchen/RecipeFacade";
+import {SQLOperator} from "../db/sql/enums/SQLOperator";
+import {SQLOrder} from "../db/sql/enums/SQLOrder";
 import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";

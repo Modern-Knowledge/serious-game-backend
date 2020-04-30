@@ -2,8 +2,8 @@
 import { Request } from "express";
 import * as fs from "fs";
 import * as path from "path";
-import { AbstractModel } from "../lib/models/AbstractModel";
-import { formatDateTime } from "../lib/utils/dateFormatter";
+import { AbstractModel } from "serious-game-library/dist/models/AbstractModel";
+import { formatDateTime } from "serious-game-library/dist/utils/dateFormatter";
 
 /**
  * Creates a string for logging that can be used with the winston logger.

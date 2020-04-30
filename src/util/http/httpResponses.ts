@@ -6,8 +6,8 @@ import {
     HttpResponse,
     HttpResponseMessage, HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../../lib/utils/http/HttpResponse";
-import { HTTPStatusCode } from "../../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import { HTTPStatusCode } from "serious-game-library/dist/utils/httpStatusCode";
 import { toHttpResponseMessage } from "../validation/validationMessages";
 
 /**

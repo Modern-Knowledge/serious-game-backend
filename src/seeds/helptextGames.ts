@@ -1,4 +1,4 @@
-import { HelptextGame } from "../lib/models/HelptextGame";
+import { HelptextGame } from "serious-game-library/dist/models/HelptextGame";
 import {game, game2, game3, game4} from "./games";
 import {helptext, helptext1, helptext2, helptext3} from "./helptexts";
 

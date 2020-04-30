@@ -1,4 +1,4 @@
-import { HelptextGame } from "../../../lib/models/HelptextGame";
+import { HelptextGame } from "serious-game-library/dist/models/HelptextGame";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

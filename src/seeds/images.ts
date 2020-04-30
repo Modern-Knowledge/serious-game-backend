@@ -1,4 +1,4 @@
-import {Image} from "../lib/models/Image";
+import {Image} from "serious-game-library/dist/models/Image";
 import {getImage, inTestMode} from "../util/Helper";
 
 async function loadImages(): Promise<Image[]> {

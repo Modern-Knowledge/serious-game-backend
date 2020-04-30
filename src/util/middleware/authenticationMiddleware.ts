@@ -2,13 +2,13 @@ import { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import passport from "passport";
 import { ExtractJwt } from "passport-jwt";
-import { User } from "../../lib/models/User";
-import { formatDateTime } from "../../lib/utils/dateFormatter";
+import { User } from "serious-game-library/dist/models/User";
+import { formatDateTime } from "serious-game-library/dist/utils/dateFormatter";
 import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
-} from "../../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
 import { loggerString } from "../Helper";
 import { http4xxResponse } from "../http/httpResponses";
 import { JWTHelper } from "../JWTHelper";

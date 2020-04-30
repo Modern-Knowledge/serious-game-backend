@@ -18,14 +18,14 @@ import methodOverride from "method-override";
 import moment from "moment";
 import morgan from "morgan";
 import passport from "passport";
-import swaggerUi from "swagger-ui-express";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "./lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "./lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import swaggerUi from "swagger-ui-express";
 import { specs } from "./util/documentation/swaggerSpecs";
 import { getRequestUrl, inProduction, inTestMode, loggerString } from "./util/Helper";
 

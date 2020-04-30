@@ -1,4 +1,4 @@
-import { ErrortextGame } from "../lib/models/ErrortextGame";
+import { ErrortextGame } from "serious-game-library/dist/models/ErrortextGame";
 import {
   dayPlanningError,
   fridgeNotCheckedError,

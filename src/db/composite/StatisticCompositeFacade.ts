@@ -1,5 +1,5 @@
-import { Errortext } from "../../lib/models/Errortext";
-import { Statistic } from "../../lib/models/Statistic";
+import { Errortext } from "serious-game-library/dist/models/Errortext";
+import { Statistic } from "serious-game-library/dist/models/Statistic";
 import { arrayContainsModel } from "../../util/Helper";
 import { StatisticFacade } from "../entity/game/StatisticFacade";
 import { ErrortextFacade } from "../entity/helptext/ErrortextFacade";

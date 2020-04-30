@@ -1,4 +1,4 @@
-import { Log } from "../lib/models/Log";
+import { Log } from "serious-game-library/dist/models/Log";
 import { validTherapist } from "./users";
 
 const params = ["params params"];

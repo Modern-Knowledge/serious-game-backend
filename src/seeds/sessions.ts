@@ -1,4 +1,4 @@
-import { Session } from "../lib/models/Session";
+import { Session } from "serious-game-library/dist/models/Session";
 import { game } from "./games";
 import { gameSettings } from "./gameSettings";
 import { statistic } from "./statistics";

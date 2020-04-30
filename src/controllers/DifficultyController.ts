@@ -1,12 +1,12 @@
 import express, {Request, Response} from "express";
-import {DifficultyFacade} from "../db/entity/enum/DifficultyFacade";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import {DifficultyFacade} from "../db/entity/enum/DifficultyFacade";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";
 

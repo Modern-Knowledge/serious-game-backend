@@ -1,6 +1,6 @@
 
 import moment from "moment";
-import { User } from "../../lib/models/User";
+import { User } from "serious-game-library/dist/models/User";
 
 /**
  * Generates and sets the password reset token for the given user. Token length

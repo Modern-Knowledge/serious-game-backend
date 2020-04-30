@@ -1,4 +1,4 @@
-import { User } from "../../../lib/models/User";
+import { User } from "serious-game-library/dist/models/User";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

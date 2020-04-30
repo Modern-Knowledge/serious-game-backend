@@ -1,5 +1,5 @@
 
-import { Text } from "../../../lib/models/Text";
+import { Text } from "serious-game-library/dist/models/Text";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

@@ -1,4 +1,4 @@
-import { TemplateParser } from "../../lib/utils/TemplateParser";
+import { TemplateParser } from "serious-game-library/dist/utils/TemplateParser";
 import { SmtpMessage } from "../../mail-texts/SmtpMessage";
 import { Attachment } from "./Attachment";
 import { MailPriority } from "./MailPriority";

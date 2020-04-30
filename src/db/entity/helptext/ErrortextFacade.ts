@@ -1,4 +1,4 @@
-import { Errortext } from "../../../lib/models/Errortext";
+import { Errortext } from "serious-game-library/dist/models/Errortext";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

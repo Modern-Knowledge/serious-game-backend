@@ -1,4 +1,4 @@
-import { FoodCategory } from "../lib/models/FoodCategory";
+import { FoodCategory } from "serious-game-library/dist/models/FoodCategory";
 
 const vegetables = new FoodCategory();
 vegetables.id = 1;

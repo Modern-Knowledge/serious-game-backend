@@ -1,5 +1,5 @@
-import { Patient } from "../../lib/models/Patient";
-import { Session } from "../../lib/models/Session";
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { Session } from "serious-game-library/dist/models/Session";
 import { arrayContainsModel } from "../../util/Helper";
 import { PatientSettingFacade } from "../entity/settings/PatientSettingFacade";
 import { PatientFacade } from "../entity/user/PatientFacade";

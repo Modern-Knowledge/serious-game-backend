@@ -1,7 +1,7 @@
+import { User } from "serious-game-library/dist/models/User";
+import { HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
 import request from "supertest";
 import app from "../app";
-import { User } from "../lib/models/User";
-import { HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
 import logger from "./log/logger";
 
 /**

@@ -1,4 +1,4 @@
-import { AbstractModel } from "../../lib/models/AbstractModel";
+import { AbstractModel } from "serious-game-library/dist/models/AbstractModel";
 import { EntityFacade } from "../entity/EntityFacade";
 import { Filter } from "../filter/Filter";
 import { Ordering } from "../order/Ordering";

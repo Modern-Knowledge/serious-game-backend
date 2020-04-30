@@ -1,4 +1,4 @@
-import { RecipeIngredient } from "../lib/models/RecipeIngredient";
+import { RecipeIngredient } from "serious-game-library/dist/models/RecipeIngredient";
 import {
     beef, blackbread, bun, butter,
     cheese,

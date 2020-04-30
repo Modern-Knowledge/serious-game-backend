@@ -1,5 +1,5 @@
 
-import { Game } from "../../../lib/models/Game";
+import { Game } from "serious-game-library/dist/models/Game";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

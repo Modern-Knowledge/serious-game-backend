@@ -1,4 +1,4 @@
-import { Session } from "../../../lib/models/Session";
+import { Session } from "serious-game-library/dist/models/Session";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

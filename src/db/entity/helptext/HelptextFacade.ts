@@ -1,5 +1,5 @@
 
-import { Helptext } from "../../../lib/models/Helptext";
+import { Helptext } from "serious-game-library/dist/models/Helptext";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

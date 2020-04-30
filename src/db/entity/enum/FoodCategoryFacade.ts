@@ -1,5 +1,5 @@
 
-import { FoodCategory } from "../../../lib/models/FoodCategory";
+import { FoodCategory } from "serious-game-library/dist/models/FoodCategory";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

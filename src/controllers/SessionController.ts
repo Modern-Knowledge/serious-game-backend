@@ -2,6 +2,16 @@ import express, { Request, Response } from "express";
 import { check } from "express-validator";
 import moment from "moment";
 
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { Session } from "serious-game-library/dist/models/Session";
+import { Statistic } from "serious-game-library/dist/models/Statistic";
+import {
+    HttpResponse,
+    HttpResponseMessage,
+    HttpResponseMessageSeverity,
+    HttpResponseStatus,
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import { HTTPStatusCode } from "serious-game-library/dist/utils/httpStatusCode";
 import { SessionCompositeFacade } from "../db/composite/SessionCompositeFacade";
 import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
 import { GameFacade } from "../db/entity/game/GameFacade";
@@ -9,16 +19,6 @@ import { SessionFacade } from "../db/entity/game/SessionFacade";
 import { StatisticFacade } from "../db/entity/game/StatisticFacade";
 import { GameSettingFacade } from "../db/entity/settings/GameSettingFacade";
 import { PatientFacade } from "../db/entity/user/PatientFacade";
-import { Patient } from "../lib/models/Patient";
-import { Session } from "../lib/models/Session";
-import { Statistic } from "../lib/models/Statistic";
-import {
-    HttpResponse,
-    HttpResponseMessage,
-    HttpResponseMessageSeverity,
-    HttpResponseStatus,
-} from "../lib/utils/http/HttpResponse";
-import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";

@@ -3,22 +3,22 @@ import * as bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import express from "express";
 import { check } from "express-validator";
-import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
-import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
-import {UserFacade} from "../db/entity/user/UserFacade";
-import {Roles} from "../lib/enums/Roles";
-import { Status } from "../lib/enums/Status";
-import {TherapistDto} from "../lib/models/Dto/TherapistDto";
-import { Therapist } from "../lib/models/Therapist";
-import { TherapistPatient } from "../lib/models/TherapistPatient";
+import {Roles} from "serious-game-library/dist/enums/Roles";
+import { Status } from "serious-game-library/dist/enums/Status";
+import {TherapistDto} from "serious-game-library/dist/models/Dto/TherapistDto";
+import { Therapist } from "serious-game-library/dist/models/Therapist";
+import { TherapistPatient } from "serious-game-library/dist/models/TherapistPatient";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import { TherapistCompositeFacade } from "../db/composite/TherapistCompositeFacade";
+import { TherapistFacade } from "../db/entity/user/TherapistFacade";
+import { TherapistsPatientsFacade } from "../db/entity/user/TherapistsPatientsFacade";
+import {UserFacade} from "../db/entity/user/UserFacade";
 import {register} from "../mail-texts/register";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { JWTHelper } from "../util/JWTHelper";

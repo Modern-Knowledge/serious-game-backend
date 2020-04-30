@@ -1,5 +1,5 @@
 
-import { SmtpLog } from "../../lib/models/SmtpLog";
+import { SmtpLog } from "serious-game-library/dist/models/SmtpLog";
 import logger from "../log/logger";
 import { Mail } from "./Mail";
 

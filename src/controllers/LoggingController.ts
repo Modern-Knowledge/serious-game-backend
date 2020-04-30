@@ -1,18 +1,18 @@
 
 import express, { Request, Response } from "express";
 import moment from "moment";
-import { LogFacade } from "../db/entity/log/LogFacade";
-import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
-import { SQLOperator } from "../db/sql/enums/SQLOperator";
-import { SQLOrder } from "../db/sql/enums/SQLOrder";
-import { Log } from "../lib/models/Log";
+import { Log } from "serious-game-library/dist/models/Log";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import { LogFacade } from "../db/entity/log/LogFacade";
+import { SQLComparisonOperator } from "../db/sql/enums/SQLComparisonOperator";
+import { SQLOperator } from "../db/sql/enums/SQLOperator";
+import { SQLOrder } from "../db/sql/enums/SQLOrder";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
 import { checkTherapistAdminPermission } from "../util/middleware/permissionMiddleware";

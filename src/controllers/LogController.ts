@@ -8,8 +8,8 @@ import {
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import { HTTPStatusCode } from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import { HTTPStatusCode } from "serious-game-library/dist/utils/httpStatusCode";
 import { loggerString } from "../util/Helper";
 import { logEndpoint } from "../util/log/endpointLogger";
 import logger from "../util/log/logger";

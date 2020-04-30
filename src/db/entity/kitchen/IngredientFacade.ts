@@ -1,5 +1,5 @@
 
-import { Ingredient } from "../../../lib/models/Ingredient";
+import { Ingredient } from "serious-game-library/dist/models/Ingredient";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

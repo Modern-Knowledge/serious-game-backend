@@ -1,5 +1,5 @@
 
-import { GameSetting } from "../../../lib/models/GameSetting";
+import { GameSetting } from "serious-game-library/dist/models/GameSetting";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

@@ -1,5 +1,5 @@
-import { Mealtimes } from "../lib/enums/Mealtimes";
-import { Recipe } from "../lib/models/Recipe";
+import { Mealtimes } from "serious-game-library/dist/enums/Mealtimes";
+import { Recipe } from "serious-game-library/dist/models/Recipe";
 import {difficultyEasy, difficultyHard, difficultyMedium} from "./difficulties";
 
 const scrambledEgg = new Recipe();

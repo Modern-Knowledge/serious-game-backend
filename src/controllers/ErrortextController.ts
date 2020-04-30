@@ -1,19 +1,19 @@
 import express, {Request, Response} from "express";
 import {check} from "express-validator";
 
-import {StatisticFacade} from "../db/entity/game/StatisticFacade";
-import {ErrortextFacade} from "../db/entity/helptext/ErrortextFacade";
-import {ErrortextStatisticFacade} from "../db/entity/helptext/ErrortextStatisticFacade";
-import {SQLComparisonOperator} from "../db/sql/enums/SQLComparisonOperator";
-import {Errortext} from "../lib/models/Errortext";
-import {ErrortextStatistic} from "../lib/models/ErrortextStatistic";
+import {Errortext} from "serious-game-library/dist/models/Errortext";
+import {ErrortextStatistic} from "serious-game-library/dist/models/ErrortextStatistic";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import {StatisticFacade} from "../db/entity/game/StatisticFacade";
+import {ErrortextFacade} from "../db/entity/helptext/ErrortextFacade";
+import {ErrortextStatisticFacade} from "../db/entity/helptext/ErrortextStatisticFacade";
+import {SQLComparisonOperator} from "../db/sql/enums/SQLComparisonOperator";
 import {failedValidation400Response, http4xxResponse} from "../util/http/httpResponses";
 import {logEndpoint} from "../util/log/endpointLogger";
 import {checkAuthentication, checkAuthenticationToken} from "../util/middleware/authenticationMiddleware";

@@ -1,4 +1,4 @@
-import { AppSetting } from "../../../lib/models/AppSetting";
+import { AppSetting } from "serious-game-library/dist/models/AppSetting";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { EntityFacade } from "../EntityFacade";
 

@@ -1,5 +1,5 @@
 
-import { SmtpLog } from "../../../lib/models/SmtpLog";
+import { SmtpLog } from "serious-game-library/dist/models/SmtpLog";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";
 import { SQLValueAttributes } from "../../sql/SQLValueAttributes";

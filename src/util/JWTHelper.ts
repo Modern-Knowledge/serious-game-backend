@@ -1,8 +1,8 @@
-
 import * as jwt from "jsonwebtoken";
-import { TherapistFacade } from "../db/entity/user/TherapistFacade";
-import {Roles} from "../lib/enums/Roles";
-import { User } from "../lib/models/User";
+
+import {Roles} from "serious-game-library/dist/enums/Roles";
+import {User} from "serious-game-library/dist/models/User";
+import {TherapistFacade} from "../db/entity/user/TherapistFacade";
 
 /**
  * Helper for jwt-functions.
@@ -27,7 +27,7 @@ export class JWTHelper {
         const expiresIn = loggedIn ? 31536000 : this._expiresIn;
 
         return jwt.sign(
-            { id: user.id, email: user.email, therapist: isTherapist, admin: isAdmin},
+            {id: user.id, email: user.email, therapist: isTherapist, admin: isAdmin},
             this._secretKey,
             {
                 expiresIn

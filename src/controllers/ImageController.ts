@@ -1,9 +1,9 @@
 
 import express, { Request, Response } from "express";
 import { check } from "express-validator";
+import { HttpResponseMessage, HttpResponseMessageSeverity } from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
 import { ImageFacade } from "../db/entity/image/ImageFacade";
-import { HttpResponseMessage, HttpResponseMessageSeverity } from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
 import { failedValidation400Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkRouteValidation } from "../util/validation/validationHelper";

@@ -2,8 +2,8 @@
 import errorHandler from "errorhandler";
 
 import moment from "moment";
+import {formatDate} from "serious-game-library/dist/utils/dateFormatter";
 import app from "./app";
-import {formatDate} from "./lib/utils/dateFormatter";
 import { inProduction, loggerString } from "./util/Helper";
 import logger from "./util/log/logger";
 moment.locale("de");

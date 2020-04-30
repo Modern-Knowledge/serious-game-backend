@@ -1,5 +1,5 @@
 
-import { TherapistPatient } from "../../../lib/models/TherapistPatient";
+import { TherapistPatient } from "serious-game-library/dist/models/TherapistPatient";
 import { SQLComparisonOperator } from "../../sql/enums/SQLComparisonOperator";
 import { SQLAttributes } from "../../sql/SQLAttributes";
 import { SQLValueAttribute } from "../../sql/SQLValueAttribute";

@@ -1,6 +1,6 @@
 
-import { Ingredient } from "../../lib/models/Ingredient";
-import { Recipe } from "../../lib/models/Recipe";
+import { Ingredient } from "serious-game-library/dist/models/Ingredient";
+import { Recipe } from "serious-game-library/dist/models/Recipe";
 import { arrayContainsModel } from "../../util/Helper";
 import { IngredientFacade } from "../entity/kitchen/IngredientFacade";
 import { RecipeFacade } from "../entity/kitchen/RecipeFacade";

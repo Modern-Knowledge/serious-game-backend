@@ -1,4 +1,4 @@
-import { Errortext } from "../lib/models/Errortext";
+import { Errortext } from "serious-game-library/dist/models/Errortext";
 import { severityEasy } from "./severities";
 
 const mealtimeError = new Errortext();

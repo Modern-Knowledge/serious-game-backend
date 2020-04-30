@@ -1,5 +1,5 @@
-import { Difficulties } from "../lib/enums/Difficulties";
-import { Difficulty } from "../lib/models/Difficulty";
+import { Difficulties } from "serious-game-library/dist/enums/Difficulties";
+import { Difficulty } from "serious-game-library/dist/models/Difficulty";
 
 const difficultyEasy = new Difficulty();
 difficultyEasy.id = 1;

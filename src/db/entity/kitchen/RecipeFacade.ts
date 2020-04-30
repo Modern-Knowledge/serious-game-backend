@@ -1,4 +1,4 @@
-import { Recipe } from "../../../lib/models/Recipe";
+import { Recipe } from "serious-game-library/dist/models/Recipe";
 import { CompositeFacade } from "../../composite/CompositeFacade";
 import { Filter } from "../../filter/Filter";
 import { Ordering } from "../../order/Ordering";

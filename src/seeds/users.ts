@@ -1,9 +1,9 @@
 import moment from "moment";
-import { Gender } from "../lib/enums/Gender";
-import { Roles } from "../lib/enums/Roles";
-import { Status } from "../lib/enums/Status";
-import { Patient } from "../lib/models/Patient";
-import { Therapist } from "../lib/models/Therapist";
+import { Gender } from "serious-game-library/dist/enums/Gender";
+import { Roles } from "serious-game-library/dist/enums/Roles";
+import { Status } from "serious-game-library/dist/enums/Status";
+import { Patient } from "serious-game-library/dist/models/Patient";
+import { Therapist } from "serious-game-library/dist/models/Therapist";
 import { generatePasswordResetToken } from "../util/password/passwordHelper";
 
 // valid admin therapist

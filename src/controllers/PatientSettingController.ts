@@ -1,14 +1,14 @@
 import express from "express";
 import { Request, Response } from "express";
 import { check } from "express-validator";
-import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import {
     HttpResponse,
     HttpResponseMessage,
     HttpResponseMessageSeverity,
     HttpResponseStatus
-} from "../lib/utils/http/HttpResponse";
-import {HTTPStatusCode} from "../lib/utils/httpStatusCode";
+} from "serious-game-library/dist/utils/http/HttpResponse";
+import {HTTPStatusCode} from "serious-game-library/dist/utils/httpStatusCode";
+import { PatientSettingFacade } from "../db/entity/settings/PatientSettingFacade";
 import { failedValidation400Response, forbidden403Response, http4xxResponse } from "../util/http/httpResponses";
 import { logEndpoint } from "../util/log/endpointLogger";
 import { checkAuthentication, checkAuthenticationToken } from "../util/middleware/authenticationMiddleware";
