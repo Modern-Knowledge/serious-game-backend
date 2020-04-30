@@ -153,7 +153,7 @@ export class PatientFacade extends CompositeFacade<Patient> {
         return this.updateStatement(attributes, [
                 {facade: this, entity: patient},
                 {facade: this._userFacade, entity: patient},
-                {facade: this._patientSettingsFacade, entity: patient}
+                {facade: this._patientSettingsFacade, entity: patient.patientSetting}
             ]);
     }
 
