@@ -1,53 +1,47 @@
 # Serious Game Backend
 
-Die Backend-Instanz des Serious Games.
+Backend-Instanz of the serious game.
 
-NodeJS+ExpressJS
+NodeJS + ExpressJS
 
 ## Getting Started
 
 ```
-git clone https://repo.inso.tuwien.ac.at/florian.mold/serious-game-backend
+git clone https://github.com/Modern-Knowledge/serious-game-backend
 cd serious-game-backend
 ```
 
 ### Prerequisites
 
-#### NPM installieren:
+#### Install NPM:
 ```
 $ npm install npm@latest -g
 ```
 
-#### MySQL-Instanz in Docker starten:
+#### MySQL-instance:
 ```
 docker run --name serious-game-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
 ```
 
 ### Installing
 
-Um eine lokale Instanz zum laufen zu bringen, müssen folgende Schritte ausgeführt werden:
+To run a locale instance, complete the following steps.
 
-#### .env-Datei erstellen:
+#### Create .env-file
 
 ```
 cp .env.example .env
 ```
-Alle Daten in der .env-Datei dementsprechend ausfüllen.
+Fill in all values in the .env.
 
 
-#### Dependencies installieren:
+#### Install dependencies
 
 ```
 npm install
 ```
 
-#### Die Serious-Game-Library ins Projekt kopieren:
-
-```
-npm run build
-```
-
-### Das Projekt ausführen:
+### Run the project
 ```
 npm run watch
 ```
