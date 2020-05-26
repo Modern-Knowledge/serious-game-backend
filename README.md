@@ -1,6 +1,6 @@
 # Serious Game Backend
 
-Backend-Instanz of the serious game.
+Backend-Instance of the serious game.
 
 NodeJS + ExpressJS
 
